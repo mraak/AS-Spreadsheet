@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="false" version="3">
+  <includeClasses>
+    <classEntry path="com.flextras.calc.Calc"/>
+    <classEntry path="com.flextras.calc.ControlObject"/>
+    <classEntry path="com.flextras.calc.FormulaBasic"/>
+    <classEntry path="com.flextras.calc.FormulaLogic"/>
+    <classEntry path="com.flextras.calc.Utils"/>
+    <classEntry path="com.flextras.spreadsheet.Spreadsheet"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetItemEditor"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetItemRenderer"/>
+    <classEntry path="com.flextras.workbook.Book"/>
+    <classEntry path="com.flextras.workbook.CalcSheet"/>
+    <classEntry path="com.flextras.workbook.ColumnHeader"/>
+    <classEntry path="com.flextras.workbook.ColumnHeaderItem"/>
+    <classEntry path="com.flextras.workbook.ContextFactory"/>
+    <classEntry path="com.flextras.workbook.FieldStylePanel"/>
+    <classEntry path="com.flextras.workbook.IFlexcelGridContext"/>
+    <classEntry path="com.flextras.workbook.NoteSheet"/>
+    <classEntry path="com.flextras.workbook.RowHeader"/>
+    <classEntry path="com.flextras.workbook.RowHeaderItem"/>
+    <classEntry path="com.flextras.spreadsheet.Spreadsheet1"/>
+    <classEntry path="com.flextras.spreadsheet.ISpreadsheet"/>
+    <classEntry path="com.flextras.spreadsheet.Spreadsheet2"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetEvent"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetItemRendererBase"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetRendererType"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetItemRenderer2"/>
+    <classEntry path="com.flextras.spreadsheet.SpreadsheetCellResizePolicy"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

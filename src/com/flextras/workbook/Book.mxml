@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="{mainCont.width + 100}" 
+	height="{mainCont.height + 100}" 
+    horizontalScrollPolicy="off"
+    verticalScrollPolicy="off"	
+	creationComplete="onCreationComplete()"
+	xmlns:flexcel="com.flexcel.*"
+	implements="com.flextras.workbook.IFlexcelGridContext" xmlns:workbook="com.flextras.workbook.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.flextras.calc.Calc;
+			import com.flextras.calc.ControlObject;
+			import com.flextras.spreadsheet.Spreadsheet;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.ColorPickerEvent;
+			import mx.events.ItemClickEvent;
+
+			[Bindable]
+			public var calc:Calc;
+			
+			[Bindable]
+        	private var SHEETS_ARRAY:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var currentSheet:CalcSheet;
+			
+			public var fileId:String;
+			
+			private var _rowCount:int = 10;
+			private var _colCount:int = 8;
+			
+			private function onCreationComplete():void
+			{
+				calc = new Calc();
+				//calc.ignoreCase = true;
+				tree.visible = false;					
+				buildSheetsNew();
+				initStyler();
+				callLater(onBuildComplete);
+			}
+			
+			private function onBuildComplete():void
+			{
+				//removeAllSheets();
+			}
+			
+			private function buildSheetsNew():void
+			{
+				addCalcSheet(_rowCount, _colCount, -1);
+				addCalcSheet(_rowCount, _colCount, -1);
+				addCalcSheet(_rowCount, _colCount, -1);
+				
+				currentSheet = SHEETS_ARRAY[0].ref;
+				currentSheet.visible = true;
+				sheetsNav.selectedIndex = 0;
+			}
+			
+			public function addCalcSheet(rowCount:int, columnCount:int, index:int = -1, displayInfo:* = null):void
+			{
+				if(rowCount <= 0) rowCount = _rowCount;
+				if(colCount <= 0) colCount = _colCount;
+				
+				var ind:int = SHEETS_ARRAY.length;
+				var id:String = "Sheet" + (ind + 1);
+				var label:String = "Sheet" + (ind + 1);
+				
+				var cs:CalcSheet = new CalcSheet(id, rowCount, columnCount, displayInfo);
+				sheetContainer.addChild(cs);
+				cs.validateNow();
+				cs.grid.label = label;
+			
+				var cm:ContextMenu = ContextFactory.getGridCM(this);
+
+				cs.grid.contextMenu = cm;
+				
+				cs.visible = false;
+				calc.addDataGrid(cs.grid);
+				
+				var current:int = sheetsNav.selectedIndex;
+				
+				if(index != -1)
+				{
+					SHEETS_ARRAY.addItemAt({label:label, ref:cs}, index);
+				}
+				else
+				{
+					index = SHEETS_ARRAY.length;
+					SHEETS_ARRAY.addItem({label:label, ref:cs});
+					
+				}
+				cs.index = index;
+				
+				sheetsNav.selectedIndex = current;
+			}
+			
+			public function removeCalcSheet(index:int = -1, keepLast:Boolean = true):void
+			{
+			
+				if(!keepLast || SHEETS_ARRAY.length > 1)
+				{
+					if(index == -1)
+					{
+						index = sheetsNav.selectedIndex;
+						//trace(index + " " + sheetsNav.selectedIndex);
+					}
+					//var g:int = sheetsNav.selectedIndex;
+					//var newInd:int = (index + 1 < 0) ? 0 : index - 1;
+					
+					sheetContainer.removeChild(SHEETS_ARRAY[index].ref);
+					calc.removeDataGrid(SHEETS_ARRAY[index].ref.grid);
+					SHEETS_ARRAY.removeItemAt(index);
+					
+					for(var i:int = index; i < SHEETS_ARRAY.length; i++)
+					{
+						SHEETS_ARRAY[i].ref.index --;
+					}
+					
+					if (index >= SHEETS_ARRAY.length) index = SHEETS_ARRAY.length - 1;
+					
+					currentSheet = SHEETS_ARRAY[index].ref;
+
+					sheetsNav.selectedIndex = index;
+
+					currentSheet.visible = true;
+				
+					//trace(">"+index + " " + sheetsNav.selectedIndex);
+					
+					var sdf:int = 0;
+					
+				}
+			}
+			
+			private function initStyler():void
+			{
+				stylePanel.clrBg.addEventListener(ColorPickerEvent.CHANGE, setBgColor);
+				stylePanel.clrFont.addEventListener(ColorPickerEvent.CHANGE, setFontColor);
+				stylePanel.btnBold.addEventListener(MouseEvent.CLICK, setFontWeight);
+				//stylePanel.btnBorder.addEventListener(MouseEvent.CLICK, setBorder);
+				//stylePanel.clrBorder.addEventListener(ColorPickerEvent.CHANGE, setBorderColor);
+			}
+			
+			private function setBgColor(evt:ColorPickerEvent):void
+			{
+				currentSheet.setFieldStyle({prop:"backgroundColor", val:evt.color});
+			}
+			
+			private function setFontColor(evt:ColorPickerEvent):void
+			{
+				currentSheet.setFieldStyle({prop:"color", val:evt.color});
+			}
+			
+			private function setFontWeight(evt:MouseEvent):void
+			{
+				if(Button(evt.target).selected)
+				{
+					currentSheet.setFieldStyle({prop:"fontWeight", val:"bold"});
+				}
+				else
+				{
+					currentSheet.setFieldStyle({prop:"fontWeight", val:"normal"});
+				}
+			}
+			
+			private function setBorder(evt:MouseEvent):void
+			{
+				currentSheet.setFieldStyle({prop:"border", val:Button(evt.target).selected});
+			}
+			
+			private function setBorderColor(evt:ColorPickerEvent):void
+			{
+				currentSheet.setFieldStyle({prop:"borderColor", val:evt.color});
+			}
+			
+			public function loadXMLData(data:XML):void
+			{
+				fileId = data..file.@id;
+				
+				removeAllSheets();
+			
+				for each(var sh:XML in data..display..sheet)
+				{
+					addCalcSheet(sh.@rowCount, sh.@columnCount, -1, sh);
+				}
+				
+				currentSheet = SHEETS_ARRAY[0].ref;
+				currentSheet.visible = true;
+				sheetsNav.selectedIndex = 0;
+
+				callLater(assignXMLExpressions,[data]);
+				
+				var sdf:int = 0;
+			}
+			
+			private function assignXMLExpressions(...args):void
+			{
+				var data:XML = args[0];
+				for each(e in data..calc_data.expressions.e)
+				{
+					calc.assignControlExpression(e.@oid.toString(), e.@exp.toString());
+				}
+				
+				for each(var sh:XML in data..calc_data..sheet)
+				{
+					var gr:Spreadsheet = calc.gridCollection[sh.@id.toString()];
+					
+					for each(var e:XML in sh..e)
+					{
+						var co:ControlObject = gr.ctrlObjects[e.@oid.toString()];
+						//trace("\t" + e.@exp.toString());
+						//Alert.show(e.@exp.toString());
+						calc.assignControlExpression(co, e.@exp.toString());
+					}
+				}
+			}
+			
+			public function getXMLData():XML
+			{
+				var s:String = "";
+				s += "<data>";
+				s += "<file formatv='2'>";
+				s += calc.expressionListXML.toString();
+				s += "<display>";
+				s += "<sheets>";
+				for (var i:int = 0; i < SHEETS_ARRAY.length; i++)
+				{
+					var sh:CalcSheet = SHEETS_ARRAY[i].ref;
+					
+					//s += "<old_sheet type='calc' id='" + sh.id + "' index='" + sh.index + "' rowCount='" +sh.grid.rowCount + "' columnCount='" + sh.grid.columnCount + "'>";
+					//s += "</old_sheet>";
+					
+					var ss:String = sh.xmlViewData.toXMLString();
+					s += ss;
+					var sdf:int = 0;
+				}
+				s += "</sheets>";
+				s += "</display>";
+				s += "</file>";
+				s += "</data>";
+				
+				
+				
+				var xf:XML = new XML(<data/>);
+				xf.file.@formatv = "2";
+				xf.calc_data = calc.expressionListXML;
+				if(fileId != "" && fileId != null) xf.file.@id = fileId;
+				for (var j:int = 0; j < SHEETS_ARRAY.length; j++)
+				{
+					var sht:CalcSheet = SHEETS_ARRAY[j].ref;
+					xf.display.sheets.sheet[j] = sht.xmlViewData;
+				}
+				//Alert.show(fileId + "," + xf..file.@id);
+				//return new XML(s);
+				return xf;
+			}
+			
+			private function addSheet():void
+			{
+				addCalcSheet(_rowCount, _colCount, -1);
+			}
+			
+			private function removeSheet():void
+			{
+				removeCalcSheet();
+			}
+			
+			private function removeAllSheets():void
+			{
+				for(var i:int = 0; i < SHEETS_ARRAY.length; i++)
+				{
+					sheetContainer.removeChild(SHEETS_ARRAY[i].ref);
+					calc.removeDataGrid(SHEETS_ARRAY[i].ref.grid);
+				}
+				SHEETS_ARRAY.removeAll();
+			}
+				
+			private function onSheetClick(event:ItemClickEvent):void
+			{
+				if(currentSheet != CalcSheet(event.item.ref))
+				{
+					currentSheet.visible = false;
+					CalcSheet(event.item.ref).visible = true;
+					currentSheet = CalcSheet(event.item.ref);
+				}
+			}
+			
+			public function moveRow(fromIndex:int, toIndex:int, copy:Boolean = false, insert:Boolean = false, fromSheet:String = null, toSheet:String = null):void
+			{
+				var dy:int = toIndex - fromIndex;
+				
+				var arrexp:Array = currentSheet.grid.getRowExpressions(fromIndex);
+				
+				if(!toSheet) toSheet = currentSheet.grid.id;
+				
+				var toGrid:Spreadsheet = Spreadsheet(calc.gridCollection[toSheet]);
+
+				if(insert)
+				{
+					toGrid.sheet.insertRowAt(toIndex);
+				} 
+				else
+				{ 
+					toGrid.clearRowContent(toIndex);
+				}
+				
+				calc.moveRange(arrexp, 0, dy, copy, toSheet);
+				
+			} 
+			
+			public function moveColumn(fromIndex:int, toIndex:int, copy:Boolean = false, insert:Boolean = false, fromSheet:String = null, toSheet:String = null):void
+			{
+				var dx:int = toIndex - fromIndex;
+				
+				var arrexp:Array = currentSheet.grid.getColumnExpressions(fromIndex);
+				
+				if(!toSheet) toSheet = currentSheet.grid.id;
+				
+				var toGrid:Spreadsheet = Spreadsheet(calc.gridCollection[toSheet]);
+
+				if(insert)
+				{
+					toGrid.sheet.insertColumnAt(toIndex);
+				} 
+				else
+				{
+					toGrid.clearColumnContent(toIndex);
+				}
+				
+				calc.moveRange(arrexp, dx, 0, copy, toSheet);
+			} 
+			
+			private function showTree():void
+			{
+				if(!tree.visible)
+				{
+					tree.dataProvider = calc.expressionTree;
+					tree.validateNow();
+					tree.visible = true;
+				}
+				else
+				{
+					tree.visible = false;
+				}
+			}
+			
+			private function setFieldStyle():void
+			{
+				currentSheet.setFieldStyle(null);
+			}
+			
+			public function cmSelect(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+			}
+			
+			public function cmInsertColumn(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.sheet.insertColumnAt(gr.itemRolloverInfo.columnIndex);
+				
+			}
+			public function cmInsertRow(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.sheet.insertRowAt(gr.itemRolloverInfo.rowIndex);
+				
+			}
+			
+			public function cmClearColumn(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.clearColumnContent(gr.itemRolloverInfo.columnIndex);
+			}
+			
+			public function cmClearRow(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.clearRowContent(gr.itemRolloverInfo.rowIndex);
+			}
+			
+			public function cmDeleteColumn(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.sheet.deleteColumn(gr.itemRolloverInfo.columnIndex);
+			}
+			
+			public function cmDeleteRow(evt:ContextMenuEvent):void
+			{
+				var sfd:int = 8;
+				var gr:Spreadsheet = Spreadsheet(evt.contextMenuOwner);
+				gr.sheet.deleteRow(gr.itemRolloverInfo.rowIndex);
+			}
+			
+			public function set rowCount(value:int):void
+			{
+				_rowCount = value;
+			}
+			public function get rowCount():int
+			{
+				return _rowCount;				
+			}
+			public function set colCount(value:int):void
+			{
+				_colCount = value;
+			}
+			public function get colCount():int
+			{
+				return _colCount;				
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:VBox id="mainCont" backgroundColor="0xaaaaaa" verticalGap="1">
+		<mx:HBox horizontalGap="0" horizontalAlign="right" width="{currentSheet.grid.width + 20}">
+			<workbook:FieldStylePanel id="stylePanel" />
+			<mx:Button label="Expression Explorer" id="btnExpTree" click="showTree()"/>
+		</mx:HBox>
+		<mx:Canvas id="sheetContainer"  verticalScrollPolicy="off" horizontalScrollPolicy="off"  width="{currentSheet.grid.width + 35}" height="{currentSheet.grid.height + 35}" />
+		<!--<mx:Canvas id="sheetContainer" backgroundColor="0x00FF00" />-->
+		<mx:HBox width="100%" horizontalGap="1">
+			<mx:Button label="-" width="25" id="btnRemSheet" click="removeSheet()"/>
+			<mx:Button label="+" width="25" id="btnAddSheet" click="addSheet()"/>
+			<mx:TabBar id="sheetsNav"  x="64" y="57" itemClick="onSheetClick(event)" >
+				<mx:dataProvider>
+		            {SHEETS_ARRAY}
+		        </mx:dataProvider> 
+			</mx:TabBar>
+		</mx:HBox>
+	</mx:VBox>
+
+	<mx:Tree id="tree" x="{btnExpTree.x - tree.width + btnExpTree.width + 10}" y="{btnExpTree.y + btnExpTree.height + 10}" editable="false" dataProvider="{calc.expressionTree}" width="331" labelField="toolTipLabelTree" dataTipField="exp"  height="468"></mx:Tree>
+	
+</mx:Canvas>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="30" horizontalGap="0">
+	<mx:Label text="Bg Color:"/>
+	<mx:ColorPicker id="clrBg"/>
+	<mx:Label text="Font Color:"/>
+	<mx:ColorPicker id="clrFont"/>
+	<mx:Button id="btnBold" toggle="true" label="Bold"/>
+	<!--
+	<mx:Label text="Border:"/>
+	<mx:Button id="btnBorder" toggle="true" label="#" width="39"/>
+	<mx:Label text="Border Color:"/>
+	<mx:ColorPicker id="clrBorder"/>
+	-->
+</mx:HBox>
