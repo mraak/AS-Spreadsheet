@@ -21,7 +21,12 @@ package com.flextras.spreadsheet
 		
 		function get renderers():Object;
 		
+		function set expressions(value:ArrayCollection):void;
+		function get expressions():ArrayCollection;
+		
 		function assignExpression(cellId:String, expression:String):void;
+		
+		function updateExpressions():void;
 	}
 	
 	

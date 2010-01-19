@@ -554,6 +554,15 @@ package com.flextras.calc
 					if(c != currentOriginator)
 					{
 						assignControlExpression(c, c.exp, true);
+						if(c.grid) c.grid.updateExpressions();
+					/*	if(c.grid)
+						{
+							c.grid.assignExpression(c.id, c.exp);
+						}
+						else
+						{
+							assignControlExpression(c, c.exp, true);
+						}*/
 					}
 					else
 					{
@@ -618,7 +627,10 @@ package com.flextras.calc
 				if(!update && expressionTree.indexOf(co) == -1)
 				{
 					expressionTree.push(co);
-					if(co.grid) co.grid.expressionTree.push(co);
+					if(co.grid)
+					{
+						co.grid.expressionTree.push(co);
+					}
 				} 
 			}
 			else if(exp == "")
@@ -833,7 +845,15 @@ package com.flextras.calc
 			var dependants:Array = getDependantsOfCollection(e.target);
 			for each(var co:ControlObject in dependants)
 			{
-				assignControlExpression(co, co.exp);
+				if(co.grid)
+				{
+					co.grid.assignExpression(co.id, co.exp);
+				}
+				else
+				{
+					assignControlExpression(co, co.exp);
+				}
+				
 			}
 		}
 		

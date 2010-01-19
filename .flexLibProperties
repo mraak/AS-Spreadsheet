@@ -19,7 +19,6 @@
     <classEntry path="com.flextras.workbook.NoteSheet"/>
     <classEntry path="com.flextras.workbook.RowHeader"/>
     <classEntry path="com.flextras.workbook.RowHeaderItem"/>
-    <classEntry path="com.flextras.spreadsheet.Spreadsheet1"/>
     <classEntry path="com.flextras.spreadsheet.ISpreadsheet"/>
     <classEntry path="com.flextras.spreadsheet.Spreadsheet2"/>
     <classEntry path="com.flextras.spreadsheet.SpreadsheetEvent"/>

@@ -481,6 +481,11 @@
 				this.columns[index].width = width;
 			}
 			
+			public function updateExpressions():void
+			{
+				
+			}
+			
 			public function get expressionListXML():XML
 			{
 				var s:String = "<sheet type=\"grid\" id=\"" + this.id + "\" columnCount=\"" + colCount + "\" rowCount=\"" + rowCount + "\">"
@@ -575,6 +580,18 @@
 			{
 				return _renderers;
 			}
+			
+			public function set expressions(value:ArrayCollection):void
+			{
+				
+			}
+			
+			public function get expressions():ArrayCollection
+			{
+				return null;
+			}
+			
+			
 			
 		]]>
 	</mx:Script>

@@ -89,27 +89,6 @@ package com.flextras.spreadsheet
 			createRowsAndColumns();
 			
 		}
-		/*
-		override protected function measure():void
-		{
-			super.measure();
-			
-			var w:Number;
-			for each(var c:DataGridColumn in columns)
-			{
-				w += c.width;
-			}
-			
-			this.measuredWidth = w;
-		}
-		
-		override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number) : void
-		{
-			super.updateDisplayList(unscaledWidth, unscaledHeight);
-			
-			this.width = this.measuredWidth;
-		}
-		*/
 		
 		override protected function commitProperties() : void
 		{
@@ -138,7 +117,8 @@ package com.flextras.spreadsheet
 							if(cell.indexOf("!") == -1)
 							{
 								var co:ControlObject = _ctrlObjects[cell];
-								calc.assignControlExpression(co, o.expression);
+								if(o.expression)
+									calc.assignControlExpression(co, o.expression);
 							}
 							else
 							{
@@ -155,7 +135,8 @@ package com.flextras.spreadsheet
 						}
 					}
 					
-					_expressions.source = expressions.source;
+					updateExpressions();
+
 				}
 				
 				var expEvt:SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_INITIALIZED);
@@ -230,10 +211,7 @@ package com.flextras.spreadsheet
 			
 			super.dataProvider = _gridDataProvider;
 			
-			//getCalculatedWidth();
-			//BindingUtils.bindProperty(this, "width", this, "getCalculatedWidth()");
-			
-			//setColumnWidthAt(0,30);
+
 		}
 		
 	
@@ -326,30 +304,33 @@ package com.flextras.spreadsheet
 		
 		public function setColumnWidthAt(index:int, width:Number):void
 		{	
-			//var w:Number = getCalculatedWidth() - columns[index].width + width;
-			
 			this.columns[index].width = width;
-			
-			//this.width = w;
 		}
 		
+		public function updateExpressions():void
+		{
+			_expressions.source = expressions.source;
+		}
 		
 		public function assignExpression(cellId:String, expression:String):void
 		{
 			var co:ControlObject = _ctrlObjects[cellId.toLowerCase()];
-			calc.assignControlExpression(co, expression);
-			/*	
-			var o:Object = getExpressionObject(cellId);
+			//calc.assignControlExpression(co, expression);
+			
+			var o:Object = getCell(cellId);
+			
+			var cellObj:Object = {cell: cellId, expression: expression}
 			
 			if(o)
 			{
-				o.expression = expression;
+				var ind:int = _expressions.getItemIndex(o);
+				_expressions.setItemAt(cellObj,ind);
 			}
 			else
 			{
-				ArrayCollection(_expressions).addItem({cell: cellId, expression: expression});
+				_expressions.addItem(cellObj);
 			}
-			*/
+			
 		}
 		
 		public function getCell(cellId:String):Object
