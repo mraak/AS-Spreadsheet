@@ -1,0 +1,77 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+
+<Label xmlns = "http://www.adobe.com/2006/mxml"
+	   height = "18"
+	   doubleClickEnabled = "true"
+	   selectable = "false"
+	   color = "{cell.styles.color}">
+
+	<Script>
+		<![CDATA[
+			import mx.collections.ListCollectionView;
+			import mx.controls.DataGrid;
+			import mx.events.PropertyChangeEvent;
+			import flash.text.TextFormat;
+			
+			import mx.controls.dataGridClasses.DataGridItemRenderer;
+			import mx.controls.dataGridClasses.DataGridListData;
+			import mx.controls.listClasses.BaseListData;
+			
+			protected var lastUID : String;
+			
+			protected var _cell:CellProperties;
+			
+			[Bindable]
+			public function get cell():CellProperties
+			{
+				return _cell;
+			}
+			
+			public function set cell(value:CellProperties):void
+			{
+				if(!value || value === _cell)
+					return;
+				
+				if(cell)
+				{
+					//cell.styles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, stylesChangedHandler);
+					cell.removeEventListener(CellEvent.STYLES_CHANGED, stylesChangedHandler);
+					cell.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, rollOverStylesChangedHandler);
+					cell.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, selectedStylesChangedHandler);
+					cell.removeEventListener(CellEvent.DISABLED_STYLES_CHANGED, disabledStylesChangedHandler);
+				}
+				
+				_cell = value;
+				
+				//cell.styles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, stylesChangedHandler);
+				cell.addEventListener(CellEvent.STYLES_CHANGED, stylesChangedHandler);
+				cell.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, rollOverStylesChangedHandler);
+				cell.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, selectedStylesChangedHandler);
+				cell.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, disabledStylesChangedHandler);
+				
+				invalidateDisplayList();
+			}
+			
+			protected function stylesChangedHandler(e:PropertyChangeEvent):void
+			{
+				invalidateDisplayList();
+				//setStyle(e.property as String, e.newValue);
+			}
+			
+			protected function rollOverStylesChangedHandler(e:CellEvent):void
+			{
+				
+			}
+			
+			protected function selectedStylesChangedHandler(e:CellEvent):void
+			{
+				
+			}
+			
+			protected function disabledStylesChangedHandler(e:CellEvent):void
+			{
+				
+			}
+		]]>
+	</Script>
+</Label>
