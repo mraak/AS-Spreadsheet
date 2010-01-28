@@ -32,26 +32,23 @@ package com.flextras.paintgrid
 		[ArrayElementType("CellProperties")]
 		protected var modifiedCells : Array = [];
 		
-		public function getModifiedCellProperties () : Array
+		public function getAllCellProperties (fromUser : Boolean = true) : Array
 		{
-			return modifiedCells;
+			return fromUser ? modifiedCells : cells;
 		}
 		
-		public function getMultipleCellProperties () : Array
-		{
-			return cells;
-		}
-		
-		public function setMultipleCellProperties (cells : Array) : void
+		public function setAllCellProperties (cells : Array) : void
 		{
 			for each (var cell : CellProperties in cells)
 				setCellProperties(cell);
 		}
 		
-		public function getCellProperties (at : Location) : CellProperties
+		public function getCellProperties (at : Location, fromUser : Boolean = true) : CellProperties
 		{
 			if (!at || !at.valid)
 				return null;
+			
+			var cells : Array = fromUser ? modifiedCells : this.cells;
 			
 			for each (var cell : CellProperties in cells)
 				if (cell.equalLocation(at))
@@ -60,12 +57,17 @@ package com.flextras.paintgrid
 			return null;
 		}
 		
+		public function getCellPropertiesAt (row : int, column : int, fromUser : Boolean = true) : CellProperties
+		{
+			var location : Location = new Location(row, column);
+			
+			return getCellProperties(location, fromUser);
+		}
+		
 		public function setCellProperties (value : CellProperties) : void
 		{
 			if (!value || !value.valid)
 				return;
-			
-			modifiedCells.push(value);
 			
 			for each (var cell : CellProperties in cells)
 				if (cell.equalLocation(value))
@@ -73,22 +75,11 @@ package com.flextras.paintgrid
 					cell.styles = value.styles;
 					cell.condition = value.condition;
 					
+					if (!cell in modifiedCells)
+						modifiedCells.push(cell);
+					
 					return;
 				}
-			
-			cells.push(value);
-		}
-		
-		public function getCellPropertiesAt (row : int, column : int) : CellProperties
-		{
-			if (row < 0 || column < 0)
-				return null;
-			
-			for each (var cell : CellProperties in cells)
-				if (cell.row == row && cell.column == column)
-					return cell;
-			
-			return null;
 		}
 		
 		public function setCellPropertiesAt (row : int, column : int, styles : Object, condition : String = null) : void
@@ -98,7 +89,7 @@ package com.flextras.paintgrid
 			setCellProperties(cell);
 		}
 		
-		public function getMultipleCellPropertiesInRange (range : Range) : Array
+		public function getAllCellPropertiesInRange (range : Range, fromUser : Boolean = true) : Array
 		{
 			if (!range || !range.valid)
 				return null;
@@ -106,7 +97,7 @@ package com.flextras.paintgrid
 			var result : Array;
 			
 			for each (var cell : CellProperties in cells)
-				if (cell.inRange(range))
+				if (cell.inRange(range) && (fromUser || getCellProperties(cell, fromUser)))
 				{
 					if (!result)
 						result = [];
@@ -117,7 +108,14 @@ package com.flextras.paintgrid
 			return result;
 		}
 		
-		public function setMultipleCellPropertiesInRange (range : Range, styles : Object, condition : String = null) : void
+		public function getAllCellPropertiesInRangeBy (start : Location, end : Location, fromUser : Boolean = true) : Array
+		{
+			var range : Range = new Range(start, end);
+			
+			return getAllCellPropertiesInRange(range, fromUser);
+		}
+		
+		public function setAllCellPropertiesInRange (range : Range, styles : Object, condition : String = null) : void
 		{
 			if (!range || !range.valid || !styles)
 				return;
@@ -127,21 +125,17 @@ package com.flextras.paintgrid
 				{
 					cell.styles = new ObjectProxy(styles);
 					cell.condition = condition;
+					
+					if (!cell in modifiedCells)
+						modifiedCells.push(cell);
 				}
 		}
 		
-		public function getMultipleCellPropertiesInRangeBy (start : Location, end : Location) : Array
+		public function setAllCellPropertiesInRangeBy (start : Location, end : Location, styles : Object, condition : String = null) : void
 		{
 			var range : Range = new Range(start, end);
 			
-			return getMultipleCellPropertiesInRange(range);
-		}
-		
-		public function setMultipleCellPropertiesInRangeBy (start : Location, end : Location, styles : Object, condition : String = null) : void
-		{
-			var range : Range = new Range(start, end);
-			
-			setMultipleCellPropertiesInRange(range, styles, condition);
+			setAllCellPropertiesInRange(range, styles, condition);
 		}
 		
 		[ArrayElementType("Column")]
@@ -222,6 +216,7 @@ package com.flextras.paintgrid
 			rowHeights.push(new Row(index, value));
 			
 			rowHeightsChanged = true;
+			
 			invalidateSize();
 		}
 		
