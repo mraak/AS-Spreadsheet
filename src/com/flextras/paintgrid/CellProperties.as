@@ -21,11 +21,14 @@ package com.flextras.paintgrid
 		[Bindable]
 		public var condition : String;
 		
-		public function CellProperties (row : int, column : int, styles : Object, condition : String = null)
+		public function CellProperties (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition : String = null)
 		{
 			super(row, column);
 			
 			this.styles = new ObjectProxy(styles);
+			this.rollOverStyles = new ObjectProxy(rollOverStyles);
+			this.selectedStyles = new ObjectProxy(selectedStyles);
+			this.disabledStyles = new ObjectProxy(disabledStyles);
 			this.condition = condition;
 			
 			_styles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, styles_changeHandler);
@@ -104,7 +107,7 @@ package com.flextras.paintgrid
 		
 		override public function get valid () : Boolean
 		{
-			return super.valid && styles && typeof(styles) == "object";
+			return super.valid && styles && typeof(styles) == "object" && rollOverStyles && typeof(rollOverStyles) == "object" && selectedStyles && typeof(selectedStyles) == "object" && disabledStyles && typeof(disabledStyles) == "object";
 		}
 		
 		protected function styles_changeHandler (e : PropertyChangeEvent) : void
@@ -131,26 +134,5 @@ package com.flextras.paintgrid
 		{
 			return new CellEvent(type, false, false, PropertyChangeEventKind.UPDATE, e.property, e.oldValue, e.newValue, this);
 		}
-	
-	/* override public function equal (cell : Location) : Boolean
-	   {
-	   if (!cell)
-	   return false;
-	
-	   // Do we really need this?
-	   if (cell is CellProperties)
-	   {
-	   var info : CellProperties = CellProperties(cell);
-	
-	   return super.equal(cell)
-	   && ObjectUtil.compare(info.styles, styles, 0) == 0
-	   && ObjectUtil.compare(info.rollOverStyles, rollOverStyles, 0) == 0
-	   && ObjectUtil.compare(info.selectedStyles, selectedStyles, 0) == 0
-	   && ObjectUtil.compare(info.disabledStyles, disabledStyles, 0) == 0
-	   && info.condition == condition;
-	   }
-	
-	   return super.equal(cell);
-	 } */
 	}
 }

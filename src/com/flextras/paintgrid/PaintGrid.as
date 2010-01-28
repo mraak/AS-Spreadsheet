@@ -26,11 +26,19 @@ package com.flextras.paintgrid
 			itemRenderer = new ClassFactory(PaintGridItemRenderer);
 		}
 		
+		/**
+		 * Styling API
+		 */
+		
 		[ArrayElementType("CellProperties")]
 		protected var cells : Array = [];
 		
 		[ArrayElementType("CellProperties")]
 		protected var modifiedCells : Array = [];
+		
+		/**
+		 * Array of CellProperties
+		 */
 		
 		public function getAllCellProperties (fromUser : Boolean = true) : Array
 		{
@@ -42,6 +50,10 @@ package com.flextras.paintgrid
 			for each (var cell : CellProperties in cells)
 				setCellProperties(cell);
 		}
+		
+		/**
+		 * Instance of CellProperties
+		 */
 		
 		public function getCellProperties (at : Location, fromUser : Boolean = true) : CellProperties
 		{
@@ -73,6 +85,9 @@ package com.flextras.paintgrid
 				if (cell.equalLocation(value))
 				{
 					cell.styles = value.styles;
+					cell.rollOverStyles = value.rollOverStyles;
+					cell.selectedStyles = value.selectedStyles;
+					cell.disabledStyles = value.disabledStyles;
 					cell.condition = value.condition;
 					
 					if (!cell in modifiedCells)
@@ -82,12 +97,148 @@ package com.flextras.paintgrid
 				}
 		}
 		
-		public function setCellPropertiesAt (row : int, column : int, styles : Object, condition : String = null) : void
+		public function setCellPropertiesAt (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition : String = null) : void
 		{
-			var cell : CellProperties = new CellProperties(row, column, styles, condition);
+			var cell : CellProperties = new CellProperties(row, column, styles, rollOverStyles, selectedStyles, disabledStyles, condition);
 			
 			setCellProperties(cell);
 		}
+		
+		/**
+		 * wrappers
+		 */
+		
+		public function getCellStyles (at : Location, fromUser : Boolean = true) : Object
+		{
+			var cell : CellProperties = getCellProperties(at, fromUser);
+			
+			if (!cell)
+				return null;
+			
+			return cell.styles;
+		}
+		
+		public function getCellStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
+		{
+			var location : Location = new Location(row, column);
+			
+			return getCellStyles(location, fromUser);
+		}
+		
+		public function setCellStyles (location : Location, styles : Object = null) : void
+		{
+			if (!location || !location.valid)
+				return;
+			
+			setCellStylesAt(location.row, location.column, styles);
+		}
+		
+		public function setCellStylesAt (row : int, column : int, styles : Object = null) : void
+		{
+			var cell : CellProperties = new CellProperties(row, column, styles);
+			
+			setCellProperties(cell);
+		}
+		
+		public function getCellRollOverStyles (at : Location, fromUser : Boolean = true) : Object
+		{
+			var cell : CellProperties = getCellProperties(at, fromUser);
+			
+			if (!cell)
+				return null;
+			
+			return cell.rollOverStyles;
+		}
+		
+		public function getCellRollOverStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
+		{
+			var location : Location = new Location(row, column);
+			
+			return getCellRollOverStyles(location, fromUser);
+		}
+		
+		public function setCellRollOverStyles (location : Location, styles : Object = null) : void
+		{
+			if (!location || !location.valid)
+				return;
+			
+			setCellRollOverStylesAt(location.row, location.column, styles);
+		}
+		
+		public function setCellRollOverStylesAt (row : int, column : int, styles : Object = null) : void
+		{
+			var cell : CellProperties = new CellProperties(row, column, null, styles);
+			
+			setCellProperties(cell);
+		}
+		
+		public function getCellSelectedStyles (at : Location, fromUser : Boolean = true) : Object
+		{
+			var cell : CellProperties = getCellProperties(at, fromUser);
+			
+			if (!cell)
+				return null;
+			
+			return cell.selectedStyles;
+		}
+		
+		public function getCellSelectedStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
+		{
+			var location : Location = new Location(row, column);
+			
+			return getCellSelectedStyles(location, fromUser);
+		}
+		
+		public function setCellSelectedStyles (location : Location, styles : Object = null) : void
+		{
+			if (!location || !location.valid)
+				return;
+			
+			setCellSelectedStylesAt(location.row, location.column, styles);
+		}
+		
+		public function setCellSelectedStylesAt (row : int, column : int, styles : Object = null) : void
+		{
+			var cell : CellProperties = new CellProperties(row, column, null, null, styles);
+			
+			setCellProperties(cell);
+		}
+		
+		public function getCellDisabledStyles (at : Location, fromUser : Boolean = true) : Object
+		{
+			var cell : CellProperties = getCellProperties(at, fromUser);
+			
+			if (!cell)
+				return null;
+			
+			return cell.disabledStyles;
+		}
+		
+		public function getCellDisabledStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
+		{
+			var location : Location = new Location(row, column);
+			
+			return getCellDisabledStyles(location, fromUser);
+		}
+		
+		public function setCellDisabledStyles (location : Location, styles : Object = null) : void
+		{
+			if (!location || !location.valid)
+				return;
+			
+			setCellDisabledStylesAt(location.row, location.column, styles);
+		}
+		
+		public function setCellDisabledStylesAt (row : int, column : int, styles : Object = null) : void
+		{
+			var cell : CellProperties = new CellProperties(row, column, null, null, null, styles);
+			
+			setCellProperties(cell);
+		}
+		
+		/**
+		 * Array of CellProperties in Range
+		 */
 		
 		public function getAllCellPropertiesInRange (range : Range, fromUser : Boolean = true) : Array
 		{
@@ -115,15 +266,18 @@ package com.flextras.paintgrid
 			return getAllCellPropertiesInRange(range, fromUser);
 		}
 		
-		public function setAllCellPropertiesInRange (range : Range, styles : Object, condition : String = null) : void
+		public function setAllCellPropertiesInRange (range : Range, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition : String = null) : void
 		{
-			if (!range || !range.valid || !styles)
+			if (!range || !range.valid)
 				return;
 			
 			for each (var cell : CellProperties in cells)
 				if (cell.inRange(range))
 				{
 					cell.styles = new ObjectProxy(styles);
+					cell.rollOverStyles = new ObjectProxy(rollOverStyles);
+					cell.selectedStyles = new ObjectProxy(selectedStyles);
+					cell.disabledStyles = new ObjectProxy(disabledStyles);
 					cell.condition = condition;
 					
 					if (!cell in modifiedCells)
@@ -131,12 +285,16 @@ package com.flextras.paintgrid
 				}
 		}
 		
-		public function setAllCellPropertiesInRangeBy (start : Location, end : Location, styles : Object, condition : String = null) : void
+		public function setAllCellPropertiesInRangeBy (start : Location, end : Location, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition : String = null) : void
 		{
 			var range : Range = new Range(start, end);
 			
-			setAllCellPropertiesInRange(range, styles, condition);
+			setAllCellPropertiesInRange(range, styles, rollOverStyles, selectedStyles, disabledStyles, condition);
 		}
+		
+		/**
+		 * Column width API
+		 */
 		
 		[ArrayElementType("Column")]
 		protected var columnWidths : Array = [];
@@ -178,6 +336,10 @@ package com.flextras.paintgrid
 			
 			invalidateProperties();
 		}
+		
+		/**
+		 * Row height API
+		 */
 		
 		[ArrayElementType("Row")]
 		protected var rowHeights : Array = [];
@@ -303,7 +465,7 @@ package com.flextras.paintgrid
 						
 						for (col = 0; col < cols; ++col)
 						{
-							cell = new CellProperties(ce.location, col, {});
+							cell = new CellProperties(ce.location, col);
 							ce.items[row].cells[col] = cell;
 							
 							cells.push(cell);
