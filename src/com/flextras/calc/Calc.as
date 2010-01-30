@@ -1,7 +1,7 @@
 package com.flextras.calc
 {
 	import com.flextras.spreadsheet.ISpreadsheet;
-	import com.flextras.spreadsheet.Spreadsheet;
+	//import com.flextras.spreadsheet.Spreadsheet2;
 	import com.flextras.spreadsheet.SpreadsheetEvent;
 	
 	import flash.events.EventDispatcher;

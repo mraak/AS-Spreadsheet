@@ -5,6 +5,7 @@
 	<mx:Label text="Font Color:"/>
 	<mx:ColorPicker id="clrFont"/>
 	<mx:Button id="btnBold" toggle="true" label="Bold"/>
+	
 	<!--
 	<mx:Label text="Border:"/>
 	<mx:Button id="btnBorder" toggle="true" label="#" width="39"/>

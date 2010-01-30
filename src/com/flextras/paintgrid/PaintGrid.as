@@ -76,6 +76,10 @@ package com.flextras.paintgrid
 			return getCellProperties(location, fromUser);
 		}
 		
+		/**
+		 * This method assigns cell properties to the particular cell.
+		 * 
+		 * */
 		public function setCellProperties (value : CellProperties) : void
 		{
 			if (!value || !value.valid)

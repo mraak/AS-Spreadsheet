@@ -23,6 +23,8 @@
 			import mx.controls.dataGridClasses.DataGridColumn;
 			import mx.events.DataGridEvent;
 			import mx.events.ListEvent;
+			import com.flextras.spreadsheet.SpreadsheetItemRenderer;
+			import com.flextras.spreadsheet.SpreadsheetItemEditor;
 			
 			private var datapr:Array = new Array();
 			private var _colCount:int = 10;

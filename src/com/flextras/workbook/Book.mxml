@@ -6,14 +6,17 @@
     verticalScrollPolicy="off"	
 	creationComplete="onCreationComplete()"
 	xmlns:flexcel="com.flexcel.*"
-	implements="com.flextras.workbook.IFlexcelGridContext" xmlns:workbook="com.flextras.workbook.*">
+	implements="com.flextras.workbook.IFlexcelGridContext" 
+	xmlns:workbook="com.flextras.workbook.*">
 	
 	<mx:Script>
 		<![CDATA[
 			import com.flextras.calc.Calc;
 			import com.flextras.calc.ControlObject;
-			import com.flextras.spreadsheet.Spreadsheet;
-			
+			//import com.flextras.spreadsheet.Spreadsheet;
+			import com.flextras.workbook.CalcSheet;
+			import com.flextras.workbook.ContextFactory;
+			//import com.flextras.workbook.FieldStylePanel;
 			import mx.collections.ArrayCollection;
 			import mx.events.ColorPickerEvent;
 			import mx.events.ItemClickEvent;
@@ -135,9 +138,10 @@
 			
 			private function initStyler():void
 			{
-				stylePanel.clrBg.addEventListener(ColorPickerEvent.CHANGE, setBgColor);
-				stylePanel.clrFont.addEventListener(ColorPickerEvent.CHANGE, setFontColor);
-				stylePanel.btnBold.addEventListener(MouseEvent.CLICK, setFontWeight);
+				//stylePanel.clrBg.addEventListener(ColorPickerEvent.CHANGE, setBgColor);
+				//stylePanel.clrFont.addEventListener(ColorPickerEvent.CHANGE, setFontColor);
+				//stylePanel.btnBold.addEventListener(MouseEvent.CLICK, setFontWeight);
+				
 				//stylePanel.btnBorder.addEventListener(MouseEvent.CLICK, setBorder);
 				//stylePanel.clrBorder.addEventListener(ColorPickerEvent.CHANGE, setBorderColor);
 			}
@@ -419,7 +423,7 @@
 	</mx:Script>
 	<mx:VBox id="mainCont" backgroundColor="0xaaaaaa" verticalGap="1">
 		<mx:HBox horizontalGap="0" horizontalAlign="right" width="{currentSheet.grid.width + 20}">
-			<workbook:FieldStylePanel id="stylePanel" />
+			<!--<workbook:FieldStylePanel id="stylePanel" />-->			
 			<mx:Button label="Expression Explorer" id="btnExpTree" click="showTree()"/>
 		</mx:HBox>
 		<mx:Canvas id="sheetContainer"  verticalScrollPolicy="off" horizontalScrollPolicy="off"  width="{currentSheet.grid.width + 35}" height="{currentSheet.grid.height + 35}" />
