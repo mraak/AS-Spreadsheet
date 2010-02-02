@@ -442,6 +442,8 @@ public class PaintGrid extends DataGrid
 		if (!item)
 			return null;
 		
+		item.dataGrid = this;
+		
 		if (data.hasOwnProperty("cells"))
 			item.cell = data.cells[colNum + horizontalScrollPosition];
 		

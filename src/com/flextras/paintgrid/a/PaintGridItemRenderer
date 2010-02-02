@@ -1,4 +1,4 @@
-package com.flextras.paintgrid
+package com.flextras.paintgrid.a
 {
 import flash.events.MouseEvent;
 
@@ -20,8 +20,8 @@ public class PaintGridItemRenderer extends DataGridItemRenderer
 		doubleClickEnabled = true;
 		selectable = false;
 		
-		/*addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
-		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);*/
+		addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
+		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
 		addEventListener(MouseEvent.MOUSE_DOWN, clickHandler);
 	}
 	
@@ -63,32 +63,40 @@ public class PaintGridItemRenderer extends DataGridItemRenderer
 	
 	override public function validateNow () : void
 	{
-		super.validateNow();
+		if (!listData)
+			return;
 		
-		if (data && parent && cell)
-		{
-			var dg : PaintGrid = listData.owner as PaintGrid;
-			
-			if (enabled)
-			{
-				if (dg.isItemHighlighted(listData.uid))
-				{
-					applyStyles(cell.rollOverStyles);
-				}
-				else if (dg.isItemSelected(listData.uid))
-				{
-					applyStyles(cell.selectedStyles);
-				}
-				else
-				{
-					applyStyles(cell.styles);
-				}
-			}
-			else
-			{
-				applyStyles(cell.disabledStyles);
-			}
-		}
+		var dg : PaintGrid = listData.owner as PaintGrid;
+		
+		if (!dg.isItemHighlighted(listData.uid) && !dg.isItemSelected(listData.uid))
+			super.validateNow();
+		
+		/*if (data && parent && cell)
+		   {
+		   var dg : PaintGrid = listData.owner as PaintGrid;
+		
+		   if (enabled)
+		   {
+		   if (dg.isItemHighlighted(listData.uid))
+		   {
+		   applyStyles(cell.rollOverStyles);
+		   }
+		   else if (dg.isItemSelected(listData.uid))
+		   {
+		   applyStyles(cell.selectedStyles);
+		   }
+		   else
+		   {
+		   applyStyles(cell.styles);
+		   }
+		   }
+		   else
+		   {
+		   applyStyles(cell.disabledStyles);
+		   }
+		 }*/
+		if (cell)
+			applyStyles(cell.styles);
 	}
 	
 	protected var currentStyles : ObjectProxy;
