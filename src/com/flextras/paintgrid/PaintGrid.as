@@ -66,7 +66,7 @@ public class PaintGrid extends DataGrid
 			rowHeader.graphics.drawRect(0, 0, 100, 100);
 			rowHeader.graphics.endFill();
 			
-			addChild(rowHeader);
+				//addChild(rowHeader);
 		}
 	}
 	
@@ -751,7 +751,10 @@ public class PaintGrid extends DataGrid
 			PaintGridColumnItemRenderer(item).dataGrid = this;
 			
 			if (data.hasOwnProperty("cells"))
+			{
 				PaintGridColumnItemRenderer(item).cell = data.cells[colNum + horizontalScrollPosition];
+				PaintGridColumnItemRenderer(item).cell.owner = item as PaintGridColumnItemRenderer;
+			}
 		}
 		
 		return item;

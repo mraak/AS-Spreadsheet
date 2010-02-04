@@ -99,8 +99,12 @@
 			
 			public function set cell (value : CellProperties) : void
 			{
-				if (!value || value === _cell)
+				if (!value /*  || value === _cell */)
 					return;
+				
+				updateCellState = false;
+				currentState = null;
+				updateCellState = true;
 				
 				if (cell)
 				{
@@ -114,6 +118,8 @@
 				
 				_cell = value;
 				
+				invalidateDisplayList();
+				
 				if (cell)
 				{
 					cell.addEventListener(CellEvent.STYLES_CHANGED, styles.stylesChangedHandler);
@@ -121,12 +127,32 @@
 					cell.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, styles.selectedStylesChangedHandler);
 					cell.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, styles.disabledStylesChangedHandler);
 					
-					styles.applyStyles(cell.styles);
+					updateCellState = false;
+					currentState = cell.state;
+					updateCellState = true;
+					
+					styles.fontStylesChanged = true;
+					
+					invalidateSize();
+					invalidateDisplayList();
+					
+					initStyles(cell.state);
 				}
+			}
+			
+			protected var updateCellState : Boolean;
+			
+			override public function set currentState (value : String) : void
+			{
+				super.currentState = value;
+				
+				if (cell && updateCellState)
+					cell.state = value;
 			}
 			
 			protected var background : Shape;
 			
+			[Bindable]
 			protected var textField : UITextField;
 			
 			override protected function createChildren () : void
@@ -148,7 +174,6 @@
 				}
 			}
 			
-			// TODO!!! Display actual data
 			override protected function commitProperties () : void
 			{
 				super.commitProperties();
@@ -170,12 +195,6 @@
 				
 				measuredMinWidth = measuredWidth = w;
 				measuredMinHeight = measuredHeight = h;
-			
-			/* if (dataGrid)
-			 dataGrid.setColumnWidthAt(cell.column, w); */
-			
-			/* dataGrid.setColumnWidthAt(cell.column, w);
-			 dataGrid.setRowHeightAt(cell.row, h); */
 			}
 			
 			override protected function updateDisplayList (w : Number, h : Number) : void
@@ -256,8 +275,14 @@
 				if (!cell)
 					return;
 				
-				switch (newState)
+				initStyles(newState);
+			}
+			
+			protected function initStyles (state : String) : void
+			{
+				switch (state)
 				{
+					case null:
 					case "normal":
 						styles.applyStyles(cell.styles);
 						break;
@@ -304,10 +329,14 @@
 			{
 				if (currentState != "selected")
 					currentState = "selected";
-				else
-					currentState = "over";
 				
-				PaintGrid(owner).selectedCellProperties = cell;
+				if (!dataGrid)
+					return;
+				
+				if (dataGrid.selectedCellProperties)
+					dataGrid.selectedCellProperties.owner.invalidateDisplayList();
+				
+				dataGrid.selectedCellProperties = cell;
 			}
 		]]>
 	</fx:Script>

@@ -1,7 +1,5 @@
 package com.flextras.paintgrid
 {
-import flash.events.Event;
-
 import mx.events.PropertyChangeEvent;
 import mx.events.PropertyChangeEventKind;
 import mx.utils.ObjectProxy;
@@ -12,6 +10,10 @@ import mx.utils.ObjectProxy;
 [Event(name="disabledStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 public class CellProperties extends CellLocation
 {
+	public var owner : PaintGridColumnItemRenderer;
+	
+	public var state : String = "normal";
+	
 	protected var _styles : ObjectProxy = new ObjectProxy;
 	
 	protected var _rollOverStyles : ObjectProxy = new ObjectProxy;
