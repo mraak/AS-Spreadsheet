@@ -10,7 +10,7 @@ import mx.utils.ObjectProxy;
 [Event(name="rollOverStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="selectedStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="disabledStylesChanged", type="com.flextras.paintgrid.CellEvent")]
-public class CellProperties extends Location
+public class CellProperties extends CellLocation
 {
 	protected var _styles : ObjectProxy = new ObjectProxy;
 	
@@ -99,7 +99,7 @@ public class CellProperties extends Location
 			_disabledStyles[disabledStyle] = value[disabledStyle];
 	}
 	
-	public function equalLocation (cell : Location) : Boolean
+	public function equalLocation (cell : CellLocation) : Boolean
 	{
 		if (!cell)
 			return false;
