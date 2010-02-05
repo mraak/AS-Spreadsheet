@@ -106,13 +106,14 @@
 				currentState = null;
 				updateCellState = true;
 				
+				styles.styleChanged("styleName");
+				
 				if (cell)
 				{
 					cell.removeEventListener(CellEvent.STYLES_CHANGED, styles.stylesChangedHandler);
 					cell.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, styles.rollOverStylesChangedHandler);
 					cell.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, styles.selectedStylesChangedHandler);
 					cell.removeEventListener(CellEvent.DISABLED_STYLES_CHANGED, styles.disabledStylesChangedHandler);
-					
 					styles.resetStyles();
 				}
 				
@@ -169,6 +170,7 @@
 				if (!textField)
 				{
 					textField = new UITextField();
+					textField.styleName = this;
 					
 					addChild(textField);
 				}
@@ -228,7 +230,7 @@
 					if (styles._family)
 						tf.font = styles._family;
 					
-					tf.size = styles._size;
+					tf.size = cell.styles.size ? cell.styles.size : styles.defaultSize;
 					
 					if (styles._align)
 						tf.align = styles._align;
@@ -250,6 +252,9 @@
 					textField.setTextFormat(tf);
 					
 					styles.fontStylesChanged = false;
+					
+					callLater(invalidateSize);
+					validateNow();
 				}
 				
 				if (styles.backgroundChanged)

@@ -467,113 +467,121 @@ public class CellStyles
 		indent = defaultIndent;
 	}
 	
+	protected function assignStyle (style : Object, prop : String) : void
+	{
+		var result : Object = owner.getStyle(prop);
+		
+		if (result)
+			style = result;
+	}
+	
 	public function styleChanged (styleProp : String) : void
 	{
 		switch (styleProp)
 		{
-			/* case null:
-			   defaultForegroundColor = owner.getStyle("color") as uint;
-			   defaultForegroundAlpha = owner.getStyle("alpha") as Number;
-			   defaultBackgroundColor = owner.getStyle("backgroundColor") as uint;
-			   defaultBackgroundAlpha = owner.getStyle("backgroundAlpha") as Number;
-			   defaultAntiAliasType = owner.getStyle("antiAliasType") as String;
-			   defaultFamily = owner.getStyle("family") as String;
-			   defaultGridFitType = owner.getStyle("gridFitType") as String;
-			   defaultSharpness = owner.getStyle("sharpness") as Number;
-			   defaultSize = owner.getStyle("size") as uint;
-			   defaultStyle = owner.getStyle("style") as String;
-			   defaultThickness = owner.getStyle("thickness") as Number;
-			   defaultWeight = owner.getStyle("weight") as String;
-			   defaultKerning = owner.getStyle("kerning") as Boolean;
-			   defaultSpacing = owner.getStyle("spacing") as int;
-			   defaultAlign = owner.getStyle("align") as String;
-			   defaultDecoration = owner.getStyle("decoration") as String;
-			   defaultIndent = owner.getStyle("indent") as int;
-			
-			 break; */
+			case "styleName":
+				assignStyle(defaultForegroundColor, "color");
+				assignStyle(defaultForegroundAlpha, "alpha");
+				assignStyle(defaultBackgroundColor, "backgroundColor");
+				assignStyle(defaultBackgroundAlpha, "backgroundAlpha");
+				assignStyle(defaultAntiAliasType, "antiAliasType");
+				assignStyle(defaultFamily, "family");
+				assignStyle(defaultGridFitType, "gridFitType");
+				assignStyle(defaultSharpness, "sharpness");
+				assignStyle(defaultSize, "size");
+				assignStyle(defaultStyle, "style");
+				assignStyle(defaultThickness, "thickness");
+				assignStyle(defaultWeight, "weight");
+				assignStyle(defaultKerning, "kerning");
+				assignStyle(defaultSpacing, "spacing");
+				assignStyle(defaultAlign, "align");
+				assignStyle(defaultDecoration, "decoration");
+				assignStyle(defaultIndent, "indent");
+				
+				break;
 			
 			case "color":
-				defaultForegroundColor = owner.getStyle(styleProp) as uint;
+				assignStyle(defaultForegroundColor, styleProp);
 				
 				break;
 			
 			case "alpha":
-				defaultForegroundAlpha = owner.getStyle(styleProp) as Number;
+				assignStyle(defaultForegroundAlpha, styleProp);
 				
 				break;
 			
 			case "backgroundColor":
-				defaultBackgroundColor = owner.getStyle(styleProp) as uint;
+				assignStyle(defaultBackgroundColor, styleProp);
 				
 				break;
 			
 			case "backgroundAlpha":
-				defaultBackgroundAlpha = owner.getStyle(styleProp) as Number;
+				assignStyle(defaultBackgroundAlpha, styleProp);
 				
 				break;
 			
 			case "antiAliasType":
-				defaultAntiAliasType = owner.getStyle(styleProp) as String;
+				assignStyle(defaultAntiAliasType, styleProp);
 				
 				break;
 			
 			case "family":
-				defaultFamily = owner.getStyle(styleProp) as String;
+				assignStyle(defaultFamily, styleProp);
 				
 				break;
 			
 			case "gridFitType":
-				defaultGridFitType = owner.getStyle(styleProp) as String;
+				assignStyle(defaultGridFitType, styleProp);
 				
 				break;
 			
 			case "sharpness":
-				defaultSharpness = owner.getStyle(styleProp) as Number;
+				assignStyle(defaultSharpness, styleProp);
 				
 				break;
 			
 			case "size":
-				defaultSize = owner.getStyle(styleProp) as uint;
+				assignStyle(defaultSize, styleProp);
 				
 				break;
 			
 			case "style":
-				defaultStyle = owner.getStyle(styleProp) as String;
+				assignStyle(defaultStyle, styleProp);
 				
 				break;
 			
 			case "thickness":
-				defaultThickness = owner.getStyle(styleProp) as Number;
+				assignStyle(defaultThickness, styleProp);
 				
 				break;
 			
 			case "weight":
-				defaultWeight = owner.getStyle(styleProp) as String;
+				assignStyle(defaultWeight, styleProp);
 				
 				break;
 			
 			case "kerning":
-				defaultKerning = owner.getStyle(styleProp) as Boolean;
+				assignStyle(defaultKerning, styleProp);
 				
 				break;
 			
 			case "spacing":
-				defaultSpacing = owner.getStyle(styleProp) as int;
+				assignStyle(defaultSpacing, styleProp);
 				
 				break;
 			
 			case "align":
-				defaultAlign = owner.getStyle(styleProp) as String;
+				assignStyle(defaultAlign, styleProp);
 				
 				break;
 			
 			case "decoration":
-				defaultDecoration = owner.getStyle(styleProp) as String;
+				assignStyle(defaultDecoration, styleProp);
 				
 				break;
 			
 			case "indent":
-				defaultIndent = owner.getStyle(styleProp) as int;
+				assignStyle(defaultIndent, styleProp);
 				
 				break;
 		}

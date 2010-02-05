@@ -1,23 +1,19 @@
 package com.flextras.paintgrid
 {
-import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.geom.Point;
 
-import mx.collections.CursorBookmark;
-import mx.collections.errors.ItemPendingError;
 import mx.controls.DataGrid;
 import mx.controls.dataGridClasses.DataGridColumn;
-import mx.controls.dataGridClasses.DataGridHeader;
 import mx.controls.listClasses.IListItemRenderer;
 import mx.controls.listClasses.ListBaseContentHolder;
+import mx.controls.listClasses.ListRowInfo;
 import mx.core.ClassFactory;
-import mx.core.EdgeMetrics;
 import mx.core.ScrollPolicy;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
+import mx.events.TweenEvent;
 import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
@@ -28,302 +24,63 @@ public class PaintGrid extends DataGrid
 	{
 		super();
 		
+		//headerClass = PaintGridEmptyColumnHeader;
+		//lockedColumnCount = 1;
 		variableRowHeight = true;
 		allowMultipleSelection = true;
 		horizontalScrollPolicy = ScrollPolicy.AUTO; // !!
 		itemRenderer = new ClassFactory(PaintGridColumnItemRenderer);
 	}
 	
-	protected var rowHeader : PaintGridRowHeader;
+	protected var lockedColumnCountChanged : Boolean;
 	
-	protected var rowHeaderVisible : Boolean = true;
-	
-	protected var rowHeaderClass : Class = PaintGridRowHeader;
-	
-	protected var rowHeaderMask : Shape;
-	
-	protected var visibleRows : Array;
-	
-	override public function set enabled (value : Boolean) : void
+	override public function set lockedColumnCount (value : int) : void
 	{
-		super.enabled = value;
+		super.lockedColumnCount = value;
+		lockedColumnCountChanged = true;
 		
-		if (rowHeader)
-			rowHeader.enabled = value;
+		invalidateDisplayList();
 	}
 	
-	override protected function createChildren () : void
-	{
-		super.createChildren();
-		
-		if (!rowHeader)
-		{
-			rowHeader = new rowHeaderClass();
-			rowHeader.styleName = this;
-			
-			rowHeader.width = 100;
-			rowHeader.graphics.beginFill(0xFF0000);
-			rowHeader.graphics.drawRect(0, 0, 100, 100);
-			rowHeader.graphics.endFill();
-			
-				//addChild(rowHeader);
-		}
-	}
+	/*override protected function updateDisplayList (unscaledWidth : Number, unscaledHeight : Number) : void
+	   {
+	   if (headerVisible && header)
+	   {
+	   header.visibleColumns = visibleColumns;
+	   header.headerItemsChanged = true;
+	   header.invalidateSize();
+	   header.validateNow();
+	   }
 	
-	override protected function updateDisplayList (w : Number, h : Number) : void
-	{
-		/*if (rowHeaderVisible && rowHeader)
-		   {
-		   rowHeader.visibleRows = visibleRows;
-		   rowHeader.headerItemsChanged = true;
-		   rowHeader.invalidateSize();
-		   rowHeader.validateNow();
-		   }
-		
-		   if (horizontalScrollBar != null && horizontalScrollBar.visible && (verticalScrollBar == null || !verticalScrollBar.visible) && rowHeaderVisible)
-		   {
-		   var hh : Number = rowHeader.height;
-		   var bm : EdgeMetrics = borderMetrics;
-		
-		   if (roomForScrollBar(horizontalScrollBar, w - bm.left - bm.right - rowHeader.width, h - hh - bm.top - bm.bottom))
-		   {
-		   horizontalScrollBar.move(rowHeader.width + horizontalScrollBar.x, viewMetrics.top + hh);
-		   horizontalScrollBar.setActualSize(horizontalScrollBar.width - rowHeader.width, h - viewMetrics.top - viewMetrics.bottom - hh);
-		   horizontalScrollBar.visible = true;
-		
-		   //rowHeaderMask.width += horizontalScrollBar.getExplicitOrMeasuredWidth() - rowHeader.width;
-		
-		   if (!rowHeader.needRightSeparator)
-		   {
-		   rowHeader.invalidateDisplayList();
-		   rowHeader.needRightSeparator = true;
-		   }
-		   }
-		   else
-		   {
-		   if (rowHeader.needRightSeparator)
-		   {
-		   rowHeader.invalidateDisplayList();
-		   rowHeader.needRightSeparator = false;
-		   }
-		   }
-		   }
-		   else
-		   {
-		   if (rowHeader.needRightSeparator)
-		   {
-		   rowHeader.invalidateDisplayList();
-		   rowHeader.needRightSeparator = false;
-		   }
-		 }*/
-		
-		super.updateDisplayList(w, h);
-		
-		if (verticalScrollBar != null && verticalScrollBar.visible && headerVisible && horizontalScrollBar != null && horizontalScrollBar.visible)
-		{
-			var hh : Number = header.height;
-			var rhw : Number = rowHeader.width;
-			var bm : EdgeMetrics = borderMetrics;
-			
-			if (roomForScrollBar(verticalScrollBar, unscaledWidth - bm.left - bm.right - rhw, unscaledHeight - hh - bm.top - bm.bottom - horizontalScrollBar.height))
-			{
-				verticalScrollBar.move(verticalScrollBar.x, viewMetrics.top + hh);
-				verticalScrollBar.setActualSize(verticalScrollBar.width, unscaledHeight - viewMetrics.top - viewMetrics.bottom - hh);
-				verticalScrollBar.visible = true;
-				headerMask.width += verticalScrollBar.getExplicitOrMeasuredWidth();
-				
-			}
-			
-			if (roomForScrollBar(horizontalScrollBar, unscaledWidth - rhw - bm.left - bm.right - verticalScrollBar.width, unscaledHeight - bm.top - bm.bottom - hh))
-			{
-				horizontalScrollBar.move(viewMetrics.left + rhw, horizontalScrollBar.y);
-				horizontalScrollBar.setActualSize(unscaledWidth - viewMetrics.left - viewMetrics.right - rhw, horizontalScrollBar.height);
-				horizontalScrollBar.visible = true;
-				headerMask.height += horizontalScrollBar.getExplicitOrMeasuredHeight();
-			}
-		}
-	}
+	   if (lockedColumnCountChanged)
+	   {
+	   lockedColumnCountChanged = false;
+	
+	   if (lockedColumnCount > 0 && !lockedColumnContent)
+	   {
+	   lockedColumnHeader = new PaintGridEmptyColumnHeader();
+	   lockedColumnHeader.styleName = this;
+	   addChild(lockedColumnHeader);
+	   lockedColumnAndRowContent = new DataGridLockedRowContentHolder(this);
+	   lockedColumnAndRowContent.styleName = this;
+	   addChild(lockedColumnAndRowContent)
+	   lockedColumnContent = new ListBaseContentHolder(this);
+	   lockedColumnContent.styleName = this;
+	   addChild(lockedColumnContent);
+	   }
+	   }
+	
+	   super.updateDisplayList(unscaledWidth, unscaledHeight);
+	 }*/
 	
 	override protected function drawSelectionIndicator (indicator : Sprite, x : Number, y : Number, width : Number, height : Number, color : uint, itemRenderer : IListItemRenderer) : void
 	{
 	
 	}
 	
-	/*override protected function drawItem (item : IListItemRenderer, selected : Boolean = false, highlighted : Boolean = false, caret : Boolean = false, transition : Boolean = false) : void
+	/*override protected function makeRowsAndColumns (left : Number, top : Number, right : Number, bottom : Number, firstColumn : int, firstRow : int, byCount : Boolean = false, rowsNeeded : uint = 0) : Point
 	   {
-	   if (item is PaintGridRowHeader)
-	   PaintGridRowHeader(item).alpha = .5;
-	
-	   super.drawItem(item, selected, highlighted, caret, transition);
-	 }*/
-	
-	override protected function adjustListContent (unscaledWidth : Number = -1, unscaledHeight : Number = -1) : void
-	{
-		//super.adjustListContent(unscaledWidth, unscaledHeight);
-		var ww : Number;
-		var hh : Number = 0;
-		var lcx : Number;
-		var lcy : Number;
-		var hcx : Number;
-		var lockedColumnWidth : Number = rowHeader.width;
-		
-		if (headerVisible)
-		{
-			if (lockedColumnCount > 0)
-			{
-				lockedColumnHeader.visible = true;
-				hcx = viewMetrics.left + Math.min(DataGridHeader(lockedColumnHeader).leftOffset, 0);
-				lockedColumnHeader.move(hcx, viewMetrics.top);
-				hh = lockedColumnHeader.getExplicitOrMeasuredHeight();
-				lockedColumnHeader.setActualSize(lockedColumnWidth + 1, hh);
-				DataGridHeader(lockedColumnHeader).needRightSeparator = true;
-				DataGridHeader(lockedColumnHeader).needRightSeparatorEvents = true;
-			}
-			header.visible = true;
-			hcx = viewMetrics.left + lockedColumnWidth + Math.min(DataGridHeader(header).leftOffset, 0);
-			header.move(hcx, viewMetrics.top);
-			
-			// If we have a vScroll only, we want the scrollbar to be below
-			// the header.
-			if (verticalScrollBar != null && verticalScrollBar.visible && (horizontalScrollBar == null || !horizontalScrollBar.visible) && headerVisible && roomForScrollBar(verticalScrollBar, unscaledWidth, unscaledHeight - header.height))
-				ww = Math.max(0, DataGridHeader(header).rightOffset) - hcx - borderMetrics.right;
-			else
-				ww = Math.max(0, DataGridHeader(header).rightOffset) - hcx - viewMetrics.right;
-			hh = header.getExplicitOrMeasuredHeight();
-			header.setActualSize(unscaledWidth + ww, hh);
-			
-			/*if (!skipHeaderUpdate)
-			   {
-			   header.headerItemsChanged = true;
-			   header.invalidateDisplayList(); // make sure it redraws, even if size didn't change
-			   // internal renderers could have changed
-			 }*/
-		}
-		else
-		{
-			header.visible = false;
-			
-			if (lockedColumnCount > 0)
-				lockedColumnHeader.visible = false;
-		}
-		
-		if (lockedRowCount > 0 && lockedRowContent && lockedRowContent.iterator)
-		{
-			try
-			{
-				lockedRowContent.iterator.seek(CursorBookmark.FIRST);
-				var pt : Point = makeRows(lockedRowContent, 0, 0, unscaledWidth, unscaledHeight, 0, 0, true, lockedRowCount, true);
-				
-				if (lockedColumnCount > 0)
-				{
-					lcx = viewMetrics.left + Math.min(lockedColumnAndRowContent.leftOffset, 0);
-					lcy = viewMetrics.top + Math.min(lockedColumnAndRowContent.topOffset, 0) + Math.ceil(hh);
-					lockedColumnAndRowContent.move(lcx, lcy);
-					lockedColumnAndRowContent.setActualSize(lockedColumnWidth, lockedColumnAndRowContent.getExplicitOrMeasuredHeight());
-				}
-				lcx = viewMetrics.left + lockedColumnWidth + Math.min(lockedRowContent.leftOffset, 0);
-				lcy = viewMetrics.top + Math.min(lockedRowContent.topOffset, 0) + Math.ceil(hh);
-				lockedRowContent.move(lcx, lcy);
-				ww = Math.max(0, lockedRowContent.rightOffset) - lcx - viewMetrics.right;
-				lockedRowContent.setActualSize(unscaledWidth + ww, lockedRowContent.getExplicitOrMeasuredHeight());
-				hh += lockedRowContent.getExplicitOrMeasuredHeight();
-			}
-			catch (e : ItemPendingError)
-			{
-				//e.addResponder(new ItemResponder(lockedRowSeekPendingResultHandler, seekPendingFailureHandler, null));
-				
-			}
-		}
-		
-		if (lockedColumnCount > 0)
-		{
-			lcx = viewMetrics.left + Math.min(lockedColumnContent.leftOffset, 0);
-			lcy = viewMetrics.top + Math.min(lockedColumnContent.topOffset, 0) + Math.ceil(hh);
-			lockedColumnContent.move(lcx, lcy);
-			ww = lockedColumnWidth + lockedColumnContent.rightOffset - lockedColumnContent.leftOffset;
-			lockedColumnContent.setActualSize(ww, unscaledHeight + Math.max(0, lockedColumnContent.bottomOffset) - lcy - viewMetrics.bottom);
-		}
-		lcx = viewMetrics.left + lockedColumnWidth + Math.min(listContent.leftOffset, 0);
-		lcy = viewMetrics.top + Math.min(listContent.topOffset, 0) + Math.ceil(hh);
-		listContent.move(lcx, lcy);
-		ww = Math.max(0, listContent.rightOffset) - lcx - viewMetrics.right;
-		hh = Math.max(0, listContent.bottomOffset) - lcy - viewMetrics.bottom;
-		
-		rowHeader.y = lcy;
-		rowHeader.height = unscaledHeight - hh;
-		listContent.setActualSize(Math.max(0, unscaledWidth + ww - lockedColumnWidth), Math.max(0, unscaledHeight + hh));
-	
-	}
-	
-	override public function set horizontalScrollPosition (value : Number) : void
-	{
-		super.horizontalScrollPosition = value;
-	/*var oldValue : int = super.horizontalScrollPosition;
-	   super.horizontalScrollPosition = value;
-	
-	   if (itemsSizeChanged)
-	   return;
-	
-	   if (oldValue != value)
-	   {
-	   removeClipMask();
-	
-	   var bookmark : CursorBookmark;
-	
-	   if (iterator)
-	   bookmark = iterator.bookmark;
-	
-	   clearIndicators();
-	   clearVisibleData();
-	   //if we scrolled more than the number of scrollable columns
-	   makeRowsAndColumns(rowHeader.width, 0, listContent.width - rowHeader.width, listContent.height, 0, 0);
-	
-	   if (rowHeaderVisible && rowHeader)
-	   {
-	   rowHeader.visibleRows = visibleRows;
-	   rowHeader.headerItemsChanged = true;
-	   rowHeader.invalidateSize();
-	   rowHeader.validateNow();
-	   }
-	
-	   if (iterator && bookmark)
-	   iterator.seek(bookmark, 0);
-	
-	   invalidateDisplayList();
-	
-	   addClipMask(false);
-	 }*/
-	}
-	
-	override public function set verticalScrollPosition (value : Number) : void
-	{
-		var oldValue : Number = super.verticalScrollPosition;
-		super.verticalScrollPosition = value;
-		
-		if (oldValue != value)
-		{
-			if (lockedColumnContent)
-				drawRowGraphics(lockedColumnContent)
-			
-			if (rowHeader)
-			{
-				rowHeader.visibleRows = visibleRows;
-				rowHeader.headerItemsChanged = true;
-				rowHeader.invalidateSize();
-				rowHeader.validateNow();
-			}
-			
-		}
-	}
-	
-	/*override protected function makeRows (contentHolder : ListBaseContentHolder, left : Number, top : Number, right : Number, bottom : Number, firstCol : int, firstRow : int, byCount : Boolean = false, rowsNeeded : uint = 0, alwaysCleanup : Boolean = false) : Point
-	   {
-	   return super.makeRows(contentHolder, left + rowHeader.width, top, right, bottom, firstCol, firstRow, byCount, rowsNeeded, alwaysCleanup);
-	 }*/
-	
-	/*override protected function layoutColumnItemRenderer (c : DataGridColumn, item : IListItemRenderer, xx : Number, yy : Number) : Point
-	   {
-	   return super.layoutColumnItemRenderer(c, item, xx + rowHeader.width, yy);
+	   return super.makeRowsAndColumns(left, top, right, bottom, firstColumn, firstRow, byCount, rowsNeeded);
 	 }*/
 	
 	/**
@@ -628,16 +385,19 @@ public class PaintGrid extends DataGrid
 	
 	protected var columnWidthsChanged : Boolean;
 	
+	[Bindable(event="columnWidthChanged")]
 	public function getColumnWidthAt (index : int) : Number
 	{
-		if (value < 0)
+		if (index < 0)
 			return -1;
 		
-		for each (var column : Column in columnWidths)
-			if (column.index == index)
-				return column.width;
+		/*for each (var column : Column in columnWidths)
+		   if (column.index == index)
+		 return column.width;*/
 		
-		return -1;
+		var col : DataGridColumn = columns[index];
+		
+		return col ? col.width : -1;
 	}
 	
 	public function setColumnWidthAt (index : int, value : Number) : void
@@ -645,24 +405,35 @@ public class PaintGrid extends DataGrid
 		if (index < 0 || value < 0)
 			return;
 		
-		for each (var column : Column in columnWidths)
-			if (column.index == index)
-			{
-				column.width = value;
-				
-				columnWidthsChanged = true;
-				
-				invalidateProperties();
-				
-				return;
-			}
+		resizeColumn(index, value);
 		
-		columnWidths.push(new Column(index, value));
-		
-		columnWidthsChanged = true;
-		
-		invalidateProperties();
+		dispatchEvent(new Event("columnWidthChanged"));
+	
+	/*for each (var column : Column in columnWidths)
+	   if (column.index == index)
+	   {
+	   column.width = value;
+	
+	   columnWidthsChanged = true;
+	
+	   invalidateProperties();
+	
+	   return;
+	   }
+	
+	   columnWidths.push(new Column(index, value));
+	
+	   columnWidthsChanged = true;
+	
+	 invalidateProperties();*/
 	}
+	
+	/*override mx_internal function resizeColumn (col : int, w : Number) : void
+	   {
+	   super.resizeColumn(col, w);
+	
+	   dispatchEvent(new Event("columnWidthChanged"));
+	 }*/
 	
 	/**
 	 * Row height API
@@ -678,8 +449,10 @@ public class PaintGrid extends DataGrid
 		if (value < 0)
 			return -1;
 		
-		for each (var row : Row in rowHeights)
-			if (row.index == index)
+		return measureHeightOfItems(index, 1);
+		
+		for each (var row : ListRowInfo in rowInfo)
+			if (y == 0 && 0 == index || y > 0 && y / rowHeight == index)
 				return row.height;
 		
 		return -1;
@@ -711,21 +484,15 @@ public class PaintGrid extends DataGrid
 	
 	override protected function commitProperties () : void
 	{
-		if (itemsNeedMeasurement && isNaN(explicitRowHeight) && iterator && columns.length > 0)
-		{
-			visibleRows = columns;
-			columnsInvalid = true;
-		}
-		
 		super.commitProperties();
 		
-		if (columnWidthsChanged)
-		{
-			for each (var column : Column in columnWidths)
-				resizeColumn(column.index, column.width);
-			
-			columnWidthsChanged = false;
-		}
+		/*if (columnWidthsChanged)
+		   {
+		   for each (var column : Column in columnWidths)
+		   resizeColumn(column.index, column.width);
+		
+		   columnWidthsChanged = false;
+		 }*/
 		
 		// TODO!!!
 		if (rowHeightsChanged)
@@ -746,6 +513,8 @@ public class PaintGrid extends DataGrid
 		if (!item)
 			return null;
 		
+		item.styleName = this;
+		
 		if (item is PaintGridColumnItemRenderer)
 		{
 			PaintGridColumnItemRenderer(item).dataGrid = this;
@@ -759,34 +528,6 @@ public class PaintGrid extends DataGrid
 		
 		return item;
 	}
-	
-	/*override protected function createBorder () : void
-	   {
-	   //super.createBorder();
-	
-	   if (!border)
-	   {
-	   var borderClass : Class = PaintGridBorder;
-	
-	   border = new borderClass();
-	
-	   if (border is IUIComponent)
-	   IUIComponent(border).enabled = enabled;
-	
-	   if (border is ISimpleStyleClient)
-	   ISimpleStyleClient(border).styleName = this;
-	
-	   // Add the border behind all the children.
-	   addChildAt(DisplayObject(border), 0);
-	
-	   invalidateDisplayList();
-	   }
-	   }
-	
-	   override public function get borderMetrics () : EdgeMetrics
-	   {
-	   return (border as PaintGridBorder).borderMetrics;
-	 }*/
 	
 	override mx_internal function shiftColumns (oldIndex : int, newIndex : int, trigger : Event = null) : void
 	{
@@ -810,6 +551,11 @@ public class PaintGrid extends DataGrid
 				}
 			}
 		}
+	}
+	
+	override mx_internal function selectionTween_updateHandler (event : TweenEvent) : void
+	{
+	
 	}
 	
 	override protected function collectionChangeHandler (event : Event) : void
@@ -839,6 +585,21 @@ public class PaintGrid extends DataGrid
 						ce.items[row].cells[col] = cell;
 						
 						cells.push(cell);
+					}
+				}
+				break;
+			
+			case CollectionEventKind.REMOVE:
+				for (rows = ce.items.length; row < rows; ++row)
+				{
+					while (ce.items[row].cells.length)
+					{
+						cell = ce.items[row].cells.pop();
+						
+						col = cells.indexOf(cell);
+						
+						if (col > -1)
+							cells.splice(col, 1);
 					}
 				}
 				break;
