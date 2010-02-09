@@ -110,6 +110,8 @@
 				
 				if (cell)
 				{
+					cell.removeEventListener("enabledChanged", enabledChangedHandler);
+					cell.removeEventListener("selectedChanged", selectedChangedHandler);
 					cell.removeEventListener(CellEvent.STYLES_CHANGED, styles.stylesChangedHandler);
 					cell.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, styles.rollOverStylesChangedHandler);
 					cell.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, styles.selectedStylesChangedHandler);
@@ -123,6 +125,8 @@
 				
 				if (cell)
 				{
+					cell.addEventListener("enabledChanged", enabledChangedHandler);
+					cell.addEventListener("selectedChanged", selectedChangedHandler);
 					cell.addEventListener(CellEvent.STYLES_CHANGED, styles.stylesChangedHandler);
 					cell.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, styles.rollOverStylesChangedHandler);
 					cell.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, styles.selectedStylesChangedHandler);
@@ -203,8 +207,8 @@
 			{
 				super.updateDisplayList(w, h);
 				
-				if (dataGrid && dataGrid.selectedCellProperties != cell && currentState == "selected")
-					currentState = "normal";
+				/* if (dataGrid && dataGrid.selectedCellProperties != cell && currentState == "selected")
+				 currentState = "normal"; */
 				
 				if (styles.foregroundChanged)
 				{
@@ -320,28 +324,62 @@
 			
 			protected function rollOverHandler (e : MouseEvent) : void
 			{
-				if (currentState != "selected")
+				if (cell && cell.enabled && currentState != "selected")
 					currentState = "over";
 			}
 			
 			protected function rollOutHandler (e : MouseEvent) : void
 			{
-				if (currentState != "selected")
+				if (cell && cell.enabled && currentState != "selected")
 					currentState = "normal";
 			}
 			
 			protected function clickHandler (e : MouseEvent) : void
 			{
-				if (currentState != "selected")
-					currentState = "selected";
-				
-				if (!dataGrid)
+			/* if (cell && cell.enabled && currentState != "selected")
+			 currentState = "selected"; */
+			
+			/* if (!dataGrid)
+			   return;
+			
+			   if (dataGrid.selectedCellProperties)
+			   dataGrid.selectedCellProperties.owner.invalidateDisplayList();
+			
+			 dataGrid.selectedCellProperties = cell; */
+			}
+			
+			protected function selectedChangedHandler (e : Event) : void
+			{
+				if (!cell || !cell.enabled)
 					return;
 				
-				if (dataGrid.selectedCellProperties)
-					dataGrid.selectedCellProperties.owner.invalidateDisplayList();
+				if (cell.selected)
+					currentState = "selected";
+				else
+					currentState = "normal";
+			
+			/* if (cell.enabled)
+			   currentState = cell.oldState;
+			   else
+			   {
+			   cell.oldState = cell.state;
+			   currentState = "disabled";
+			   }
+			
+			 initStyles(cell.state); */
+			}
+			
+			protected function enabledChangedHandler (e : Event) : void
+			{
+				if (cell.enabled)
+					currentState = cell.oldState;
+				else
+				{
+					cell.oldState = cell.state;
+					currentState = "disabled";
+				}
 				
-				dataGrid.selectedCellProperties = cell;
+				initStyles(cell.state);
 			}
 		]]>
 	</fx:Script>

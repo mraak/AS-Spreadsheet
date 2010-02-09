@@ -27,7 +27,12 @@ public class CellLocation extends EventDispatcher
 	
 	public function inRange (range : CellRange) : Boolean
 	{
-		return column >= range.start.column && column <= range.end.column && row >= range.start.row && row <= range.end.row;
+		var minC : int = range.start.column < range.end.column ? range.start.column : range.end.column;
+		var maxC : int = range.start.column > range.end.column ? range.start.column : range.end.column;
+		var minR : int = range.start.row < range.end.row ? range.start.row : range.end.row;
+		var maxR : int = range.start.row > range.end.row ? range.start.row : range.end.row;
+		
+		return column >= minC && column <= maxC && row >= minR && row <= maxR;
 	}
 	
 	public function get valid () : Boolean

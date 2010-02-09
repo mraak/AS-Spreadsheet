@@ -1,9 +1,13 @@
 package com.flextras.paintgrid
 {
+import flash.events.Event;
+
 import mx.events.PropertyChangeEvent;
 import mx.events.PropertyChangeEventKind;
 import mx.utils.ObjectProxy;
 
+[Event(name="enabledChanged", type="flash.events.Event")]
+[Event(name="selectedChanged", type="flash.events.Event")]
 [Event(name="stylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="rollOverStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="selectedStylesChanged", type="com.flextras.paintgrid.CellEvent")]
@@ -14,6 +18,8 @@ public class CellProperties extends CellLocation
 	
 	public var state : String = "normal";
 	
+	public var oldState : String;
+	
 	protected var _styles : ObjectProxy = new ObjectProxy;
 	
 	protected var _rollOverStyles : ObjectProxy = new ObjectProxy;
@@ -22,10 +28,7 @@ public class CellProperties extends CellLocation
 	
 	protected var _disabledStyles : ObjectProxy = new ObjectProxy;
 	
-	[Bindable]
-	public var condition : String;
-	
-	public function CellProperties (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition : String = null)
+	public function CellProperties (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null)
 	{
 		super(row, column);
 		
@@ -33,12 +36,47 @@ public class CellProperties extends CellLocation
 		this.rollOverStyles = new ObjectProxy(rollOverStyles);
 		this.selectedStyles = new ObjectProxy(selectedStyles);
 		this.disabledStyles = new ObjectProxy(disabledStyles);
-		this.condition = condition;
 		
 		_styles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, styles_changeHandler);
 		_rollOverStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, rollOverStyles_changeHandler);
 		_selectedStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, selectedStyles_changeHandler);
 		_disabledStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, disabledStyles_changeHandler);
+	}
+	
+	protected var _enabled : Boolean = true;
+	
+	[Bindable(event="enabledChanged")]
+	public function get enabled () : Boolean
+	{
+		return _enabled;
+	}
+	
+	public function set enabled (value : Boolean) : void
+	{
+		if (_enabled == value)
+			return;
+		
+		_enabled = value;
+		
+		dispatchEvent(new Event("enabledChanged"));
+	}
+	
+	protected var _selected : Boolean;
+	
+	[Bindable(event="selectedChanged")]
+	public function get selected () : Boolean
+	{
+		return _selected;
+	}
+	
+	public function set selected (value : Boolean) : void
+	{
+		if (_selected == value)
+			return;
+		
+		_selected = value;
+		
+		dispatchEvent(new Event("selectedChanged"));
 	}
 	
 	[Bindable(event="stylesChanged")]
