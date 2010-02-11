@@ -16,10 +16,6 @@ public class CellProperties extends CellLocation
 {
 	public var owner : PaintGridColumnItemRenderer;
 	
-	public var state : String = "normal";
-	
-	public var oldState : String;
-	
 	protected var _styles : ObjectProxy = new ObjectProxy;
 	
 	protected var _rollOverStyles : ObjectProxy = new ObjectProxy;
@@ -28,19 +24,27 @@ public class CellProperties extends CellLocation
 	
 	protected var _disabledStyles : ObjectProxy = new ObjectProxy;
 	
-	public function CellProperties (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null)
+	public function CellProperties (row : int = 0, column : int = 0, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null)
 	{
 		super(row, column);
-		
-		this.styles = new ObjectProxy(styles);
-		this.rollOverStyles = new ObjectProxy(rollOverStyles);
-		this.selectedStyles = new ObjectProxy(selectedStyles);
-		this.disabledStyles = new ObjectProxy(disabledStyles);
 		
 		_styles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, styles_changeHandler);
 		_rollOverStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, rollOverStyles_changeHandler);
 		_selectedStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, selectedStyles_changeHandler);
 		_disabledStyles.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, disabledStyles_changeHandler);
+		
+		this.styles = new ObjectProxy(styles);
+		this.rollOverStyles = new ObjectProxy(rollOverStyles);
+		this.selectedStyles = new ObjectProxy(selectedStyles);
+		this.disabledStyles = new ObjectProxy(disabledStyles);
+	}
+	
+	public function release () : void
+	{
+		_styles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, styles_changeHandler);
+		_rollOverStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, rollOverStyles_changeHandler);
+		_selectedStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, selectedStyles_changeHandler);
+		_disabledStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, disabledStyles_changeHandler);
 	}
 	
 	protected var _enabled : Boolean = true;
@@ -87,9 +91,6 @@ public class CellProperties extends CellLocation
 	
 	public function set styles (value : ObjectProxy) : void
 	{
-		if (!value)
-			return;
-		
 		for (var style : String in value)
 			_styles[style] = value[style];
 	}
@@ -102,9 +103,6 @@ public class CellProperties extends CellLocation
 	
 	public function set rollOverStyles (value : ObjectProxy) : void
 	{
-		if (!value)
-			return;
-		
 		for (var rollOverStyle : String in value)
 			_rollOverStyles[rollOverStyle] = value[rollOverStyle];
 	}
@@ -117,9 +115,6 @@ public class CellProperties extends CellLocation
 	
 	public function set selectedStyles (value : ObjectProxy) : void
 	{
-		if (!value)
-			return;
-		
 		for (var selectedStyle : String in value)
 			_selectedStyles[selectedStyle] = value[selectedStyle];
 	}
@@ -132,9 +127,6 @@ public class CellProperties extends CellLocation
 	
 	public function set disabledStyles (value : ObjectProxy) : void
 	{
-		if (!value)
-			return;
-		
 		for (var disabledStyle : String in value)
 			_disabledStyles[disabledStyle] = value[disabledStyle];
 	}

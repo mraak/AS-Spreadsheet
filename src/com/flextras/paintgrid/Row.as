@@ -1,16 +1,16 @@
 package com.flextras.paintgrid
 {
+
+public class Row
+{
+	public var height : Number;
 	
-	public class Row
+	[ArrayInstanceType("com.flextras.paintgrid.CellProperties")]
+	public const cells : Array = [];
+	
+	public function Row (value : Number)
 	{
-		public var height : Number;
-		
-		public var index : int;
-		
-		public function Row (index : int, value : Number)
-		{
-			this.index = index;
-			this.height = value;
-		}
+		this.height = value;
 	}
+}
 }

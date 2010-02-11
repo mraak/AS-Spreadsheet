@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="true" version="3">
   <includeClasses>
-    <classEntry path="com.flextras.paintgrid.PaintGridColumnItemRenderer"/>
     <classEntry path="com.flextras.paintgrid.CellStyles"/>
-    <classEntry path="com.flextras.paintgrid.PaintGridBorder"/>
-    <classEntry path="com.flextras.paintgrid.PaintGridRowItemRenderer"/>
-    <classEntry path="com.flextras.paintgrid.PaintGridRowHeader"/>
     <classEntry path="com.flextras.paintgrid.PaintGridEmptyColumnHeader"/>
+    <classEntry path="com.flextras.paintgrid.Styles"/>
+    <classEntry path="com.flextras.paintgrid.BasicStyles"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
