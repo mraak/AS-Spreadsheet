@@ -8,6 +8,8 @@ import flash.text.engine.FontWeight;
 import flashx.textLayout.formats.TextAlign;
 import flashx.textLayout.formats.TextDecoration;
 
+import mx.core.UIComponent;
+
 public class CellStyles
 {
 	public var defaultStyles : Styles;
@@ -20,7 +22,7 @@ public class CellStyles
 	
 	public var disabledStyles : BasicStyles;
 	
-	public function CellStyles (owner : PaintGridColumnItemRenderer)
+	public function CellStyles (owner : UIComponent)
 	{
 		defaultStyles = new Styles(owner);
 		styles = new Styles(owner);

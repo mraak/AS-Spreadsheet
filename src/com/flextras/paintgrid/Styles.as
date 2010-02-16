@@ -1,9 +1,10 @@
 package com.flextras.paintgrid
 {
+import mx.core.UIComponent;
 
 public class Styles extends BasicStyles
 {
-	public function Styles (owner : PaintGridColumnItemRenderer)
+	public function Styles (owner : UIComponent)
 	{
 		super(owner);
 	}

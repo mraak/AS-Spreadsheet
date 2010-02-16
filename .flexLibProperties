@@ -5,6 +5,9 @@
     <classEntry path="com.flextras.paintgrid.PaintGridEmptyColumnHeader"/>
     <classEntry path="com.flextras.paintgrid.Styles"/>
     <classEntry path="com.flextras.paintgrid.BasicStyles"/>
+    <classEntry path="com.flextras.spreadsheet.PaintSpreadsheet"/>
+    <classEntry path="com.flextras.paintgrid.PaintGrid2"/>
+    <classEntry path="com.flextras.paintgrid.RowInfo"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

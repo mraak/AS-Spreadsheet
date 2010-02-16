@@ -16,9 +16,9 @@ import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
 
-public class PaintGridColumnItemRenderer extends UIComponent implements IListItemRenderer, IDropInListItemRenderer
+public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListItemRenderer, IDropInListItemRenderer
 {
-	public function PaintGridColumnItemRenderer ()
+	public function PaintGrid2ColumnItemRenderer ()
 	{
 		super();
 		
@@ -26,9 +26,9 @@ public class PaintGridColumnItemRenderer extends UIComponent implements IListIte
 		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
 	}
 	
-	protected const styles : CellStyles = new CellStyles(this as PaintGridColumnItemRenderer);
+	protected const styles : CellStyles = new CellStyles(this as PaintGrid2ColumnItemRenderer);
 	
-	protected const globalStyles : CellStyles = new CellStyles(this as PaintGridColumnItemRenderer);
+	protected const globalStyles : CellStyles = new CellStyles(this as PaintGrid2ColumnItemRenderer);
 	
 	protected var _currentStyles : BasicStyles;
 	
@@ -70,14 +70,14 @@ public class PaintGridColumnItemRenderer extends UIComponent implements IListIte
 		invalidateDisplayList();
 	}
 	
-	protected var _dataGrid : PaintGrid;
+	protected var _dataGrid : PaintGrid2;
 	
-	public function get dataGrid () : PaintGrid
+	public function get dataGrid () : PaintGrid2
 	{
 		return _dataGrid;
 	}
 	
-	public function set dataGrid (value : PaintGrid) : void
+	public function set dataGrid (value : PaintGrid2) : void
 	{
 		if (_dataGrid === value)
 			return;
@@ -120,21 +120,21 @@ public class PaintGridColumnItemRenderer extends UIComponent implements IListIte
 		_listData = value as DataGridListData;
 	}
 	
-	protected var _info : Row;
+	protected var _info : RowInfo;
 	
-	public function get info () : Row
+	public function get info () : RowInfo
 	{
 		return _info;
 	}
 	
-	public function set info (value : Row) : void
+	public function set info (value : RowInfo) : void
 	{
 		if (value === _info)
 			return;
 		
 		_info = value;
 		
-		heightProxy = new ObjectProxy(value.height);
+		heightProxy = new ObjectProxy(value ? value.height : 20);
 	}
 	
 	protected var _heightProxy : ObjectProxy;
@@ -317,12 +317,8 @@ public class PaintGridColumnItemRenderer extends UIComponent implements IListIte
 			
 			if (currentStylesChanged || styles.styles.fontStylesChanged)
 			{
-				if (styles.styles.antiAliasType)
-					textField.antiAliasType = styles.styles.antiAliasType;
-				
-				if (styles.styles.gridFitType)
-					textField.gridFitType = styles.styles.gridFitType;
-				
+				textField.antiAliasType = styles.styles.antiAliasType;
+				textField.gridFitType = styles.styles.gridFitType;
 				textField.sharpness = styles.styles.sharpness;
 				textField.thickness = styles.styles.thickness;
 				

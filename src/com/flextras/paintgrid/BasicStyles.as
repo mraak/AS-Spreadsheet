@@ -1,11 +1,12 @@
 package com.flextras.paintgrid
 {
+import mx.core.UIComponent;
 
 public class BasicStyles
 {
-	protected var owner : PaintGridColumnItemRenderer;
+	protected var owner : UIComponent;
 	
-	public function BasicStyles (owner : PaintGridColumnItemRenderer)
+	public function BasicStyles (owner : UIComponent)
 	{
 		this.owner = owner;
 	}
