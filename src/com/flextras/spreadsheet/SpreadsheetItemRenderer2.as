@@ -35,27 +35,6 @@ package com.flextras.spreadsheet
 		}
 		
 		
-		override public function setStyle(styleProp:String, newValue:*) : void
-		{
-			if(styleProp == "backgroundColor")
-			{
-				backgroundColor = newValue;
-			}
-			else if(styleProp == "selectedColor")
-			{
-				selectedColor = newValue;
-			}
-			else if(styleProp == "rollOverColor")
-			{
-				rollOverColor = newValue;
-			}
-			else
-			{
-				super.setStyle(styleProp, newValue);
-			}
-		}
-		
-		
 		override protected function mouseMoveHandler(e:MouseEvent):void
 		{
 			
@@ -98,12 +77,14 @@ package com.flextras.spreadsheet
 		{
 			if(rowResizable)
 			{
-				if(Spreadsheet2(this.owner).cellResizePolicy == SpreadsheetCellResizePolicy.ALL) rowResizing = true;
+				if(Spreadsheet2(this.owner).cellResizePolicy == SpreadsheetCellResizePolicy.ALL) 
+					rowResizing = true;
 			}
 			
 			if(columnResizable)
 			{
-				if(Spreadsheet2(this.owner).cellResizePolicy == SpreadsheetCellResizePolicy.ALL) columnResizing = true;
+				if(Spreadsheet2(this.owner).cellResizePolicy == SpreadsheetCellResizePolicy.ALL) 
+					columnResizing = true;
 			}
 
 		}

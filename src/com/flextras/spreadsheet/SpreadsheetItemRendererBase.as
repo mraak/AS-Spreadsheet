@@ -53,7 +53,7 @@ public class SpreadsheetItemRendererBase extends PaintGridColumnItemRenderer /*T
 		
 		//this.text =_cellId + " h: " + data.rowHeight;
 		
-		BindingUtils.bindSetter(setHeight, data, "rowHeight");
+		//BindingUtils.bindSetter(setHeight, data, "rowHeight");
 	
 	}
 	
@@ -74,21 +74,21 @@ public class SpreadsheetItemRendererBase extends PaintGridColumnItemRenderer /*T
 	
 	protected function clickHandler (evt : MouseEvent) : void
 	{
-		var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_CLICK, true);
-		this.dispatchEvent(cevt);
+	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_CLICK, true);
+		this.dispatchEvent(cevt);*/
 	}
 	
 	protected function dblClickHandler (evt : MouseEvent) : void
 	{
-		var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_DOUBLE_CLICK, true);
+	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_DOUBLE_CLICK, true);
 		cevt.data = evt;
-		this.dispatchEvent(cevt);
+		this.dispatchEvent(cevt);*/
 	}
 	
-	private function setHeight (value : Object) : void
+/*	private function setHeight (value : Object) : void
 	{
 		this.height = value as Number;
-	}
+	}*/
 	
 	//////////////////////////////////////////////
 	//  GETTERS && SETTERS

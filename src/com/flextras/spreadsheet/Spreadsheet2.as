@@ -325,7 +325,7 @@ package com.flextras.spreadsheet
 		{
 			var co : ControlObject = _ctrlObjects[cellId.toLowerCase()];
 			//calc.assignControlExpression(co, expression);
-			
+			trace("assignExpression, cellId: " + cellId + ", expression: " + expression)
 			var o : Object = getCell(cellId);
 			
 			var cellObj : Object = {cell: cellId, expression: expression}

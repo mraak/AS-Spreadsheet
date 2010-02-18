@@ -54,8 +54,6 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	
 	private var _expressionsTemp : *;
 	
-	private var _nonEditableCells : Array = new Array();
-	
 	private var _cellResizePolicy : String = SpreadsheetCellResizePolicy.ALL;
 	
 	private var expressionsChanged : Boolean;
@@ -238,16 +236,7 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	
 	}
 	
-	private function getCalculatedWidth () : Number
-	{
-		
-		for each (var c : DataGridColumn in columns)
-		{
-			calculatedWidth += c.width;
-		}
-		
-		return calculatedWidth;
-	}
+
 	
 	///////////////////////////////////////////
 	// LISTENERS
@@ -278,7 +267,7 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	{
 		//trace(SpreadsheetItemRendererBase(e.target).cellId + ", " + _nonEditableCells.indexOf(SpreadsheetItemRendererBase(e.target).cellId));
 		
-		if (_nonEditableCells.indexOf(SpreadsheetItemRendererBase(e.target).cellId) == -1)
+		if (disabledCells.indexOf(SpreadsheetItemRendererBase(e.target).cellId) == -1)
 		{
 			super.mouseDownHandler(e.data);
 			super.mouseUpHandler(e.data);
@@ -316,47 +305,6 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	// PUBLIC 
 	/////////////////////////////////////
 	
-	/*public function setRowHeightAt (index : int, height : Number) : void
-	   {
-	   var row : Object = _gridDataProvider.getItemAt(index);
-	   row.rowHeight = height;
-	   _gridDataProvider.itemUpdated(row);
-	 }*/
-	
-	/*public function setColumnWidthAt (index : int, width : Number) : void
-	   {
-	   this.columns[index].width = width;
-	 }*/
-	
-	/**
-	 * Row height API
-	 */
-	
-	override public function getRowHeightAt (index : int) : Number
-	{
-		if (value < 0)
-			return -1;
-		
-		var info : Row = _gridDataProvider.getItemAt(index).info;
-		
-		if (!info)
-			return -1;
-		
-		return info.height;
-	}
-	
-	override public function setRowHeightAt (index : int, value : Number) : void
-	{
-		if (index < 0 || value < 0)
-			return;
-		
-		var info : Row = _gridDataProvider.getItemAt(index).info;
-		
-		if (!info)
-			return;
-		
-		info.height = value;
-	}
 	
 	public function updateExpressions () : void
 	{
@@ -443,16 +391,7 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 		return _calc;
 	}
 	
-	public function set nonEditableCells (value : Array) : void
-	{
-		_nonEditableCells = value;
-	
-	}
-	
-	public function get nonEditableCells () : Array
-	{
-		return _nonEditableCells;
-	}
+
 	
 	[Bindable]
 	public function set expressions (value : ArrayCollection) : void
