@@ -3,6 +3,7 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
+import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid;
 import com.flextras.paintgrid.Row;
 
@@ -177,10 +178,14 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 		var dataSource : Array = new Array();
 		var c : int = _columnCount; //4;
 		var r : int = _rowCount; //100;
+		var info : Row, cell : CellProperties;
 		
 		for (var i : int = 0; i < r; i++)
 		{
 			var rowObject : Object = new Object();
+			info = new Row(20);
+			
+			rowObject.info = info;
 			
 			for (var j : int = 0; j < c; j++)
 			{
@@ -188,6 +193,12 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 				rowObject[prop] = ""; //i.toString();
 				rowObject.rowIndex = i;
 				rowObject.rowHeight = 20;
+				
+				cell = new CellProperties(i, j);
+				info.cells[j] = cell;
+				
+				cells.push(cell);
+				
 				var co : ControlObject = new ControlObject();
 				co.id = prop + i;
 				co.exp = "";
@@ -497,5 +508,36 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 		_cellResizePolicy = value;
 	}
 
+/*	override protected function collectionChangeHandler (event : Event) : void
+   {
+   super.collectionChangeHandler(event);
+
+   if (!event is CollectionEvent)
+   return;
+
+   var ce : CollectionEvent = CollectionEvent(event);
+
+   var cell : CellProperties, info : ControlObject, ctrl : ControlObject, row : Row;
+
+   switch (ce.kind)
+   {
+   case CollectionEventKind.UPDATE:
+   info = ce.items[0].source;
+
+   for each (ctrl in info.ctrlOperands)
+   {
+   row = new Row(20);
+
+   cell = new CellProperties(ctrl.rowIndex, ctrl.colIndex);
+   row.cells[ctrl.colIndex] = cell;
+
+   cells.push(cell);
+
+   ctrl.info = row;
+   }
+   break;
+   }
+   }
+ */
 }
 }

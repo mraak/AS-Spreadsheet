@@ -421,16 +421,11 @@ public class PaintGrid extends DataGrid
 		if (!range || !range.valid)
 			return null;
 		
-		var result : Array;
+		var result : Array = [];
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.inRange(range) && (fromUser || getCellProperties(cell, fromUser)))
-			{
-				if (!result)
-					result = [];
-				
 				result.push(cell);
-			}
 		
 		return result;
 	}
