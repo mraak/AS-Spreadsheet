@@ -4,7 +4,6 @@ import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.text.TextFormat;
 
-import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.BaseListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.controls.listClasses.IListItemRenderer;
@@ -105,7 +104,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		invalidateProperties();
 	}
 	
-	protected var _listData : DataGridListData;
+	protected var _listData : BaseListData;
 	
 	public function get listData () : BaseListData
 	{
@@ -117,12 +116,10 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (_listData === value)
 			return;
 		
-		if (!(value is PaintGridListData))
-			return;
+		_listData = value;
+		dataChanged = true;
 		
-		_listData = PaintGridListData(value);
-	
-		//cell = PaintGridListData(value).cell;
+		invalidateProperties();
 	}
 	
 	protected var _info : Row;
@@ -132,15 +129,15 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		return _info;
 	}
 	
-	/*public function set info (value : Row) : void
-	   {
-	   if (value === _info)
-	   return;
-	
-	   _info = value;
-	
-	   heightProxy = new ObjectProxy(value.height);
-	 }*/
+	public function set info (value : Row) : void
+	{
+		if (value === _info)
+			return;
+		
+		_info = value;
+		
+		heightProxy = new ObjectProxy(value.height);
+	}
 	
 	protected var _heightProxy : ObjectProxy;
 	
@@ -280,20 +277,25 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		}
 	}
 	
+	protected var explicitRowHeight : Number;
+	
 	override protected function measure () : void
 	{
 		super.measure();
 		
-		var ih : Number = info ? info.height : 0;
+		var w : Number = textField.measuredWidth;
+		var h : Number;
 		
-		var w : Number = textField.measuredWidth; // > background.width ? textField.measuredWidth : background.width;
-		var h : Number = textField.measuredHeight > ih ? textField.measuredHeight : ih; // > background.height ? textField.measuredHeight : background.height;
+		if (info)
+			explicitRowHeight = info.height;
+		
+		if (!isNaN(explicitRowHeight))
+			h = textField.measuredHeight > explicitRowHeight ? textField.measuredHeight : explicitRowHeight;
+		else
+			h = textField.measuredHeight;
 		
 		measuredMinWidth = measuredWidth = w;
 		measuredMinHeight = measuredHeight = h;
-		
-		if (info)
-			info.height = h;
 	}
 	
 	override protected function updateDisplayList (w : Number, h : Number) : void
@@ -437,7 +439,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		globalStyles.styles.change(e.property, e.newValue);
 		
-		// TODO
 		styles.styles.change(e.property, e.newValue);
 		styles.apply(cell);
 	}
@@ -469,6 +470,11 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	protected function heightChangedHandler (e : PropertyChangeEvent) : void
 	{
 		//dataGrid.invalidateList();
+	
+		//callLater(invalidateSize);
+	/*invalidateSize();
+	   invalidateDisplayList();
+	 invalidateParentSizeAndDisplayList();*/
 	}
 }
 }

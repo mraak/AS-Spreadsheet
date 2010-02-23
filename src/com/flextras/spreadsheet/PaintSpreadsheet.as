@@ -4,7 +4,7 @@ import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
 import com.flextras.paintgrid.CellProperties;
-import com.flextras.paintgrid.PaintGrid;
+import com.flextras.paintgrid.PaintGrid2;
 import com.flextras.paintgrid.Row;
 
 import flash.events.MouseEvent;
@@ -30,7 +30,7 @@ import mx.events.DataGridEvent;
  * objects and collections as variables in the calculations.
  *
  * */
-public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsheet
+public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreadsheet
 {
 	
 	[Bindable]
@@ -181,9 +181,8 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 		for (var i : int = 0; i < r; i++)
 		{
 			var rowObject : Object = new Object();
-			info = new Row(20);
-			
-			rowObject.info = info;
+			info = new Row();
+			info.uid = itemToUID(rowObject);
 			
 			for (var j : int = 0; j < c; j++)
 			{
@@ -210,6 +209,7 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 				
 				_ctrlObjects[co.id] = co;
 			}
+			infos.push(info);
 			dataSource.push(rowObject);
 		}
 		
@@ -235,8 +235,6 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 		super.dataProvider = _gridDataProvider;
 	
 	}
-	
-
 	
 	///////////////////////////////////////////
 	// LISTENERS
@@ -304,7 +302,6 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	/////////////////////////////////////
 	// PUBLIC 
 	/////////////////////////////////////
-	
 	
 	public function updateExpressions () : void
 	{
@@ -390,8 +387,6 @@ public class PaintSpreadsheet extends PaintGrid /*DataGrid*/implements ISpreadsh
 	{
 		return _calc;
 	}
-	
-
 	
 	[Bindable]
 	public function set expressions (value : ArrayCollection) : void

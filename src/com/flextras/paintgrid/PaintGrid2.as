@@ -2,10 +2,11 @@ package com.flextras.paintgrid
 {
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import mx.controls.DataGrid;
 import mx.controls.dataGridClasses.DataGridColumn;
-import mx.controls.listClasses.BaseListData;
+import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.controls.listClasses.IListItemRenderer;
 import mx.controls.listClasses.ListBaseContentHolder;
 import mx.core.ClassFactory;
@@ -26,6 +27,7 @@ public class PaintGrid2 extends DataGrid
 		super();
 		
 		editable = true;
+		doubleClickEnabled = true;
 		variableRowHeight = true;
 		allowMultipleSelection = true;
 		horizontalScrollPolicy = ScrollPolicy.AUTO; // !!
@@ -34,125 +36,31 @@ public class PaintGrid2 extends DataGrid
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, itemEditBeginningHandler);
 	}
 	
-	protected var _selectedCells : Array = [];
-	
-	[Bindable(event="selectedCellsChanged")]
-	public function get selectedCells () : Array
-	{
-		return _selectedCells;
-	}
-	
-	override protected function selectItem (item : IListItemRenderer, shiftKey : Boolean, ctrlKey : Boolean, transition : Boolean = true) : Boolean
-	{
-		var retval : Boolean = super.selectItem(item, shiftKey, ctrlKey, transition);
-		
-		var currentCell : CellProperties, oldCell : CellProperties = selectedCellProperties;
-		var i : int, arr : Array;
-		var start : CellLocation, end : CellLocation;
-		var cells : Array, cell : CellProperties;
-		
-		if (item is PaintGrid2ColumnItemRenderer)
-			currentCell = PaintGrid2ColumnItemRenderer(item).cell;
-		
-		if (!currentCell)
-			return retval;
-		
-		if (!ctrlKey && !shiftKey)
-		{
-			while (_selectedCells.length)
-			{
-				cell = _selectedCells.pop();
-				cell.selected = false;
-			}
-			
-			_selectedCells.push(currentCell);
-			currentCell.selected = true;
-		}
-		else if (ctrlKey && shiftKey)
-		{
-			start = selectedCellProperties || new CellLocation(), end = currentCell;
-			cells = getAllCellPropertiesInRangeBy(start, end);
-			
-			for each (cell in cells)
-				if ((i = _selectedCells.indexOf(cell)) > -1)
-				{
-					arr = _selectedCells.splice(i, 1);
-					
-					while (arr.length)
-					{
-						cell = arr.pop();
-						cell.selected = false;
-					}
-				}
-		}
-		else if (ctrlKey && !shiftKey)
-		{
-			if (oldCell === currentCell)
-			{
-				currentCell.selected = !currentCell.selected;
-				
-				if (!currentCell.selected && (i = _selectedCells.indexOf(currentCell)) > -1)
-					arr = _selectedCells.splice(i, 1);
-				else
-					_selectedCells.push(currentCell);
-			}
-			else if ((i = _selectedCells.indexOf(currentCell)) > -1)
-			{
-				arr = _selectedCells.splice(i, 1);
-				arr[0].selected = false;
-			}
-			else
-			{
-				_selectedCells.push(currentCell);
-				currentCell.selected = true;
-			}
-		}
-		else if (shiftKey && !ctrlKey)
-		{
-			start = selectedCellProperties || new CellLocation(), end = currentCell;
-			cells = getAllCellPropertiesInRangeBy(start, end);
-			
-			for each (cell in cells)
-				if ((i = _selectedCells.indexOf(cell)) < 0)
-				{
-					_selectedCells.push(cell);
-					cell.selected = true;
-				}
-		}
-		
-		selectedCellProperties = currentCell;
-		dispatchEvent(new Event("selectedCellsChanged"));
-		
-		return retval;
-	}
-	
-	override protected function drawSelectionIndicator (indicator : Sprite, x : Number, y : Number, width : Number, height : Number, color : uint, itemRenderer : IListItemRenderer) : void
-	{
-	
-	}
-	
 	/**
 	 * Styling API
 	 */
 	
 	[ArrayElementType("CellProperties")]
-	protected var cells : Object = {};
+	protected var cells : Array = [];
 	
-	protected function getCell (at : CellLocation) : CellProperties
-	{
-		if (!at || !at.valid)
-			return null;
-		
-		return cells[at.row + " " + at.column];
-	}
+	[ArrayElementType("CellProperties")]
+	protected var modifiedCells : Array = [];
 	
-	protected function addCell (value : CellProperties) : void
-	{
-		if (!value || !value.valid)
-			return;
-		
-		cells[value.row + " " + value.column] = value;
-	}
+	/*protected function getCell (at : CellLocation) : CellProperties
+	   {
+	   if (!at || !at.valid)
+	   return null;
+	
+	   return cells[at.row + " " + at.column];
+	   }
+	
+	   protected function addCell (value : CellProperties) : void
+	   {
+	   if (!value || !value.valid)
+	   return;
+	
+	   cells[value.row + " " + value.column] = value;
+	 }*/
 	
 	/**
 	 * Array of CellProperties
@@ -224,25 +132,25 @@ public class PaintGrid2 extends DataGrid
 	 * Instance of CellProperties
 	 */
 	
-	public function getCellProperties (at : CellLocation) : CellProperties
+	public function getCellProperties (at : CellLocation, fromUser : Boolean = true) : CellProperties
 	{
-		var cell : CellProperties = getCell(at);
+		if (!at || !at.valid)
+			return null;
 		
-		if (cell)
-			return cell;
+		var cells : Array = fromUser ? modifiedCells : this.cells;
 		
-		/*cell = new CellProperties(at.row, at.column);
-		 addCell(cell);*/
-		//cell.assign(globalCellStyles);
+		for each (var cell : CellProperties in cells)
+			if (cell.equalLocation(at))
+				return cell;
 		
-		return cell;
+		return null;
 	}
 	
-	public function getCellPropertiesAt (row : int, column : int) : CellProperties
+	public function getCellPropertiesAt (row : int, column : int, fromUser : Boolean = true) : CellProperties
 	{
 		var location : CellLocation = new CellLocation(row, column);
 		
-		return getCellProperties(location);
+		return getCellProperties(location, fromUser);
 	}
 	
 	public function setCellProperties (value : CellProperties) : void
@@ -250,12 +158,23 @@ public class PaintGrid2 extends DataGrid
 		if (!value || !value.valid)
 			return;
 		
-		var cell : CellProperties = getCell(value);
+		var cell : CellProperties;
 		
-		if (cell)
+		if ((cell = getCellProperties(value, false)))
 			cell.assign(value);
-		else
-			addCell(value);
+		
+		updateCell(cell);
+	}
+	
+	protected function updateCell (value : CellProperties) : void
+	{
+		var cell : CellProperties;
+		
+		if (!(cell = getCellProperties(value, true)))
+			modifiedCells.push(value);
+	
+	/*if (!cell in modifiedCells)
+	 modifiedCells.push(cell);*/
 	}
 	
 	public function setCellPropertiesAt (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
@@ -287,9 +206,9 @@ public class PaintGrid2 extends DataGrid
 		dispatchEvent(new Event("globalCellStylesChanged"));
 	}
 	
-	public function getCellStyles (at : CellLocation) : Object
+	public function getCellStyles (at : CellLocation, fromUser : Boolean = true) : Object
 	{
-		var cell : CellProperties = getCellProperties(at);
+		var cell : CellProperties = getCellProperties(at, fromUser);
 		
 		if (!cell)
 			return null;
@@ -297,11 +216,11 @@ public class PaintGrid2 extends DataGrid
 		return cell.styles;
 	}
 	
-	public function getCellStylesAt (row : int, column : int) : Object
+	public function getCellStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
 	{
 		var location : CellLocation = new CellLocation(row, column);
 		
-		return getCellStyles(location);
+		return getCellStyles(location, fromUser);
 	}
 	
 	public function setCellStyles (location : CellLocation, styles : Object = null) : void
@@ -319,9 +238,9 @@ public class PaintGrid2 extends DataGrid
 		setCellProperties(cell);
 	}
 	
-	public function getCellRollOverStyles (at : CellLocation) : Object
+	public function getCellRollOverStyles (at : CellLocation, fromUser : Boolean = true) : Object
 	{
-		var cell : CellProperties = getCellProperties(at);
+		var cell : CellProperties = getCellProperties(at, fromUser);
 		
 		if (!cell)
 			return null;
@@ -329,11 +248,11 @@ public class PaintGrid2 extends DataGrid
 		return cell.rollOverStyles;
 	}
 	
-	public function getCellRollOverStylesAt (row : int, column : int) : Object
+	public function getCellRollOverStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
 	{
 		var location : CellLocation = new CellLocation(row, column);
 		
-		return getCellRollOverStyles(location);
+		return getCellRollOverStyles(location, fromUser);
 	}
 	
 	public function setCellRollOverStyles (location : CellLocation, styles : Object = null) : void
@@ -351,9 +270,9 @@ public class PaintGrid2 extends DataGrid
 		setCellProperties(cell);
 	}
 	
-	public function getCellSelectedStyles (at : CellLocation) : Object
+	public function getCellSelectedStyles (at : CellLocation, fromUser : Boolean = true) : Object
 	{
-		var cell : CellProperties = getCellProperties(at);
+		var cell : CellProperties = getCellProperties(at, fromUser);
 		
 		if (!cell)
 			return null;
@@ -361,11 +280,11 @@ public class PaintGrid2 extends DataGrid
 		return cell.selectedStyles;
 	}
 	
-	public function getCellSelectedStylesAt (row : int, column : int) : Object
+	public function getCellSelectedStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
 	{
 		var location : CellLocation = new CellLocation(row, column);
 		
-		return getCellSelectedStyles(location);
+		return getCellSelectedStyles(location, fromUser);
 	}
 	
 	public function setCellSelectedStyles (location : CellLocation, styles : Object = null) : void
@@ -383,9 +302,9 @@ public class PaintGrid2 extends DataGrid
 		setCellProperties(cell);
 	}
 	
-	public function getCellDisabledStyles (at : CellLocation) : Object
+	public function getCellDisabledStyles (at : CellLocation, fromUser : Boolean = true) : Object
 	{
-		var cell : CellProperties = getCellProperties(at);
+		var cell : CellProperties = getCellProperties(at, fromUser);
 		
 		if (!cell)
 			return null;
@@ -393,11 +312,11 @@ public class PaintGrid2 extends DataGrid
 		return cell.disabledStyles;
 	}
 	
-	public function getCellDisabledStylesAt (row : int, column : int) : Object
+	public function getCellDisabledStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
 	{
 		var location : CellLocation = new CellLocation(row, column);
 		
-		return getCellDisabledStyles(location);
+		return getCellDisabledStyles(location, fromUser);
 	}
 	
 	public function setCellDisabledStyles (location : CellLocation, styles : Object = null) : void
@@ -419,12 +338,13 @@ public class PaintGrid2 extends DataGrid
 	 * Array of CellProperties in Range
 	 */
 	
-	public function getAllCellPropertiesInRange (range : CellRange) : Array
+	public function getAllCellPropertiesInRange (range : CellRange, fromUser : Boolean = true) : Array
 	{
 		if (!range || !range.valid)
 			return null;
 		
 		var result : Array = [];
+		var cells : Array = fromUser ? modifiedCells : this.cells;
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.inRange(range))
@@ -433,11 +353,11 @@ public class PaintGrid2 extends DataGrid
 		return result;
 	}
 	
-	public function getAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation) : Array
+	public function getAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation, fromUser : Boolean = true) : Array
 	{
 		var range : CellRange = new CellRange(start, end);
 		
-		return getAllCellPropertiesInRange(range);
+		return getAllCellPropertiesInRange(range, fromUser);
 	}
 	
 	public function setAllCellPropertiesInRange (range : CellRange, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
@@ -445,30 +365,15 @@ public class PaintGrid2 extends DataGrid
 		if (!range || !range.valid)
 			return;
 		
-		var minC : int = range.start.column < range.end.column ? range.start.column : range.end.column;
-		var maxC : int = range.start.column > range.end.column ? range.start.column : range.end.column;
-		var minR : int = range.start.row < range.end.row ? range.start.row : range.end.row;
-		var maxR : int = range.start.row > range.end.row ? range.start.row : range.end.row;
-		var cell : CellProperties;
-		
-		for (var r : int = minR, c : int; r < maxR /* + 1*/; ++r)
-			for (c = minC; c < maxC; ++c)
+		for each (var cell : CellProperties in cells)
+			if (cell.inRange(range))
 			{
-				cell = getCellPropertiesAt(r, c);
+				cell.styles = new ObjectProxy(styles);
+				cell.rollOverStyles = new ObjectProxy(rollOverStyles);
+				cell.selectedStyles = new ObjectProxy(selectedStyles);
+				cell.disabledStyles = new ObjectProxy(disabledStyles);
 				
-				if (!cell)
-				{
-					cell = new CellProperties(r, c, styles, rollOverStyles, selectedStyles, disabledStyles);
-					
-					addCell(cell);
-				}
-				else
-				{
-					cell.styles = new ObjectProxy(styles);
-					cell.rollOverStyles = new ObjectProxy(rollOverStyles);
-					cell.selectedStyles = new ObjectProxy(selectedStyles);
-					cell.disabledStyles = new ObjectProxy(disabledStyles);
-				}
+				updateCell(cell);
 			}
 	}
 	
@@ -522,9 +427,9 @@ public class PaintGrid2 extends DataGrid
 		for each (var o : Object in value)
 		{
 			if (o is CellLocation)
-				cell = getCellProperties(o as CellLocation);
+				cell = getCellProperties(o as CellLocation, false);
 			else
-				cell = getCellPropertiesAt(o.rowIndex, o.columnIndex);
+				cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
 			
 			if (cell)
 				cell.enabled = /*o is CellProperties ? CellProperties(o).enabled :*/ !cell.enabled;
@@ -558,83 +463,80 @@ public class PaintGrid2 extends DataGrid
 	
 	public function addColumn (index : int = 0) : void
 	{
-	/*if (index < 0)
-	   index = 0;
-	   else if (index > columns.length)
-	   index = columns.length;
-	
-	   var cols : Array = columns;
-	
-	   var column : DataGridColumn = new DataGridColumn();
-	   column.headerText = "test";
-	   column.dataField = "r0";
-	
-	   cols.splice(index, 0, column);
-	
-	   var i : int, j : int, cell : CellProperties;
-	   var info : Row, n : int = cols.length;
-	
-	   for each (var row : Object in collection)
-	   {
-	   info = row.info;
-	   cell = new CellProperties(info.cells[0].row, index);
-	
-	   info.cells.splice(index, 0, cell);
-	   cells.push(cell);
-	
-	   for (i = index + 1; i < n; ++i)
-	   {
-	   cell = info.cells[i];
-	
-	   if (cell)
-	   ++cell.column;
-	   }
-	   }
-	
-	 columns = cols;*/
+		if (index < 0)
+			index = 0;
+		else if (index > columns.length)
+			index = columns.length;
+		
+		var cols : Array = columns;
+		
+		var column : DataGridColumn = new DataGridColumn();
+		column.headerText = "test";
+		column.dataField = "r0";
+		
+		cols.splice(index, 0, column);
+		
+		var i : int, j : int, cell : CellProperties;
+		var n : int = cols.length;
+		
+		for each (var info : Row in infos)
+		{
+			cell = new CellProperties(info.cells[0].row, index);
+			
+			info.cells.splice(index, 0, cell);
+			cells.push(cell);
+			
+			for (i = index + 1; i < n; ++i)
+			{
+				cell = info.cells[i];
+				
+				if (cell)
+					++cell.column;
+			}
+		}
+		
+		columns = cols;
 	}
 	
 	public function removeColumn (index : int = 0) : void
 	{
-	/*if (index < 0)
-	   index = 0;
-	   else if (index > columns.length)
-	   index = columns.length;
-	
-	   var cols : Array = columns;
-	
-	   var column : DataGridColumn = cols.splice(index, 1)[0];
-	
-	   var i : int, j : int, cell : CellProperties;
-	   var info : Row, n : int = cols.length;
-	
-	   for each (var row : Object in collection)
-	   {
-	   info = row.info;
-	
-	   cell = info.cells.splice(index, 1)[0];
-	   cell.release();
-	
-	   if (selectedCellProperties === cell)
-	   {
-	   selectedCellProperties = null;
-	
-	   i = selectedCells.indexOf(cell);
-	   selectedCells.splice(i, 1);
-	   }
-	
-	   cells.splice(cells.indexOf(cell), 1);
-	
-	   for (i = index; i < n; ++i)
-	   {
-	   cell = info.cells[i];
-	
-	   if (cell)
-	   --cell.column;
-	   }
-	   }
-	
-	 columns = cols;*/
+		if (index < 0)
+			index = 0;
+		else if (index > columns.length)
+			index = columns.length;
+		
+		var cols : Array = columns;
+		
+		var column : DataGridColumn = cols.splice(index, 1)[0];
+		
+		var i : int, j : int, cell : CellProperties;
+		var n : int = cols.length;
+		
+		for each (var info : Row in infos)
+		{
+			cell = info.cells.splice(index, 1)[0];
+			cell.release();
+			
+			if (selectedCellProperties === cell)
+			{
+				selectedCellProperties = null;
+				
+				i = selectedCells.indexOf(cell);
+				selectedCells.splice(i, 1);
+			}
+			
+			cells.splice(cells.indexOf(cell), 1);
+			
+			for (i = index; i < n; ++i)
+			{
+				cell = info.cells[i];
+				
+				if (cell)
+					--cell.column;
+			}
+		}
+		
+		columns = cols;
 	}
 	
 	/**
@@ -647,7 +549,7 @@ public class PaintGrid2 extends DataGrid
 		if (value < 0)
 			return -1;
 		
-		var info : Row = dataProvider.getItemAt(index).info;
+		var info : Row = infos[index];
 		
 		if (!info)
 			return -1;
@@ -660,7 +562,7 @@ public class PaintGrid2 extends DataGrid
 		if (index < 0 || value < 0)
 			return;
 		
-		var info : Row = super.dataProvider.getItemAt(index).info;
+		var info : Row = infos[index];
 		
 		if (!info)
 			return;
@@ -668,40 +570,189 @@ public class PaintGrid2 extends DataGrid
 		info.height = value;
 		
 		callLater(dispatchEvent, [new Event("rowHeightChanged")]);
-	
-	/*itemsNeedMeasurement = true;
-	   itemsSizeChanged = true;
-	   invalidateSize();
-	   invalidateList();
-	 invalidateDisplayList();*/
 	}
 	
-	/*override mx_internal function shiftColumns (oldIndex : int, newIndex : int, trigger : Event = null) : void
-	   {
-	   super.shiftColumns(oldIndex, newIndex, trigger);
+	[ArrayElementType("Row")]
+	protected var infos : Array = [];
 	
-	   if (newIndex >= 0 && oldIndex != newIndex)
-	   {
-	   var incr : int = oldIndex < newIndex ? 1 : -1;
-	   var i : int, j : int, cell : CellProperties;
-	   var info : Row;
+	protected function getInfoByUID (value : String) : Row
+	{
+		if (!value || !value.length)
+			return null;
+		
+		for each (var info : Row in infos)
+			if (info.uid == value)
+				return info;
+		
+		return null;
+	}
 	
-	   for each (var row : Object in collection)
-	   {
-	   info = row.info;
+	/**
+	 * Unless selected cell is enabled prevent default behavior - prevent item from being edited.
+	 *
+	 * @param e
+	 *
+	 */
 	
-	   for (i = oldIndex; i != newIndex; i += incr)
-	   {
-	   j = i + incr;
-	   cell = info.cells[i];
-	   info.cells[i] = info.cells[j];
-	   info.cells[j] = cell;
-	   info.cells[i].column = i;
-	   info.cells[j].column = j;
-	   }
-	   }
-	   }
-	 }*/
+	protected function itemEditBeginningHandler (e : DataGridEvent) : void
+	{
+		if (!(e.itemRenderer is PaintGrid2ColumnItemRenderer))
+			return;
+		
+		var r : PaintGrid2ColumnItemRenderer = PaintGrid2ColumnItemRenderer(e.itemRenderer);
+		var cell : CellProperties = r.cell;
+		
+		if (!cell || !cell.enabled)
+			e.preventDefault();
+	}
+	
+	protected var _selectedCells : Array = [];
+	
+	[Bindable(event="selectedCellsChanged")]
+	public function get selectedCells () : Array
+	{
+		return _selectedCells;
+	}
+	
+	override protected function selectItem (item : IListItemRenderer, shiftKey : Boolean, ctrlKey : Boolean, transition : Boolean = true) : Boolean
+	{
+		var retval : Boolean = super.selectItem(item, shiftKey, ctrlKey, transition);
+		
+		var currentCell : CellProperties, oldCell : CellProperties = selectedCellProperties;
+		var i : int, arr : Array;
+		var start : CellLocation, end : CellLocation;
+		var cells : Array, cell : CellProperties;
+		
+		if (item is PaintGrid2ColumnItemRenderer)
+			currentCell = PaintGrid2ColumnItemRenderer(item).cell;
+		
+		if (!currentCell)
+			return retval;
+		
+		if (!ctrlKey && !shiftKey)
+		{
+			while (_selectedCells.length)
+			{
+				cell = _selectedCells.pop();
+				cell.selected = false;
+			}
+			
+			beginEdit = oldCell == currentCell;
+			
+			_selectedCells.push(currentCell);
+			currentCell.selected = true;
+		}
+		else if (ctrlKey && shiftKey)
+		{
+			start = selectedCellProperties || new CellLocation(), end = currentCell;
+			cells = getAllCellPropertiesInRangeBy(start, end, false);
+			
+			for each (cell in cells)
+				if ((i = _selectedCells.indexOf(cell)) > -1)
+				{
+					arr = _selectedCells.splice(i, 1);
+					
+					while (arr.length)
+					{
+						cell = arr.pop();
+						cell.selected = false;
+					}
+				}
+		}
+		else if (ctrlKey && !shiftKey)
+		{
+			if (oldCell === currentCell)
+			{
+				currentCell.selected = !currentCell.selected;
+				
+				if (!currentCell.selected && (i = _selectedCells.indexOf(currentCell)) > -1)
+					arr = _selectedCells.splice(i, 1);
+				else
+					_selectedCells.push(currentCell);
+			}
+			else if ((i = _selectedCells.indexOf(currentCell)) > -1)
+			{
+				arr = _selectedCells.splice(i, 1);
+				arr[0].selected = false;
+			}
+			else
+			{
+				_selectedCells.push(currentCell);
+				currentCell.selected = true;
+			}
+		}
+		else if (shiftKey && !ctrlKey)
+		{
+			start = selectedCellProperties || new CellLocation(), end = currentCell;
+			cells = getAllCellPropertiesInRangeBy(start, end);
+			
+			for each (cell in cells)
+				if ((i = _selectedCells.indexOf(cell)) < 0)
+				{
+					_selectedCells.push(cell);
+					cell.selected = true;
+				}
+		}
+		
+		selectedCellProperties = currentCell;
+		dispatchEvent(new Event("selectedCellsChanged"));
+		
+		return retval;
+	}
+	
+	override mx_internal function shiftColumns (oldIndex : int, newIndex : int, trigger : Event = null) : void
+	{
+		super.shiftColumns(oldIndex, newIndex, trigger);
+		
+		if (newIndex >= 0 && oldIndex != newIndex)
+		{
+			var incr : int = oldIndex < newIndex ? 1 : -1;
+			var i : int, j : int, cell : CellProperties;
+			
+			for each (var info : Row in infos)
+				for (i = oldIndex; i != newIndex; i += incr)
+				{
+					j = i + incr;
+					cell = info.cells[i];
+					info.cells[i] = info.cells[j];
+					info.cells[j] = cell;
+					info.cells[i].column = i;
+					info.cells[j].column = j;
+				}
+		}
+	}
+	
+	override protected function setupColumnItemRenderer (c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
+	{
+		var item : IListItemRenderer = super.setupColumnItemRenderer(c, contentHolder, rowNum, colNum, data, uid);
+		
+		if (!item)
+			return null;
+		
+		item.styleName = this;
+		
+		if (item is PaintGrid2ColumnItemRenderer)
+		{
+			var info : Row = getInfoByUID(uid);
+			var r : PaintGrid2ColumnItemRenderer = PaintGrid2ColumnItemRenderer(item);
+			
+			r.dataGrid = this;
+			r.globalCell = _globalCellStyles;
+			
+			if (info)
+			{
+				r.cell = info.cells[colNum + horizontalScrollPosition];
+				r.info = info;
+			}
+		}
+		
+		return item;
+	}
+	
+	override protected function drawSelectionIndicator (indicator : Sprite, x : Number, y : Number, width : Number, height : Number, color : uint, itemRenderer : IListItemRenderer) : void
+	{
+	
+	}
 	
 	override mx_internal function selectionTween_updateHandler (event : TweenEvent) : void
 	{
@@ -718,57 +769,62 @@ public class PaintGrid2 extends DataGrid
 		var ce : CollectionEvent = CollectionEvent(event);
 		
 		var row : int, rows : int, col : int, cols : int, cell : CellProperties;
-		var cells : Array;
+		var info : Row;
 		
 		switch (ce.kind)
 		{
 			case CollectionEventKind.RESET:
 				break;
 			
-			/*case CollectionEventKind.ADD:
-			   for (rows = ce.items.length, cols = columns.length; row < rows; ++row)
-			   {
-			   info = new Row(20);
+			case CollectionEventKind.ADD:
+				for (rows = ce.items.length, cols = columns.length; row < rows; ++row)
+				{
+					info = new Row();
+					info.uid = itemToUID(ce.items[row]);
+					
+					for (col = 0; col < cols; ++col)
+					{
+						cell = new CellProperties(ce.location, col);
+						info.cells[col] = cell;
+						
+						cells.push(cell);
+					}
+					
+					infos.push(info);
+				}
+				break;
 			
-			   for (col = 0; col < cols; ++col)
-			   {
-			   cell = new CellProperties(ce.location, col);
-			   info.cells[col] = cell;
-			
-			   cells.push(cell);
-			   }
-			
-			   ce.items[row].info = info;
-			   }
-			 break;*/
-			
-			/*case CollectionEventKind.REMOVE:
-			   for (rows = ce.items.length; row < rows; ++row)
-			   {
-			   info = ce.items[row].info;
-			
-			   while (info.cells.length)
-			   {
-			   info = ce.items[row].info;
-			   cell = info.cells.pop();
-			   cell.release();
-			
-			   col = cells.indexOf(cell);
-			
-			   if (col > -1)
-			   cells.splice(col, 1);
-			   }
-			   }
-			 break;*/
+			case CollectionEventKind.REMOVE:
+				for (rows = ce.items.length; row < rows; ++row)
+				{
+					info = infos.splice(row, 1)[0];
+					
+					while (info.cells.length)
+					{
+						cell = info.cells.pop();
+						cell.release();
+						
+						col = cells.indexOf(cell);
+						
+						if (col > -1)
+							cells.splice(col, 1);
+						
+						col = modifiedCells.indexOf(cell);
+						
+						if (col > -1)
+							modifiedCells.splice(col, 1);
+					}
+				}
+				break;
 			
 			case CollectionEventKind.REFRESH:
-				for (rows = cache.length; row < rows; ++row)
+				for (rows = infos.length; row < rows; ++row)
 				{
-					cells = cache[row];
+					info = infos[row];
 					
-					for (col = 0, cols = cells.length; col < cols; ++col)
+					for (col = 0, cols = info.cells.length; col < cols; ++col)
 					{
-						cell = cells[col];
+						cell = info.cells[col];
 						cell.row = row;
 						cell.column = col;
 					}
@@ -777,83 +833,62 @@ public class PaintGrid2 extends DataGrid
 		}
 	}
 	
-	protected var currentRow : int;
-	
-	protected var currentColumn : int;
-	
-	override protected function setupColumnItemRenderer (c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
+	override protected function mouseDoubleClickHandler (event : MouseEvent) : void
 	{
-		currentRow = rowNum + verticalScrollPosition;
-		currentColumn = colNum + horizontalScrollPosition;
+		var dataGridEvent : DataGridEvent;
+		var r : IListItemRenderer;
+		var dgColumn : DataGridColumn;
 		
-		var item : IListItemRenderer = super.setupColumnItemRenderer(c, contentHolder, rowNum, colNum, data, uid);
+		r = mouseEventToItemRenderer(event);
 		
-		if (!item)
-			return null;
-		
-		item.styleName = this;
-		
-		if (item is PaintGrid2ColumnItemRenderer)
+		if (r && r != itemEditorInstance)
 		{
-			var r : PaintGrid2ColumnItemRenderer = PaintGrid2ColumnItemRenderer(item);
-			r.dataGrid = this;
-			r.globalCell = _globalCellStyles;
-			r.cell = cache[currentRow][currentColumn];
-		}
-		
-		return item;
-	}
-	
-	protected var cache : Array = [];
-	
-	override protected function makeListData (data : Object, uid : String, rowNum : int, columnNum : int, column : DataGridColumn) : BaseListData
-	{
-		var text : String;
-		
-		if (data is DataGridColumn)
-			text = column.headerText ? column.headerText : column.dataField;
-		else
-		{
-			cache[currentRow] ||= [];
+			var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
 			
-			var cell : CellProperties = cache[currentRow][columnNum] as CellProperties;
-			
-			if (!cell)
+			if (columns[dilr.listData.columnIndex].editable)
 			{
-				var location : CellLocation = new CellLocation(currentRow, currentColumn);
-				cell = getCellProperties(location);
+				dgColumn = columns[dilr.listData.columnIndex];
+				dataGridEvent = new DataGridEvent(DataGridEvent.ITEM_EDIT_BEGINNING, false, true);
+				// ITEM_EDIT events are cancelable
+				dataGridEvent.columnIndex = dilr.listData.columnIndex;
+				dataGridEvent.dataField = dgColumn.dataField;
+				dataGridEvent.rowIndex = dilr.listData.rowIndex + verticalScrollPosition;
+				dataGridEvent.itemRenderer = r;
 				
-				if (!cell)
-				{
-					cell = new CellProperties(location.row, location.column);
-					addCell(cell);
-				}
-				
-				cache[currentRow][currentColumn] = cell;
+				dispatchEvent(dataGridEvent);
 			}
-			
-			cell.column = currentColumn;
-			cell.row = currentRow;
-			
-			text = column.itemToLabel(data);
 		}
 		
-		return new PaintGridListData(cell, text, column.dataField, columnNum, uid, this, rowNum);
+		super.mouseDoubleClickHandler(event);
 	}
 	
-	/**
-	 * Unless selected cell is enabled prevent default behavior - prevent item from being edited.
-	 *
-	 * @param e
-	 *
-	 */
+	protected var beginEdit : Boolean;
 	
-	protected function itemEditBeginningHandler (e : DataGridEvent) : void
+	override protected function mouseUpHandler (event : MouseEvent) : void
 	{
-		var cell : CellProperties = getCellPropertiesAt(e.rowIndex + verticalScrollPosition, e.columnIndex + horizontalScrollPosition);
+		var r : IListItemRenderer;
+		var dgColumn : DataGridColumn;
 		
-		if (!cell || !cell.enabled)
-			e.preventDefault();
+		r = mouseEventToItemRenderer(event);
+		
+		if (r)
+		{
+			if (beginEdit)
+				mouseDoubleClickHandler(event);
+			
+			var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
+			
+			if (columns[dilr.listData.columnIndex].editable)
+			{
+				dgColumn = columns[dilr.listData.columnIndex];
+				dgColumn.editable = false;
+			}
+		}
+		
+		super.mouseUpHandler(event);
+		
+		if (dgColumn)
+			dgColumn.editable = true;
 	}
 }
 }
