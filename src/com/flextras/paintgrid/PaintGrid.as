@@ -13,6 +13,7 @@ import mx.core.ScrollPolicy;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
+import mx.events.DataGridEvent;
 import mx.events.TweenEvent;
 import mx.utils.ObjectProxy;
 import mx.utils.ObjectUtil;
@@ -25,10 +26,13 @@ public class PaintGrid extends DataGrid
 	{
 		super();
 		
+		editable = true;
 		variableRowHeight = true;
 		allowMultipleSelection = true;
 		horizontalScrollPolicy = ScrollPolicy.AUTO; // !!
 		itemRenderer = new ClassFactory(PaintGridColumnItemRenderer);
+		
+		addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, itemEditBeginningHandler);
 	}
 	
 	protected var _selectedCells : Array = [];
@@ -796,6 +800,21 @@ public class PaintGrid extends DataGrid
 				}
 				break;
 		}
+	}
+	
+	/**
+	 * Unless selected cell is enabled prevent default behavior - prevent item from being edited.
+	 *
+	 * @param e
+	 *
+	 */
+	
+	protected function itemEditBeginningHandler (e : DataGridEvent) : void
+	{
+		var cell : CellProperties = getCellPropertiesAt(e.rowIndex + verticalScrollPosition, e.columnIndex + horizontalScrollPosition, false);
+		
+		if (!cell || !cell.enabled)
+			e.preventDefault();
 	}
 }
 }

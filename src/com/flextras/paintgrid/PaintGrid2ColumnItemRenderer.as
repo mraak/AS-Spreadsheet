@@ -117,25 +117,30 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (_listData === value)
 			return;
 		
-		_listData = value as DataGridListData;
+		if (!(value is PaintGridListData))
+			return;
+		
+		_listData = PaintGridListData(value);
+	
+		//cell = PaintGridListData(value).cell;
 	}
 	
-	protected var _info : RowInfo;
+	protected var _info : Row;
 	
-	public function get info () : RowInfo
+	public function get info () : Row
 	{
 		return _info;
 	}
 	
-	public function set info (value : RowInfo) : void
-	{
-		if (value === _info)
-			return;
-		
-		_info = value;
-		
-		heightProxy = new ObjectProxy(value ? value.height : 20);
-	}
+	/*public function set info (value : Row) : void
+	   {
+	   if (value === _info)
+	   return;
+	
+	   _info = value;
+	
+	   heightProxy = new ObjectProxy(value.height);
+	 }*/
 	
 	protected var _heightProxy : ObjectProxy;
 	
@@ -267,7 +272,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.commitProperties();
 		
-		if (dataChanged)
+		if (dataChanged && _listData)
 		{
 			textField.text = _listData.label;
 			
@@ -317,8 +322,12 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 			
 			if (currentStylesChanged || styles.styles.fontStylesChanged)
 			{
-				textField.antiAliasType = styles.styles.antiAliasType;
-				textField.gridFitType = styles.styles.gridFitType;
+				if (styles.styles.antiAliasType)
+					textField.antiAliasType = styles.styles.antiAliasType;
+				
+				if (styles.styles.gridFitType)
+					textField.gridFitType = styles.styles.gridFitType;
+				
 				textField.sharpness = styles.styles.sharpness;
 				textField.thickness = styles.styles.thickness;
 				

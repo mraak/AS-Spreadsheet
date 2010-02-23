@@ -8,6 +8,7 @@
     <classEntry path="com.flextras.spreadsheet.PaintSpreadsheet"/>
     <classEntry path="com.flextras.paintgrid.PaintGrid2"/>
     <classEntry path="com.flextras.paintgrid.RowInfo"/>
+    <classEntry path="com.flextras.paintgrid.PaintGridListData"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

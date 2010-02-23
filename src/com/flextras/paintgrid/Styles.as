@@ -24,7 +24,7 @@ public class Styles extends BasicStyles
 	{
 		_fontStylesChanged = value;
 		
-		if (value)
+		if (owner && value)
 			owner.invalidateDisplayList();
 	}
 	

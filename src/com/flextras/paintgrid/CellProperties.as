@@ -139,6 +139,17 @@ public class CellProperties extends CellLocation
 		return super.equal(cell);
 	}
 	
+	public function assign (value : CellProperties) : void
+	{
+		if (!value)
+			return;
+		
+		styles = value.styles;
+		rollOverStyles = value.rollOverStyles;
+		selectedStyles = value.selectedStyles;
+		disabledStyles = value.disabledStyles;
+	}
+	
 	override public function get valid () : Boolean
 	{
 		return super.valid && styles && typeof(styles) == "object" && rollOverStyles && typeof(rollOverStyles) == "object" && selectedStyles && typeof(selectedStyles) == "object" && disabledStyles && typeof(disabledStyles) == "object";

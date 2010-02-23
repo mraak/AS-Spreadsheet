@@ -26,7 +26,7 @@ public class BasicStyles
 	{
 		_foregroundChanged = value;
 		
-		if (value)
+		if (owner && value)
 			owner.invalidateDisplayList();
 	}
 	
@@ -77,7 +77,7 @@ public class BasicStyles
 	{
 		_backgroundChanged = value;
 		
-		if (value)
+		if (owner && value)
 			owner.invalidateDisplayList();
 	}
 	
