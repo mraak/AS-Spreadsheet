@@ -1,19 +1,18 @@
 package com.flextras.spreadsheet
 {
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.PaintGridColumnItemRenderer;
+import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
 
-import mx.binding.utils.BindingUtils;
 import mx.controls.dataGridClasses.DataGridListData;
 import mx.core.IDataRenderer;
 
 [Event(name="cellClick", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="cellDoubleClick", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
-public class SpreadsheetItemRendererBase extends PaintGridColumnItemRenderer /*Text*/implements IDataRenderer
+public class SpreadsheetItemRendererBase extends PaintGrid2ColumnItemRenderer /*Text*/implements IDataRenderer
 {
 	
 	private var _rowIndex : int;
@@ -50,9 +49,9 @@ public class SpreadsheetItemRendererBase extends PaintGridColumnItemRenderer /*T
 		_rowIndex = data.rowIndex;
 		_columnIndex = myListData.columnIndex;
 		_cellId = String(Utils.alphabet[_columnIndex]).toLowerCase() + _rowIndex;
-		
+	
 		//this.text =_cellId + " h: " + data.rowHeight;
-		
+	
 		//BindingUtils.bindSetter(setHeight, data, "rowHeight");
 	
 	}
@@ -75,20 +74,20 @@ public class SpreadsheetItemRendererBase extends PaintGridColumnItemRenderer /*T
 	protected function clickHandler (evt : MouseEvent) : void
 	{
 	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_CLICK, true);
-		this.dispatchEvent(cevt);*/
+	 this.dispatchEvent(cevt);*/
 	}
 	
 	protected function dblClickHandler (evt : MouseEvent) : void
 	{
 	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_DOUBLE_CLICK, true);
-		cevt.data = evt;
-		this.dispatchEvent(cevt);*/
+	   cevt.data = evt;
+	 this.dispatchEvent(cevt);*/
 	}
 	
-/*	private function setHeight (value : Object) : void
-	{
-		this.height = value as Number;
-	}*/
+	/*	private function setHeight (value : Object) : void
+	   {
+	   this.height = value as Number;
+	 }*/
 	
 	//////////////////////////////////////////////
 	//  GETTERS && SETTERS
