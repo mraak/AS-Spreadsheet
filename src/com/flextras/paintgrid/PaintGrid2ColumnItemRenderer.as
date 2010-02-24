@@ -249,6 +249,8 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.createChildren();
 		
+		dataGrid = owner as PaintGrid2;
+		
 		if (!background)
 		{
 			background = new Shape();
@@ -269,7 +271,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.commitProperties();
 		
-		if (dataChanged && _listData)
+		if (dataChanged && textField && _listData)
 		{
 			textField.text = _listData.label;
 			
@@ -283,19 +285,25 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.measure();
 		
-		var w : Number = textField.measuredWidth;
-		var h : Number;
+		var w : Number, h : Number;
+		
+		if (textField)
+		{
+			w = textField.measuredWidth;
+			h = textField.measuredHeight;
+		}
 		
 		if (info)
 			explicitRowHeight = info.height;
 		
-		if (!isNaN(explicitRowHeight))
-			h = textField.measuredHeight > explicitRowHeight ? textField.measuredHeight : explicitRowHeight;
-		else
-			h = textField.measuredHeight;
+		if (!isNaN(explicitRowHeight) && explicitHeight > h)
+			h = explicitRowHeight;
 		
-		measuredMinWidth = measuredWidth = w;
-		measuredMinHeight = measuredHeight = h;
+		if (!isNaN(w))
+			measuredMinWidth = measuredWidth = w;
+		
+		if (!isNaN(h))
+			measuredMinHeight = measuredHeight = h;
 	}
 	
 	override protected function updateDisplayList (w : Number, h : Number) : void

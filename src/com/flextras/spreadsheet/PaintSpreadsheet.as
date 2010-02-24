@@ -7,14 +7,18 @@ import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
 import com.flextras.paintgrid.Row;
 
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import mx.collections.ArrayCollection;
 import mx.controls.TextInput;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.core.ClassFactory;
+import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.DataGridEvent;
+
+use namespace mx_internal;
 
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
@@ -48,8 +52,6 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	
 	private var _ctrlObjects : Object = new Object();
 	
-	private var _dataprovider : Object;
-	
 	private var _expressions : ArrayCollection = new ArrayCollection();
 	
 	private var _expressionsTemp : *;
@@ -65,24 +67,15 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	public function PaintSpreadsheet ()
 	{
 		super();
-		init();
-	
-	}
-	
-	protected function init () : void
-	{
-		this.editable = true;
+		
 		this.draggableColumns = false;
 		this.sortableColumns = false;
-		this.variableRowHeight = true;
 		this.showHeaders = false;
+		doubleClickToEdit = true;
 		
-		this.itemRenderer = new ClassFactory(SpreadsheetItemRenderer2);
+		this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
 		
 		this.addEventListener(DataGridEvent.ITEM_FOCUS_IN, onItemFocusIn);
-		this.addEventListener(SpreadsheetEvent.CELL_REGISTER, onCellDataChange);
-		this.addEventListener(SpreadsheetEvent.CELL_CLICK, onCellClick);
-		this.addEventListener(SpreadsheetEvent.CELL_DOUBLE_CLICK, onCellDoubleClick);
 	
 	}
 	
@@ -256,22 +249,6 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		}
 	}
 	
-	private function onCellClick (e : SpreadsheetEvent) : void
-	{
-	
-	}
-	
-	private function onCellDoubleClick (e : SpreadsheetEvent) : void
-	{
-		//trace(SpreadsheetItemRendererBase(e.target).cellId + ", " + _nonEditableCells.indexOf(SpreadsheetItemRendererBase(e.target).cellId));
-		
-		if (disabledCells.indexOf(SpreadsheetItemRendererBase(e.target).cellId) == -1)
-		{
-			super.mouseDownHandler(e.data);
-			super.mouseUpHandler(e.data);
-		}
-	}
-	
 	protected function onExpressionsChange (e : CollectionEvent) : void
 	{
 		expressionChangeEvent = e;
@@ -291,12 +268,6 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		var e : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.WARNING);
 		e.message = event.message;
 		this.dispatchEvent(e);
-	}
-	
-	private function onCellDataChange (e : SpreadsheetEvent) : void
-	{
-		//var renderer:SpreadsheetItemRenderer1 = e.target as SpreadsheetItemRenderer1;
-		//_renderers[renderer.cellId] = renderer;
 	}
 	
 	/////////////////////////////////////
@@ -441,37 +412,21 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	{
 		_cellResizePolicy = value;
 	}
-
-/*	override protected function collectionChangeHandler (event : Event) : void
-   {
-   super.collectionChangeHandler(event);
-
-   if (!event is CollectionEvent)
-   return;
-
-   var ce : CollectionEvent = CollectionEvent(event);
-
-   var cell : CellProperties, info : ControlObject, ctrl : ControlObject, row : Row;
-
-   switch (ce.kind)
-   {
-   case CollectionEventKind.UPDATE:
-   info = ce.items[0].source;
-
-   for each (ctrl in info.ctrlOperands)
-   {
-   row = new Row(20);
-
-   cell = new CellProperties(ctrl.rowIndex, ctrl.colIndex);
-   row.cells[ctrl.colIndex] = cell;
-
-   cells.push(cell);
-
-   ctrl.info = row;
-   }
-   break;
-   }
-   }
- */
+	
+	override protected function keyDownHandler (event : KeyboardEvent) : void
+	{
+		super.keyDownHandler(event);
+		
+		if (event.ctrlKey && selectedRenderer is PaintSpreadsheetItemRenderer)
+			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = true;
+	}
+	
+	override protected function keyUpHandler (event : KeyboardEvent) : void
+	{
+		super.keyUpHandler(event);
+		
+		if (!event.ctrlKey && selectedRenderer is PaintSpreadsheetItemRenderer)
+			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = false;
+	}
 }
 }
