@@ -78,6 +78,7 @@ package com.flextras.spreadsheet
 			this.showHeaders = false;
 			
 			this.itemRenderer = new ClassFactory(SpreadsheetItemRenderer2);
+			//this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
 			
 			this.addEventListener(DataGridEvent.ITEM_FOCUS_IN, onItemFocusIn);
 			this.addEventListener(SpreadsheetEvent.CELL_REGISTER, onCellDataChange);

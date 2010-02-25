@@ -73,15 +73,15 @@ public class SpreadsheetItemRendererBase extends PaintGrid2ColumnItemRenderer /*
 	
 	protected function clickHandler (evt : MouseEvent) : void
 	{
-	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_CLICK, true);
-	 this.dispatchEvent(cevt);*/
+	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_CLICK, true);
+	 this.dispatchEvent(cevt);
 	}
 	
 	protected function dblClickHandler (evt : MouseEvent) : void
 	{
-	/*	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_DOUBLE_CLICK, true);
+	var cevt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.CELL_DOUBLE_CLICK, true);
 	   cevt.data = evt;
-	 this.dispatchEvent(cevt);*/
+	 this.dispatchEvent(cevt);
 	}
 	
 	/*	private function setHeight (value : Object) : void

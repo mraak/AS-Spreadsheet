@@ -7,6 +7,7 @@ import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
 import com.flextras.paintgrid.Row;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
@@ -142,7 +143,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 				}
 				
 				updateExpressions();
-				
+				dispatchEvent(new Event("expressionsChanged"));
 			}
 			
 			var expEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_INITIALIZED);
@@ -182,7 +183,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 				var prop : String = String(Utils.alphabet[j]).toLowerCase();
 				rowObject[prop] = ""; //i.toString();
 				rowObject.rowIndex = i;
-				rowObject.rowHeight = 20;
+				//rowObject.rowHeight = 20;
 				
 				cell = new CellProperties(i, j);
 				info.cells[j] = cell;
@@ -251,6 +252,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	
 	protected function onExpressionsChange (e : CollectionEvent) : void
 	{
+	
 		expressionChangeEvent = e;
 		expressionsChanged = true;
 		invalidateProperties();
@@ -359,7 +361,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		return _calc;
 	}
 	
-	[Bindable]
+	[Bindable(event="expressionsChanged")]
 	public function set expressions (value : ArrayCollection) : void
 	{
 		_expressions = value;
@@ -367,6 +369,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		expressionsChanged = true;
 		invalidateProperties();
 	}
+	
 	
 	public function get expressions () : ArrayCollection
 	{

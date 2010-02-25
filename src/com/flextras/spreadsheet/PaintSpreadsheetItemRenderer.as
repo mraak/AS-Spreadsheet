@@ -79,13 +79,13 @@ public class PaintSpreadsheetItemRenderer extends PaintGrid2ColumnItemRenderer
 	{
 		super.updateDisplayList(w, h);
 		
-		verticalSeparator.x = w - 2;
-		horizontalSeparator.y = h - 2;
+		verticalSeparator.x = w - 5;
+		horizontalSeparator.y = h - 5;
 		
 		showSeparators = dataGrid && dataGrid.isCtrl && dataGrid.isAlt && cell && cell.selected;
 		
-		drawSeparator(verticalSeparator, 0, 0, 2, h);
-		drawSeparator(horizontalSeparator, 0, 0, w - 2, 2);
+		drawSeparator(verticalSeparator, 0, 0, 5, h);
+		drawSeparator(horizontalSeparator, 0, 0, w - 5, 5);
 	}
 	
 	protected function drawSeparator (s : Sprite, x : Number, y : Number, w : Number, h : Number) : void
