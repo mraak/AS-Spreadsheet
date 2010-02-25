@@ -169,7 +169,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		_cell = value;
 		
-		invalidateDisplayList();
+		callLater(invalidateDisplayList);
 		
 		if (value)
 		{
