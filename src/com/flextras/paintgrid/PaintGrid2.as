@@ -5,6 +5,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import flashx.textLayout.container.ISandboxSupport;
+
 import mx.controls.DataGrid;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.controls.listClasses.IDropInListItemRenderer;
@@ -600,6 +602,9 @@ public class PaintGrid2 extends DataGrid
 	{
 		var retval : Boolean = super.selectItem(item, shiftKey, ctrlKey, transition);
 		
+		if (isAlt)
+			return retval;
+		
 		var currentCell : CellProperties, oldCell : CellProperties = selectedCellProperties;
 		var i : int, arr : Array;
 		var start : CellLocation, end : CellLocation;
@@ -622,14 +627,15 @@ public class PaintGrid2 extends DataGrid
 				cell.selected = false;
 			}
 			
-			beginEdit = oldCell == currentCell && !preventFromEditing && doubleClickToEdit;
+			beginEdit = oldCell == currentCell && doubleClickToEdit || !doubleClickToEdit;
 			
 			_selectedCells.push(currentCell);
 			currentCell.selected = true;
 		}
 		else if (ctrlKey && shiftKey)
 		{
-			start = selectedCellProperties || new CellLocation(), end = currentCell;
+			start = selectedCellProperties || new CellLocation();
+			end = currentCell;
 			cells = getAllCellPropertiesInRangeBy(start, end, false);
 			
 			for each (cell in cells)
@@ -648,15 +654,12 @@ public class PaintGrid2 extends DataGrid
 		{
 			if (oldCell === currentCell)
 			{
-				if (!preventFromEditing && (doubleClickToEdit || isCtrl))
-				{
-					currentCell.selected = !currentCell.selected;
-					
-					if (!currentCell.selected && (i = _selectedCells.indexOf(currentCell)) > -1)
-						arr = _selectedCells.splice(i, 1);
-					else
-						_selectedCells.push(currentCell);
-				}
+				currentCell.selected = !currentCell.selected;
+				
+				if (!currentCell.selected && (i = _selectedCells.indexOf(currentCell)) > -1)
+					arr = _selectedCells.splice(i, 1);
+				else
+					_selectedCells.push(currentCell);
 			}
 			else if ((i = _selectedCells.indexOf(currentCell)) > -1)
 			{
@@ -733,6 +736,8 @@ public class PaintGrid2 extends DataGrid
 				r.cell = info.cells[colNum + horizontalScrollPosition];
 				r.info = info;
 			}
+			
+			r.invalidateDisplayList();
 		}
 		
 		return item;
@@ -837,8 +842,10 @@ public class PaintGrid2 extends DataGrid
 		var r : PaintGrid2ColumnItemRenderer = PaintGrid2ColumnItemRenderer(e.itemRenderer);
 		var cell : CellProperties = r.cell;
 		
-		if (!cell || !cell.enabled && (!doubleClickToEdit || !isCtrl))
+		if (!cell || !cell.enabled || !beginEdit)
 			e.preventDefault();
+		
+		beginEdit = false;
 	}
 	
 	override protected function mouseDoubleClickHandler (event : MouseEvent) : void
@@ -853,8 +860,10 @@ public class PaintGrid2 extends DataGrid
 		{
 			var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
 			
-			if (columns[dilr.listData.columnIndex].editable && !preventFromEditing && (doubleClickToEdit || isCtrl))
+			if (columns[dilr.listData.columnIndex].editable && doubleClickToEdit && !isCtrl && !isAlt)
 			{
+				beginEdit = true;
+				
 				dgColumn = columns[dilr.listData.columnIndex];
 				dataGridEvent = new DataGridEvent(DataGridEvent.ITEM_EDIT_BEGINNING, false, true);
 				// ITEM_EDIT events are cancelable
@@ -874,49 +883,51 @@ public class PaintGrid2 extends DataGrid
 	
 	protected var beginEdit : Boolean;
 	
-	override protected function mouseUpHandler (event : MouseEvent) : void
-	{
-		var r : IListItemRenderer;
-		var dgColumn : DataGridColumn;
-		
-		r = mouseEventToItemRenderer(event);
-		
-		if (r)
-		{
-			if (beginEdit)
-				mouseDoubleClickHandler(event);
-			
-			var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
-			
-			if (columns[dilr.listData.columnIndex].editable)
-			{
-				dgColumn = columns[dilr.listData.columnIndex];
-				dgColumn.editable = false;
-			}
-		}
-		
-		super.mouseUpHandler(event);
-		
-		if (dgColumn)
-			dgColumn.editable = true;
-	}
+	/*override protected function mouseUpHandler (event : MouseEvent) : void
+	   {
+	   var r : IListItemRenderer;
+	   var dgColumn : DataGridColumn;
+	
+	   r = mouseEventToItemRenderer(event);
+	
+	   if (r)
+	   {
+	   if (beginEdit)
+	   mouseDoubleClickHandler(event);
+	
+	   var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
+	
+	   if (columns[dilr.listData.columnIndex].editable)
+	   {
+	   dgColumn = columns[dilr.listData.columnIndex];
+	   dgColumn.editable = false;
+	   }
+	   }
+	
+	   super.mouseUpHandler(event);
+	
+	   if (dgColumn)
+	   dgColumn.editable = true;
+	 }*/
 	
 	mx_internal var isCtrl : Boolean;
+	
+	mx_internal var isAlt : Boolean;
 	
 	override protected function keyDownHandler (event : KeyboardEvent) : void
 	{
 		super.keyDownHandler(event);
 		
-		if (event.ctrlKey && selectedRenderer is PaintGrid2ColumnItemRenderer)
-			isCtrl = true;
+		isCtrl = event.ctrlKey;
+		isAlt = event.altKey;
 	}
 	
 	override protected function keyUpHandler (event : KeyboardEvent) : void
 	{
 		super.keyUpHandler(event);
 		
-		if (!event.ctrlKey && selectedRenderer is PaintGrid2ColumnItemRenderer)
-			isCtrl = false;
+		isCtrl = event.ctrlKey;
+		isAlt = event.altKey;
 	}
 	
 	mx_internal function get hScrollBar () : ScrollBar

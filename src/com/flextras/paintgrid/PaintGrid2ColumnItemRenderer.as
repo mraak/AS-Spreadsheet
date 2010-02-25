@@ -10,7 +10,6 @@ import mx.controls.listClasses.IListItemRenderer;
 import mx.core.UIComponent;
 import mx.core.UITextField;
 import mx.core.mx_internal;
-import mx.events.PropertyChangeEvent;
 import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
@@ -134,30 +133,13 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (value === _info)
 			return;
 		
+		if (_info)
+			_info.removeEventListener("heightChanged", heightChangedHandler);
+		
 		_info = value;
 		
-		heightProxy = new ObjectProxy(value.height);
-	}
-	
-	protected var _heightProxy : ObjectProxy;
-	
-	protected function get heightProxy () : ObjectProxy
-	{
-		return _heightProxy;
-	}
-	
-	protected function set heightProxy (value : ObjectProxy) : void
-	{
-		if (value === _heightProxy)
-			return;
-		
-		if (_heightProxy)
-			_heightProxy.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, heightChangedHandler);
-		
-		_heightProxy = value;
-		
 		if (value)
-			value.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, heightChangedHandler);
+			value.addEventListener("heightChanged", heightChangedHandler);
 	}
 	
 	protected var _cell : CellProperties;
@@ -279,36 +261,21 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		}
 	}
 	
-	protected var explicitRowHeight : Number;
-	
 	override protected function measure () : void
 	{
 		super.measure();
 		
-		var w : Number, h : Number;
-		
-		if (textField)
-		{
-			w = textField.measuredWidth;
-			h = textField.measuredHeight;
-		}
-		
-		if (info)
-			explicitRowHeight = info.height;
-		
-		if (!isNaN(explicitRowHeight) && explicitHeight > h)
-			h = explicitRowHeight;
-		
-		if (!isNaN(w))
-			measuredMinWidth = measuredWidth = w;
-		
-		if (!isNaN(h))
-			measuredMinHeight = measuredHeight = h;
+		measuredMinHeight = measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
 	}
 	
 	override protected function updateDisplayList (w : Number, h : Number) : void
 	{
 		super.updateDisplayList(w, h);
+		
+		background.width = w;
+		background.height = h;
+		
+		textField.setActualSize(w, h);
 		
 		if (currentStyles)
 		{
@@ -354,17 +321,18 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 				
 				textField.setTextFormat(tf);
 				
+				height = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
+				
 				styles.styles.fontStylesChanged = false;
-				callLater(invalidateSize);
 			}
 			
 			currentStylesChanged = false;
 		}
-		
-		background.width = w;
-		background.height = h;
-		
-		textField.setActualSize(w, h);
+	
+	/*
+	   if (dataGrid && cell)
+	   dataGrid.setColumnWidthAt(cell.column, textField.measuredWidth > width ? textField.measuredWidth : width);
+	 */
 	}
 	
 	/**
@@ -475,14 +443,9 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		styles.apply(cell);
 	}
 	
-	protected function heightChangedHandler (e : PropertyChangeEvent) : void
+	protected function heightChangedHandler (e : Event) : void
 	{
-		//dataGrid.invalidateList();
-	
-		//callLater(invalidateSize);
-	/*invalidateSize();
-	   invalidateDisplayList();
-	 invalidateParentSizeAndDisplayList();*/
+		height = textField && textField.measuredHeight > info.height ? textField.measuredHeight : info.height;
 	}
 }
 }

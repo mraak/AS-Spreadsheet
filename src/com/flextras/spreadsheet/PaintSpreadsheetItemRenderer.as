@@ -82,7 +82,7 @@ public class PaintSpreadsheetItemRenderer extends PaintGrid2ColumnItemRenderer
 		verticalSeparator.x = w - 2;
 		horizontalSeparator.y = h - 2;
 		
-		showSeparators = dataGrid is PaintSpreadsheet && PaintSpreadsheet(dataGrid).isCtrl && cell && cell.selected;
+		showSeparators = dataGrid && dataGrid.isCtrl && dataGrid.isAlt && cell && cell.selected;
 		
 		drawSeparator(verticalSeparator, 0, 0, 2, h);
 		drawSeparator(horizontalSeparator, 0, 0, w - 2, 2);
