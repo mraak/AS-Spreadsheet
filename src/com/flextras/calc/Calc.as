@@ -1,7 +1,6 @@
 package com.flextras.calc
 {
 	import com.flextras.spreadsheet.ISpreadsheet;
-	//import com.flextras.spreadsheet.Spreadsheet2;
 	import com.flextras.spreadsheet.SpreadsheetEvent;
 	
 	import flash.events.EventDispatcher;
@@ -672,7 +671,11 @@ package com.flextras.calc
 			if(!co.grid)
 			{
 				//UIComponent(co.ctrl).toolTip =  "id: " + co.id + "\nclass: " + UIComponent(co.ctrl).className + "\nexp: " + co.exp;
-				UIComponent(co.ctrl).toolTip =  co.toolTipLabel;
+				try
+				{
+					UIComponent(co.ctrl).toolTip =  co.toolTipLabel;	
+				}
+				catch(e:Error){}
 			}
 
 		
@@ -865,6 +868,7 @@ package com.flextras.calc
 		public function addTextInput(textInput:TextInput):void
 		{
 			addControl(textInput, "text", ["focusIn"], [FlexEvent.ENTER, "focusOut"]);
+			//addControl(textInput, "text", ["focusIn"], ["enter", "focusOut"]);
 		}
 		
 		/**
@@ -905,6 +909,15 @@ package com.flextras.calc
 			}
 		}
 		
+		public function addObject(object:*, valueProp:String, id:String):void
+		{
+			var ctrlObject:ControlObject = new ControlObject();
+			ctrlObject.valueProp = valueProp;
+			ctrlObject.ctrl = object;
+			ctrlObject.exp = "";
+			ctrlObject.id = id;
+			_ctrlCollection[ctrlObject.id] = ctrlObject;
+		}
 
 		
 		/**
