@@ -3,9 +3,7 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
-import com.flextras.paintgrid.Row;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -13,10 +11,10 @@ import flash.events.MouseEvent;
 
 import mx.collections.ArrayCollection;
 import mx.controls.TextInput;
+import mx.controls.dataGridClasses.DataGridColumn;
 import mx.core.ClassFactory;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
-import mx.events.CollectionEventKind;
 import mx.events.DataGridEvent;
 
 use namespace mx_internal;
@@ -76,7 +74,9 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 		
 		this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
 		
-		this.addEventListener(DataGridEvent.ITEM_FOCUS_IN, onItemFocusIn);
+		//this.addEventListener(DataGridEvent.ITEM_FOCUS_IN, onItemFocusIn);
+		
+		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditEndHandler);
 	
 	}
 	
@@ -124,8 +124,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 						{
 							var co : ControlObject = _ctrlObjects[cell];
 							
-							/*if (o.expression)
-							 calc.assignControlExpression(co, o.expression);*/
+							if (o.expression)
+								calc.assignControlExpression(co, o.expression);
 						}
 						else
 						{
@@ -143,7 +143,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 				}
 				
 				updateExpressions();
-				
+				dispatchEvent(new Event("expressionsChanged"));
 			}
 			
 			var expEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_INITIALIZED);
@@ -168,82 +168,22 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 	protected function createRowsAndColumns () : void
 	{
 		var arr : ArrayCollection = new ArrayCollection();
-		var o : Object;
-		
-		super.dataProvider = arr;
 		
 		for (var r : int; r < rowCount; ++r)
-		{
-			o = {a: r, b: r, c: r};
-			arr.addItem(o);
-		}
-	
+			arr.addItem(createRow);
+		
+		dataProvider = arr;
 	}
 	
-	/*protected function createRowsAndColumns () : void
-	   {
-	   var dataSource : Array = new Array();
-	   var c : int = _columnCount; //4;
-	   var r : int = _rowCount; //100;
-	   var info : Row, cell : CellProperties;
-	
-	   for (var i : int = 0; i < r; i++)
-	   {
-	   var rowObject : Object = new Object();
-	   info = new Row();
-	   info.uid = itemToUID(rowObject);
-	
-	   for (var j : int = 0; j < c; j++)
-	   {
-	   var prop : String = String(Utils.alphabet[j]).toLowerCase();
-	   rowObject[prop] = ""; //i.toString();
-	   rowObject.rowIndex = i;
-	   rowObject.rowHeight = 20;
-	
-	   cell = new CellProperties(i, j);
-	   info.cells[j] = cell;
-	
-	   cells.push(cell);
-	
-	   var co : ControlObject = new ControlObject();
-	   co.id = prop + i;
-	   co.exp = "";
-	   co.ctrl = rowObject;
-	   co.valueProp = prop;
-	   co.row = i.toString();
-	   co.rowIndex = i;
-	   co.col = prop;
-	   co.colIndex = j;
-	   co.grid = this;
-	
-	   _ctrlObjects[co.id] = co;
-	   }
-	   infos.push(info);
-	   dataSource.push(rowObject);
-	   }
-	
-	   _gridDataProvider = new ArrayCollection(dataSource);
-	
-	   var cols : Array = new Array();
-	
-	   for (j = 0; j < c; j++)
-	   {
-	   var dc : DataGridColumn = new DataGridColumn(Utils.alphabet[j]);
-	   dc.headerText = Utils.alphabet[j];
-	   dc.dataField = String(Utils.alphabet[j]).toLowerCase();
-	   dc.itemEditor = new ClassFactory(SpreadsheetItemEditor);
-	   dc.editorDataField = "actualValue";
-	
-	   if (this.columnWidth)
-	   dc.width = this.columnWidth;
-	   cols.push(dc);
-	   }
-	
-	   this.columns = cols;
-	
-	   super.dataProvider = _gridDataProvider;
-	
-	 }*/
+	protected function get createRow () : Object
+	{
+		var o : Object = {};
+		
+		for (var c : int = 0; c < columnCount; ++c)
+			o[String.fromCharCode(97 + c)] = null;
+		
+		return o;
+	}
 	
 	///////////////////////////////////////////
 	// LISTENERS
@@ -267,6 +207,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 	
 	protected function onExpressionsChange (e : CollectionEvent) : void
 	{
+		
 		expressionChangeEvent = e;
 		expressionsChanged = true;
 		invalidateProperties();
@@ -311,7 +252,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 		}
 		else
 		{
-			_expressions.addItem(cellObj);
+			if (_expressions)
+				_expressions.addItem(cellObj);
 		}
 	
 	}
@@ -375,7 +317,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 		return _calc;
 	}
 	
-	[Bindable]
+	[Bindable(event="expressionsChanged")]
 	public function set expressions (value : ArrayCollection) : void
 	{
 		_expressions = value;
@@ -411,7 +353,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 	
 	public function get gridDataProvider () : ArrayCollection
 	{
-		return _gridDataProvider;
+		return collection as ArrayCollection;
 	}
 	
 	public function get expressionTree () : Array
@@ -445,85 +387,163 @@ public class PaintSpreadsheet2 extends PaintGrid2 /*DataGrid*/implements ISpread
 			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
 	}
 	
-	override protected function collectionChangeHandler (event : Event) : void
+	override public function set columns (value : Array) : void
 	{
-		super.collectionChangeHandler(event);
-		
-		if (!event is CollectionEvent)
-			return;
-		
-		var ce : CollectionEvent = CollectionEvent(event);
-		
-		var row : int, rows : int, col : int, cols : int, cell : CellProperties;
-		var info : Row;
-		
-		switch (ce.kind)
+		for each (var column : DataGridColumn in value)
 		{
-			case CollectionEventKind.ADD:
-				for (row = ce.location, rows = ce.items.length + ce.location, cols = columns.length; row < rows; ++row)
-				{
-					info = infos[row];
-					
-					/*rowObject[prop] = ""; //i.toString();
-					   rowObject.rowIndex = row;
-					 rowObject.rowHeight = 20;*/
-					
-					for (col = 0; col < cols; ++col)
-					{
-						var prop : String = String(Utils.alphabet[col]).toLowerCase();
-						
-						var co : ControlObject = new ControlObject();
-						co.id = prop + row;
-						co.exp = "";
-						co.ctrl = ce.items[row];
-						co.valueProp = prop;
-						co.row = row.toString();
-						co.rowIndex = row;
-						co.col = prop;
-						co.colIndex = col;
-						co.grid = this;
-						
-						_ctrlObjects[co.id] = co;
-					}
-				}
-				break;
+			column.itemEditor = new ClassFactory(SpreadsheetItemEditor);
+			column.editorDataField = "actualValue";
+		}
 		
-		/*case CollectionEventKind.REMOVE:
-		   for (rows = ce.items.length; row < rows; ++row)
-		   {
-		   info = infos.splice(row, 1)[0];
+		super.columns = value;
+	}
+	
+	override protected function collectionChange_reset (rows : int, cols : int) : void
+	{
+		super.collectionChange_reset(rows, cols);
 		
-		   while (info.cells.length)
-		   {
-		   cell = info.cells.pop();
-		   cell.release();
+		var row : int, col : int, prop : String;
 		
-		   col = cells.indexOf(cell);
+		_ctrlObjects = {};
 		
-		   if (col > -1)
-		   cells.splice(col, 1);
+		for (; row < rows; ++row)
+		{
+			var rowObject : Object = collection[row];
+			
+			for (col = 0; col < cols; ++col)
+			{
+				var co : Object = new ControlObject;
+				
+				prop = String(Utils.alphabet[col]).toLowerCase();
+				
+				co.id = prop + row;
+				co.ctrl = rowObject;
+				co.valueProp = prop;
+				co.rowIndex = row;
+				co.row = co.rowIndex.toString();
+				co.col = prop;
+				co.colIndex = col;
+				co.grid = this;
+				
+				_ctrlObjects[co.id] = co;
+			}
+		}
+	}
+	
+	override protected function collectionChange_add (row : int, rows : int, col : int, cols : int, e : CollectionEvent) : void
+	{
+		super.collectionChange_add(row, rows, col, cols, e);
 		
-		   col = modifiedCells.indexOf(cell);
+		for (var i : int = collection.length - 2; i > 0; --i)
+			updateRowObject(i, rows);
 		
-		   if (col > -1)
-		   modifiedCells.splice(col, 1);
-		   }
-		   }
-		   break;
+		var prop : String;
 		
-		   case CollectionEventKind.REFRESH:
-		   for (rows = infos.length; row < rows; ++row)
-		   {
-		   info = infos[row];
+		for (; row < rows; ++row)
+		{
+			var rowObject : Object = e.items[row];
+			
+			for (col = 0; col < cols; ++col)
+			{
+				var co : Object = new ControlObject;
+				
+				prop = String(Utils.alphabet[col]).toLowerCase();
+				
+				co.id = prop + row;
+				co.ctrl = rowObject;
+				co.valueProp = prop;
+				co.rowIndex = row;
+				co.row = co.rowIndex.toString();
+				co.col = prop;
+				co.colIndex = col;
+				co.grid = this;
+				
+				_ctrlObjects[co.id] = co;
+			}
+		}
 		
-		   for (col = 0, cols = info.cells.length; col < cols; ++col)
-		   {
-		   cell = info.cells[col];
-		   cell.row = row;
-		   cell.column = col;
-		   }
-		   }
-		 break;*/
+		expressionsChanged = true;
+		invalidateProperties();
+	}
+	
+	override protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
+	{
+		super.collectionChange_remove(row, rows, col, cols);
+		
+		var n : int = collection.length;
+		
+		for (var i : int; i < n; ++i)
+			updateRowObject(i, -rows);
+		
+		var prop : String;
+		
+		for (; col < cols; ++col)
+		{
+			prop = String(Utils.alphabet[col]).toLowerCase();
+			
+			for (row = n - rows; row < n; ++row)
+				delete _ctrlObjects[prop + row];
+		}
+		
+		expressionsChanged = true;
+		invalidateProperties();
+	}
+	
+	override protected function collectionChange_refresh (row : int, rows : int, col : int, cols : int) : void
+	{
+		super.collectionChange_refresh(row, rows, col, cols);
+	
+	/*var co : ControlObject, id : String, prop : String;
+	
+	   for (; row < rows; ++row)
+	   for (col = 0; col < cols; ++col)
+	   {
+	   prop = String(Utils.alphabet[col]).toLowerCase();
+	
+	   setRowObject(_ctrlObjects[prop + row], collection[row], row, 0, col, prop, false);
+	   }
+	
+	   expressionsChanged = true;
+	 invalidateProperties();*/
+	}
+	
+	protected function itemEditEndHandler (e : DataGridEvent) : void
+	{
+		var col : String = String(Utils.alphabet[e.columnIndex]).toLowerCase();
+		var oid : String = col + e.rowIndex;
+		
+		var co : ControlObject = _ctrlObjects[oid];
+		//var t : String = TextInput(itemEditorInstance).text;
+		var ce : String = co.exp;
+		var cv : String = co.ctrl[col];
+		
+		if (ce != null && ce != "")
+		{
+			//TextInput(evt.itemRenderer).text = ce;
+			selectedRenderer.data = ce;
+		}
+	}
+	
+	protected function updateRowObject (index : int, amount : int) : void
+	{
+		var c : int = columns.length;
+		var rowObject : Object = collection[index];
+		
+		for (var j : int = 0; j < c; ++j)
+		{
+			var prop : String = String(Utils.alphabet[j]).toLowerCase();
+			var co : Object = ctrlObjects[prop + index.toString()];
+			
+			co.id = prop + (index + amount);
+			co.ctrl = rowObject;
+			co.valueProp = prop;
+			co.rowIndex += amount;
+			co.row = co.rowIndex.toString();
+			co.col = prop;
+			co.colIndex = j;
+			co.grid = this;
+			
+			_ctrlObjects[co.id] = co;
 		}
 	}
 }

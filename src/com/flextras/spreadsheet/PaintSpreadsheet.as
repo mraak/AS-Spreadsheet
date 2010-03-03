@@ -3,9 +3,7 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
-import com.flextras.paintgrid.Row;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -167,51 +165,10 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	
 	protected function createRowsAndColumns () : void
 	{
-		var dataSource : Array = new Array();
 		var c : int = _columnCount; //4;
-		var r : int = _rowCount; //100;
-		var info : Row, cell : CellProperties;
-		
-		for (var i : int = 0; i < r; i++)
-		{
-			var rowObject : Object = new Object();
-			info = new Row();
-			info.uid = itemToUID(rowObject);
-			
-			for (var j : int = 0; j < c; j++)
-			{
-				var prop : String = String(Utils.alphabet[j]).toLowerCase();
-				rowObject[prop] = ""; //i.toString();
-				rowObject.rowIndex = i;
-				//rowObject.rowHeight = 20;
-				
-				cell = new CellProperties(i, j);
-				info.cells[j] = cell;
-				
-				cells.push(cell);
-				
-				var co : ControlObject = new ControlObject();
-				co.id = prop + i;
-				co.exp = "";
-				co.ctrl = rowObject;
-				co.valueProp = prop;
-				co.row = i.toString();
-				co.rowIndex = i;
-				co.col = prop;
-				co.colIndex = j;
-				co.grid = this;
-				
-				_ctrlObjects[co.id] = co;
-			}
-			infos.push(info);
-			dataSource.push(rowObject);
-		}
-		
-		_gridDataProvider = new ArrayCollection(dataSource);
-		
 		var cols : Array = new Array();
 		
-		for (j = 0; j < c; j++)
+		for (var j : int = 0; j < c; ++j)
 		{
 			var dc : DataGridColumn = new DataGridColumn(Utils.alphabet[j]);
 			dc.headerText = Utils.alphabet[j];
@@ -226,8 +183,39 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		
 		this.columns = cols;
 		
+		var dataSource : Array = new Array();
+		var r : int = _rowCount;
+		
+		for (var i : int = 0; i < r; ++i)
+			dataSource.push(addRowObject(i, c, false));
+		
+		_gridDataProvider = new ArrayCollection(dataSource);
+		
 		super.dataProvider = _gridDataProvider;
+	}
 	
+	override public function addRow (value : Object, index : int) : void
+	{
+		if (!value || index < 0 || index >= collection.length)
+			return;
+		
+		super.addRow(value, index);
+		
+		++_rowCount;
+		
+		addRowObject(index, columns.length);
+	}
+	
+	override public function removeRow (index : int) : void
+	{
+		if (index < 0 || index >= collection.length)
+			return;
+		
+		super.removeRow(index);
+		
+		--_rowCount;
+		
+		removeRowObject(index, columns.length);
 	}
 	
 	///////////////////////////////////////////
@@ -252,7 +240,7 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 	
 	protected function onExpressionsChange (e : CollectionEvent) : void
 	{
-	
+		
 		expressionChangeEvent = e;
 		expressionsChanged = true;
 		invalidateProperties();
@@ -370,7 +358,6 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		invalidateProperties();
 	}
 	
-	
 	public function get expressions () : ArrayCollection
 	{
 		var ac : ArrayCollection = new ArrayCollection();
@@ -430,6 +417,98 @@ public class PaintSpreadsheet extends PaintGrid2 /*DataGrid*/implements ISpreads
 		
 		if (selectedRenderer is PaintSpreadsheetItemRenderer)
 			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
+	}
+	
+	override public function addColumn (index : int = 0) : int
+	{
+		index = super.addColumn(index);
+		
+		//resetDataProvider();
+		
+		return index;
+	}
+	
+	override public function removeColumn (index : int = 0) : int
+	{
+		index = super.removeColumn(index);
+		
+		//resetDataProvider();
+		
+		return index;
+	}
+	
+	protected function addRowObject (index : int, c : int, update : Boolean = true) : Object
+	{
+		var rowObject : Object = new Object();
+		rowObject.rowIndex = index;
+		
+		if (update)
+		{
+			var r : int = _rowCount;
+			
+			for (var i : int = r - 1; i > index; --i)
+				updateRowObject(i - 1, i);
+		}
+		
+		for (var j : int = 0; j < c; ++j)
+		{
+			var prop : String = String(Utils.alphabet[j]).toLowerCase();
+			rowObject[prop] = ""; //i.toString();
+			
+			setRowObject(new ControlObject(), rowObject, index, j, prop);
+		}
+		
+		return rowObject;
+	}
+	
+	protected function removeRowObject (index : int, c : int, update : Boolean = true) : void
+	{
+		if (update)
+		{
+			var r : int = _rowCount;
+			
+			for (var i : int = r - 1; i > index; --i)
+				updateRowObject(i - 1, i - 2);
+		}
+		
+		_gridDataProvider.removeItemAt(index);
+		
+		for (var j : int = 0; j < c; ++j)
+		{
+			var prop : String = String(Utils.alphabet[j]).toLowerCase();
+			
+			delete _ctrlObjects[prop + index];
+		}
+	}
+	
+	protected function updateRowObject (from : int, to : int) : void
+	{
+		var c : int = columns.length;
+		var prop : String;
+		var rowObject : Object = _gridDataProvider.getItemAt(to);
+		
+		rowObject.rowIndex = to;
+		
+		for (var j : int = 0; j < c; ++j)
+		{
+			prop = String(Utils.alphabet[j]).toLowerCase();
+			
+			setRowObject(_ctrlObjects[prop + from.toString()], rowObject, to, j, prop, false);
+		}
+	}
+	
+	protected function setRowObject (co : ControlObject, rowObject : Object, row : int, col : int, prop : String, update : Boolean = true) : void
+	{
+		co.id = prop + row.toString();
+		co.ctrl = rowObject;
+		co.valueProp = prop;
+		co.row = row.toString();
+		co.rowIndex = row;
+		co.col = prop;
+		co.colIndex = col;
+		co.grid = this;
+		
+		_ctrlObjects[co.id] = co;
 	}
 }
 }

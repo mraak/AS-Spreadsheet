@@ -18,7 +18,7 @@ public class ControlObject extends EventDispatcher
 	
 	public var colIndex : int;
 	
-	private var _exp : String;
+	private var _exp : String = "";
 	
 	public var id : String;
 	

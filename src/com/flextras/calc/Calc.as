@@ -556,7 +556,7 @@ public class Calc extends EventDispatcher
 	{
 		if (objectChanged.grid)
 		{
-			objectChanged.grid.gridDataProvider.itemUpdated(objectChanged);
+			objectChanged.grid.gridDataProvider.itemUpdated(objectChanged.ctrl);
 		}
 		
 		if (objectChanged.dependants.length > 0)
@@ -565,7 +565,8 @@ public class Calc extends EventDispatcher
 			{
 				if (c != currentOriginator)
 				{
-					assignControlExpression(c, c.exp, true);
+					if (c.exp)
+						assignControlExpression(c, c.exp, true);
 					
 					if (c.grid)
 						c.grid.updateExpressions();

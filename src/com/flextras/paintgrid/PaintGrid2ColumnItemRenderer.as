@@ -1,6 +1,5 @@
 package com.flextras.paintgrid
 {
-import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.text.TextFormat;
 
@@ -10,7 +9,6 @@ import mx.controls.listClasses.IListItemRenderer;
 import mx.core.UIComponent;
 import mx.core.UITextField;
 import mx.core.mx_internal;
-import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
 
@@ -169,7 +167,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		_cell = value;
 		
-		callLater(invalidateDisplayList);
+		invalidateDisplayList();
 		
 		if (value)
 		{
@@ -222,8 +220,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		}
 	}
 	
-	protected var background : Shape;
-	
 	[Bindable]
 	protected var textField : UITextField;
 	
@@ -232,13 +228,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		super.createChildren();
 		
 		dataGrid = owner as PaintGrid2;
-		
-		if (!background)
-		{
-			background = new Shape();
-			
-			addChild(background);
-		}
 		
 		if (!textField)
 		{
@@ -255,10 +244,26 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		if (dataChanged && textField && _listData)
 		{
-			textField.text = _listData.label;
+			textField.text = data.toString(); //_listData.label;
 			
 			dataChanged = false;
 		}
+	}
+	
+	override public function set width (value : Number) : void
+	{
+		super.width = value;
+		
+		if (textField)
+			textField.width = value;
+	}
+	
+	override public function set height (value : Number) : void
+	{
+		super.height = value;
+		
+		if (textField)
+			textField.height = value;
 	}
 	
 	override protected function measure () : void
@@ -272,22 +277,27 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.updateDisplayList(w, h);
 		
-		background.width = w;
-		background.height = h;
+		/*background.width = w;
+		 background.height = h;*/
 		
 		textField.setActualSize(w, h);
 		
 		if (currentStyles)
 		{
-			if (currentStylesChanged || currentStyles.backgroundChanged)
-			{
-				background.graphics.clear();
-				background.graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
-				background.graphics.drawRect(0, 0, w, h);
-				background.graphics.endFill();
-				
-				currentStyles.backgroundChanged = false;
-			}
+			graphics.clear();
+			graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
+			
+			/*if (currentStylesChanged || currentStyles.backgroundChanged)
+			   {
+			   graphics.clear();
+			   graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
+			   graphics.drawRect(0, 0, w, h);
+			   graphics.endFill();
+			
+			   currentStyles.backgroundChanged = false;
+			 }*/
 			
 			if (currentStylesChanged || currentStyles.foregroundChanged)
 			{
@@ -416,7 +426,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.styles.change(e.property, e.newValue);
 		
 		styles.styles.change(e.property, e.newValue);
-		styles.apply(cell);
 	}
 	
 	protected function global_rollOverStylesChangedHandler (e : CellEvent) : void
@@ -424,7 +433,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.rollOverStyles.change(e.property, e.newValue);
 		
 		styles.rollOverStyles.change(e.property, e.newValue);
-		styles.apply(cell);
 	}
 	
 	protected function global_selectedStylesChangedHandler (e : CellEvent) : void
@@ -432,7 +440,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.selectedStyles.change(e.property, e.newValue);
 		
 		styles.selectedStyles.change(e.property, e.newValue);
-		styles.apply(cell);
 	}
 	
 	protected function global_disabledStylesChangedHandler (e : CellEvent) : void
@@ -440,7 +447,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.disabledStyles.change(e.property, e.newValue);
 		
 		styles.disabledStyles.change(e.property, e.newValue);
-		styles.apply(cell);
 	}
 	
 	protected function heightChangedHandler (e : Event) : void

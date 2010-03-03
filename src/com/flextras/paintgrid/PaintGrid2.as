@@ -5,8 +5,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import flashx.textLayout.container.ISandboxSupport;
-
+import mx.collections.ListCollectionView;
 import mx.controls.DataGrid;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.controls.listClasses.IDropInListItemRenderer;
@@ -457,7 +456,7 @@ public class PaintGrid2 extends DataGrid
 		callLater(dispatchEvent, [new Event("columnWidthChanged")]);
 	}
 	
-	public function addColumn (index : int = 0) : void
+	public function addColumn (index : int = 0) : int
 	{
 		if (index < 0)
 			index = 0;
@@ -492,9 +491,11 @@ public class PaintGrid2 extends DataGrid
 		}
 		
 		columns = cols;
+		
+		return index;
 	}
 	
-	public function removeColumn (index : int = 0) : void
+	public function removeColumn (index : int = 0) : int
 	{
 		if (index < 0)
 			index = 0;
@@ -533,6 +534,8 @@ public class PaintGrid2 extends DataGrid
 		}
 		
 		columns = cols;
+		
+		return index;
 	}
 	
 	/**
@@ -571,6 +574,22 @@ public class PaintGrid2 extends DataGrid
 		invalidateDisplayList();
 		
 		callLater(dispatchEvent, [new Event("rowHeightChanged")]);
+	}
+	
+	public function addRow (value : Object, index : int) : void
+	{
+		if (!value || index < 0 || index >= collection.length)
+			return;
+		
+		ListCollectionView(collection).addItemAt(value, index);
+	}
+	
+	public function removeRow (index : int) : void
+	{
+		if (index < 0 || index >= collection.length)
+			return;
+		
+		ListCollectionView(collection).removeItemAt(index);
 	}
 	
 	[ArrayElementType("Row")]
@@ -675,7 +694,7 @@ public class PaintGrid2 extends DataGrid
 		else if (shiftKey && !ctrlKey)
 		{
 			start = selectedCellProperties || new CellLocation(), end = currentCell;
-			cells = getAllCellPropertiesInRangeBy(start, end);
+			cells = getAllCellPropertiesInRangeBy(start, end, false);
 			
 			for each (cell in cells)
 				if ((i = _selectedCells.indexOf(cell)) < 0)
@@ -751,80 +770,6 @@ public class PaintGrid2 extends DataGrid
 	override mx_internal function selectionTween_updateHandler (event : TweenEvent) : void
 	{
 	
-	}
-	
-	override protected function collectionChangeHandler (event : Event) : void
-	{
-		super.collectionChangeHandler(event);
-		
-		if (!event is CollectionEvent)
-			return;
-		
-		var ce : CollectionEvent = CollectionEvent(event);
-		
-		var row : int, rows : int, col : int, cols : int, cell : CellProperties;
-		var info : Row;
-		
-		switch (ce.kind)
-		{
-			case CollectionEventKind.RESET:
-				break;
-			
-			case CollectionEventKind.ADD:
-				for (rows = ce.items.length, cols = columns.length; row < rows; ++row)
-				{
-					info = new Row();
-					info.uid = itemToUID(ce.items[row]);
-					
-					for (col = 0; col < cols; ++col)
-					{
-						cell = new CellProperties(ce.location, col);
-						info.cells[col] = cell;
-						
-						cells.push(cell);
-					}
-					
-					infos.push(info);
-				}
-				break;
-			
-			case CollectionEventKind.REMOVE:
-				for (rows = ce.items.length; row < rows; ++row)
-				{
-					info = infos.splice(row, 1)[0];
-					
-					while (info.cells.length)
-					{
-						cell = info.cells.pop();
-						cell.release();
-						
-						col = cells.indexOf(cell);
-						
-						if (col > -1)
-							cells.splice(col, 1);
-						
-						col = modifiedCells.indexOf(cell);
-						
-						if (col > -1)
-							modifiedCells.splice(col, 1);
-					}
-				}
-				break;
-			
-			case CollectionEventKind.REFRESH:
-				for (rows = infos.length; row < rows; ++row)
-				{
-					info = infos[row];
-					
-					for (col = 0, cols = info.cells.length; col < cols; ++col)
-					{
-						cell = info.cells[col];
-						cell.row = row;
-						cell.column = col;
-					}
-				}
-				break;
-		}
 	}
 	
 	/**
@@ -933,6 +878,141 @@ public class PaintGrid2 extends DataGrid
 	mx_internal function get hScrollBar () : ScrollBar
 	{
 		return horizontalScrollBar;
+	}
+	
+	override protected function collectionChangeHandler (event : Event) : void
+	{
+		super.collectionChangeHandler(event);
+		
+		if (!event is CollectionEvent)
+			return;
+		
+		var ce : CollectionEvent = CollectionEvent(event);
+		
+		switch (ce.kind)
+		{
+			case CollectionEventKind.RESET:
+				collectionChange_reset(collection.length, columns.length);
+				break;
+			
+			case CollectionEventKind.ADD:
+				collectionChange_add(0, ce.items.length, 0, columns.length, ce);
+				break;
+			
+			case CollectionEventKind.REMOVE:
+				collectionChange_remove(ce.location, ce.items.length + ce.location, 0, columns.length);
+				break;
+			
+			case CollectionEventKind.REFRESH:
+				collectionChange_refresh(0, collection.length, 0, columns.length);
+				break;
+		}
+	}
+	
+	protected function collectionChange_reset (rows : int, cols : int) : void
+	{
+		var row : int, col : int, info : Row, cell : CellProperties;
+		
+		while (infos.length)
+		{
+			info = infos.pop();
+			
+			while (info.cells.length)
+			{
+				cell = info.cells.pop();
+				cell.release();
+				
+				col = cells.indexOf(cell);
+				
+				if (col > -1)
+					cells.splice(col, 1);
+				
+				col = modifiedCells.indexOf(cell);
+				
+				if (col > -1)
+					modifiedCells.splice(col, 1);
+			}
+		}
+		
+		for (; row < rows; ++row)
+		{
+			info = new Row();
+			info.uid = itemToUID(collection[row]);
+			
+			for (col = 0; col < cols; ++col)
+			{
+				cell = new CellProperties(row, col);
+				info.cells[col] = cell;
+				
+				cells.push(cell);
+			}
+			
+			infos.push(info);
+		}
+	}
+	
+	protected function collectionChange_add (row : int, rows : int, col : int, cols : int, e : CollectionEvent) : void
+	{
+		var info : Row, cell : CellProperties;
+		
+		for (; row < rows; ++row)
+		{
+			info = new Row();
+			info.uid = itemToUID(e.items[row]);
+			
+			for (col = 0; col < cols; ++col)
+			{
+				cell = new CellProperties(row + e.location, col);
+				info.cells[col] = cell;
+				
+				cells.push(cell);
+			}
+			
+			infos.splice(row + e.location, 0, info);
+		}
+	}
+	
+	protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
+	{
+		var info : Row, cell : CellProperties;
+		
+		for (; row < rows; ++row)
+		{
+			info = infos.splice(row, 1)[0];
+			
+			while (info.cells.length)
+			{
+				cell = info.cells.pop();
+				cell.release();
+				
+				col = cells.indexOf(cell);
+				
+				if (col > -1)
+					cells.splice(col, 1);
+				
+				col = modifiedCells.indexOf(cell);
+				
+				if (col > -1)
+					modifiedCells.splice(col, 1);
+			}
+		}
+	}
+	
+	protected function collectionChange_refresh (row : int, rows : int, col : int, cols : int) : void
+	{
+		var info : Row, cell : CellProperties;
+		
+		for (; row < rows; ++row)
+		{
+			info = infos[row];
+			
+			for (col = 0; col < cols; ++col)
+			{
+				cell = info.cells[col];
+				cell.row = row;
+				cell.column = col;
+			}
+		}
 	}
 }
 }

@@ -1,5 +1,7 @@
 package com.flextras.spreadsheet
 {
+import com.flextras.calc.ControlObject;
+import com.flextras.calc.Utils;
 import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 import com.flextras.paintgrid.PaintGridRowResizeSkin;
 
@@ -41,6 +43,33 @@ public class PaintSpreadsheetItemRenderer extends PaintGrid2ColumnItemRenderer
 		super();
 		
 		minHeight = 20;
+	}
+	
+	override protected function commitProperties () : void
+	{
+		if (dataChanged && textField && _listData)
+		{
+			var value : String = _listData.label;
+			
+			if (dataGrid is ISpreadsheet && ISpreadsheet(dataGrid).calc)
+			{
+				var sheet : ISpreadsheet = ISpreadsheet(dataGrid);
+				
+				var col : String = Utils.alphabet[cell.column].toString().toLowerCase();
+				var oid : String = col + cell.row.toString();
+				
+				var co : ControlObject = sheet.ctrlObjects[oid];
+				
+				if (co)
+					value = co.ctrl[col];
+			}
+			
+			textField.text = value;
+			
+			dataChanged = false;
+		}
+		
+		super.commitProperties();
 	}
 	
 	public function set showSeparators (value : Boolean) : void
