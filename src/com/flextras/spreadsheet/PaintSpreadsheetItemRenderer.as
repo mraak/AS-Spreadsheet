@@ -51,18 +51,20 @@ public class PaintSpreadsheetItemRenderer extends PaintGrid2ColumnItemRenderer
 		{
 			var value : String = _listData.label;
 			
-			if (dataGrid is ISpreadsheet && ISpreadsheet(dataGrid).calc)
-			{
-				var sheet : ISpreadsheet = ISpreadsheet(dataGrid);
-				
-				var col : String = Utils.alphabet[cell.column].toString().toLowerCase();
-				var oid : String = col + cell.row.toString();
-				
-				var co : ControlObject = sheet.ctrlObjects[oid];
-				
-				if (co)
-					value = co.ctrl[col];
-			}
+			if (value && value.length > 1)
+				trace(value);
+			/*if (dataGrid is ISpreadsheet && ISpreadsheet(dataGrid).calc)
+			   {
+			   var sheet : ISpreadsheet = ISpreadsheet(dataGrid);
+			
+			   var col : String = Utils.alphabet[cell.column].toString().toLowerCase();
+			   var oid : String = col + cell.row.toString();
+			
+			   var co : ControlObject = sheet.ctrlObjects[oid];
+			
+			   if (co)
+			   value = co.ctrl[col];
+			 }*/
 			
 			textField.text = value;
 			
