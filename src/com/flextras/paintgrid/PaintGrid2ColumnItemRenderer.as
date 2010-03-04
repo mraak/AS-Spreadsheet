@@ -9,6 +9,9 @@ import mx.controls.listClasses.IListItemRenderer;
 import mx.core.UIComponent;
 import mx.core.UITextField;
 import mx.core.mx_internal;
+import mx.effects.AnimateProperty;
+
+import spark.effects.AnimateColor;
 
 use namespace mx_internal;
 
@@ -29,6 +32,10 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	protected var _currentStyles : BasicStyles;
 	
 	protected var currentStylesChanged : Boolean;
+	
+	protected var backgroundColorEffect : AnimateColor = new AnimateColor(this);
+	
+	protected var backgroundAlphaEffect : AnimateProperty = new AnimateProperty(this);
 	
 	protected function get currentStyles () : BasicStyles
 	{
@@ -244,7 +251,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		if (dataChanged && textField && _listData)
 		{
-			textField.text = data.toString(); //_listData.label;
+			textField.text = _listData.label;
 			
 			dataChanged = false;
 		}
@@ -273,6 +280,48 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		measuredMinHeight = measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
 	}
 	
+	private var _colorTo : uint;
+	
+	public function get colorTo () : uint
+	{
+		return _colorTo;
+	}
+	
+	public function set colorTo (value : uint) : void
+	{
+		if (_colorTo == value)
+			return;
+		
+		_colorTo = value;
+		
+		drawBackground(value, _alphaTo);
+	}
+	
+	private var _alphaTo : Number = 1;
+	
+	public function get alphaTo () : Number
+	{
+		return _alphaTo;
+	}
+	
+	public function set alphaTo (value : Number) : void
+	{
+		if (_alphaTo == value)
+			return;
+		
+		_alphaTo = value;
+		
+		drawBackground(_colorTo, value);
+	}
+	
+	protected function drawBackground (c : uint, a : Number) : void
+	{
+		graphics.clear();
+		graphics.beginFill(c, a);
+		graphics.drawRect(0, 0, width, height);
+		graphics.endFill();
+	}
+	
 	override protected function updateDisplayList (w : Number, h : Number) : void
 	{
 		super.updateDisplayList(w, h);
@@ -284,10 +333,18 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		if (currentStyles)
 		{
-			graphics.clear();
-			graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
-			graphics.drawRect(0, 0, w, h);
-			graphics.endFill();
+			backgroundAlphaEffect.property = "alphaTo";
+			backgroundAlphaEffect.toValue = currentStyles.backgroundAlpha;
+			backgroundAlphaEffect.play();
+			
+			backgroundColorEffect.colorPropertyName = "colorTo";
+			backgroundColorEffect.colorTo = currentStyles.backgroundColor;
+			backgroundColorEffect.play();
+			
+			/*graphics.clear();
+			   graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
+			   graphics.drawRect(0, 0, w, h);
+			 graphics.endFill();*/
 			
 			/*if (currentStylesChanged || currentStyles.backgroundChanged)
 			   {

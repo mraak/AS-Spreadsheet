@@ -11,6 +11,7 @@ import flash.events.MouseEvent;
 
 import mx.collections.ArrayCollection;
 import mx.controls.dataGridClasses.DataGridColumn;
+import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.core.ClassFactory;
 import mx.core.IIMESupport;
@@ -18,6 +19,7 @@ import mx.core.IInvalidating;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.DataGridEvent;
+import mx.events.DataGridEventReason;
 import mx.managers.IFocusManager;
 import mx.managers.IFocusManagerComponent;
 
@@ -524,11 +526,26 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	protected function itemEditEndHandler (e : DataGridEvent) : void
 	{
+		e.preventDefault();
+		
+		if (itemEditorInstance && e.reason != DataGridEventReason.CANCELLED)
+		{
+			if (e.itemRenderer is IDropInListItemRenderer)
+			{
+				var listData : DataGridListData = DataGridListData(IDropInListItemRenderer(e.itemRenderer).listData);
+				listData.label = columns[e.columnIndex].itemToLabel(data);
+				IDropInListItemRenderer(e.itemRenderer).listData = listData;
+			}
+			e.itemRenderer.data = data;
+		}
+		
 		var col : String = String(Utils.alphabet[e.columnIndex]).toLowerCase();
 		var oid : String = col + e.rowIndex;
 		
 		if (itemEditorInstance is PaintSpreadsheetItemEditor)
 			assignExpression(oid, PaintSpreadsheetItemEditor(itemEditorInstance).text);
+		
+		destroyItemEditor();
 	}
 }
 }
