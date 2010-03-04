@@ -707,6 +707,9 @@ public class Calc extends EventDispatcher
 		
 		updateDependent(co);
 		
+		if (co && co.grid)
+			co.grid.updateExpressions();
+		
 		currentTarget = null;
 	}
 	
