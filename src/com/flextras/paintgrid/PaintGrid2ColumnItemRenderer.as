@@ -333,14 +333,17 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		if (currentStyles)
 		{
+			/*	
 			backgroundAlphaEffect.property = "alphaTo";
+			backgroundAlphaEffect.duration = 500;
 			backgroundAlphaEffect.toValue = currentStyles.backgroundAlpha;
 			backgroundAlphaEffect.play();
 			
 			backgroundColorEffect.colorPropertyName = "colorTo";
+			backgroundColorEffect.duration = 500;
 			backgroundColorEffect.colorTo = currentStyles.backgroundColor;
 			backgroundColorEffect.play();
-			
+			*/
 			/*graphics.clear();
 			   graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
 			   graphics.drawRect(0, 0, w, h);
