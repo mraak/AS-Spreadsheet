@@ -5,7 +5,7 @@ import flash.events.MouseEvent;
 public class SpreadsheetItemRenderer2 extends SpreadsheetItemRendererBase
 {
 	
-	private var backgroundColor : uint = 0xCCCCCC;
+	//private var backgroundColor : uint = 0xCCCCCC;
 	
 	private var selectedColor : uint = 0xEECC99;
 	

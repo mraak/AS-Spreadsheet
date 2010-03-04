@@ -1,18 +1,19 @@
 package com.flextras.spreadsheet
 {
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import mx.controls.Text;
+import mx.controls.dataGridClasses.DataGridItemRenderer;
 import mx.controls.dataGridClasses.DataGridListData;
 import mx.core.IDataRenderer;
 
 [Event(name="cellClick", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="cellDoubleClick", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
-public class SpreadsheetItemRendererBase extends PaintGrid2ColumnItemRenderer /*Text*/implements IDataRenderer
+public class SpreadsheetItemRendererBase extends /*PaintGrid2ColumnItemRenderer*/ DataGridItemRenderer implements IDataRenderer
 {
 	
 	private var _rowIndex : int;

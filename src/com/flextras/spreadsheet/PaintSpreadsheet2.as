@@ -238,6 +238,12 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		super.columns = value;
 	}
 	
+	public function moveRange(range:Array, dx:int, dy:int, copy:Boolean = false):void
+	{
+		calc.moveRange(range, dx, dy, copy);
+	}
+	
+	
 	///////////////////////////////////////////////////////////
 	// PRIVATE && PROTECTED
 	///////////////////////////////////////////////////////////
@@ -257,7 +263,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		var o : Object = {};
 		
 		for (var c : int = 0; c < columnCount; ++c)
-			o[String.fromCharCode(97 + c)] = null;
+			o[String.fromCharCode(97 + c)] = "";
 		
 		return o;
 	}
