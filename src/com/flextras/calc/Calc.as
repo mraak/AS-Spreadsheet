@@ -783,11 +783,15 @@ public class Calc extends EventDispatcher
 		for each (var ctrl : *in range)
 		{
 			co = getCtrl(ctrl);
+			
+			if(!co.grid) throw(new Error("Only objects within ISpreadsheet can be moved"));
+			
 			oldCopyArray.push(co);
 			
 			var nco : ControlObject = new ControlObject();
 			
 			nco.id = Utils.moveFieldId(co.id, dx, dy);
+			nco.grid = co.grid;
 			
 			if (copy)
 			{
@@ -818,13 +822,16 @@ public class Calc extends EventDispatcher
 		{
 			for each (co in oldCopyArray)
 			{
-				assignControlExpression(co, "");
+				//assignControlExpression(co, "");
+				co.grid.assignExpression(co.id, "");
+				
 			}
 		}
 		
 		for each (co in copyArray)
 		{
-			assignControlExpression(toGrid + "!" + co.id, co.exp);
+			//assignControlExpression(toGrid + "!" + co.id, co.exp);
+			co.grid.assignExpression(co.id, co.exp);
 		}
 	
 	}

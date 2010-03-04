@@ -309,7 +309,7 @@
 					toGrid.clearRowContent(toIndex);
 				}
 				
-				calc.moveRange(arrexp, 0, dy, copy, toSheet);
+				calc.moveRange(arrexp, 0, dy, copy);
 				
 			} 
 			
@@ -332,7 +332,7 @@
 					toGrid.clearColumnContent(toIndex);
 				}
 				
-				calc.moveRange(arrexp, dx, 0, copy, toSheet);
+				calc.moveRange(arrexp, dx, 0, copy);
 			} 
 			
 			private function showTree():void

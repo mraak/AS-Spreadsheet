@@ -93,8 +93,6 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	public function assignExpression (cellId : String, expression : String) : void
 	{
-		if (!cellId || !cellId.length || !expression || !expression.length || expression == " ")
-			return;
 		
 		var o : Object = getCell(cellId);
 		
@@ -318,7 +316,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 					{
 						var co : ControlObject = _ctrlObjects[cell];
 						
-						if (o.expression)
+						if (o.expression != null)
 							calc.assignControlExpression(co, o.expression);
 					}
 					else
