@@ -331,33 +331,33 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	{
 		super.commitProperties();
 		
-		/*if (rowCountChanged)
-		   {
-		   for (var r : int = collection.length; r < rowCount; ++r)
-		   addRow(createRow, r - 1);
+		if (rowCountChanged)
+		{
+			for (var r : int = collection.length; r < rowCount; ++r)
+				addRow(createRow, r - 1);
+			
+			for (r = collection.length; r > rowCount; --r)
+				removeRow(r - 1);
+			
+			rowCountChanged = false;
+		}
 		
-		   for (r = collection.length; r > rowCount; --r)
-		   removeRow(r - 1);
-		
-		   rowCountChanged = false;
-		   }
-		
-		   if (columnCountChanged)
-		   {
-		   for (var c : int = columns.length; c < columnCount; ++c)
-		   {
-		   addColumn(c - 1);
-		   updateRowObject(c - 1, 0);
-		   }
-		
-		   for (c = columns.length; c > columnCount; --c)
-		   {
-		   removeColumn(c - 1);
-		   updateRowObject(c - 1, 0);
-		   }
-		
-		   columnCountChanged = false;
-		 }*/
+		if (columnCountChanged)
+		{
+			for (var c : int = columns.length; c < columnCount; ++c)
+			{
+				addColumn(c - 1);
+				updateRowObject(c - 1, 0);
+			}
+			
+			for (c = columns.length; c > columnCount; --c)
+			{
+				removeColumn(c - 1);
+				updateRowObject(c - 1, 0);
+			}
+			
+			columnCountChanged = false;
+		}
 		
 		if (expressionsChanged)
 		{
@@ -469,25 +469,25 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		}
 	}
 	
-	override protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
-	{
-		super.collectionChange_remove(row, rows, col, cols);
-		
-		var n : int = collection.length;
-		
-		for (var i : int = rows - n; i < n; ++i)
-			updateRowObject(i, n - rows);
-		
-		var prop : String;
-		
-		for (; col < cols; ++col)
-		{
-			prop = String(Utils.alphabet[col]).toLowerCase();
-			
-			for (row = n - rows; row < n; ++row)
-				delete _ctrlObjects[prop + row];
-		}
-	}
+	/*override protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
+	   {
+	   super.collectionChange_remove(row, rows, col, cols);
+	
+	   var n : int = collection.length;
+	
+	   for (var i : int = rows - n; i < n; ++i)
+	   updateRowObject(i, n - rows);
+	
+	   var prop : String;
+	
+	   for (; col < cols; ++col)
+	   {
+	   prop = String(Utils.alphabet[col]).toLowerCase();
+	
+	   for (row = n - rows; row < n; ++row)
+	   delete _ctrlObjects[prop + row];
+	   }
+	 }*/
 	
 	/*
 	   override protected function collectionChange_refresh (row : int, rows : int, col : int, cols : int) : void
