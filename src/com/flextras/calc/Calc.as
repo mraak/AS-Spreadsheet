@@ -712,9 +712,13 @@ public class Calc extends EventDispatcher
 		{
 			var dg : PaintSpreadsheet2 = PaintSpreadsheet2(co.grid);
 			var o : Object = dg.getCell(co.id);
-			var oldValue : Object = o.value;
-			o.value = _val;
-			dg.expressions.itemUpdated(o, "value", oldValue, _val);
+			
+			if (o)
+			{
+				var oldValue : Object = o.value;
+				o.value = _val;
+				dg.expressions.itemUpdated(o, "value", oldValue, _val);
+			}
 		}
 		
 		currentTarget = null;

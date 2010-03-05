@@ -11,6 +11,7 @@
     <classEntry path="com.flextras.paintgrid.PaintGridRowResizeSkin"/>
     <classEntry path="com.flextras.spreadsheet.PaintSpreadsheet2"/>
     <classEntry path="com.flextras.spreadsheet.PaintSpreadsheetItemEditor"/>
+    <classEntry path="com.flextras.context.Menu"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
