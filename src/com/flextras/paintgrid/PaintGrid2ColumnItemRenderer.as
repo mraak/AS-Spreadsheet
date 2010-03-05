@@ -21,6 +21,10 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super();
 		
+		backgroundColorEffect.colorPropertyName = "colorTo";
+		backgroundAlphaEffect.property = "alphaTo";
+		backgroundColorEffect.duration = backgroundAlphaEffect.duration = 500;
+		
 		addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
 		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
 	}
@@ -33,9 +37,9 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	
 	protected var currentStylesChanged : Boolean;
 	
-	protected var backgroundColorEffect : AnimateColor = new AnimateColor(this);
+	protected const backgroundColorEffect : AnimateColor = new AnimateColor(this);
 	
-	protected var backgroundAlphaEffect : AnimateProperty = new AnimateProperty(this);
+	protected const backgroundAlphaEffect : AnimateProperty = new AnimateProperty(this);
 	
 	protected function get currentStyles () : BasicStyles
 	{
@@ -333,21 +337,24 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		if (currentStyles)
 		{
-			/*	
-			backgroundAlphaEffect.property = "alphaTo";
-			backgroundAlphaEffect.duration = 500;
-			backgroundAlphaEffect.toValue = currentStyles.backgroundAlpha;
-			backgroundAlphaEffect.play();
-			
-			backgroundColorEffect.colorPropertyName = "colorTo";
-			backgroundColorEffect.duration = 500;
-			backgroundColorEffect.colorTo = currentStyles.backgroundColor;
-			backgroundColorEffect.play();
-			*/
-			/*graphics.clear();
-			   graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
-			   graphics.drawRect(0, 0, w, h);
-			 graphics.endFill();*/
+			if (rollOverActive || rollOutActive)
+			{
+				backgroundAlphaEffect.toValue = currentStyles.backgroundAlpha;
+				backgroundColorEffect.colorTo = currentStyles.backgroundColor;
+				
+				backgroundAlphaEffect.play();
+				backgroundColorEffect.play();
+				
+				rollOverActive = false;
+				rollOutActive = false;
+			}
+			else
+			{
+				backgroundAlphaEffect.fromValue = currentStyles.backgroundAlpha;
+				backgroundColorEffect.colorFrom = currentStyles.backgroundColor;
+				
+				drawBackground(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
+			}
 			
 			/*if (currentStylesChanged || currentStyles.backgroundChanged)
 			   {
@@ -409,6 +416,8 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	 * Event handlers
 	 */
 	
+	protected var rollOverActive : Boolean;
+	
 	protected function rollOverHandler (e : MouseEvent) : void
 	{
 		if (!cell || cell.selected || !cell.enabled)
@@ -416,7 +425,12 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		currentStyles = styles.rollOverStyles;
 		currentGlobalStyles = globalStyles.rollOverStyles;
+		
+		rollOverActive = true;
+		invalidateDisplayList();
 	}
+	
+	protected var rollOutActive : Boolean;
 	
 	protected function rollOutHandler (e : MouseEvent) : void
 	{
@@ -425,6 +439,9 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		currentStyles = styles.styles;
 		currentGlobalStyles = globalStyles.styles;
+		
+		rollOutActive = true;
+		invalidateDisplayList();
 	}
 	
 	protected function selectedChangedHandler (e : Event) : void

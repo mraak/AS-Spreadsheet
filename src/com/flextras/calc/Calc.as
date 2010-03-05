@@ -1,6 +1,7 @@
 package com.flextras.calc
 {
 import com.flextras.spreadsheet.ISpreadsheet;
+import com.flextras.spreadsheet.PaintSpreadsheet2;
 import com.flextras.spreadsheet.SpreadsheetEvent;
 
 import flash.events.EventDispatcher;
@@ -707,8 +708,14 @@ public class Calc extends EventDispatcher
 		
 		updateDependent(co);
 		
-		if (co && co.grid)
-			co.grid.updateExpressions();
+		if (co && co.grid && co.grid is PaintSpreadsheet2)
+		{
+			var dg : PaintSpreadsheet2 = PaintSpreadsheet2(co.grid);
+			var o : Object = dg.getCell(co.id);
+			var oldValue : Object = o.value;
+			o.value = _val;
+			dg.expressions.itemUpdated(o, "value", oldValue, _val);
+		}
 		
 		currentTarget = null;
 	}
@@ -784,7 +791,8 @@ public class Calc extends EventDispatcher
 		{
 			co = getCtrl(ctrl);
 			
-			if(!co.grid) throw(new Error("Only objects within ISpreadsheet can be moved"));
+			if (!co.grid)
+				throw(new Error("Only objects within ISpreadsheet can be moved"));
 			
 			oldCopyArray.push(co);
 			
@@ -824,7 +832,22 @@ public class Calc extends EventDispatcher
 			{
 				//assignControlExpression(co, "");
 				co.grid.assignExpression(co.id, "");
+				/*if (co && co.grid && co.grid is PaintSpreadsheet2)
+				   {
+				   var dg : PaintSpreadsheet2 = PaintSpreadsheet2(co.grid);
+				   var o : Object = dg.getCell(co.id);
+				   var i : int;
 				
+				   dg.expressions.removeItemAt(dg.expressions.getItemIndex(o));
+				
+				   if ((i = expressionTree.indexOf(co)) > -1)
+				   {
+				   expressionTree.splice(i, 1);
+				
+				   if ((i = co.grid.expressionTree.indexOf(co)) > -1)
+				   co.grid.expressionTree.splice(i, 1);
+				   }
+				 }*/
 			}
 		}
 		
