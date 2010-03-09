@@ -132,7 +132,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	{
 		if (_rowCount == value)
 			return;
-		
+		super.rowCount = value;
 		_rowCount = value;
 		
 		rowCountChanged = true;
