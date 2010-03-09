@@ -1,0 +1,272 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<mx:TitleWindow xmlns:fx = "http://ns.adobe.com/mxml/2009"
+				xmlns:s = "library://ns.adobe.com/flex/spark"
+				xmlns:mx = "library://ns.adobe.com/flex/halo"
+				showCloseButton = "true"
+				title = "Set cell styles"
+				xmlns:context = "com.flextras.context.*">
+	<fx:Declarations>
+		<context:Data id = "stuff" />
+
+		<s:RadioButtonGroup id = "antiAliasType"
+							selectedValue = "{styles.antiAliasType}"
+							change = "updateStyle('antiAliasType', event.currentTarget.selectedValue);" />
+
+		<s:RadioButtonGroup id = "style"
+							selectedValue = "{styles.style}"
+							change = "updateStyle('style', event.currentTarget.selectedValue);" />
+
+		<s:RadioButtonGroup id = "weight"
+							selectedValue = "{styles.weight}"
+							change = "updateStyle('weight', event.currentTarget.selectedValue);" />
+
+		<s:RadioButtonGroup id = "decoration"
+							selectedValue = "{styles.decoration}"
+							change = "updateStyle('decoration', event.currentTarget.selectedValue);" />
+	</fx:Declarations>
+
+	<s:ButtonBar id = "buttonBar"
+				 selectedIndex = "0"
+				 enabled = "{!!grid.selectedCellProperties}"
+				 change = "updateCell()">
+		<s:dataProvider>
+			<s:ArrayCollection>
+				<fx:Object label = "styles" />
+
+				<fx:Object label = "rollOverStyles" />
+
+				<fx:Object label = "selectedStyles" />
+
+				<fx:Object label = "disabledStyles" />
+			</s:ArrayCollection>
+		</s:dataProvider>
+	</s:ButtonBar>
+
+	<mx:Form enabled = "{buttonBar.selectedItem}">
+		<mx:FormItem label = "color">
+			<mx:ColorPicker selectedColor = "{styles.color}"
+							change = "updateStyle('color', event.currentTarget.selectedColor);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "alpha">
+			<s:HSlider minimum = "0"
+					   maximum = "1"
+					   stepSize = "0.01"
+					   snapInterval = "0.01"
+					   value = "{styles.alpha}"
+					   change = "updateStyle('alpha', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "backgroundColor">
+			<mx:ColorPicker selectedColor = "{styles.backgroundColor}"
+							change = "updateStyle('backgroundColor', event.currentTarget.selectedColor);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "backgroundAlpha">
+			<s:HSlider minimum = "0"
+					   maximum = "1"
+					   stepSize = "0.01"
+					   snapInterval = "0.01"
+					   value = "{styles.backgroundAlpha}"
+					   change = "updateStyle('backgroundAlpha', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "antiAliasType"
+					 direction = "horizontal"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:RadioButton x = "131"
+						   y = "22"
+						   label = "advanced"
+						   value = "advanced"
+						   groupName = "antiAliasType" />
+
+			<s:RadioButton x = "131"
+						   y = "48"
+						   label = "normal"
+						   value = "normal"
+						   groupName = "antiAliasType" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "family"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:DropDownList selectedItem = "{styles.family}"
+							dataProvider = "{new ArrayCollection(stuff.fontFamilyArray)}"
+							change = "updateStyle('family', event.currentTarget.selectedItem);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "gridFitType"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:ButtonBar selectedItem = "{styles.gridFitType}"
+						 dataProvider = "{new ArrayCollection(stuff.gridFitTypes)}"
+						 change = "updateStyle('gridFitType', event.currentTarget.selectedItem);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "sharpness"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:HSlider minimum = "-400"
+					   maximum = "400"
+					   stepSize = "1"
+					   value = "{styles.sharpness}"
+					   change = "updateStyle('sharpness', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "size"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:HSlider minimum = "10"
+					   maximum = "64"
+					   stepSize = "1"
+					   value = "{styles.size}"
+					   change = "updateStyle('size', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "style"
+					 direction = "horizontal"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:RadioButton x = "131"
+						   y = "22"
+						   label = "italic"
+						   value = "italic"
+						   groupName = "style" />
+
+			<s:RadioButton x = "131"
+						   y = "48"
+						   label = "normal"
+						   value = "normal"
+						   groupName = "style" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "thickness"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:HSlider minimum = "-200"
+					   maximum = "200"
+					   stepSize = "1"
+					   value = "{styles.thickness}"
+					   change = "updateStyle('thickness', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "weight"
+					 direction = "horizontal"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:RadioButton x = "131"
+						   y = "22"
+						   label = "bold"
+						   value = "bold"
+						   groupName = "weight" />
+
+			<s:RadioButton x = "131"
+						   y = "48"
+						   label = "normal"
+						   value = "normal"
+						   groupName = "weight" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "kerning"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:CheckBox label = "true, false"
+						selected = "{styles.kerning}"
+						change = "updateStyle('kerning', event.currentTarget.selected);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "spacing"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:HSlider minimum = "0"
+					   maximum = "50"
+					   stepSize = "1"
+					   value = "{styles.spacing}"
+					   change = "updateStyle('spacing', event.currentTarget.value);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "align"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:ButtonBar selectedItem = "{styles.align}"
+						 dataProvider = "{new ArrayCollection(stuff.aligns)}"
+						 change = "updateStyle('align', event.currentTarget.selectedItem);" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "decoration"
+					 direction = "horizontal"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:RadioButton x = "131"
+						   y = "22"
+						   label = "underline"
+						   value = "underline"
+						   groupName = "decoration" />
+
+			<s:RadioButton x = "131"
+						   y = "48"
+						   label = "none"
+						   value = "none"
+						   groupName = "decoration" />
+		</mx:FormItem>
+
+		<mx:FormItem label = "indent"
+					 enabled = "{buttonBar.selectedIndex == 0}">
+			<s:HSlider minimum = "0"
+					   maximum = "50"
+					   stepSize = "1"
+					   value = "{styles.indent}"
+					   change = "updateStyle('indent', event.currentTarget.value);" />
+		</mx:FormItem>
+	</mx:Form>
+
+	<fx:Script>
+		<![CDATA[
+			import com.flextras.paintgrid.*;
+			
+			import mx.collections.ArrayCollection;
+			import mx.utils.ObjectProxy;
+			
+			[Bindable]
+			protected var styles : ObjectProxy;
+			
+			[Bindable]
+			public var grid : PaintGrid2;
+			
+			public function updateCell () : void
+			{
+				switch (buttonBar.selectedIndex)
+				{
+					case 0:
+						styles = grid.selectedCellProperties.styles;
+						break;
+					
+					case 1:
+						styles = grid.selectedCellProperties.rollOverStyles;
+						break;
+					
+					case 2:
+						styles = grid.selectedCellProperties.selectedStyles;
+						break;
+					
+					case 3:
+						styles = grid.selectedCellProperties.disabledStyles;
+						break;
+				}
+			}
+			
+			protected function updateStyle (name : String, value : Object) : void
+			{
+				styles[name] = value;
+				
+				switch (buttonBar.selectedIndex)
+				{
+					case 0:
+						grid.selectedCellsStyles = styles;
+						break;
+					
+					case 1:
+						grid.selectedCellsRollOverStyles = styles;
+						break;
+					
+					case 2:
+						grid.selectedCellsSelectedStyles = styles;
+						break;
+					
+					case 3:
+						grid.selectedCellsDisabledStyles = styles;
+						break;
+				}
+			}
+		]]>
+	</fx:Script>
+</mx:TitleWindow>

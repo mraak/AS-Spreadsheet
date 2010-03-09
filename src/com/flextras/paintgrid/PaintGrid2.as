@@ -1,13 +1,12 @@
 package com.flextras.paintgrid
 {
-import com.flextras.context.Menu;
+import com.flextras.context.GlobalContextMenu;
+import com.flextras.context.LocalContextMenu;
 
 import flash.display.Sprite;
-import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.ui.ContextMenuItem;
 
 import mx.collections.ListCollectionView;
 import mx.controls.DataGrid;
@@ -46,24 +45,11 @@ public class PaintGrid2 extends DataGrid
 		itemRenderer = new ClassFactory(PaintGrid2ColumnItemRenderer);
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, itemEditBeginningHandler);
-		
-		globalMenu.addItem("Set global styles", setGlobalStylesHandler);
-		
-		cellMenu.addItem("cut", cutHandler);
-		cellMenu.addItem("copy", copyHandler);
-		cellMenu.addItem("paste", pasteHandler);
-		cellMenu.addItem("paste value", pasteValueHandler);
-		cellMenu.addItem("paste styles", pasteStylesHandler);
-		cellMenu.addItem("paste expressions", pasteExpressionsHandler);
-		cellMenu.addItem("disable", disableHandler);
-		cellMenu.addItem("Set cell styles", setCellStylesHandler);
-		cellMenu.addItem("Set column width", setColumnWidthHandler);
-		cellMenu.addItem("Set row height", setRowHeightHandler);
 	}
 	
-	protected const globalMenu : Menu = new Menu(this as PaintGrid2);
+	protected const globalMenu : GlobalContextMenu = new GlobalContextMenu(this as PaintGrid2);
 	
-	protected const cellMenu : Menu = new Menu();
+	protected const cellMenu : LocalContextMenu = new LocalContextMenu();
 	
 	[Bindable]
 	public var doubleClickToEdit : Boolean;
@@ -1299,75 +1285,6 @@ public class PaintGrid2 extends DataGrid
 				cell.column = col;
 			}
 		}
-	}
-	
-	/**
-	 * Global Context Menu Handlers
-	 */
-	
-	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	/**
-	 * Cell Context Menu Handlers
-	 */
-	
-	protected function cutHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function copyHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function pasteHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function pasteValueHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function pasteStylesHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function pasteExpressionsHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function disableHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-		var item : ContextMenuItem;
-		
-		if ((item = cellMenu.getItem("disable")))
-			item.caption = "enable";
-		else if ((item = cellMenu.getItem("enable")))
-			item.caption = "disable";
-	}
-	
-	protected function setCellStylesHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function setColumnWidthHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
-	}
-	
-	protected function setRowHeightHandler (e : ContextMenuEvent) : void
-	{
-		trace(e);
 	}
 }
 }

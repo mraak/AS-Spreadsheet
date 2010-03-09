@@ -39,6 +39,8 @@ public class Menu
 		
 		if (value)
 			value.contextMenu = _menu;
+		
+		reset();
 	}
 	
 	public function addItem (description : String, callBack : Function, separator : Boolean = false, enabled : Boolean = true, visible : Boolean = true) : void
@@ -75,6 +77,11 @@ public class Menu
 		for each (var item : ContextMenuItem in _menu.customItems)
 			if (item.caption == description)
 				_menu.customItems = _menu.customItems.splice(item, 1);
+	}
+	
+	public function reset () : void
+	{
+	
 	}
 }
 }
