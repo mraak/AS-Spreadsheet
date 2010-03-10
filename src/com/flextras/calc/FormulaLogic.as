@@ -59,6 +59,10 @@ package com.flextras.calc
 			{
 				if(arg1 <= arg2) b = true;
 			}
+			else if(op == "<>")
+			{
+				if(arg1 != arg2) b = true;
+			}
 			else
 			{
 				throw(new Error("Unknown comparison operator: " + op));
