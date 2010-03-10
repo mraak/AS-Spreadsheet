@@ -13,29 +13,31 @@ import mx.managers.PopUpManager;
 
 public class LocalContextMenu extends Menu
 {
-	protected const removeRow : ContextMenuItem = new ContextMenuItem("remove row");
+
 	
-	protected const removeColumn : ContextMenuItem = new ContextMenuItem("remove column");
+	protected const cut : ContextMenuItem = new ContextMenuItem("Cut ");
 	
-	protected const cut : ContextMenuItem = new ContextMenuItem("cut ");
+	protected const copy : ContextMenuItem = new ContextMenuItem("Copy ");
 	
-	protected const copy : ContextMenuItem = new ContextMenuItem("copy ");
+	protected const paste : ContextMenuItem = new ContextMenuItem("Paste ");
 	
-	protected const paste : ContextMenuItem = new ContextMenuItem("paste ");
+	protected const pasteValue : ContextMenuItem = new ContextMenuItem("Paste Value", true);
 	
-	protected const pasteValue : ContextMenuItem = new ContextMenuItem("paste value");
+	protected const pasteStyles : ContextMenuItem = new ContextMenuItem("Paste Styles");
 	
-	protected const pasteStyles : ContextMenuItem = new ContextMenuItem("paste styles");
+	protected const pasteExpressions : ContextMenuItem = new ContextMenuItem("Paste Expressions");
 	
-	protected const pasteExpressions : ContextMenuItem = new ContextMenuItem("paste expressions");
+	protected const disable : ContextMenuItem = new ContextMenuItem("Disable Cell", true);
 	
-	protected const disable : ContextMenuItem = new ContextMenuItem("disable");
+	protected const setCellStyles : ContextMenuItem = new ContextMenuItem("Cell Styles", true);
 	
-	protected const setCellStyles : ContextMenuItem = new ContextMenuItem("set cell styles");
+	protected const setColumnWidth : ContextMenuItem = new ContextMenuItem("Set Column Width", true);
 	
-	protected const setColumnWidth : ContextMenuItem = new ContextMenuItem("set column width");
+	protected const setRowHeight : ContextMenuItem = new ContextMenuItem("Set Row Height");
 	
-	protected const setRowHeight : ContextMenuItem = new ContextMenuItem("set row height");
+	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row", true);
+	
+	protected const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
 	
 	public function LocalContextMenu (owner : PaintGrid2 = null)
 	{
@@ -54,12 +56,12 @@ public class LocalContextMenu extends Menu
 		setColumnWidth.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
 		setRowHeight.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
 		
-		_menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions, removeRow, removeColumn, disable, setCellStyles, setColumnWidth, setRowHeight];
+		_menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions, disable, setCellStyles, setColumnWidth, setRowHeight, removeRow, removeColumn];
 	}
 	
 	override public function reset () : void
 	{
-		disable.caption = "disable";
+		disable.caption = "Disable Cell";
 	}
 	
 	protected function removeRowHandler (e : ContextMenuEvent) : void
@@ -146,7 +148,7 @@ public class LocalContextMenu extends Menu
 	
 	protected function disableHandler (e : ContextMenuEvent) : void
 	{
-		disable.caption = disable.caption == "disable" ? "enable" : "disable";
+		disable.caption = disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
 		
 		owner.disabledCells = owner.selectedCells;
 	}

@@ -10,7 +10,7 @@ public class GlobalContextMenu extends Menu
 	{
 		super(owner);
 		
-		addItem("Set global styles", setGlobalStylesHandler);
+		addItem("Global Styles", setGlobalStylesHandler);
 	}
 	
 	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
