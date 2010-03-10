@@ -1,7 +1,10 @@
 package com.flextras.context
 {
+import com.flextras.calc.ControlObject;
+import com.flextras.calc.Utils;
+import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
-import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
+import com.flextras.spreadsheet.PaintSpreadsheet2;
 
 import flash.events.ContextMenuEvent;
 import flash.ui.ContextMenuItem;
@@ -10,11 +13,15 @@ import mx.managers.PopUpManager;
 
 public class LocalContextMenu extends Menu
 {
-	protected const cut : ContextMenuItem = new ContextMenuItem("cut");
+	protected const removeRow : ContextMenuItem = new ContextMenuItem("remove row");
 	
-	protected const copy : ContextMenuItem = new ContextMenuItem("copy");
+	protected const removeColumn : ContextMenuItem = new ContextMenuItem("remove column");
 	
-	protected const paste : ContextMenuItem = new ContextMenuItem("paste");
+	protected const cut : ContextMenuItem = new ContextMenuItem("cut ");
+	
+	protected const copy : ContextMenuItem = new ContextMenuItem("copy ");
+	
+	protected const paste : ContextMenuItem = new ContextMenuItem("paste ");
 	
 	protected const pasteValue : ContextMenuItem = new ContextMenuItem("paste value");
 	
@@ -34,6 +41,8 @@ public class LocalContextMenu extends Menu
 	{
 		super(owner);
 		
+		removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+		removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
 		cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
 		paste.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
@@ -45,7 +54,7 @@ public class LocalContextMenu extends Menu
 		setColumnWidth.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
 		setRowHeight.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
 		
-		_menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions, disable, setCellStyles, setColumnWidth, setRowHeight];
+		_menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions, removeRow, removeColumn, disable, setCellStyles, setColumnWidth, setRowHeight];
 	}
 	
 	override public function reset () : void
@@ -53,19 +62,71 @@ public class LocalContextMenu extends Menu
 		disable.caption = "disable";
 	}
 	
+	protected function removeRowHandler (e : ContextMenuEvent) : void
+	{
+		for each (var cell : CellProperties in owner.selectedCells)
+			owner.removeRow(cell.row);
+	}
+	
+	protected function removeColumnHandler (e : ContextMenuEvent) : void
+	{
+		for each (var cell : CellProperties in owner.selectedCells)
+			owner.removeColumn(cell.column);
+	}
+	
+	protected var range : Array;
+	
+	protected var dx : int, dy : int;
+	
+	protected var performCopy : Boolean;
+	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		performCopy = false;
+		dx = owner.selectedCellProperties.column;
+		dy = owner.selectedCellProperties.row;
+		
+		setupRange();
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		performCopy = true;
+		dx = owner.selectedCellProperties.column;
+		dy = owner.selectedCellProperties.row;
+		
+		setupRange();
+	}
+	
+	protected function setupRange () : void
+	{
+		if (!(owner is PaintSpreadsheet2))
+			return;
+		
+		var pss : PaintSpreadsheet2 = PaintSpreadsheet2(owner);
+		var prop : String, id : String, co : ControlObject;
+		
+		range = [];
+		
+		for each (var cell : CellProperties in owner.selectedCells)
+		{
+			prop = String(Utils.alphabet[cell.column]).toLowerCase();
+			id = prop + cell.row;
+			
+			co = pss.ctrlObjects[id];
+			
+			if (co)
+				range.push(co);
+		}
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		var x : int = owner.selectedCellProperties.column - dx;
+		var y : int = owner.selectedCellProperties.row - dy;
+		
+		if (owner is PaintSpreadsheet2)
+			PaintSpreadsheet2(owner).moveRange(range, x, y, performCopy);
 	}
 	
 	protected function pasteValueHandler (e : ContextMenuEvent) : void
@@ -86,9 +147,11 @@ public class LocalContextMenu extends Menu
 	protected function disableHandler (e : ContextMenuEvent) : void
 	{
 		disable.caption = disable.caption == "disable" ? "enable" : "disable";
+		
+		owner.disabledCells = owner.selectedCells;
 	}
 	
-	var popup : StylesPopup;
+	protected var popup : BasePopup;
 	
 	protected function setCellStylesHandler (e : ContextMenuEvent) : void
 	{
@@ -97,22 +160,38 @@ public class LocalContextMenu extends Menu
 		
 		popup = new StylesPopup();
 		
-		popup.grid = PaintGrid2ColumnItemRenderer(owner).dataGrid;
+		popup.grid = owner;
 		
 		PopUpManager.addPopUp(popup, popup.grid);
 		PopUpManager.centerPopUp(popup);
 		
-		popup.updateCell();
+		StylesPopup(popup).updateCell();
 	}
 	
 	protected function setColumnWidthHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		if (popup)
+			PopUpManager.removePopUp(popup);
+		
+		popup = new WidthPopup();
+		
+		popup.grid = owner;
+		
+		PopUpManager.addPopUp(popup, popup.grid);
+		PopUpManager.centerPopUp(popup);
 	}
 	
 	protected function setRowHeightHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		if (popup)
+			PopUpManager.removePopUp(popup);
+		
+		popup = new HeightPopup();
+		
+		popup.grid = owner;
+		
+		PopUpManager.addPopUp(popup, popup.grid);
+		PopUpManager.centerPopUp(popup);
 	}
 }
 }

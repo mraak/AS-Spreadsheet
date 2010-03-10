@@ -2,7 +2,6 @@ package com.flextras.context
 {
 import com.flextras.paintgrid.PaintGrid2;
 
-import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
 import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
@@ -23,14 +22,14 @@ public class Menu
 		return _menu;
 	}
 	
-	protected var _owner : InteractiveObject;
+	protected var _owner : PaintGrid2;
 	
-	public function get owner () : InteractiveObject
+	public function get owner () : PaintGrid2
 	{
 		return _owner;
 	}
 	
-	public function set owner (value : InteractiveObject) : void
+	public function set owner (value : PaintGrid2) : void
 	{
 		if (_owner === value)
 			return;

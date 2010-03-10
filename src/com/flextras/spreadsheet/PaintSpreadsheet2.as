@@ -4,6 +4,7 @@ import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
 import com.flextras.paintgrid.PaintGrid2;
+import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -13,6 +14,7 @@ import mx.collections.ArrayCollection;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
+import mx.controls.listClasses.ListRowInfo;
 import mx.core.ClassFactory;
 import mx.core.IIMESupport;
 import mx.core.IInvalidating;
@@ -93,8 +95,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	public function assignExpression (cellId : String, expression : String) : void
 	{
-		/*if (!cellId || !cellId.length || !expression || !expression.length || expression == " ")
-		 return;*/
+		if (!cellId || !cellId.length || !expression || !expression.length)
+			return;
 		
 		var o : Object = getCell(cellId);
 		
@@ -327,6 +329,19 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		}
 	}
 	
+	override protected function measure () : void
+	{
+		super.measure();
+		
+		if (isNaN(explicitHeight))
+			measuredHeight = measureHeightOfItems(0, rowCount + 1);
+	}
+	
+	override protected function updateDisplayList (w : Number, h : Number) : void
+	{
+		super.updateDisplayList(w, h);
+	}
+	
 	override protected function commitProperties () : void
 	{
 		super.commitProperties();
@@ -338,6 +353,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 			
 			for (r = collection.length; r > rowCount; --r)
 				removeRow(r - 1);
+			
+			invalidateSize();
 			
 			rowCountChanged = false;
 		}
@@ -441,12 +458,12 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		super.collectionChange_add(row, rows, col, cols, e);
 		
 		/*for (var i : int = collection.length - 2; i > 0; --i)
-			updateRowObject(i, rows);*/
+		 updateRowObject(i, rows);*/
 		
-		var a:Array = [];
+		var a : Array = [];
 		
-		for each(var co:ControlObject in ctrlObjects)
-			if(co.rowIndex >= e.location)
+		for each (var co : ControlObject in ctrlObjects)
+			if (co.rowIndex >= e.location)
 				a.push(co);
 		
 		calc.moveRange(a, 0, rows);
@@ -478,23 +495,23 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	}
 	
 	override protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
-	   {
-	   super.collectionChange_remove(row, rows, col, cols);
+	{
+		super.collectionChange_remove(row, rows, col, cols);
+		
+		var n : int = collection.length;
+		
+		/*for (var i : int = rows - n; i < n; ++i)
+		 updateRowObject(i, n - rows);*/
+		
+		var a : Array = [];
+		
+		for each (var co : ControlObject in ctrlObjects)
+			if (co.rowIndex >= row)
+				a.push(co);
+		
+		calc.moveRange(a, 0, -rows + row);
 	
-	   var n : int = collection.length;
-	
-	   /*for (var i : int = rows - n; i < n; ++i)
-	   updateRowObject(i, n - rows);*/
-	   
-	   var a:Array = [];
-	   
-	   for each(var co:ControlObject in ctrlObjects)
-	   if(co.rowIndex >= row)
-		   a.push(co);
-	   
-	   calc.moveRange(a, 0, -rows+row);
-	
-	   /*var prop : String;
+	/*var prop : String;
 	
 	   for (; col < cols; ++col)
 	   {
@@ -502,8 +519,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	   for (row = n - rows; row < n; ++row)
 	   delete _ctrlObjects[prop + row];
-	   }*/
-	 }
+	 }*/
+	}
 	
 	/*
 	   override protected function collectionChange_refresh (row : int, rows : int, col : int, cols : int) : void

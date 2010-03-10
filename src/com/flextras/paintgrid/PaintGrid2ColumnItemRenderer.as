@@ -178,6 +178,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		_cell = value;
 		
+		invalidateSize();
 		invalidateDisplayList();
 		
 		if (value)
@@ -398,8 +399,8 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 				
 				textField.setTextFormat(tf);
 				
-				height = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
-				
+				//measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
+				invalidateSize();
 				styles.styles.fontStylesChanged = false;
 			}
 			
@@ -426,8 +427,11 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		currentStyles = styles.rollOverStyles;
 		currentGlobalStyles = globalStyles.rollOverStyles;
 		
-		rollOverActive = true;
-		invalidateDisplayList();
+		backgroundColorEffect.stop();
+		backgroundAlphaEffect.stop();
+	
+	/*rollOverActive = true;
+	 invalidateDisplayList();*/
 	}
 	
 	protected var rollOutActive : Boolean;
@@ -439,6 +443,9 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		currentStyles = styles.styles;
 		currentGlobalStyles = globalStyles.styles;
+		
+		backgroundColorEffect.stop();
+		backgroundAlphaEffect.stop();
 		
 		rollOutActive = true;
 		invalidateDisplayList();
@@ -528,7 +535,8 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	
 	protected function heightChangedHandler (e : Event) : void
 	{
-		height = textField && textField.measuredHeight > info.height ? textField.measuredHeight : info.height;
+		//measuredHeight = textField && textField.measuredHeight > info.height ? textField.measuredHeight : info.height;
+		invalidateSize();
 	}
 }
 }

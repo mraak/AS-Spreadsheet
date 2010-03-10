@@ -49,7 +49,7 @@ public class PaintGrid2 extends DataGrid
 	
 	protected const globalMenu : GlobalContextMenu = new GlobalContextMenu(this as PaintGrid2);
 	
-	protected const cellMenu : LocalContextMenu = new LocalContextMenu();
+	protected const cellMenu : LocalContextMenu = new LocalContextMenu(this as PaintGrid2);
 	
 	[Bindable]
 	public var doubleClickToEdit : Boolean;
@@ -577,7 +577,6 @@ public class PaintGrid2 extends DataGrid
 		rowInfo[index - verticalScrollPosition].height = value;
 		
 		itemsSizeChanged = true;
-		
 		invalidateDisplayList();
 		
 		callLater(dispatchEvent, [new Event("rowHeightChanged")]);
@@ -643,8 +642,6 @@ public class PaintGrid2 extends DataGrid
 			
 			selectedRenderer = PaintGrid2ColumnItemRenderer(item);
 			currentCell = selectedRenderer.cell;
-			
-			cellMenu.owner = selectedRenderer;
 		}
 		
 		if (!currentCell)

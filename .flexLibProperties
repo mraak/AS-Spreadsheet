@@ -16,6 +16,8 @@
     <classEntry path="com.flextras.context.LocalContextMenu"/>
     <classEntry path="com.flextras.context.MenuItem"/>
     <classEntry path="com.flextras.context.StylesPopup"/>
+    <classEntry path="com.flextras.context.WidthPopup"/>
+    <classEntry path="com.flextras.context.BasePopup"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
