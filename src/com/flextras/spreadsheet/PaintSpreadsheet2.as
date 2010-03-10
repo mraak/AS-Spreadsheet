@@ -63,6 +63,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		this.draggableColumns = false;
 		this.sortableColumns = false;
 		this.showHeaders = false;
+
 		doubleClickToEdit = true;
 		
 		this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
@@ -95,8 +96,8 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	public function assignExpression (cellId : String, expression : String) : void
 	{
-		if (!cellId || !cellId.length || !expression || !expression.length)
-			return;
+		//if (!cellId || !cellId.length || !expression || !expression.length)
+		//	return;
 		
 		var o : Object = getCell(cellId);
 		
@@ -647,7 +648,18 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		var oid : String = col + e.rowIndex;
 		
 		if (itemEditorInstance is PaintSpreadsheetItemEditor)
-			assignExpression(oid, PaintSpreadsheetItemEditor(itemEditorInstance).text);
+		{
+			var t : String = PaintSpreadsheetItemEditor(itemEditorInstance).text;
+			var co : ControlObject = this.ctrlObjects[oid];
+			var v : String = co.ctrl[col];
+			var ex : String = co.exp;
+			
+			if (v != t && ex != t)
+			{
+				assignExpression(oid, t);
+			}
+		}
+			
 		
 		destroyItemEditor();
 	}
