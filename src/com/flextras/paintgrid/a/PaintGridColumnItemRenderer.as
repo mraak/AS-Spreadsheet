@@ -1,64 +1,44 @@
-package com.flextras.paintgrid
+package com.flextras.paintgrid.a
 {
-import com.flextras.calc.FormulaLogic;
+import com.flextras.paintgrid.BasicStyles;
+import com.flextras.paintgrid.CellEvent;
+import com.flextras.paintgrid.CellProperties;
+import com.flextras.paintgrid.CellStyles;
+import com.flextras.paintgrid.Row;
 
+import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.text.TextFormat;
 
+import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.BaseListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.controls.listClasses.IListItemRenderer;
 import mx.core.UIComponent;
 import mx.core.UITextField;
 import mx.core.mx_internal;
-import mx.effects.AnimateProperty;
-
-import spark.effects.AnimateColor;
+import mx.events.PropertyChangeEvent;
+import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
 
-public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListItemRenderer, IDropInListItemRenderer
+public class PaintGridColumnItemRenderer extends UIComponent implements IListItemRenderer, IDropInListItemRenderer
 {
-	public function PaintGrid2ColumnItemRenderer ()
+	public function PaintGridColumnItemRenderer ()
 	{
 		super();
-		
-		backgroundColorEffect.colorPropertyName = "colorTo";
-		backgroundAlphaEffect.property = "alphaTo";
-		backgroundColorEffect.duration = backgroundAlphaEffect.duration = 500;
 		
 		addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
 		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
 	}
 	
-	protected var _condition : Condition;
+	protected const styles : CellStyles = new CellStyles(this as PaintGridColumnItemRenderer);
 	
-	public function get condition () : Condition
-	{
-		return _condition;
-	}
-	
-	public function set condition (value : Condition) : void
-	{
-		if (_condition === value)
-			return;
-		
-		_condition = value;
-		
-		invalidateDisplayList();
-	}
-	
-	protected const styles : CellStyles = new CellStyles(this as PaintGrid2ColumnItemRenderer);
-	
-	protected const globalStyles : CellStyles = new CellStyles(this as PaintGrid2ColumnItemRenderer);
+	protected const globalStyles : CellStyles = new CellStyles(this as PaintGridColumnItemRenderer);
 	
 	protected var _currentStyles : BasicStyles;
 	
 	protected var currentStylesChanged : Boolean;
-	
-	protected const backgroundColorEffect : AnimateColor = new AnimateColor(this);
-	
-	protected const backgroundAlphaEffect : AnimateProperty = new AnimateProperty(this);
 	
 	protected function get currentStyles () : BasicStyles
 	{
@@ -96,14 +76,14 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		invalidateDisplayList();
 	}
 	
-	protected var _dataGrid : PaintGrid2;
+	protected var _dataGrid : PaintGrid;
 	
-	public function get dataGrid () : PaintGrid2
+	public function get dataGrid () : PaintGrid
 	{
 		return _dataGrid;
 	}
 	
-	public function set dataGrid (value : PaintGrid2) : void
+	public function set dataGrid (value : PaintGrid) : void
 	{
 		if (_dataGrid === value)
 			return;
@@ -131,7 +111,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		invalidateProperties();
 	}
 	
-	protected var _listData : BaseListData;
+	protected var _listData : DataGridListData;
 	
 	public function get listData () : BaseListData
 	{
@@ -143,10 +123,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (_listData === value)
 			return;
 		
-		_listData = value;
-		dataChanged = true;
-		
-		invalidateProperties();
+		_listData = value as DataGridListData;
 	}
 	
 	protected var _info : Row;
@@ -161,13 +138,30 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (value === _info)
 			return;
 		
-		if (_info)
-			_info.removeEventListener("heightChanged", heightChangedHandler);
-		
 		_info = value;
 		
+		heightProxy = new ObjectProxy(value.height);
+	}
+	
+	protected var _heightProxy : ObjectProxy;
+	
+	protected function get heightProxy () : ObjectProxy
+	{
+		return _heightProxy;
+	}
+	
+	protected function set heightProxy (value : ObjectProxy) : void
+	{
+		if (value === _heightProxy)
+			return;
+		
+		if (_heightProxy)
+			_heightProxy.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, heightChangedHandler);
+		
+		_heightProxy = value;
+		
 		if (value)
-			value.addEventListener("heightChanged", heightChangedHandler);
+			value.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, heightChangedHandler);
 	}
 	
 	protected var _cell : CellProperties;
@@ -197,7 +191,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		_cell = value;
 		
-		invalidateSize();
 		invalidateDisplayList();
 		
 		if (value)
@@ -251,6 +244,8 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		}
 	}
 	
+	protected var background : Shape;
+	
 	[Bindable]
 	protected var textField : UITextField;
 	
@@ -258,7 +253,12 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.createChildren();
 		
-		dataGrid = owner as PaintGrid2;
+		if (!background)
+		{
+			background = new Shape();
+			
+			addChild(background);
+		}
 		
 		if (!textField)
 		{
@@ -273,7 +273,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		super.commitProperties();
 		
-		if (dataChanged && textField && _listData)
+		if (dataChanged)
 		{
 			textField.text = _listData.label;
 			
@@ -281,116 +281,44 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		}
 	}
 	
-	override public function set width (value : Number) : void
-	{
-		super.width = value;
-		
-		if (textField)
-			textField.width = value;
-	}
-	
-	override public function set height (value : Number) : void
-	{
-		super.height = value;
-		
-		if (textField)
-			textField.height = value;
-	}
-	
 	override protected function measure () : void
 	{
 		super.measure();
 		
-		measuredMinHeight = measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
-	}
-	
-	private var _colorTo : uint;
-	
-	public function get colorTo () : uint
-	{
-		return _colorTo;
-	}
-	
-	public function set colorTo (value : uint) : void
-	{
-		if (_colorTo == value)
-			return;
+		var ih : Number = info ? info.height : 0;
 		
-		_colorTo = value;
+		var w : Number = textField.measuredWidth; // > background.width ? textField.measuredWidth : background.width;
+		var h : Number = textField.measuredHeight > ih ? textField.measuredHeight : ih; // > background.height ? textField.measuredHeight : background.height;
 		
-		drawBackground(value, _alphaTo);
-	}
-	
-	private var _alphaTo : Number = 1;
-	
-	public function get alphaTo () : Number
-	{
-		return _alphaTo;
-	}
-	
-	public function set alphaTo (value : Number) : void
-	{
-		if (_alphaTo == value)
-			return;
+		measuredMinWidth = measuredWidth = w;
+		measuredMinHeight = measuredHeight = h;
 		
-		_alphaTo = value;
-		
-		drawBackground(_colorTo, value);
-	}
-	
-	protected function drawBackground (c : uint, a : Number) : void
-	{
-		graphics.clear();
-		graphics.beginFill(c, a);
-		graphics.drawRect(0, 0, width, height);
-		graphics.endFill();
+		if (info)
+			info.height = h;
 	}
 	
 	override protected function updateDisplayList (w : Number, h : Number) : void
 	{
 		super.updateDisplayList(w, h);
 		
-		textField.setActualSize(w, h);
-		
-		var s : BasicStyles = !condition || textField && FormulaLogic.compare(parseFloat(textField.text), condition.operator, condition.value) ? currentStyles : currentGlobalStyles;
-		
 		if (currentStyles)
 		{
-			if (rollOverActive || rollOutActive)
+			if (currentStylesChanged || currentStyles.backgroundChanged)
 			{
-				backgroundAlphaEffect.toValue = s.backgroundAlpha;
-				backgroundColorEffect.colorTo = s.backgroundColor;
+				background.graphics.clear();
+				background.graphics.beginFill(currentStyles.backgroundColor, currentStyles.backgroundAlpha);
+				background.graphics.drawRect(0, 0, w, h);
+				background.graphics.endFill();
 				
-				backgroundAlphaEffect.play();
-				backgroundColorEffect.play();
-				
-				rollOverActive = false;
-				rollOutActive = false;
-			}
-			else
-			{
-				backgroundAlphaEffect.fromValue = s.backgroundAlpha;
-				backgroundColorEffect.colorFrom = s.backgroundColor;
-				
-				drawBackground(s.backgroundColor, s.backgroundAlpha);
+				currentStyles.backgroundChanged = false;
 			}
 			
-			/*if (currentStylesChanged || s.backgroundChanged)
-			   {
-			   graphics.clear();
-			   graphics.beginFill(s.backgroundColor, s.backgroundAlpha);
-			   graphics.drawRect(0, 0, w, h);
-			   graphics.endFill();
-			
-			   s.backgroundChanged = false;
-			 }*/
-			
-			if (currentStylesChanged || s.foregroundChanged)
+			if (currentStylesChanged || currentStyles.foregroundChanged)
 			{
-				textField.textColor = s.foregroundColor;
-				textField.alpha = s.foregroundAlpha;
+				textField.textColor = currentStyles.foregroundColor;
+				textField.alpha = currentStyles.foregroundAlpha;
 				
-				s.foregroundChanged = false;
+				currentStyles.foregroundChanged = false;
 			}
 			
 			if (currentStylesChanged || styles.styles.fontStylesChanged)
@@ -417,25 +345,22 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 				
 				textField.setTextFormat(tf);
 				
-				//measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
-				invalidateSize();
 				styles.styles.fontStylesChanged = false;
+				callLater(invalidateSize);
 			}
 			
 			currentStylesChanged = false;
 		}
-	
-	/*
-	   if (dataGrid && cell)
-	   dataGrid.setColumnWidthAt(cell.column, textField.measuredWidth > width ? textField.measuredWidth : width);
-	 */
+		
+		background.width = w;
+		background.height = h;
+		
+		textField.setActualSize(w, h);
 	}
 	
 	/**
 	 * Event handlers
 	 */
-	
-	protected var rollOverActive : Boolean;
 	
 	protected function rollOverHandler (e : MouseEvent) : void
 	{
@@ -444,15 +369,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		currentStyles = styles.rollOverStyles;
 		currentGlobalStyles = globalStyles.rollOverStyles;
-		
-		backgroundColorEffect.stop();
-		backgroundAlphaEffect.stop();
-	
-	/*rollOverActive = true;
-	 invalidateDisplayList();*/
 	}
-	
-	protected var rollOutActive : Boolean;
 	
 	protected function rollOutHandler (e : MouseEvent) : void
 	{
@@ -461,12 +378,6 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		currentStyles = styles.styles;
 		currentGlobalStyles = globalStyles.styles;
-		
-		backgroundColorEffect.stop();
-		backgroundAlphaEffect.stop();
-		
-		rollOutActive = true;
-		invalidateDisplayList();
 	}
 	
 	protected function selectedChangedHandler (e : Event) : void
@@ -527,7 +438,9 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 	{
 		globalStyles.styles.change(e.property, e.newValue);
 		
+		// TODO
 		styles.styles.change(e.property, e.newValue);
+		styles.apply(cell);
 	}
 	
 	protected function global_rollOverStylesChangedHandler (e : CellEvent) : void
@@ -535,6 +448,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.rollOverStyles.change(e.property, e.newValue);
 		
 		styles.rollOverStyles.change(e.property, e.newValue);
+		styles.apply(cell);
 	}
 	
 	protected function global_selectedStylesChangedHandler (e : CellEvent) : void
@@ -542,6 +456,7 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.selectedStyles.change(e.property, e.newValue);
 		
 		styles.selectedStyles.change(e.property, e.newValue);
+		styles.apply(cell);
 	}
 	
 	protected function global_disabledStylesChangedHandler (e : CellEvent) : void
@@ -549,73 +464,12 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		globalStyles.disabledStyles.change(e.property, e.newValue);
 		
 		styles.disabledStyles.change(e.property, e.newValue);
+		styles.apply(cell);
 	}
 	
-	protected function heightChangedHandler (e : Event) : void
+	protected function heightChangedHandler (e : PropertyChangeEvent) : void
 	{
-		//measuredHeight = textField && textField.measuredHeight > info.height ? textField.measuredHeight : info.height;
-		invalidateSize();
-	}
-	
-	override public function styleChanged (styleProp : String) : void
-	{
-		super.styleChanged(styleProp);
-		
-		/*if (!styleProp || styleProp != styleName)
-		 return;*/
-		
-		var value : Object;
-		
-		if ((value = getStyle("foregroundColor")))
-			globalStyles.styles.foregroundColor = value as uint;
-		
-		if ((value = getStyle("foregroundAlpha")))
-			globalStyles.styles.foregroundAlpha = value as Number;
-		
-		if ((value = getStyle("backgroundColor")))
-			globalStyles.styles.backgroundColor = value as uint;
-		
-		if ((value = getStyle("backgroundAlpha")))
-			globalStyles.styles.backgroundAlpha = value as Number;
-		
-		if ((value = getStyle("align")))
-			globalStyles.styles.align = value as String;
-		
-		if ((value = getStyle("antiAliasType")))
-			globalStyles.styles.antiAliasType = value as String;
-		
-		if ((value = getStyle("decoration")))
-			globalStyles.styles.decoration = value as String;
-		
-		if ((value = getStyle("family")))
-			globalStyles.styles.family = value as String;
-		
-		if ((value = getStyle("gridFitType")))
-			globalStyles.styles.gridFitType = value as String;
-		
-		if ((value = getStyle("indent")))
-			globalStyles.styles.indent = value as int;
-		
-		if ((value = getStyle("kerning")))
-			globalStyles.styles.kerning = value as Boolean;
-		
-		if ((value = getStyle("sharpness")))
-			globalStyles.styles.sharpness = value as Number;
-		
-		if ((value = getStyle("size")))
-			globalStyles.styles.size = value as uint;
-		
-		if ((value = getStyle("spacing")))
-			globalStyles.styles.spacing = value as int;
-		
-		if ((value = getStyle("style")))
-			globalStyles.styles.style = value as String;
-		
-		if ((value = getStyle("thickness")))
-			globalStyles.styles.thickness = value as Number;
-		
-		if ((value = getStyle("weight")))
-			globalStyles.styles.weight = value as String;
+		//dataGrid.invalidateList();
 	}
 }
 }

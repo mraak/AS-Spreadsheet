@@ -1,5 +1,6 @@
 package com.flextras.paintgrid
 {
+import com.flextras.calc.Utils;
 import com.flextras.context.GlobalContextMenu;
 import com.flextras.context.LocalContextMenu;
 
@@ -387,6 +388,36 @@ public class PaintGrid2 extends DataGrid
 	}
 	
 	/**
+	 * Conditions API
+	 */
+	
+	protected var _condition : Condition;
+	
+	protected var _conditionString : String;
+	
+	public function get condition () : String
+	{
+		return _conditionString;
+	}
+	
+	public function set condition (value : String) : void
+	{
+		if (_conditionString == value)
+			return;
+		
+		_conditionString = value;
+		
+		_condition = null;
+		
+		if (value)
+		{
+			var o : Object = Utils.breakComparisonInput(value);
+			
+			_condition = new Condition(o.op, o.arg2);
+		}
+	}
+	
+	/**
 	 * Disabled Cells API
 	 */
 	
@@ -758,6 +789,7 @@ public class PaintGrid2 extends DataGrid
 			
 			r.dataGrid = this;
 			r.globalCell = _globalCellStyles;
+			r.condition = _condition;
 			
 			if (info)
 			{
