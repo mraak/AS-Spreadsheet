@@ -653,8 +653,11 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	protected function itemEditBeginHandler (e : DataGridEvent) : void
 	{
 		e.preventDefault();
-		
+		try
+		{}
+		catch(e:Error){}
 		createItemEditor(e.columnIndex, e.rowIndex);
+		
 		
 		if (editedItemRenderer is IDropInListItemRenderer && itemEditorInstance is IDropInListItemRenderer)
 		{
@@ -692,6 +695,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		event.itemRenderer = itemEditorInstance;
 		
 		dispatchEvent(event);
+		
 	}
 	
 	protected function itemEditEndHandler (e : DataGridEvent) : void
