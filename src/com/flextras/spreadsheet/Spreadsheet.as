@@ -4,7 +4,7 @@ import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
 import com.flextras.paintgrid.CellProperties;
-import com.flextras.paintgrid.PaintGrid2;
+import com.flextras.paintgrid.PaintGrid;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -54,11 +54,11 @@ use namespace mx_internal;
  * objects and collections as variables in the calculations.
  *
  * */
-public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
+public class Spreadsheet extends PaintGrid implements ISpreadsheet
 {
 	private var _rowCount : int = 15;
 	
-	private var _columnCount : int = 10;
+	private var _columnCount : int = 7;
 	
 	private var _calc : Calc;
 	
@@ -86,6 +86,13 @@ public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 		
 		this.itemRenderer = new ClassFactory(SpreadsheetItemRenderer);
 		
+		this.setStyle("horizontalGridLines", true);
+		this.setStyle("horizontalGridLineColor", 0x666666);
+		
+		this.globalCellStyles.rollOverStyles.backgroundColor = 0xCCCCCC;
+		this.globalCellStyles.selectedStyles.backgroundColor = 0xCCFF33;
+		this.globalCellStyles.disabledStyles.backgroundColor = 0xFF3333;
+
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGIN, itemEditBeginHandler);
 		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditEndHandler);
 		

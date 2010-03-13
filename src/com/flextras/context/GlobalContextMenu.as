@@ -1,9 +1,6 @@
 package com.flextras.context
 {
-import com.flextras.calc.ControlObject;
-import com.flextras.calc.Utils;
 import com.flextras.paintgrid.CellProperties;
-import com.flextras.spreadsheet.PaintSpreadsheet2;
 
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;

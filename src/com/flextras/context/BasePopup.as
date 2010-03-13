@@ -1,6 +1,6 @@
 package com.flextras.context
 {
-import com.flextras.paintgrid.PaintGrid2;
+import com.flextras.paintgrid.PaintGrid;
 
 import flash.events.Event;
 
@@ -10,15 +10,15 @@ import mx.managers.PopUpManager;
 
 public class BasePopup extends TitleWindow
 {
-	protected var _grid : PaintGrid2;
+	protected var _grid : PaintGrid;
 	
 	[Bindable]
-	public function get grid () : PaintGrid2
+	public function get grid () : PaintGrid
 	{
 		return _grid;
 	}
 	
-	public function set grid (value : PaintGrid2) : void
+	public function set grid (value : PaintGrid) : void
 	{
 		if (_grid === value)
 			return;

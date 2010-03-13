@@ -1,7 +1,6 @@
 package com.flextras.calc
 {
 import com.flextras.spreadsheet.ISpreadsheet;
-import com.flextras.spreadsheet.PaintSpreadsheet2;
 import com.flextras.spreadsheet.SpreadsheetEvent;
 
 import flash.events.EventDispatcher;
@@ -708,9 +707,9 @@ public class Calc extends EventDispatcher
 		
 		updateDependent(co);
 		
-		if (co && co.grid && co.grid is PaintSpreadsheet2)
+		if (co && co.grid && co.grid is ISpreadsheet)
 		{
-			var dg : PaintSpreadsheet2 = PaintSpreadsheet2(co.grid);
+			var dg : ISpreadsheet = co.grid;
 			var o : Object = dg.getCell(co.id);
 			
 			if (o)
@@ -836,22 +835,7 @@ public class Calc extends EventDispatcher
 			{
 				//assignControlExpression(co, "");
 				co.grid.assignExpression(co.id, "");
-				/*if (co && co.grid && co.grid is PaintSpreadsheet2)
-				   {
-				   var dg : PaintSpreadsheet2 = PaintSpreadsheet2(co.grid);
-				   var o : Object = dg.getCell(co.id);
-				   var i : int;
-				
-				   dg.expressions.removeItemAt(dg.expressions.getItemIndex(o));
-				
-				   if ((i = expressionTree.indexOf(co)) > -1)
-				   {
-				   expressionTree.splice(i, 1);
-				
-				   if ((i = co.grid.expressionTree.indexOf(co)) > -1)
-				   co.grid.expressionTree.splice(i, 1);
-				   }
-				 }*/
+
 			}
 		}
 		
@@ -987,17 +971,7 @@ public class Calc extends EventDispatcher
 		_ctrlCollection[ctrlObject.id] = ctrlObject;
 	}
 	
-	/**
-	 * Adds FlexcelDataGrid and registers it with the Calc.
-	 *
-	 * */
-	public function addDataGrid (grid : Spreadsheet) : void
-	{
-		grid.calc = this;
-		//_gridsArray.push(grid);
-		_gridCollection[grid.id] = grid;
-		var dsf : int = 0;
-	}
+
 	
 	public function addSpreadsheet (sheet : ISpreadsheet) : void
 	{
@@ -1016,31 +990,7 @@ public class Calc extends EventDispatcher
 		_gridCollection[sheet.id] = sheet;
 	}
 	
-	/**
-	 * Removes the FlexcelDataGrid from the list of registered controls.
-	 * All the other expressions containing fields from this grid will become
-	 * invalid, and will contain non existant references to fields from this grid.
-	 * */
-	public function removeDataGrid (grid : Spreadsheet) : void
-	{
-		//var tmp_cos:Object = grid.ctrlObjects;
-		var tmp_cos : Object = grid.expressionTree;
-		delete _gridCollection[grid.id];
-		
-		for each (var co : ControlObject in tmp_cos)
-		{
-			currentOriginator = co;
-			var i : int = expressionTree.indexOf(co);
-			
-			if (i != -1)
-			{
-				expressionTree.splice(i, 1);
-			}
-			
-			updateDependent(co);
-		}
-		var dsf : int = 0;
-	}
+
 	
 	/**
 	 * Calc currently supports ArrayCollection only
@@ -1063,30 +1013,7 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	public function get expressionListXML () : XML
-	{
-		var s : String = "<calc_data>";
-		s += "<expressions>";
-		
-		for each (var co : ControlObject in expressionTree)
-		{
-			if (!co.grid)
-			{
-				var exp : String = (co.exp) ? co.exp : co.ctrl[co.valueProp];
-				s += "<e oid=\"" + co.id + "\" exp=\"" + exp + "\"/>";
-			}
-		}
-		s += "</expressions>";
-		
-		for each (var gr : Spreadsheet in _gridCollection)
-		{
-			s += gr.expressionListXML;
-		}
-		
-		s += "</calc_data>";
-		
-		return new XML(s);
-	}
+
 	
 	public function get gridCollection () : Object
 	{

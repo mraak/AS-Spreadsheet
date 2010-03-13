@@ -1,7 +1,7 @@
 package com.flextras.context
 {
-import com.flextras.paintgrid.PaintGrid2;
-import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
+import com.flextras.paintgrid.PaintGrid;
+import com.flextras.paintgrid.PaintGridItemRenderer;
 
 import flash.display.InteractiveObject;
 import flash.events.Event;
@@ -11,14 +11,14 @@ import mx.controls.IFlexContextMenu;
 
 public class Menu implements IFlexContextMenu
 {
-	protected var _owner : PaintGrid2;
+	protected var _owner : PaintGrid;
 	
-	public function get owner () : PaintGrid2
+	public function get owner () : PaintGrid
 	{
 		return _owner;
 	}
 	
-	public function set owner (value : PaintGrid2) : void
+	public function set owner (value : PaintGrid) : void
 	{
 		if (_owner === value)
 			return;
@@ -46,10 +46,10 @@ public class Menu implements IFlexContextMenu
 		
 		_target = value;
 		
-		if (value is PaintGrid2)
-			owner = PaintGrid2(value);
-		else if (value is PaintGrid2ColumnItemRenderer)
-			owner = PaintGrid2ColumnItemRenderer(value).dataGrid;
+		if (value is PaintGrid)
+			owner = PaintGrid(value);
+		else if (value is PaintGridItemRenderer)
+			owner = PaintGridItemRenderer(value).dataGrid;
 		
 		menu = new ContextMenu();
 		menu.hideBuiltInItems();

@@ -2,7 +2,7 @@ package com.flextras.spreadsheet
 {
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
+import com.flextras.paintgrid.PaintGridItemRenderer;
 import com.flextras.paintgrid.PaintGridRowResizeSkin;
 
 import flash.display.DisplayObject;
@@ -21,7 +21,7 @@ import mx.skins.halo.DataGridColumnResizeSkin;
 
 use namespace mx_internal;
 
-public class SpreadsheetItemRenderer extends PaintGrid2ColumnItemRenderer
+public class SpreadsheetItemRenderer extends PaintGridItemRenderer
 {
 	
 	private var resizeCursorID : int = CursorManager.NO_CURSOR;

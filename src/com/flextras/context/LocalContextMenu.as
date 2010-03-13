@@ -1,7 +1,7 @@
 package com.flextras.context
 {
 import com.flextras.paintgrid.CellProperties;
-import com.flextras.spreadsheet.PaintSpreadsheet2;
+import com.flextras.spreadsheet.Spreadsheet;
 
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
@@ -31,6 +31,8 @@ public class LocalContextMenu extends Menu
 	protected const disable : ContextMenuItem = new ContextMenuItem("Disable Cell", true);
 	
 	protected const setCellStyles : ContextMenuItem = new ContextMenuItem("Cell Styles", true);
+	
+	protected const setGlobalStyles : ContextMenuItem = new ContextMenuItem("Global Styles");
 	
 	protected const setColumnWidth : ContextMenuItem = new ContextMenuItem("Set Column Width", true);
 	
@@ -77,24 +79,24 @@ public class LocalContextMenu extends Menu
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is PaintSpreadsheet2)
-			PaintSpreadsheet2(owner).cut();
+		if (owner is Spreadsheet)
+			Spreadsheet(owner).cut();
 		cellSelectedHandler(null);
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is PaintSpreadsheet2)
-			PaintSpreadsheet2(owner).copy();
+		if (owner is Spreadsheet)
+			Spreadsheet(owner).copy();
 		
 		cellSelectedHandler(null);
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is PaintSpreadsheet2)
+		if (owner is Spreadsheet)
 		{
-			var pss : PaintSpreadsheet2 = PaintSpreadsheet2(owner);
+			var pss : Spreadsheet = Spreadsheet(owner);
 			
 			var x : int = cell.column - pss.dx;
 			var y : int = cell.row - pss.dy;
@@ -173,9 +175,9 @@ public class LocalContextMenu extends Menu
 		cut.enabled = allow;
 		copy.enabled = allow;
 		
-		if (owner is PaintSpreadsheet2)
+		if (owner is Spreadsheet)
 		{
-			var pss : PaintSpreadsheet2 = PaintSpreadsheet2(owner);
+			var pss : Spreadsheet = Spreadsheet(owner);
 			allow = pss.dx > -1 && pss.dy > -1 && pss.allowPaste;
 		}
 		else
@@ -185,6 +187,19 @@ public class LocalContextMenu extends Menu
 		pasteValue.enabled = allow;
 		pasteStyles.enabled = allow;
 		pasteExpressions.enabled = allow;
+	}
+	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
+	{
+		if (popup)
+			PopUpManager.removePopUp(popup);
+		
+		popup = new StylesPopup();
+		popup.grid = owner;
+		
+		PopUpManager.addPopUp(popup, owner);
+		PopUpManager.centerPopUp(popup);
+		
+		StylesPopup(popup).cell = owner.globalCellStyles;
 	}
 	
 	override public function set enabled (value : Boolean) : void
@@ -203,6 +218,7 @@ public class LocalContextMenu extends Menu
 		setCellStyles.enabled = value;
 		setColumnWidth.enabled = value;
 		setRowHeight.enabled = value;
+		setGlobalStyles.enabled = value;
 		
 		cellSelectedHandler(null);
 		
@@ -226,8 +242,11 @@ public class LocalContextMenu extends Menu
 		setColumnWidth.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
 		setRowHeight.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
 		
+		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
+		
+		
 		menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions,
-							disable, setCellStyles, setColumnWidth, setRowHeight, removeRow, removeColumn];
+							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight, removeRow, removeColumn];
 	}
 	
 	override public function unsetContextMenu (component : InteractiveObject) : void
@@ -246,6 +265,7 @@ public class LocalContextMenu extends Menu
 		setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
 		setColumnWidth.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
 		setRowHeight.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
+		setGlobalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = null;
 	}
