@@ -84,7 +84,7 @@ public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 		
 		doubleClickToEdit = true;
 		
-		this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
+		this.itemRenderer = new ClassFactory(SpreadsheetItemRenderer);
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGIN, itemEditBeginHandler);
 		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditEndHandler);
@@ -338,7 +338,7 @@ public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 	override public function set columns (value : Array) : void
 	{
 		for each (var column : DataGridColumn in value)
-			column.itemEditor = new ClassFactory(PaintSpreadsheetItemEditor);
+			column.itemEditor = new ClassFactory(SpreadsheetItemEditor);
 		
 		super.columns = value;
 	}
@@ -630,16 +630,16 @@ public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 	{
 		super.keyDownHandler(event);
 		
-		if (selectedRenderer is PaintSpreadsheetItemRenderer)
-			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
+		if (selectedRenderer is SpreadsheetItemRenderer)
+			SpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
 	}
 	
 	override protected function keyUpHandler (event : KeyboardEvent) : void
 	{
 		super.keyUpHandler(event);
 		
-		if (selectedRenderer is PaintSpreadsheetItemRenderer)
-			PaintSpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
+		if (selectedRenderer is SpreadsheetItemRenderer)
+			SpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
 	}
 	
 	override protected function mouseUpHandler (event : MouseEvent) : void
@@ -716,9 +716,9 @@ public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 		var col : String = String(Utils.alphabet[e.columnIndex]).toLowerCase();
 		var oid : String = col + e.rowIndex;
 		
-		if (itemEditorInstance is PaintSpreadsheetItemEditor)
+		if (itemEditorInstance is SpreadsheetItemEditor)
 		{
-			var t : String = PaintSpreadsheetItemEditor(itemEditorInstance).text;
+			var t : String = SpreadsheetItemEditor(itemEditorInstance).text;
 			var co : ControlObject = this.ctrlObjects[oid];
 			var v : String = co.ctrl[col];
 			var ex : String = co.exp;
