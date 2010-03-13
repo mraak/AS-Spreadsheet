@@ -24,6 +24,8 @@ public interface ISpreadsheet
 	function set expressions (value : ArrayCollection) : void;
 	function get expressions () : ArrayCollection;
 	
+	function getCell(cellId:String) : Object;
+	
 	function assignExpression (cellId : String, expression : String) : void;
 	
 	function updateExpressions () : void;

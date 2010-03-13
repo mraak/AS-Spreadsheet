@@ -54,7 +54,7 @@ use namespace mx_internal;
  * objects and collections as variables in the calculations.
  *
  * */
-public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
+public class Spreadsheet extends PaintGrid2 implements ISpreadsheet
 {
 	private var _rowCount : int = 15;
 	
@@ -74,7 +74,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 	
 	private var expressionsChanged : Boolean;
 	
-	public function PaintSpreadsheet2 ()
+	public function Spreadsheet ()
 	{
 		super();
 		
