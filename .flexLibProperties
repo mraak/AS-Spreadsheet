@@ -5,12 +5,7 @@
     <classEntry path="com.flextras.paintgrid.PaintGridEmptyColumnHeader"/>
     <classEntry path="com.flextras.paintgrid.Styles"/>
     <classEntry path="com.flextras.paintgrid.BasicStyles"/>
-    <classEntry path="com.flextras.spreadsheet.a.PaintSpreadsheet"/>
-    <classEntry path="com.flextras.paintgrid.PaintGrid2"/>
-    <classEntry path="com.flextras.spreadsheet.PaintSpreadsheetItemRenderer"/>
     <classEntry path="com.flextras.paintgrid.PaintGridRowResizeSkin"/>
-    <classEntry path="com.flextras.spreadsheet.PaintSpreadsheet2"/>
-    <classEntry path="com.flextras.spreadsheet.PaintSpreadsheetItemEditor"/>
     <classEntry path="com.flextras.context.Menu"/>
     <classEntry path="com.flextras.context.GlobalContextMenu"/>
     <classEntry path="com.flextras.context.LocalContextMenu"/>

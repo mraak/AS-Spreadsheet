@@ -1,7 +1,5 @@
 package com.flextras.spreadsheet
 {
-import com.flextras.calc.ControlObject;
-import com.flextras.calc.Utils;
 import com.flextras.paintgrid.PaintGridItemRenderer;
 import com.flextras.paintgrid.PaintGridRowResizeSkin;
 

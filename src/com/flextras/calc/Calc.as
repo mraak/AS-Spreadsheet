@@ -835,7 +835,7 @@ public class Calc extends EventDispatcher
 			{
 				//assignControlExpression(co, "");
 				co.grid.assignExpression(co.id, "");
-
+				
 			}
 		}
 		
@@ -971,8 +971,6 @@ public class Calc extends EventDispatcher
 		_ctrlCollection[ctrlObject.id] = ctrlObject;
 	}
 	
-
-	
 	public function addSpreadsheet (sheet : ISpreadsheet) : void
 	{
 		if (sheet.id == "" || sheet.id == null)
@@ -989,8 +987,6 @@ public class Calc extends EventDispatcher
 			sheet.calc = this;
 		_gridCollection[sheet.id] = sheet;
 	}
-	
-
 	
 	/**
 	 * Calc currently supports ArrayCollection only
@@ -1012,8 +1008,6 @@ public class Calc extends EventDispatcher
 			throw(new Error("Calc.addCollection currently supports ArrayCollection only"));
 		}
 	}
-	
-
 	
 	public function get gridCollection () : Object
 	{

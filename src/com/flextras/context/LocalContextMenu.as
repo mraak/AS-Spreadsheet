@@ -188,6 +188,7 @@ public class LocalContextMenu extends Menu
 		pasteStyles.enabled = allow;
 		pasteExpressions.enabled = allow;
 	}
+	
 	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
 	{
 		if (popup)
@@ -243,7 +244,6 @@ public class LocalContextMenu extends Menu
 		setRowHeight.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
 		
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
-		
 		
 		menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions,
 							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight, removeRow, removeColumn];
