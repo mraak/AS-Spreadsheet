@@ -26,7 +26,7 @@
 
 	<s:ButtonBar id = "buttonBar"
 				 selectedIndex = "0"
-				 enabled = "{!!grid.selectedCellProperties}"
+				 enabled = "{!!cell}"
 				 change = "updateCell()">
 		<s:dataProvider>
 			<s:ArrayCollection>
@@ -206,6 +206,15 @@
 					   value = "{styles.indent}"
 					   change = "updateStyle('indent', event.currentTarget.value);" />
 		</mx:FormItem>
+
+		<mx:FormItem label = "condition"
+					 direction = "horizontal">
+			<s:TextInput text = "{grid.condition}"
+						 change = "grid.condition = event.currentTarget.text" />
+
+			<s:Button label = "Clear"
+					  click = "grid.condition = null" />
+		</mx:FormItem>
 	</mx:Form>
 
 	<fx:Script>
@@ -218,24 +227,48 @@
 			[Bindable]
 			protected var styles : ObjectProxy;
 			
+			protected var _cell : CellProperties;
+			
+			[Bindable("cellChanged")]
+			public function get cell () : CellProperties
+			{
+				return _cell;
+			}
+			
+			public function set cell (value : CellProperties) : void
+			{
+				if (_cell === value)
+					return;
+				
+				_cell = value;
+				
+				if (value)
+					updateCell();
+				
+				dispatchEvent(new Event("cellChanged"));
+			}
+			
 			public function updateCell () : void
 			{
+				if (!cell)
+					return;
+				
 				switch (buttonBar.selectedIndex)
 				{
 					case 0:
-						styles = grid.selectedCellProperties.styles;
+						styles = cell.styles;
 						break;
 					
 					case 1:
-						styles = grid.selectedCellProperties.rollOverStyles;
+						styles = cell.rollOverStyles;
 						break;
 					
 					case 2:
-						styles = grid.selectedCellProperties.selectedStyles;
+						styles = cell.selectedStyles;
 						break;
 					
 					case 3:
-						styles = grid.selectedCellProperties.disabledStyles;
+						styles = cell.disabledStyles;
 						break;
 				}
 			}
@@ -244,22 +277,25 @@
 			{
 				styles[name] = value;
 				
+				if (!cell)
+					return;
+				
 				switch (buttonBar.selectedIndex)
 				{
 					case 0:
-						grid.selectedCellsStyles = styles;
+						cell.styles = new ObjectProxy(styles);
 						break;
 					
 					case 1:
-						grid.selectedCellsRollOverStyles = styles;
+						cell.rollOverStyles = new ObjectProxy(styles);
 						break;
 					
 					case 2:
-						grid.selectedCellsSelectedStyles = styles;
+						cell.selectedStyles = new ObjectProxy(styles);
 						break;
 					
 					case 3:
-						grid.selectedCellsDisabledStyles = styles;
+						cell.disabledStyles = new ObjectProxy(styles);
 						break;
 				}
 			}

@@ -1,5 +1,7 @@
 package com.flextras.paintgrid
 {
+import com.flextras.context.LocalContextMenu;
+
 import flash.events.Event;
 
 import mx.events.PropertyChangeEvent;
@@ -43,6 +45,9 @@ public class CellProperties extends CellLocation
 		_rollOverStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, rollOverStyles_changeHandler);
 		_selectedStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, selectedStyles_changeHandler);
 		_disabledStyles.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, disabledStyles_changeHandler);
+		
+		if (menu)
+			menu.unsetContextMenu(null);
 	}
 	
 	protected var _enabled : Boolean = true;
@@ -60,7 +65,28 @@ public class CellProperties extends CellLocation
 		
 		_enabled = value;
 		
+		if (menu)
+			menu.enabled = value;
+		
 		dispatchEvent(new Event("enabledChanged"));
+	}
+	
+	protected var _menu : LocalContextMenu;
+	
+	public function get menu () : LocalContextMenu
+	{
+		return _menu;
+	}
+	
+	public function set menu (value : LocalContextMenu) : void
+	{
+		if (_menu === value)
+			return;
+		
+		_menu = value;
+		
+		if (value)
+			value.enabled = enabled;
 	}
 	
 	protected var _selected : Boolean;
@@ -150,7 +176,8 @@ public class CellProperties extends CellLocation
 	
 	override public function get valid () : Boolean
 	{
-		return super.valid && styles && typeof(styles) == "object" && rollOverStyles && typeof(rollOverStyles) == "object" && selectedStyles && typeof(selectedStyles) == "object" && disabledStyles && typeof(disabledStyles) == "object";
+		return super.valid && styles && typeof(styles) == "object" && rollOverStyles && typeof(rollOverStyles) == "object" && selectedStyles && typeof(selectedStyles) == "object" && disabledStyles && typeof(disabledStyles) ==
+			"object";
 	}
 	
 	protected function styles_changeHandler (e : PropertyChangeEvent) : void

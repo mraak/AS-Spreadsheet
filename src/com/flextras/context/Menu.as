@@ -1,27 +1,16 @@
 package com.flextras.context
 {
 import com.flextras.paintgrid.PaintGrid2;
+import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 
-import flash.events.ContextMenuEvent;
+import flash.display.InteractiveObject;
+import flash.events.Event;
 import flash.ui.ContextMenu;
-import flash.ui.ContextMenuItem;
 
-public class Menu
+import mx.controls.IFlexContextMenu;
+
+public class Menu implements IFlexContextMenu
 {
-	protected const _menu : ContextMenu = new ContextMenu();
-	
-	public function Menu (owner : PaintGrid2 = null)
-	{
-		_menu.hideBuiltInItems();
-		
-		this.owner = owner;
-	}
-	
-	public function get menu () : ContextMenu
-	{
-		return _menu;
-	}
-	
 	protected var _owner : PaintGrid2;
 	
 	public function get owner () : PaintGrid2
@@ -34,51 +23,65 @@ public class Menu
 		if (_owner === value)
 			return;
 		
+		if (_owner)
+			_owner.removeEventListener("allowPasteAction", allowPasteActionHandler);
+		
 		_owner = value;
 		
 		if (value)
-			value.contextMenu = _menu;
+			value.addEventListener("allowPasteAction", allowPasteActionHandler);
+	}
+	
+	private var _target : InteractiveObject;
+	
+	public function get target () : InteractiveObject
+	{
+		return _target;
+	}
+	
+	public function set target (value : InteractiveObject) : void
+	{
+		if (_target === value)
+			return;
 		
-		reset();
-	}
-	
-	public function addItem (description : String, callBack : Function, separator : Boolean = false, enabled : Boolean = true, visible : Boolean = true) : void
-	{
-		var item : ContextMenuItem = new ContextMenuItem(description, separator, enabled, visible);
-		item.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, callBack);
+		_target = value;
 		
-		_menu.customItems = _menu.customItems.concat(item);
-	}
-	
-	public function getItem (description : String) : ContextMenuItem
-	{
-		for each (var item : ContextMenuItem in _menu.customItems)
-			if (item.caption == description)
-				return item;
+		if (value is PaintGrid2)
+			owner = PaintGrid2(value);
+		else if (value is PaintGrid2ColumnItemRenderer)
+			owner = PaintGrid2ColumnItemRenderer(value).dataGrid;
 		
-		return null;
+		menu = new ContextMenu();
+		menu.hideBuiltInItems();
+		
+		value.contextMenu = menu;
 	}
 	
-	public function updateItem (description : String, newDescription : String, separator : Boolean = false, enabled : Boolean = true, visible : Boolean = true) : void
+	protected var menu : ContextMenu;
+	
+	protected var _enabled : Boolean;
+	
+	public function get enabled () : Boolean
 	{
-		for each (var item : ContextMenuItem in _menu.customItems)
-			if (item.caption == description)
-			{
-				item.caption = newDescription;
-				item.enabled = enabled;
-				item.separatorBefore = separator;
-				item.visible = visible;
-			}
+		return _enabled;
 	}
 	
-	public function removeItem (description : String) : void
+	public function set enabled (value : Boolean) : void
 	{
-		for each (var item : ContextMenuItem in _menu.customItems)
-			if (item.caption == description)
-				_menu.customItems = _menu.customItems.splice(item, 1);
+		_enabled = value;
 	}
 	
-	public function reset () : void
+	public function setContextMenu (component : InteractiveObject) : void
+	{
+		target = component;
+	}
+	
+	public function unsetContextMenu (component : InteractiveObject) : void
+	{
+	
+	}
+	
+	protected function allowPasteActionHandler (e : Event) : void
 	{
 	
 	}

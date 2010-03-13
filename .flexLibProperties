@@ -17,7 +17,6 @@
     <classEntry path="com.flextras.context.MenuItem"/>
     <classEntry path="com.flextras.context.StylesPopup"/>
     <classEntry path="com.flextras.context.WidthPopup"/>
-    <classEntry path="com.flextras.context.BasePopup"/>
     <classEntry path="com.flextras.paintgrid.Condition"/>
   </includeClasses>
   <includeResources/>

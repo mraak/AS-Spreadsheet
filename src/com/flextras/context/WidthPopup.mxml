@@ -8,12 +8,30 @@
 			   minimum = "0"
 			   maximum = "300"
 			   stepSize = "1"
-			   value = "{grid.getColumnWidthAt(grid.selectedCellProperties.column)}"
+			   value = "{grid.getColumnWidthAt(cell.column)}"
 			   change = "slider_changeHandler(event)" />
 
 	<fx:Script>
 		<![CDATA[
 			import com.flextras.paintgrid.CellProperties;
+			
+			protected var _cell : CellProperties;
+			
+			[Bindable("cellChanged")]
+			public function get cell () : CellProperties
+			{
+				return _cell;
+			}
+			
+			public function set cell (value : CellProperties) : void
+			{
+				if (_cell === value)
+					return;
+				
+				_cell = value;
+				
+				dispatchEvent(new Event("cellChanged"));
+			}
 			
 			override protected function selectedCellsChangedHandler (e : Event) : void
 			{
@@ -22,8 +40,8 @@
 			
 			protected function slider_changeHandler (event : Event) : void
 			{
-				for each (var cell : CellProperties in grid.selectedCells)
-					grid.setColumnWidthAt(cell.column, slider.value);
+				//for each (var cell : CellProperties in grid.selectedCells)
+				grid.setColumnWidthAt(cell.column, slider.value);
 			}
 		]]>
 	</fx:Script>

@@ -46,11 +46,9 @@ public class PaintGrid2 extends DataGrid
 		itemRenderer = new ClassFactory(PaintGrid2ColumnItemRenderer);
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, itemEditBeginningHandler);
+		
+		flexContextMenu = new GlobalContextMenu();
 	}
-	
-	protected const globalMenu : GlobalContextMenu = new GlobalContextMenu(this as PaintGrid2);
-	
-	protected const cellMenu : LocalContextMenu = new LocalContextMenu(this as PaintGrid2);
 	
 	[Bindable]
 	public var doubleClickToEdit : Boolean;
@@ -380,7 +378,8 @@ public class PaintGrid2 extends DataGrid
 			}
 	}
 	
-	public function setAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
+	public function setAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object =
+												   null) : void
 	{
 		var range : CellRange = new CellRange(start, end);
 		
@@ -395,6 +394,7 @@ public class PaintGrid2 extends DataGrid
 	
 	protected var _conditionString : String;
 	
+	[Bindable(event="conditionChanged")]
 	public function get condition () : String
 	{
 		return _conditionString;
@@ -407,14 +407,29 @@ public class PaintGrid2 extends DataGrid
 		
 		_conditionString = value;
 		
-		_condition = null;
+		//_condition = null;
 		
 		if (value)
 		{
 			var o : Object = Utils.breakComparisonInput(value);
 			
-			_condition = new Condition(o.op, o.arg2);
+			if (_condition)
+			{
+				_condition.operator = o.op;
+				_condition.value = o.arg2;
+			}
+			else
+				_condition = new Condition(o.op, o.arg2);
 		}
+		else if (_condition)
+		{
+			_condition.operator = null;
+			_condition.value = 0;
+		}
+		else
+			_condition = new Condition();
+		
+		dispatchEvent(new Event("conditionChanged"));
 	}
 	
 	/**
@@ -668,9 +683,6 @@ public class PaintGrid2 extends DataGrid
 		
 		if (item is PaintGrid2ColumnItemRenderer)
 		{
-			if (selectedRenderer)
-				selectedRenderer.contextMenu = null;
-			
 			selectedRenderer = PaintGrid2ColumnItemRenderer(item);
 			currentCell = selectedRenderer.cell;
 		}
@@ -796,6 +808,19 @@ public class PaintGrid2 extends DataGrid
 				r.cell = info.cells[colNum + horizontalScrollPosition];
 				r.info = info;
 			}
+			
+			var menu : LocalContextMenu = r.cell.menu;
+			
+			if (menu)
+				menu.unsetContextMenu(null);
+			
+			menu = new LocalContextMenu;
+			menu.setContextMenu(r);
+			
+			r.cell.menu = menu;
+			menu.cell = r.cell;
+			
+			r.flexContextMenu = menu;
 			
 			r.invalidateDisplayList();
 		}

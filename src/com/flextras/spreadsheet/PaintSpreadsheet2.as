@@ -3,8 +3,8 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
+import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid2;
-import com.flextras.paintgrid.PaintGrid2ColumnItemRenderer;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -14,7 +14,6 @@ import mx.collections.ArrayCollection;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
-import mx.controls.listClasses.ListRowInfo;
 import mx.core.ClassFactory;
 import mx.core.IIMESupport;
 import mx.core.IInvalidating;
@@ -29,6 +28,25 @@ use namespace mx_internal;
 
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+
+/*[Style(name="foregroundColor", type="uint", format="Color", inherit="yes")]
+   [Style(name="foregroundAlpha", type="Number", inherit="yes")]
+   [Style(name="backgroundColor", type="uint", format="Color", inherit="yes")]
+ [Style(name="backgroundAlpha", type="Number", inherit="yes")]*/
+
+/*[Style(name="antiAliasType", type="String", inherit="yes")]
+   [Style(name="family", type="String", inherit="yes")]
+   [Style(name="gridFitType", type="String", inherit="yes")]
+   [Style(name="sharpness", type="Number", format="Length", inherit="yes")]
+   [Style(name="size", type="uint", format="Length", inherit="yes")]
+   [Style(name="style", type="String", inherit="yes")]
+   [Style(name="thickness", type="Number", format="Length", inherit="yes")]
+   [Style(name="weight", type="String", inherit="yes")]
+   [Style(name="kerning", type="Boolean", inherit="yes")]
+   [Style(name="spacing", type="int", format="Length", inherit="yes")]
+   [Style(name="align", type="String", inherit="yes")]
+   [Style(name="decoration", type="String", inherit="yes")]
+ [Style(name="indent", type="int", format="Length", inherit="yes")]*/
 
 /**
  * Spreadsheet allows you to visauly and programatically use features and calculations found in
@@ -63,7 +81,7 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		this.draggableColumns = false;
 		this.sortableColumns = false;
 		this.showHeaders = false;
-
+		
 		doubleClickToEdit = true;
 		
 		this.itemRenderer = new ClassFactory(PaintSpreadsheetItemRenderer);
@@ -82,6 +100,53 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 		
 		if (!_calc)
 			calc = new Calc();
+	}
+	
+	mx_internal var range : Array;
+	
+	mx_internal var dx : int = -1, dy : int = -1;
+	
+	mx_internal var performCopy : Boolean;
+	
+	mx_internal var allowPaste : Boolean;
+	
+	mx_internal function cut () : void
+	{
+		performCopy = false;
+		dx = selectedCellProperties.column;
+		dy = selectedCellProperties.row;
+		
+		setupRange();
+	}
+	
+	mx_internal function copy () : void
+	{
+		performCopy = true;
+		dx = selectedCellProperties.column;
+		dy = selectedCellProperties.row;
+		
+		setupRange();
+	}
+	
+	protected function setupRange () : void
+	{
+		var prop : String, id : String, co : ControlObject;
+		
+		range = [];
+		
+		for each (var cell : CellProperties in selectedCells)
+		{
+			prop = String(Utils.alphabet[cell.column]).toLowerCase();
+			id = prop + cell.row;
+			
+			co = ctrlObjects[id];
+			
+			if (co)
+				range.push(co);
+		}
+		
+		allowPaste = true;
+		dispatchEvent(new Event("allowPasteAction"));
 	}
 	
 	/////////////////////////////////////
@@ -659,7 +724,6 @@ public class PaintSpreadsheet2 extends PaintGrid2 implements ISpreadsheet
 				assignExpression(oid, t);
 			}
 		}
-			
 		
 		destroyItemEditor();
 	}

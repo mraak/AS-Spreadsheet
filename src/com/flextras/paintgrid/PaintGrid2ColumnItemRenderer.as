@@ -2,6 +2,7 @@ package com.flextras.paintgrid
 {
 import com.flextras.calc.FormulaLogic;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.text.TextFormat;
 
@@ -43,8 +44,25 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		if (_condition === value)
 			return;
 		
+		if (_condition)
+		{
+			_condition.removeEventListener("operatorChanged", conditionChanged);
+			_condition.removeEventListener("valueChanged", conditionChanged);
+		}
+		
 		_condition = value;
 		
+		if (value)
+		{
+			value.addEventListener("operatorChanged", conditionChanged);
+			value.addEventListener("valueChanged", conditionChanged);
+		}
+		
+		invalidateDisplayList();
+	}
+	
+	protected function conditionChanged (e : Event) : void
+	{
 		invalidateDisplayList();
 	}
 	
@@ -352,7 +370,12 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 		
 		textField.setActualSize(w, h);
 		
-		var s : BasicStyles = !condition || textField && FormulaLogic.compare(parseFloat(textField.text), condition.operator, condition.value) ? currentStyles : currentGlobalStyles;
+		var hasCondition : Boolean = !condition || !condition.valid || textField && FormulaLogic.compare(parseFloat(textField.text), condition.operator, condition.value);
+		
+		var s : BasicStyles = hasCondition ? currentStyles : currentGlobalStyles;
+		var ss : Styles = hasCondition ? styles.styles : globalStyles.styles;
+		
+		currentStylesChanged = true;
 		
 		if (currentStyles)
 		{
@@ -393,33 +416,33 @@ public class PaintGrid2ColumnItemRenderer extends UIComponent implements IListIt
 				s.foregroundChanged = false;
 			}
 			
-			if (currentStylesChanged || styles.styles.fontStylesChanged)
+			if (currentStylesChanged || ss.fontStylesChanged)
 			{
-				if (styles.styles.antiAliasType)
-					textField.antiAliasType = styles.styles.antiAliasType;
+				if (ss.antiAliasType)
+					textField.antiAliasType = ss.antiAliasType;
 				
-				if (styles.styles.gridFitType)
-					textField.gridFitType = styles.styles.gridFitType;
+				if (ss.gridFitType)
+					textField.gridFitType = ss.gridFitType;
 				
-				textField.sharpness = styles.styles.sharpness;
-				textField.thickness = styles.styles.thickness;
+				textField.sharpness = ss.sharpness;
+				textField.thickness = ss.thickness;
 				
 				var tf : TextFormat = new TextFormat();
-				tf.font = styles.styles.family;
-				tf.size = styles.styles.size;
-				tf.align = styles.styles.align;
-				tf.bold = styles.styles.weight == "bold";
-				tf.indent = styles.styles.indent;
-				tf.italic = styles.styles.style == "italic";
-				tf.kerning = styles.styles.kerning;
-				tf.letterSpacing = styles.styles.spacing;
-				tf.underline = styles.styles.decoration == "underline";
+				tf.font = ss.family;
+				tf.size = ss.size;
+				tf.align = ss.align;
+				tf.bold = ss.weight == "bold";
+				tf.indent = ss.indent;
+				tf.italic = ss.style == "italic";
+				tf.kerning = ss.kerning;
+				tf.letterSpacing = ss.spacing;
+				tf.underline = ss.decoration == "underline";
 				
 				textField.setTextFormat(tf);
 				
 				//measuredHeight = info && info.height > textField.measuredHeight ? info.height : (textField.measuredHeight > minHeight ? textField.measuredHeight : minHeight);
 				invalidateSize();
-				styles.styles.fontStylesChanged = false;
+				ss.fontStylesChanged = false;
 			}
 			
 			currentStylesChanged = false;

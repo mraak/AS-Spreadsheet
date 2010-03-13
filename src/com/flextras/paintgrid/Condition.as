@@ -1,14 +1,49 @@
 package com.flextras.paintgrid
 {
+import flash.events.Event;
+import flash.events.EventDispatcher;
 
-public class Condition
+public class Condition extends EventDispatcher
 {
-	public var operator : String, value : int;
+	protected var _operator : String;
 	
-	public function Condition (operator : String, value : int)
+	[Bindable(event="operatorChanged")]
+	public function get operator () : String
+	{
+		return _operator;
+	}
+	
+	public function set operator (value : String) : void
+	{
+		_operator = value;
+		
+		dispatchEvent(new Event("operatorChanged"));
+	}
+	
+	protected var _value : int;
+	
+	[Bindable(event="valueChanged")]
+	public function get value () : int
+	{
+		return _value;
+	}
+	
+	public function set value (value : int) : void
+	{
+		_value = value;
+		
+		dispatchEvent(new Event("valueChanged"));
+	}
+	
+	public function Condition (operator : String = null, value : int = 0)
 	{
 		this.operator = operator;
 		this.value = value;
+	}
+	
+	public function get valid () : Boolean
+	{
+		return operator && operator.length > 0;
 	}
 }
 }
