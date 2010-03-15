@@ -29,25 +29,6 @@ use namespace mx_internal;
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
-/*[Style(name="foregroundColor", type="uint", format="Color", inherit="yes")]
-   [Style(name="foregroundAlpha", type="Number", inherit="yes")]
-   [Style(name="backgroundColor", type="uint", format="Color", inherit="yes")]
- [Style(name="backgroundAlpha", type="Number", inherit="yes")]*/
-
-/*[Style(name="antiAliasType", type="String", inherit="yes")]
-   [Style(name="family", type="String", inherit="yes")]
-   [Style(name="gridFitType", type="String", inherit="yes")]
-   [Style(name="sharpness", type="Number", format="Length", inherit="yes")]
-   [Style(name="size", type="uint", format="Length", inherit="yes")]
-   [Style(name="style", type="String", inherit="yes")]
-   [Style(name="thickness", type="Number", format="Length", inherit="yes")]
-   [Style(name="weight", type="String", inherit="yes")]
-   [Style(name="kerning", type="Boolean", inherit="yes")]
-   [Style(name="spacing", type="int", format="Length", inherit="yes")]
-   [Style(name="align", type="String", inherit="yes")]
-   [Style(name="decoration", type="String", inherit="yes")]
- [Style(name="indent", type="int", format="Length", inherit="yes")]*/
-
 /**
  * Spreadsheet allows you to visauly and programatically use features and calculations found in
  * Excel and other Spreadsheet programs. It is divided into rows and columns and can accept other
@@ -70,8 +51,6 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	protected var _expressions : ArrayCollection = new ArrayCollection();
 	
-	private var _cellResizePolicy : String = SpreadsheetCellResizePolicy.ALL;
-	
 	private var expressionsChanged : Boolean;
 	
 	public function Spreadsheet ()
@@ -92,7 +71,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		this.globalCellStyles.rollOverStyles.backgroundColor = 0xCCCCCC;
 		this.globalCellStyles.selectedStyles.backgroundColor = 0xCCFF33;
 		this.globalCellStyles.disabledStyles.backgroundColor = 0xFF3333;
-
+		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGIN, itemEditBeginHandler);
 		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditEndHandler);
 		
@@ -107,53 +86,6 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		if (!_calc)
 			calc = new Calc();
-	}
-	
-	mx_internal var range : Array;
-	
-	mx_internal var dx : int = -1, dy : int = -1;
-	
-	mx_internal var performCopy : Boolean;
-	
-	mx_internal var allowPaste : Boolean;
-	
-	mx_internal function cut () : void
-	{
-		performCopy = false;
-		dx = selectedCellProperties.column;
-		dy = selectedCellProperties.row;
-		
-		setupRange();
-	}
-	
-	mx_internal function copy () : void
-	{
-		performCopy = true;
-		dx = selectedCellProperties.column;
-		dy = selectedCellProperties.row;
-		
-		setupRange();
-	}
-	
-	protected function setupRange () : void
-	{
-		var prop : String, id : String, co : ControlObject;
-		
-		range = [];
-		
-		for each (var cell : CellProperties in selectedCells)
-		{
-			prop = String(Utils.alphabet[cell.column]).toLowerCase();
-			id = prop + cell.row;
-			
-			co = ctrlObjects[id];
-			
-			if (co)
-				range.push(co);
-		}
-		
-		allowPaste = true;
-		dispatchEvent(new Event("allowPasteAction"));
 	}
 	
 	/////////////////////////////////////
@@ -326,26 +258,13 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		return _expressionTree;
 	}
 	
-	[Bindable(event="cellResizePolicyChanged")]
-	public function get cellResizePolicy () : String
-	{
-		return _cellResizePolicy;
-	}
-	
-	public function set cellResizePolicy (value : String) : void
-	{
-		if (_cellResizePolicy == value)
-			return;
-		
-		_cellResizePolicy = value;
-		
-		dispatchEvent(new Event("cellResizePolicyChanged"));
-	}
-	
 	override public function set columns (value : Array) : void
 	{
 		for each (var column : DataGridColumn in value)
+		{
 			column.itemEditor = new ClassFactory(SpreadsheetItemEditor);
+			column.editorDataField = "actualValue";
+		}
 		
 		super.columns = value;
 	}
@@ -649,22 +568,11 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			SpreadsheetItemRenderer(selectedRenderer).showSeparators = isCtrl && isAlt;
 	}
 	
-	override protected function mouseUpHandler (event : MouseEvent) : void
-	{
-		var saved : Boolean = editable;
-		editable = false;
-		super.mouseUpHandler(event);
-		editable = saved;
-	}
-	
 	protected function itemEditBeginHandler (e : DataGridEvent) : void
 	{
 		e.preventDefault();
-		try
-		{}
-		catch(e:Error){}
-		createItemEditor(e.columnIndex, e.rowIndex);
 		
+		createItemEditor(e.columnIndex, e.rowIndex);
 		
 		if (editedItemRenderer is IDropInListItemRenderer && itemEditorInstance is IDropInListItemRenderer)
 		{
@@ -702,11 +610,13 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		event.itemRenderer = itemEditorInstance;
 		
 		dispatchEvent(event);
-		
+	
 	}
 	
 	protected function itemEditEndHandler (e : DataGridEvent) : void
 	{
+		return;
+		
 		e.preventDefault();
 		
 		if (itemEditorInstance && e.reason != DataGridEventReason.CANCELLED)

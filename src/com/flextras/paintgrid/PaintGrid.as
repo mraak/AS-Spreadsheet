@@ -37,6 +37,7 @@ public class PaintGrid extends DataGrid
 		setStyle("paddingRight", 0);
 		setStyle("paddingTop", 0);
 		setStyle("paddingBottom", 0);
+		//setStyle("useRollOver", false);
 		
 		editable = true;
 		doubleClickEnabled = true;

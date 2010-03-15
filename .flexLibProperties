@@ -13,6 +13,7 @@
     <classEntry path="com.flextras.context.StylesPopup"/>
     <classEntry path="com.flextras.context.WidthPopup"/>
     <classEntry path="com.flextras.paintgrid.Condition"/>
+    <classEntry path="com.flextras.context.ClipboardData"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

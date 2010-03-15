@@ -1,15 +1,14 @@
 package com.flextras.context
 {
 import com.flextras.paintgrid.CellProperties;
-import com.flextras.spreadsheet.Spreadsheet;
 
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.ui.ContextMenuItem;
 
-import mx.managers.PopUpManager;
 import mx.core.mx_internal;
+import mx.managers.PopUpManager;
 
 use namespace mx_internal;
 
@@ -67,42 +66,50 @@ public class LocalContextMenu extends Menu
 	
 	protected function removeRowHandler (e : ContextMenuEvent) : void
 	{
-		//for each (var cell : CellProperties in owner.selectedCells)
-		owner.removeRow(cell.row);
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+			for each (var c : CellProperties in owner.selectedCells)
+				owner.removeRow(c.row);
+		else
+			owner.removeRow(cell.row);
 	}
 	
 	protected function removeColumnHandler (e : ContextMenuEvent) : void
 	{
-		//for each (var cell : CellProperties in owner.selectedCells)
-		owner.removeColumn(cell.column);
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+			for each (var c : CellProperties in owner.selectedCells)
+				owner.removeColumn(c.column);
+		else
+			owner.removeColumn(cell.column);
 	}
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-			Spreadsheet(owner).cut();
-		cellSelectedHandler(null);
+	/*Clipboard.generalClipboard.clear();
+	
+	   var c : ClipboardData = new ClipboardData();
+	   c.dx = cell.column;
+	   c.dy = cell.row;
+	
+	   if (Clipboard.generalClipboard.setData(ClipboardFormats.RICH_TEXT_FORMAT, c))
+	 cellSelectedHandler(null);*/
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-			Spreadsheet(owner).copy();
-		
 		cellSelectedHandler(null);
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			
-			var x : int = cell.column - pss.dx;
-			var y : int = cell.row - pss.dy;
-			
-			pss.moveRange(pss.range, x, y, pss.performCopy);
-		}
+	/*if (owner is Spreadsheet)
+	   {
+	   var pss : Spreadsheet = Spreadsheet(owner);
+	
+	   var x : int = cell.column - pss.dx;
+	   var y : int = cell.row - pss.dy;
+	
+	   pss.moveRange(pss.range, x, y, pss.performCopy);
+	 }*/
 	}
 	
 	protected function pasteValueHandler (e : ContextMenuEvent) : void
@@ -122,9 +129,18 @@ public class LocalContextMenu extends Menu
 	
 	protected function disableHandler (e : ContextMenuEvent) : void
 	{
-		disable.caption = disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
-		
-		owner.disabledCells = [cell];
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+		{
+			for each (var c : CellProperties in owner.selectedCells)
+				c.menu.disable.caption = c.menu.disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
+			
+			owner.disabledCells = [owner.selectedCells];
+		}
+		else
+		{
+			disable.caption = disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
+			owner.disabledCells = [cell];
+		}
 	}
 	
 	protected function setCellStylesHandler (e : ContextMenuEvent) : void
@@ -137,6 +153,9 @@ public class LocalContextMenu extends Menu
 		
 		PopUpManager.addPopUp(popup, owner);
 		PopUpManager.centerPopUp(popup);
+		
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+			StylesPopup(popup).cells = owner.selectedCells;
 		
 		StylesPopup(popup).cell = cell;
 	}
@@ -152,7 +171,10 @@ public class LocalContextMenu extends Menu
 		PopUpManager.addPopUp(popup, popup.grid);
 		PopUpManager.centerPopUp(popup);
 		
-		WidthPopup(popup).cell = cell;
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+			StylesPopup(popup).cells = owner.selectedCells;
+		
+		StylesPopup(popup).cell = cell;
 	}
 	
 	protected function setRowHeightHandler (e : ContextMenuEvent) : void
@@ -166,7 +188,10 @@ public class LocalContextMenu extends Menu
 		PopUpManager.addPopUp(popup, popup.grid);
 		PopUpManager.centerPopUp(popup);
 		
-		HeightPopup(popup).cell = cell;
+		if (owner.selectedCells && owner.selectedCells.length > 0)
+			StylesPopup(popup).cells = owner.selectedCells;
+		
+		StylesPopup(popup).cell = cell;
 	}
 	
 	protected function cellSelectedHandler (e : Event) : void
@@ -175,13 +200,13 @@ public class LocalContextMenu extends Menu
 		cut.enabled = allow;
 		copy.enabled = allow;
 		
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			allow = pss.dx > -1 && pss.dy > -1 && pss.allowPaste;
-		}
-		else
-			allow = false;
+		/*if (owner is Spreadsheet)
+		   {
+		   var pss : Spreadsheet = Spreadsheet(owner);
+		   allow = pss.dx > -1 && pss.dy > -1 && pss.allowPaste;
+		   }
+		 else*/
+		allow = false;
 		
 		paste.enabled = allow;
 		pasteValue.enabled = allow;

@@ -113,7 +113,7 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		currentGlobalStylesChanged = true;
 		
 		invalidateDisplayList();
-		
+	
 	}
 	
 	protected var _dataGrid : PaintGrid;
@@ -460,6 +460,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 	 * Event handlers
 	 */
 	
+	protected var useRollOver : Boolean;
+	
 	protected var rollOverActive : Boolean;
 	
 	protected function rollOverHandler (e : MouseEvent) : void
@@ -472,9 +474,12 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		backgroundColorEffect.stop();
 		backgroundAlphaEffect.stop();
-	
-	/*rollOverActive = true;
-	 invalidateDisplayList();*/
+		
+		if (useRollOver)
+		{
+			rollOverActive = true;
+			invalidateDisplayList();
+		}
 	}
 	
 	protected var rollOutActive : Boolean;
@@ -586,61 +591,103 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 	{
 		super.styleChanged(styleProp);
 		
-		/*if (!styleProp || styleProp != styleName)
-		 return;*/
-		
 		var value : Object;
 		
-		if ((value = getStyle("foregroundColor")))
+		if ((value = getStyle("cellColor")) || (value = getStyle("color")))
 			globalStyles.styles.foregroundColor = value as uint;
 		
-		if ((value = getStyle("foregroundAlpha")))
+		if ((value = getStyle("cellAlpha")) || (value = getStyle("alpha")))
 			globalStyles.styles.foregroundAlpha = value as Number;
 		
-		if ((value = getStyle("backgroundColor")))
+		if ((value = getStyle("cellBackgroundColor")) || (value = getStyle("backgroundColor")))
 			globalStyles.styles.backgroundColor = value as uint;
 		
-		if ((value = getStyle("backgroundAlpha")))
+		if ((value = getStyle("cellBackgroundAlpha")) || (value = getStyle("backgroundAlpha")))
 			globalStyles.styles.backgroundAlpha = value as Number;
 		
-		if ((value = getStyle("align")))
+		if ((value = getStyle("align"))) // textAlign
 			globalStyles.styles.align = value as String;
 		
-		if ((value = getStyle("antiAliasType")))
+		if ((value = getStyle("fontAntiAliasType")))
 			globalStyles.styles.antiAliasType = value as String;
 		
-		if ((value = getStyle("decoration")))
+		if ((value = getStyle("textDecoration")))
 			globalStyles.styles.decoration = value as String;
 		
-		if ((value = getStyle("family")))
+		if ((value = getStyle("fontFamily")))
 			globalStyles.styles.family = value as String;
 		
-		if ((value = getStyle("gridFitType")))
+		if ((value = getStyle("fontGridFitType")))
 			globalStyles.styles.gridFitType = value as String;
 		
-		if ((value = getStyle("indent")))
+		if ((value = getStyle("textIndent")))
 			globalStyles.styles.indent = value as int;
 		
 		if ((value = getStyle("kerning")))
 			globalStyles.styles.kerning = value as Boolean;
 		
-		if ((value = getStyle("sharpness")))
+		if ((value = getStyle("fontSharpness")))
 			globalStyles.styles.sharpness = value as Number;
 		
-		if ((value = getStyle("size")))
+		if ((value = getStyle("fontSize")))
 			globalStyles.styles.size = value as uint;
 		
 		if ((value = getStyle("spacing")))
 			globalStyles.styles.spacing = value as int;
 		
-		if ((value = getStyle("style")))
+		if ((value = getStyle("fontStyle")))
 			globalStyles.styles.style = value as String;
 		
-		if ((value = getStyle("thickness")))
+		if ((value = getStyle("fontThickness")))
 			globalStyles.styles.thickness = value as Number;
 		
-		if ((value = getStyle("weight")))
+		if ((value = getStyle("fontWeight")))
 			globalStyles.styles.weight = value as String;
+		
+		// Roll over styles
+		
+		/*if ((value = getStyle("useRollOver")))
+		 useRollOver = value as Boolean;*/
+		
+		if ((value = getStyle("cellRollOverColor")) || (value = getStyle("textRollOverColor")))
+			globalStyles.rollOverStyles.foregroundColor = value as uint;
+		
+		if ((value = getStyle("cellRollOverAlpha")) || (value = getStyle("textRollOverAlpha")))
+			globalStyles.rollOverStyles.foregroundAlpha = value as Number;
+		
+		if ((value = getStyle("cellRollOverBackgroundColor")) || (value = getStyle("rollOverColor")))
+			globalStyles.rollOverStyles.backgroundColor = value as uint;
+		
+		if ((value = getStyle("cellRollOverBackgroundAlpha")) || (value = getStyle("rollOverAlpha")))
+			globalStyles.rollOverStyles.backgroundAlpha = value as Number;
+		
+		// Selected styles
+		
+		if ((value = getStyle("cellSelectedColor")) || (value = getStyle("textSelectedColor")))
+			globalStyles.selectedStyles.foregroundColor = value as uint;
+		
+		if ((value = getStyle("cellSelectedAlpha")) || (value = getStyle("textSelectedAlpha")))
+			globalStyles.selectedStyles.foregroundAlpha = value as Number;
+		
+		if ((value = getStyle("cellSelectedBackgroundColor")) || (value = getStyle("selectionColor")))
+			globalStyles.selectedStyles.backgroundColor = value as uint;
+		
+		if ((value = getStyle("cellSelectedBackgroundAlpha")) || (value = getStyle("selectionAlpha")))
+			globalStyles.selectedStyles.backgroundAlpha = value as Number;
+		
+		// Disabled styles
+		
+		if ((value = getStyle("cellDisabledColor")) || (value = getStyle("disabledColor")))
+			globalStyles.disabledStyles.foregroundColor = value as uint;
+		
+		if ((value = getStyle("cellDisabledAlpha")) || (value = getStyle("disabledAlpha")))
+			globalStyles.disabledStyles.foregroundAlpha = value as Number;
+		
+		if ((value = getStyle("cellDisabledBackgroundColor")) || (value = getStyle("backgroundDisabledColor")))
+			globalStyles.disabledStyles.backgroundColor = value as uint;
+		
+		if ((value = getStyle("cellDisabledBackgroundAlpha")) || (value = getStyle("backgroundDisabledAlpha")))
+			globalStyles.disabledStyles.backgroundAlpha = value as Number;
 	}
 }
 }
