@@ -3,12 +3,10 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
-import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
 
 import mx.collections.ArrayCollection;
 import mx.controls.dataGridClasses.DataGridColumn;
@@ -68,9 +66,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		this.setStyle("horizontalGridLines", true);
 		this.setStyle("horizontalGridLineColor", 0x666666);
 		
-		this.globalCellStyles.rollOverStyles.backgroundColor = 0xCCCCCC;
-		this.globalCellStyles.selectedStyles.backgroundColor = 0xCCFF33;
-		this.globalCellStyles.disabledStyles.backgroundColor = 0xFF3333;
+		this.setStyle("cellRollOverBackgroundColor", 0xCCCCCC);
+		this.setStyle("cellSelectedBackgroundColor", 0xCCFF33);
+		this.setStyle("cellDisabledBackgroundColor", 0xFF3333);
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGIN, itemEditBeginHandler);
 		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditEndHandler);
@@ -268,6 +266,68 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		super.columns = value;
 	}
+	
+	public function insertRowAt(index:int):void
+	{
+		
+		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null,null,index,null]);
+	}
+	
+	// indexProp is either 'colIndex' or 'rowIndex'
+	// index is an index where the insertion happened
+	private function updateExpressionsUponRowOrColumnChange(indexProp:String, index:int, dx:int, dy:int, excludeRule:Array = null):void
+	{
+		
+		var oldCopy:Array = new Array();
+		var newCopy:Array = new Array();
+		
+		for each(var co:ControlObject in expressionTree)
+		{
+			var nco:ControlObject = new ControlObject();
+			var oco:ControlObject = new ControlObject();
+			
+			if(co[indexProp] >= index)
+			{
+				nco.id = Utils.moveFieldId(co.id, dx, dy);
+			}
+			else
+			{
+				nco.id = co.id;
+			}
+			
+			nco.exp = (co.exp) ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
+			
+			oco.id = co.id;
+			
+			newCopy.push(nco);
+			oldCopy.push(oco);
+		}
+		
+		for each(co in oldCopy)
+		{
+			this.assignExpression(_ctrlObjects[co.id], "");
+		}
+		
+		for each(co in newCopy)
+		{
+			this.assignExpression(_ctrlObjects[co.id], co.exp);
+		}
+		
+	}
+	
+	public function getRowExpressions(index:int):Array
+	{
+		var ra:Array = new Array;
+		for each(var co:ControlObject in expressionTree)
+		{
+			if(co.rowIndex == index)
+			{
+				ra.push(co);
+			}
+		}
+		return ra;
+	}
+
 	
 	public function moveRange (range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
