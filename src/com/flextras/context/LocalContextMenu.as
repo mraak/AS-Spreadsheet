@@ -203,9 +203,9 @@ public class LocalContextMenu extends Menu
 		PopUpManager.centerPopUp(popup);
 		
 		if (owner.selectedCells && owner.selectedCells.length > 0)
-			StylesPopup(popup).cells = owner.selectedCells;
+			WidthPopup(popup).cells = owner.selectedCells;
 		
-		StylesPopup(popup).cell = cell;
+		WidthPopup(popup).cell = cell;
 	}
 	
 	protected function setRowHeightHandler (e : ContextMenuEvent) : void
@@ -220,9 +220,9 @@ public class LocalContextMenu extends Menu
 		PopUpManager.centerPopUp(popup);
 		
 		if (owner.selectedCells && owner.selectedCells.length > 0)
-			StylesPopup(popup).cells = owner.selectedCells;
+			HeightPopup(popup).cells = owner.selectedCells;
 		
-		StylesPopup(popup).cell = cell;
+		HeightPopup(popup).cell = cell;
 	}
 	
 	protected function cellSelectedHandler (e : Event) : void

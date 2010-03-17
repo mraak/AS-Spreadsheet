@@ -33,6 +33,24 @@
 				dispatchEvent(new Event("cellChanged"));
 			}
 			
+			protected var _cells : Array;
+			
+			[Bindable("cellsChanged")]
+			public function get cells () : Array
+			{
+				return _cells;
+			}
+			
+			public function set cells (value : Array) : void
+			{
+				if (_cells === value)
+					return;
+				
+				_cells = value;
+				
+				dispatchEvent(new Event("cellsChanged"));
+			}
+			
 			override protected function selectedCellsChangedHandler (e : Event) : void
 			{
 				//slider.value = grid.getRowHeightAt(grid.selectedCellProperties.row);
@@ -40,8 +58,12 @@
 			
 			protected function slider_changeHandler (event : Event) : void
 			{
-				//for each (var cell : CellProperties in grid.selectedCells)
-				grid.setRowHeightAt(cell.row, slider.value);
+				if (cells && cells.length > 0)
+					for each (var c : CellProperties in cells)
+						grid.setRowHeightAt(c.row, slider.value);
+				
+				if (cell)
+					grid.setRowHeightAt(cell.row, slider.value);
 			}
 		]]>
 	</fx:Script>
