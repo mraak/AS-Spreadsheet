@@ -1,11 +1,17 @@
 package com.flextras.context
 {
+import com.flextras.calc.ControlObject;
+import com.flextras.calc.Utils;
 import com.flextras.paintgrid.CellProperties;
+import com.flextras.spreadsheet.Spreadsheet;
 
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
+import flash.geom.Point;
+import flash.net.SharedObject;
 import flash.ui.ContextMenuItem;
+import flash.utils.ByteArray;
 
 import mx.core.mx_internal;
 import mx.managers.PopUpManager;
@@ -42,6 +48,11 @@ public class LocalContextMenu extends Menu
 	protected const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
 	
 	protected var popup : BasePopup;
+	
+	public function LocalContextMenu ()
+	{
+		super();
+	}
 	
 	protected var _cell : CellProperties;
 	
@@ -84,32 +95,52 @@ public class LocalContextMenu extends Menu
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-	/*Clipboard.generalClipboard.clear();
-	
-	   var c : ClipboardData = new ClipboardData();
-	   c.dx = cell.column;
-	   c.dy = cell.row;
-	
-	   if (Clipboard.generalClipboard.setData(ClipboardFormats.RICH_TEXT_FORMAT, c))
-	 cellSelectedHandler(null);*/
+		var c : ClipboardData = new ClipboardData();
+		c.location = new Point(cell.column, cell.row);
+		c.range = setRange();
+		
+		var ba : ByteArray = new ByteArray();
+		ba.writeObject(c);
+		ba.compress();
+		
+		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
+		so.data.content = ba;
+		so.flush();
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		cellSelectedHandler(null);
+		var c : ClipboardData = new ClipboardData();
+		c.location = new Point(cell.column, cell.row);
+		c.range = setRange();
+		c.performCopy = true;
+		
+		var ba : ByteArray = new ByteArray();
+		ba.writeObject(c);
+		ba.compress();
+		
+		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
+		so.data.content = ba;
+		so.flush();
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-	/*if (owner is Spreadsheet)
-	   {
-	   var pss : Spreadsheet = Spreadsheet(owner);
-	
-	   var x : int = cell.column - pss.dx;
-	   var y : int = cell.row - pss.dy;
-	
-	   pss.moveRange(pss.range, x, y, pss.performCopy);
-	 }*/
+		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
+		var ba : ByteArray = so.data.content;
+		ba.uncompress();
+		var c : ClipboardData = ba.readObject() as ClipboardData;
+		var range : Array = getRange(c.range);
+		
+		if (owner is Spreadsheet && c)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var x : int = cell.column - c.location.x;
+			var y : int = cell.row - c.location.y;
+			
+			pss.moveRange(range, x, y, c.performCopy);
+		}
 	}
 	
 	protected function pasteValueHandler (e : ContextMenuEvent) : void
@@ -206,7 +237,7 @@ public class LocalContextMenu extends Menu
 		   allow = pss.dx > -1 && pss.dy > -1 && pss.allowPaste;
 		   }
 		 else*/
-		allow = false;
+		//allow = false;
 		
 		paste.enabled = allow;
 		pasteValue.enabled = allow;
@@ -295,9 +326,49 @@ public class LocalContextMenu extends Menu
 		menu.customItems = null;
 	}
 	
-	override protected function allowPasteActionHandler (e : Event) : void
+	protected function getRange (keys : Array) : Array
 	{
-		cellSelectedHandler(null);
+		if (!(owner is Spreadsheet))
+			return null;
+		
+		var ss : Spreadsheet = Spreadsheet(owner);
+		
+		var co : ControlObject;
+		var range : Array = [];
+		
+		for each (var key : String in keys)
+		{
+			co = ss.ctrlObjects[key];
+			
+			if (co)
+				range.push(co);
+		}
+		
+		return range;
+	}
+	
+	protected function setRange () : Array
+	{
+		if (!(owner is Spreadsheet))
+			return null;
+		
+		var prop : String, id : String, co : ControlObject;
+		var cells : Array = owner.selectedCells || [cell];
+		var ss : Spreadsheet = Spreadsheet(owner);
+		var range : Array = [];
+		
+		for each (var cell : CellProperties in cells)
+		{
+			prop = String(Utils.alphabet[cell.column]).toLowerCase();
+			id = prop + cell.row;
+			
+			co = ss.ctrlObjects[id];
+			
+			if (co)
+				range.push(id);
+		}
+		
+		return range;
 	}
 }
 }

@@ -7,6 +7,7 @@ import flash.events.IEventDispatcher;
 
 import mx.core.UIComponent;
 
+[RemoteClass]
 public class ControlObject extends EventDispatcher
 {
 	

@@ -24,12 +24,12 @@ public class Menu implements IFlexContextMenu
 			return;
 		
 		if (_owner)
-			_owner.removeEventListener("allowPasteAction", allowPasteActionHandler);
+			_owner.removeEventListener(Event.PASTE, pasteActionHandler);
 		
 		_owner = value;
 		
 		if (value)
-			value.addEventListener("allowPasteAction", allowPasteActionHandler);
+			value.addEventListener(Event.PASTE, pasteActionHandler);
 	}
 	
 	private var _target : InteractiveObject;
@@ -81,7 +81,7 @@ public class Menu implements IFlexContextMenu
 	
 	}
 	
-	protected function allowPasteActionHandler (e : Event) : void
+	protected function pasteActionHandler (e : Event) : void
 	{
 	
 	}
