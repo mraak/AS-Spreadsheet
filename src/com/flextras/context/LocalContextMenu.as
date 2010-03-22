@@ -8,10 +8,7 @@ import com.flextras.spreadsheet.Spreadsheet;
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
-import flash.geom.Point;
-import flash.net.SharedObject;
 import flash.ui.ContextMenuItem;
-import flash.utils.ByteArray;
 
 import mx.core.mx_internal;
 import mx.managers.PopUpManager;
@@ -43,7 +40,11 @@ public class LocalContextMenu extends Menu
 	
 	protected const setRowHeight : ContextMenuItem = new ContextMenuItem("Set Row Height");
 	
-	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row", true);
+	protected const addRow : ContextMenuItem = new ContextMenuItem("Add Row", true);
+	
+	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row");
+	
+	protected const addColumn : ContextMenuItem = new ContextMenuItem("Add Column");
 	
 	protected const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
 	
@@ -75,69 +76,65 @@ public class LocalContextMenu extends Menu
 			value.addEventListener("selectedChanged", cellSelectedHandler);
 	}
 	
+	protected function addRowHandler (e : ContextMenuEvent) : void
+	{
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
+		
+		for each (var c : CellProperties in cells)
+			owner.insertRowAt(c.row);
+	}
+	
 	protected function removeRowHandler (e : ContextMenuEvent) : void
 	{
-		if (owner.selectedCells && owner.selectedCells.length > 0)
-			for each (var c : CellProperties in owner.selectedCells)
-				owner.removeRow(c.row);
-		else
-			owner.removeRow(cell.row);
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
+		
+		for each (var c : CellProperties in cells)
+			owner.removeRow(c.row);
+	}
+	
+	protected function addColumnHandler (e : ContextMenuEvent) : void
+	{
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
+		
+		for each (var c : CellProperties in cells)
+			owner.insertColumnAt(c.column);
 	}
 	
 	protected function removeColumnHandler (e : ContextMenuEvent) : void
 	{
-		if (owner.selectedCells && owner.selectedCells.length > 0)
-			for each (var c : CellProperties in owner.selectedCells)
-				owner.removeColumn(c.column);
-		else
-			owner.removeColumn(cell.column);
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
+		
+		for each (var c : CellProperties in cells)
+			owner.removeColumn(c.column);
 	}
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-		var c : ClipboardData = new ClipboardData();
-		c.location = new Point(cell.column, cell.row);
+		var c : ClipboardData = ClipboardData.instance;
+		
 		c.range = setRange();
-		
-		var ba : ByteArray = new ByteArray();
-		ba.writeObject(c);
-		ba.compress();
-		
-		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
-		so.data.content = ba;
-		so.flush();
+		c.performCopy = false;
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		var c : ClipboardData = new ClipboardData();
-		c.location = new Point(cell.column, cell.row);
+		var c : ClipboardData = ClipboardData.instance;
+		
 		c.range = setRange();
 		c.performCopy = true;
-		
-		var ba : ByteArray = new ByteArray();
-		ba.writeObject(c);
-		ba.compress();
-		
-		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
-		so.data.content = ba;
-		so.flush();
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		var so : SharedObject = SharedObject.getLocal("spreadsheetClipboard");
-		var ba : ByteArray = so.data.content;
-		ba.uncompress();
-		var c : ClipboardData = ba.readObject() as ClipboardData;
-		var range : Array = getRange(c.range);
-		
-		if (owner is Spreadsheet && c)
+		if (owner is Spreadsheet)
 		{
 			var pss : Spreadsheet = Spreadsheet(owner);
 			
-			var x : int = cell.column - c.location.x;
-			var y : int = cell.row - c.location.y;
+			var c : ClipboardData = ClipboardData.instance;
+			var range : Array = getRange(c.range);
+			var o : ControlObject = range[0];
+			var x : int = cell.column - o.colIndex;
+			var y : int = cell.row - o.rowIndex;
 			
 			pss.moveRange(range, x, y, c.performCopy);
 		}
@@ -145,33 +142,60 @@ public class LocalContextMenu extends Menu
 	
 	protected function pasteValueHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var c : ClipboardData = ClipboardData.instance;
+			var range : Array = getRange(c.range);
+			var o : ControlObject = range[0];
+			var x : int = cell.column - o.colIndex;
+			var y : int = cell.row - o.rowIndex;
+			
+			pss.moveRangeValues(range, x, y, c.performCopy);
+		}
 	}
 	
 	protected function pasteStylesHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var c : ClipboardData = ClipboardData.instance;
+			var range : Array = getRange(c.range);
+			var o : ControlObject = range[0];
+			var x : int = cell.column - o.colIndex;
+			var y : int = cell.row - o.rowIndex;
+			
+			pss.moveRangeStyles(range, x, y, c.performCopy);
+		}
 	}
 	
 	protected function pasteExpressionsHandler (e : ContextMenuEvent) : void
 	{
-		trace(e);
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var c : ClipboardData = ClipboardData.instance;
+			var range : Array = getRange(c.range);
+			var o : ControlObject = range[0];
+			var x : int = cell.column - o.colIndex;
+			var y : int = cell.row - o.rowIndex;
+			
+			pss.moveRangeExpressions(range, x, y, c.performCopy);
+		}
 	}
 	
 	protected function disableHandler (e : ContextMenuEvent) : void
 	{
-		if (owner.selectedCells && owner.selectedCells.length > 0)
-		{
-			for each (var c : CellProperties in owner.selectedCells)
-				c.menu.disable.caption = c.menu.disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
-			
-			owner.disabledCells = [owner.selectedCells];
-		}
-		else
-		{
-			disable.caption = disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
-			owner.disabledCells = [cell];
-		}
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
+		
+		for each (var c : CellProperties in cells)
+			c.menu.disable.caption = c.menu.disable.caption == "Disable Cell" ? "Enable Cell" : "Disable Cell";
+		
+		owner.disabledCells = cells;
 	}
 	
 	protected function setCellStylesHandler (e : ContextMenuEvent) : void
@@ -227,22 +251,18 @@ public class LocalContextMenu extends Menu
 	
 	protected function cellSelectedHandler (e : Event) : void
 	{
+		var c : ClipboardData = ClipboardData.instance;
+		
 		var allow : Boolean = cell && cell.selected;
 		cut.enabled = allow;
 		copy.enabled = allow;
 		
-		/*if (owner is Spreadsheet)
-		   {
-		   var pss : Spreadsheet = Spreadsheet(owner);
-		   allow = pss.dx > -1 && pss.dy > -1 && pss.allowPaste;
-		   }
-		 else*/
-		//allow = false;
+		allow &&= c.allowPaste;
 		
 		paste.enabled = allow;
 		pasteValue.enabled = allow;
 		pasteStyles.enabled = allow;
-		pasteExpressions.enabled = allow;
+		pasteExpressions.enabled = allow && owner is Spreadsheet;
 	}
 	
 	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
@@ -263,7 +283,9 @@ public class LocalContextMenu extends Menu
 	{
 		super.enabled = value;
 		
+		addRow.enabled = value;
 		removeRow.enabled = value;
+		addColumn.enabled = value;
 		removeColumn.enabled = value;
 		/*cut.enabled = value;
 		   copy.enabled = value;
@@ -286,7 +308,9 @@ public class LocalContextMenu extends Menu
 	{
 		super.setContextMenu(component);
 		
+		addRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
 		removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+		addColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
 		removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
 		cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
@@ -302,14 +326,16 @@ public class LocalContextMenu extends Menu
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions,
-							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight, removeRow, removeColumn];
+							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight, addRow, removeRow, addColumn, removeColumn];
 	}
 	
 	override public function unsetContextMenu (component : InteractiveObject) : void
 	{
 		super.unsetContextMenu(component);
 		
+		addRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
 		removeRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+		addColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
 		removeColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
 		cut.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
@@ -353,14 +379,14 @@ public class LocalContextMenu extends Menu
 			return null;
 		
 		var prop : String, id : String, co : ControlObject;
-		var cells : Array = owner.selectedCells || [cell];
+		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		var ss : Spreadsheet = Spreadsheet(owner);
 		var range : Array = [];
 		
-		for each (var cell : CellProperties in cells)
+		for each (var c : CellProperties in cells)
 		{
-			prop = String(Utils.alphabet[cell.column]).toLowerCase();
-			id = prop + cell.row;
+			prop = String(Utils.alphabet[c.column]).toLowerCase();
+			id = prop + c.row;
 			
 			co = ss.ctrlObjects[id];
 			
@@ -368,7 +394,12 @@ public class LocalContextMenu extends Menu
 				range.push(id);
 		}
 		
-		return range;
+		return range.sort(Array.CASEINSENSITIVE);
+	}
+	
+	override protected function allowPasteChangedHandler (e : Event) : void
+	{
+		cellSelectedHandler(null);
 	}
 }
 }

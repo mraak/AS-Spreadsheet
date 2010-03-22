@@ -11,6 +11,13 @@ import mx.controls.IFlexContextMenu;
 
 public class Menu implements IFlexContextMenu
 {
+	public function Menu ()
+	{
+		var c : ClipboardData = ClipboardData.instance;
+		
+		c.addEventListener("allowPasteChanged", allowPasteChangedHandler);
+	}
+	
 	protected var _owner : PaintGrid;
 	
 	public function get owner () : PaintGrid
@@ -23,13 +30,7 @@ public class Menu implements IFlexContextMenu
 		if (_owner === value)
 			return;
 		
-		if (_owner)
-			_owner.removeEventListener(Event.PASTE, pasteActionHandler);
-		
 		_owner = value;
-		
-		if (value)
-			value.addEventListener(Event.PASTE, pasteActionHandler);
 	}
 	
 	private var _target : InteractiveObject;
@@ -81,7 +82,7 @@ public class Menu implements IFlexContextMenu
 	
 	}
 	
-	protected function pasteActionHandler (e : Event) : void
+	protected function allowPasteChangedHandler (e : Event) : void
 	{
 	
 	}

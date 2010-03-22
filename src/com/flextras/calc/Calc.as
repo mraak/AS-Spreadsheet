@@ -847,6 +847,60 @@ public class Calc extends EventDispatcher
 	
 	}
 	
+	/**
+	 * Range can contain only ControlObjects from the same grid. If toGrid is not specified,
+	 * move occurs on the same grid as objects in the range Array.
+	 * */
+	public function moveRangeValues (range : Array, dx : int, dy : int, copy : Boolean = false, toGrid : String = null) : void
+	{
+		var ss : ISpreadsheet = ControlObject(range[0]).grid;
+		
+		if (!toGrid)
+			toGrid = ss.id;
+		
+		var copyArray : Array = new Array();
+		var oldCopyArray : Array = new Array();
+		var co : ControlObject;
+		
+		for each (var ctrl : *in range)
+		{
+			co = getCtrl(ctrl);
+			
+			if (!co.grid)
+				throw(new Error("Only objects within ISpreadsheet can be moved"));
+			
+			oldCopyArray.push(co);
+			
+			var id : String = Utils.moveFieldId(co.id, dx, dy);
+			
+			var nco : ControlObject = ss.ctrlObjects[id];
+			
+			if (!nco)
+				continue;
+			
+			nco.exp = nco.ctrl[nco.valueProp] = co.ctrl[co.valueProp];
+			
+			copyArray.push(nco);
+		}
+		
+		if (!copy)
+		{
+			for each (co in oldCopyArray)
+			{
+				//assignControlExpression(co, "");
+				co.grid.assignExpression(co.id, "");
+				
+			}
+		}
+		
+		for each (co in copyArray)
+		{
+			//assignControlExpression(toGrid + "!" + co.id, co.exp);
+			co.grid.assignExpression(co.id, co.exp);
+		}
+	
+	}
+	
 	public function getDependantsOfCollection (collection : *) : Array
 	{
 		var arr : Array;

@@ -1,14 +1,14 @@
 package com.flextras.context
 {
+import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.geom.Point;
-import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.IExternalizable;
 
-[RemoteClass]
-final public class ClipboardData implements IExternalizable
+final public class ClipboardData extends EventDispatcher
 {
-	private var _range : Array;
+	public static const instance : ClipboardData = new ClipboardData;
+	
+	protected var _range : Array;
 	
 	public function get range () : Array
 	{
@@ -25,25 +25,24 @@ final public class ClipboardData implements IExternalizable
 		allowPaste = value && value.length > 0;
 	}
 	
-	public var location : Point;
-	
 	public var performCopy : Boolean;
 	
-	public var allowPaste : Boolean;
+	protected var _allowPaste : Boolean;
 	
-	public function writeExternal (output : IDataOutput) : void
+	public function get allowPaste () : Boolean
 	{
-		output.writeObject({x: location.x, y: location.y, copy: performCopy, paste: allowPaste, range: range});
+		return _allowPaste;
 	}
 	
-	public function readExternal (input : IDataInput) : void
+	public function set allowPaste (value : Boolean) : void
 	{
-		var data : Object = input.readObject();
+		if (_allowPaste == value)
+			return;
 		
-		location = new Point(data.x, data.y);
-		performCopy = data.copy;
-		allowPaste = data.paste;
-		_range = data.range;
+		_allowPaste = value;
+		
+		dispatchEvent(new Event("allowPasteChanged"));
 	}
+
 }
 }

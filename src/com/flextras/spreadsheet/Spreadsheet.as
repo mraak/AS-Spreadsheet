@@ -3,6 +3,7 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
+import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid;
 
 import flash.events.Event;
@@ -267,26 +268,34 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		super.columns = value;
 	}
 	
-	public function insertRowAt(index:int):void
+	override public function insertRowAt (index : int) : void
 	{
+		addRow(createRow, index);
 		
-		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null,null,index,null]);
+		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null, null, index, null]);
+	}
+	
+	override public function insertColumnAt (index : int) : void
+	{
+		addColumn(index);
+		
+		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
 	}
 	
 	// indexProp is either 'colIndex' or 'rowIndex'
 	// index is an index where the insertion happened
-	private function updateExpressionsUponRowOrColumnChange(indexProp:String, index:int, dx:int, dy:int, excludeRule:Array = null):void
+	private function updateExpressionsUponRowOrColumnChange (indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		
-		var oldCopy:Array = new Array();
-		var newCopy:Array = new Array();
+		var oldCopy : Array = new Array();
+		var newCopy : Array = new Array();
 		
-		for each(var co:ControlObject in expressionTree)
+		for each (var co : ControlObject in expressionTree)
 		{
-			var nco:ControlObject = new ControlObject();
-			var oco:ControlObject = new ControlObject();
+			var nco : ControlObject = new ControlObject();
+			var oco : ControlObject = new ControlObject();
 			
-			if(co[indexProp] >= index)
+			if (co[indexProp] >= index)
 			{
 				nco.id = Utils.moveFieldId(co.id, dx, dy);
 			}
@@ -303,35 +312,71 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			oldCopy.push(oco);
 		}
 		
-		for each(co in oldCopy)
+		for each (co in oldCopy)
 		{
 			this.assignExpression(_ctrlObjects[co.id], "");
 		}
 		
-		for each(co in newCopy)
+		for each (co in newCopy)
 		{
 			this.assignExpression(_ctrlObjects[co.id], co.exp);
 		}
-		
+	
 	}
 	
-	public function getRowExpressions(index:int):Array
+	public function getRowExpressions (index : int) : Array
 	{
-		var ra:Array = new Array;
-		for each(var co:ControlObject in expressionTree)
+		var ra : Array = new Array;
+		
+		for each (var co : ControlObject in expressionTree)
 		{
-			if(co.rowIndex == index)
+			if (co.rowIndex == index)
 			{
 				ra.push(co);
 			}
 		}
 		return ra;
 	}
-
 	
 	public function moveRange (range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
+		moveRangeExpressions(range, dx, dy, copy);
+		moveRangeStyles(range, dx, dy, copy);
+	}
+	
+	public function moveRangeValues (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	{
+		calc.moveRangeValues(range, dx, dy, copy);
+	}
+	
+	public function moveRangeExpressions (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	{
 		calc.moveRange(range, dx, dy, copy);
+	}
+	
+	public function moveRangeStyles (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	{
+		var co : ControlObject, l : Array, oc : CellProperties, nc : CellProperties;
+		
+		for each (var ctrl : *in range)
+		{
+			co = calc.getCtrl(ctrl);
+			
+			if (!co.grid)
+				throw(new Error("Only objects within ISpreadsheet can be moved"));
+			
+			l = Utils.gridFieldToIndexes(co.id);
+			oc = getCellPropertiesAt(l[1], l[0], false);
+			nc = getCellPropertiesAt(oc.row + dy, oc.column + dx, false);
+			
+			if (!nc)
+				continue;
+			
+			nc.assign(oc);
+			
+			if (!copy)
+				oc.assign(globalCellStyles);
+		}
 	}
 	
 	///////////////////////////////////////////////////////////

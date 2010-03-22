@@ -54,6 +54,16 @@ public class PaintGrid extends DataGrid
 	[Bindable]
 	public var doubleClickToEdit : Boolean;
 	
+	public function insertRowAt (index : int) : void
+	{
+	
+	}
+	
+	public function insertColumnAt (index : int) : void
+	{
+	
+	}
+	
 	/**
 	 * Styling API
 	 */
