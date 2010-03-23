@@ -94,12 +94,12 @@ public class Utils
 		var colErr : String;
 		
 		if (colInd < 0)
-			colErr = "ColRef"
+			return null; //colErr = "ColRef"
 		
 		var rowErr : String;
 		
 		if (rowInd < 0)
-			rowErr = "RowRef"
+			return null; //rowErr = "RowRef"
 		
 		var col : String = String(alphabet[colInd]).toLowerCase();
 		var row : String = rowInd.toString();
@@ -115,23 +115,23 @@ public class Utils
 		return moveOp;
 	}
 	
-	public static function moveExpression (co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
+	public static function moveExpression (co : ControlObject, dx : int, dy : int /*, toGrid : String = null*/ /*, excludeRule : Array = null*/) : String
 	{
 		var exp : String = co.exp;
 		var srx : String = "";
 		
-		var fc : int = -1;
-		var tc : int = -1;
-		var fr : int = -1;
-		var tr : int = -1;
+		/*var fc : int = -1;
+		   var tc : int = -1;
+		   var fr : int = -1;
+		 var tr : int = -1;*/
 		
-		if (excludeRule)
-		{
-			fc = excludeRule[0] ? excludeRule[0] : -1;
-			tc = excludeRule[1] ? excludeRule[1] : -1;
-			fr = excludeRule[2] ? excludeRule[2] : -1;
-			tr = excludeRule[3] ? excludeRule[3] : -1;
-		}
+		/*if (excludeRule)
+		   {
+		   fc = excludeRule[0] ? excludeRule[0] : -1;
+		   tc = excludeRule[1] ? excludeRule[1] : -1;
+		   fr = excludeRule[2] ? excludeRule[2] : -1;
+		   tr = excludeRule[3] ? excludeRule[3] : -1;
+		 }*/
 		
 		orepl = new Object();
 		
@@ -139,14 +139,14 @@ public class Utils
 		{
 			if (co.grid)
 			{
-				if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
-					(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
-				{
-					var origOp : String = op.id;
-					var moveOp : String = moveFieldId(origOp, dx, dy);
-					orepl[origOp] = moveOp;
-					srx += "(" + origOp + ")";
-				}
+				/*if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
+				   (fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
+				 {*/
+				var origOp : String = op.id;
+				var moveOp : String = moveFieldId(origOp, dx, dy);
+				orepl[origOp] = moveOp ? moveOp : origOp;
+				srx += "(" + origOp + ")";
+					//}
 			}
 		}
 		

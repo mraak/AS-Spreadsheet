@@ -502,7 +502,7 @@ public class PaintGrid extends DataGrid
 	[Bindable(event="columnWidthChanged")]
 	public function getColumnWidthAt (index : int) : Number
 	{
-		if (index < 0)
+		if (index < 0 || index >= columns.length)
 			return -1;
 		
 		var col : DataGridColumn = columns[index];
@@ -512,7 +512,7 @@ public class PaintGrid extends DataGrid
 	
 	public function setColumnWidthAt (index : int, value : Number) : void
 	{
-		if (index < 0 || value < 0)
+		if (index < 0 || index >= columns.length || value < 0)
 			return;
 		
 		resizeColumn(index, value);
@@ -522,10 +522,8 @@ public class PaintGrid extends DataGrid
 	
 	public function addColumn (index : int = 0) : int
 	{
-		if (index < 0)
-			index = 0;
-		else if (index > columns.length)
-			index = columns.length;
+		if (index < 0 || index >= columns.length)
+			return index;
 		
 		var cols : Array = columns;
 		
@@ -561,10 +559,8 @@ public class PaintGrid extends DataGrid
 	
 	public function removeColumn (index : int = 0) : int
 	{
-		if (index < 0)
-			index = 0;
-		else if (index > columns.length)
-			index = columns.length;
+		if (index < 0 || index >= columns.length)
+			return index;
 		
 		var cols : Array = columns;
 		
@@ -609,20 +605,17 @@ public class PaintGrid extends DataGrid
 	[Bindable(event="rowHeightChanged")]
 	public function getRowHeightAt (index : int) : Number
 	{
-		if (value < 0)
+		if (index < 0 || index >= collection.length)
 			return -1;
 		
 		var info : Row = infos[index];
 		
-		if (!info)
-			return -1;
-		
-		return info.height;
+		return info ? info.height : -1;
 	}
 	
 	public function setRowHeightAt (index : int, value : Number) : void
 	{
-		if (index < 0 || value < 0)
+		if (index < 0 || index >= collection.length || value < 0)
 			return;
 		
 		var info : Row = infos[index];
@@ -1259,6 +1252,14 @@ public class PaintGrid extends DataGrid
 				cell = info.cells.pop();
 				cell.release();
 				
+				if (selectedCellProperties === cell)
+				{
+					selectedCellProperties = null;
+					
+					col = selectedCells.indexOf(cell);
+					selectedCells.splice(col, 1);
+				}
+				
 				col = cells.indexOf(cell);
 				
 				if (col > -1)
@@ -1321,6 +1322,14 @@ public class PaintGrid extends DataGrid
 			{
 				cell = info.cells.pop();
 				cell.release();
+				
+				if (selectedCellProperties === cell)
+				{
+					selectedCellProperties = null;
+					
+					col = selectedCells.indexOf(cell);
+					selectedCells.splice(col, 1);
+				}
 				
 				col = cells.indexOf(cell);
 				

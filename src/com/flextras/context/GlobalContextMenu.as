@@ -43,7 +43,7 @@ public class GlobalContextMenu extends Menu
 		
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
-		menu.customItems = [setGlobalStyles];
+		menu.customItems = [setGlobalStyles, addRow, addColumn];
 	}
 	
 	override public function unsetContextMenu (component : InteractiveObject) : void
@@ -51,8 +51,6 @@ public class GlobalContextMenu extends Menu
 		super.unsetContextMenu(component);
 		
 		setGlobalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
-		
-		menu.customItems = null;
 	}
 }
 }

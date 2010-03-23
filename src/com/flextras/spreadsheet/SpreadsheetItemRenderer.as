@@ -43,18 +43,6 @@ public class SpreadsheetItemRenderer extends PaintGridItemRenderer
 		minHeight = 20;
 	}
 	
-	override protected function commitProperties () : void
-	{
-		if (dataChanged && textField && _listData)
-		{
-			textField.text = _listData.label;
-			
-			dataChanged = false;
-		}
-		
-		super.commitProperties();
-	}
-	
 	public function set showSeparators (value : Boolean) : void
 	{
 		verticalSeparator.visible = horizontalSeparator.visible = value;

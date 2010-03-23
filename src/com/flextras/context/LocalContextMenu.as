@@ -40,20 +40,11 @@ public class LocalContextMenu extends Menu
 	
 	protected const setRowHeight : ContextMenuItem = new ContextMenuItem("Set Row Height");
 	
-	protected const addRow : ContextMenuItem = new ContextMenuItem("Add Row", true);
-	
 	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row");
-	
-	protected const addColumn : ContextMenuItem = new ContextMenuItem("Add Column");
 	
 	protected const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
 	
 	protected var popup : BasePopup;
-	
-	public function LocalContextMenu ()
-	{
-		super();
-	}
 	
 	protected var _cell : CellProperties;
 	
@@ -76,7 +67,7 @@ public class LocalContextMenu extends Menu
 			value.addEventListener("selectedChanged", cellSelectedHandler);
 	}
 	
-	protected function addRowHandler (e : ContextMenuEvent) : void
+	override protected function addRowHandler (e : ContextMenuEvent) : void
 	{
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
@@ -92,7 +83,7 @@ public class LocalContextMenu extends Menu
 			owner.removeRow(c.row);
 	}
 	
-	protected function addColumnHandler (e : ContextMenuEvent) : void
+	override protected function addColumnHandler (e : ContextMenuEvent) : void
 	{
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
@@ -110,82 +101,34 @@ public class LocalContextMenu extends Menu
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
-		var c : ClipboardData = ClipboardData.instance;
-		
-		c.range = setRange();
-		c.performCopy = false;
+		clipboard.range = setRange();
+		clipboard.performCopy = false;
 	}
 	
 	protected function copyHandler (e : ContextMenuEvent) : void
 	{
-		var c : ClipboardData = ClipboardData.instance;
-		
-		c.range = setRange();
-		c.performCopy = true;
+		clipboard.range = setRange();
+		clipboard.performCopy = true;
 	}
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			
-			var c : ClipboardData = ClipboardData.instance;
-			var range : Array = getRange(c.range);
-			var o : ControlObject = range[0];
-			var x : int = cell.column - o.colIndex;
-			var y : int = cell.row - o.rowIndex;
-			
-			pss.moveRange(range, x, y, c.performCopy);
-		}
+		pasteLogic("moveRange");
 	}
 	
 	protected function pasteValueHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			
-			var c : ClipboardData = ClipboardData.instance;
-			var range : Array = getRange(c.range);
-			var o : ControlObject = range[0];
-			var x : int = cell.column - o.colIndex;
-			var y : int = cell.row - o.rowIndex;
-			
-			pss.moveRangeValues(range, x, y, c.performCopy);
-		}
+		pasteLogic("moveRangeValues");
 	}
 	
 	protected function pasteStylesHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			
-			var c : ClipboardData = ClipboardData.instance;
-			var range : Array = getRange(c.range);
-			var o : ControlObject = range[0];
-			var x : int = cell.column - o.colIndex;
-			var y : int = cell.row - o.rowIndex;
-			
-			pss.moveRangeStyles(range, x, y, c.performCopy);
-		}
+		pasteLogic("moveRangeStyles");
 	}
 	
 	protected function pasteExpressionsHandler (e : ContextMenuEvent) : void
 	{
-		if (owner is Spreadsheet)
-		{
-			var pss : Spreadsheet = Spreadsheet(owner);
-			
-			var c : ClipboardData = ClipboardData.instance;
-			var range : Array = getRange(c.range);
-			var o : ControlObject = range[0];
-			var x : int = cell.column - o.colIndex;
-			var y : int = cell.row - o.rowIndex;
-			
-			pss.moveRangeExpressions(range, x, y, c.performCopy);
-		}
+		pasteLogic("moveRangeExpressions");
 	}
 	
 	protected function disableHandler (e : ContextMenuEvent) : void
@@ -251,13 +194,11 @@ public class LocalContextMenu extends Menu
 	
 	protected function cellSelectedHandler (e : Event) : void
 	{
-		var c : ClipboardData = ClipboardData.instance;
-		
 		var allow : Boolean = cell && cell.selected;
 		cut.enabled = allow;
 		copy.enabled = allow;
 		
-		allow &&= c.allowPaste;
+		allow &&= clipboard.allowPaste;
 		
 		paste.enabled = allow;
 		pasteValue.enabled = allow;
@@ -283,17 +224,8 @@ public class LocalContextMenu extends Menu
 	{
 		super.enabled = value;
 		
-		addRow.enabled = value;
 		removeRow.enabled = value;
-		addColumn.enabled = value;
 		removeColumn.enabled = value;
-		/*cut.enabled = value;
-		   copy.enabled = value;
-		   paste.enabled = value;
-		   pasteValue.enabled = value;
-		   pasteStyles.enabled = value;
-		   pasteExpressions.enabled = value;
-		 disable.enabled = value;*/
 		setCellStyles.enabled = value;
 		setColumnWidth.enabled = value;
 		setRowHeight.enabled = value;
@@ -308,9 +240,7 @@ public class LocalContextMenu extends Menu
 	{
 		super.setContextMenu(component);
 		
-		addRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
 		removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
-		addColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
 		removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
 		cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
@@ -326,16 +256,15 @@ public class LocalContextMenu extends Menu
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions,
-							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight, addRow, removeRow, addColumn, removeColumn];
+							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight,
+							addRow, removeRow, addColumn, removeColumn];
 	}
 	
 	override public function unsetContextMenu (component : InteractiveObject) : void
 	{
 		super.unsetContextMenu(component);
 		
-		addRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
 		removeRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
-		addColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
 		removeColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
 		cut.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
@@ -350,6 +279,11 @@ public class LocalContextMenu extends Menu
 		setGlobalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = null;
+	}
+	
+	override protected function allowPasteChangedHandler (e : Event) : void
+	{
+		cellSelectedHandler(null);
 	}
 	
 	protected function getRange (keys : Array) : Array
@@ -397,9 +331,19 @@ public class LocalContextMenu extends Menu
 		return range.sort(Array.CASEINSENSITIVE);
 	}
 	
-	override protected function allowPasteChangedHandler (e : Event) : void
+	protected function pasteLogic (what : String) : void
 	{
-		cellSelectedHandler(null);
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var range : Array = getRange(clipboard.range);
+			var o : ControlObject = range[0];
+			var x : int = cell.column - o.colIndex;
+			var y : int = cell.row - o.rowIndex;
+			
+			pss[what](range, x, y, clipboard.performCopy);
+		}
 	}
 }
 }
