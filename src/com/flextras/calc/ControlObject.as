@@ -7,77 +7,54 @@ import flash.events.IEventDispatcher;
 
 import mx.core.UIComponent;
 
-public class ControlObject
+[RemoteClass]
+public class ControlObject extends EventDispatcher
 {
-	private var _rowIndex : int;
 	
-	public function get rowIndex () : int
-	{
-		return _rowIndex;
-	}
+	public var row : String;
 	
-	public function set rowIndex (value : int) : void
-	{
-		_rowIndex = value;
-		
-		_id = String(Utils.alphabet[_colIndex]).toLowerCase() + _rowIndex;
-	}
+	public var rowIndex : int;
 	
-	private var _colIndex : int;
+	public var col : String;
 	
-	public function get colIndex () : int
-	{
-		return _colIndex;
-	}
-	
-	public function set colIndex (value : int) : void
-	{
-		_colIndex = value;
-		
-		_id = String(Utils.alphabet[_colIndex]).toLowerCase() + _rowIndex;
-	}
+	public var colIndex : int;
 	
 	private var _exp : String = "";
 	
-	public function get exp () : String
-	{
-		return _exp;
-	}
-	
-	public function set exp (value : String) : void
-	{
-		_exp = value;
-	}
-	
-	private var _id : String;
-	
-	public function get id () : String
-	{
-		return _id;
-	}
-	
-	public function set id (value : String) : void
-	{
-		_id = value;
-		
-		var l : Array = Utils.gridFieldToIndexes(value);
-		colIndex = l[0];
-		rowIndex = l[1];
-	}
+	public var id : String;
 	
 	public var valueProp : String;
 	
 	public var ctrl : Object;
 	
-	public var dependants : Array = [];
+	public var dependants : Array = new Array();
 	
-	public var ctrlOperands : Array = [];
+	public var ctrlOperands : Array = new Array();
 	
 	public var grid : ISpreadsheet;
 	
 	public var collection : *;
 	
-	public var children : Array = [];
+	public var children : Array = new Array();
+	
+	// PaintGrid helper
+	//public var info : Row;
+	
+	public function ControlObject (target : IEventDispatcher = null)
+	{
+		//TODO: implement function
+		super(target);
+	}
+	
+	public function set exp (val : String) : void
+	{
+		_exp = val;
+	}
+	
+	public function get exp () : String
+	{
+		return _exp;
+	}
 	
 	public function get toolTipLabelTree () : String
 	{
