@@ -278,7 +278,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		super.addColumn(index);
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0 /*, [index, null, null, null]*/);
+		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
 		
 		return index;
 	}
@@ -290,7 +290,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		super.removeColumn(index);
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0 /*, [index, null, null, null]*/);
+		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0, [index, null, null, null]);
 		
 		return index;
 	}
@@ -307,7 +307,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	// indexProp is either 'colIndex' or 'rowIndex'
 	// index is an index where the insertion happened
-	private function updateExpressionsUponRowOrColumnChange (indexProp : String, index : int, dx : int, dy : int /*, excludeRule : Array = null*/) : void
+	private function updateExpressionsUponRowOrColumnChange (indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		var oldCopy : Array = [];
 		var newCopy : Array = [];
@@ -322,7 +322,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			else
 				nco.id = co.id;
 			
-			nco.exp = co.exp ? Utils.moveExpression(co, dx, dy /*, null*/ /*, excludeRule*/) : co.ctrl[co.valueProp];
+			nco.exp = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
 			
 			oco.id = co.id;
 			
@@ -562,7 +562,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	override protected function collectionChange_add (row : int, rows : int, col : int, cols : int, e : CollectionEvent) : void
 	{
 		for (i = row; i < rows; ++i)
-			updateExpressionsUponRowOrColumnChange("rowIndex", i, 0, 1 /*, [null, null, i, null]*/);
+			updateExpressionsUponRowOrColumnChange("rowIndex", i, 0, 1, [null, null, i, null]);
 		
 		super.collectionChange_add(row, rows, col, cols, e);
 		
@@ -633,7 +633,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		 }*/
 		
 		for (row = n - rows; row < n; ++row)
-			updateExpressionsUponRowOrColumnChange("rowIndex", rows, 0, -1 /*, [null, null, rows, null]*/);
+			updateExpressionsUponRowOrColumnChange("rowIndex", rows, 0, -1, [null, null, rows, null]);
 	}
 	
 	/*
