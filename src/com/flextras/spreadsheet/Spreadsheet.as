@@ -5,11 +5,13 @@ import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
 import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid;
+import com.flextras.paintgrid.Row;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
 import mx.collections.ArrayCollection;
+import mx.collections.ListCollectionView;
 import mx.controls.dataGridClasses.DataGridColumn;
 import mx.controls.dataGridClasses.DataGridListData;
 import mx.controls.listClasses.IDropInListItemRenderer;
@@ -268,7 +270,35 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		if (!value || index < 0 || index >= collection.length)
 			return;
 		
-		super.addRow(value, index);
+		//super.addRow(value, index);
+		location = index;
+		
+		ListCollectionView(collection).addItemAt(value, collection.length);
+	}
+	
+	override public function removeRow (index : int) : void
+	{
+		if (index < 0 || index >= collection.length)
+			return;
+		
+		//super.removeRow(index);
+		location = index;
+		
+		ListCollectionView(collection).removeItemAt(collection.length - 1);
+	}
+	
+	public function clearRowAt (index : int) : void
+	{
+		if (index < 0 || index >= collection.length)
+			return;
+		
+		var prop : String;
+		
+		for (var col : int, cols : int = columns.length; col < cols; ++col)
+		{
+			prop = String(Utils.alphabet[col]).toLowerCase();
+			assignExpression(prop + index, "");
+		}
 	}
 	
 	override public function addColumn (index : int = 0) : int
@@ -276,7 +306,58 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		if (index < 0 || index >= columns.length)
 			return index;
 		
-		super.addColumn(index);
+		//super.addColumn(index);
+		
+		var cols : Array = columns;
+		var row : int, rows : int = collection.length, n : int = cols.length;
+		var prop : String = String(Utils.alphabet[n]).toLowerCase();
+		
+		var column : DataGridColumn = new DataGridColumn();
+		column.headerText = prop;
+		column.dataField = prop;
+		
+		cols.push(column);
+		
+		var i : int, j : int, cell : CellProperties;
+		
+		for each (var info : Row in infos)
+		{
+			cell = new CellProperties(info.cells[0].row, index);
+			
+			info.cells.splice(index, 0, cell);
+			cells.push(cell);
+			
+			for (i = index + 1; i <= n; ++i)
+			{
+				cell = info.cells[i];
+				
+				if (cell)
+					++cell.column;
+			}
+		}
+		
+		prop = String(Utils.alphabet[n]).toLowerCase();
+		var co : ControlObject;
+		
+		for (; row < rows; ++row)
+		{
+			co = new ControlObject;
+			
+			var rowObject : Object = ListCollectionView(collection).getItemAt(row);
+			
+			co.id = prop + row;
+			co.ctrl = rowObject;
+			co.valueProp = prop;
+			co.rowIndex = row;
+			co.row = co.rowIndex.toString();
+			co.colIndex = n;
+			co.col = prop;
+			co.grid = this;
+			
+			_ctrlObjects[co.id] = co;
+		}
+		
+		columns = cols;
 		
 		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
 		
@@ -288,11 +369,66 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		if (index < 0 || index >= columns.length)
 			return index;
 		
-		super.removeColumn(index);
+		//super.removeColumn(index);
+		
+		var cols : Array = columns;
+		
+		cols.pop();
+		
+		var i : int, j : int, cell : CellProperties;
+		var n : int = cols.length;
+		
+		for each (var info : Row in infos)
+		{
+			cell = info.cells.splice(index, 1)[0];
+			cell.release();
+			
+			if (selectedCellProperties === cell)
+			{
+				selectedCellProperties = null;
+				
+				i = selectedCells.indexOf(cell);
+				selectedCells.splice(i, 1);
+			}
+			
+			cells.splice(cells.indexOf(cell), 1);
+			
+			for (i = index; i < n; ++i)
+			{
+				cell = info.cells[i];
+				
+				if (cell)
+					--cell.column;
+			}
+		}
+		
+		/*var row : int, rows : int = collection.length;
+		
+		   var prop : String;
+		
+		   for (; row < rows; ++row)
+		   {
+		   prop = String(Utils.alphabet[n]).toLowerCase();
+		
+		   delete _ctrlObjects[prop + row];
+		 }*/
+		
+		columns = cols;
 		
 		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0, [index, null, null, null]);
 		
 		return index;
+	}
+	
+	public function clearColumn (index : int) : void
+	{
+		if (index < 0 || index >= columns.length)
+			return;
+		
+		var prop : String = String(Utils.alphabet[index]).toLowerCase();
+		
+		for (var row : int, rows : int = collection.length; row < rows; ++row)
+			assignExpression(prop + row, "");
 	}
 	
 	override public function insertRowAt (index : int) : void
@@ -311,8 +447,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	{
 		var oldCopy : Array = [];
 		var newCopy : Array = [];
+		var co : ControlObject;
 		
-		for each (var co : ControlObject in expressionTree)
+		for each (co in expressionTree)
 		{
 			var nco : ControlObject = new ControlObject();
 			var oco : ControlObject = new ControlObject();
@@ -326,6 +463,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			
 			oco.id = co.id;
 			
+			//co.ctrl[co.valueProp] = "";
 			newCopy.push(nco);
 			oldCopy.push(oco);
 		}
@@ -413,30 +551,6 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		return o;
 	}
 	
-	protected function updateRowObject (index : int, amount : int) : void
-	{
-		return;
-		var c : int = columns.length;
-		var rowObject : Object = collection[index];
-		
-		for (var j : int = 0; j < c; ++j)
-		{
-			var prop : String = String(Utils.alphabet[j]).toLowerCase();
-			var co : Object = ctrlObjects[prop + index.toString()] || new ControlObject();
-			
-			co.id = prop + (index + amount);
-			co.ctrl = rowObject;
-			co.valueProp = prop;
-			co.rowIndex += amount;
-			co.row = co.rowIndex.toString();
-			co.col = prop;
-			co.colIndex = j;
-			co.grid = this;
-			
-			_ctrlObjects[co.id] = co;
-		}
-	}
-	
 	override protected function measure () : void
 	{
 		super.measure();
@@ -470,16 +584,10 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		if (columnCountChanged)
 		{
 			for (var c : int = columns.length; c < columnCount; ++c)
-			{
 				addColumn(c - 1);
-				updateRowObject(c - 1, 0);
-			}
 			
 			for (c = columns.length; c > columnCount; --c)
-			{
 				removeColumn(c - 1);
-				updateRowObject(c - 1, 0);
-			}
 			
 			columnCountChanged = false;
 		}
@@ -551,7 +659,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 				co.ctrl = rowObject;
 				co.valueProp = prop;
 				co.rowIndex = row;
+				co.row = co.rowIndex.toString();
 				co.colIndex = col;
+				co.col = prop;
 				co.grid = this;
 				
 				_ctrlObjects[co.id] = co;
@@ -559,81 +669,64 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		}
 	}
 	
-	override protected function collectionChange_add (row : int, rows : int, col : int, cols : int, e : CollectionEvent) : void
+	protected var location : int;
+	
+	override protected function collectionChange_add (rows : int, cols : int, e : CollectionEvent) : void
 	{
-		for (i = row; i < rows; ++i)
-			updateExpressionsUponRowOrColumnChange("rowIndex", i, 0, 1, [null, null, i, null]);
+		super.collectionChange_add(rows, cols, e);
 		
-		super.collectionChange_add(row, rows, col, cols, e);
+		var co : ControlObject, prop : String;
+		var row : int, col : int;
 		
-		var i : int;
-	
-	/*for (i = collection.length - 2; i > 0; --i)
-	 updateRowObject(i, rows);*/
-	
-	/*var a : Array = [];
-	
-	   for each (var co : ControlObject in ctrlObjects)
-	   if (co.rowIndex >= e.location)
-	   a.push(co);
-	
-	   calc.moveRange(a, 0, rows);
-	
-	   var prop : String;
-	
-	   for (i = row; i < rows; ++i)
-	   {
-	   var rowObject : Object = e.items[i];
-	
-	   for (col = 0; col < cols; ++col)
-	   {
-	   co = new ControlObject;
-	
-	   prop = String(Utils.alphabet[col]).toLowerCase();
-	
-	   co.id = prop + i;
-	   co.ctrl = rowObject;
-	   co.valueProp = prop;
-	   co.rowIndex = i;
-	   co.row = co.rowIndex.toString();
-	   co.col = prop;
-	   co.colIndex = col;
-	   co.grid = this;
-	
-	   _ctrlObjects[co.id] = co;
-	   }
-	 }*/
+		for (; row < rows; ++row)
+		{
+			var rowObject : Object = e.items[row];
+			
+			for (col = 0; col < cols; ++col)
+			{
+				co = new ControlObject;
+				
+				prop = String(Utils.alphabet[col]).toLowerCase();
+				
+				co.id = prop + (row + e.location);
+				co.ctrl = rowObject;
+				co.valueProp = prop;
+				co.rowIndex = row + e.location;
+				co.row = co.rowIndex.toString();
+				co.colIndex = col;
+				co.col = prop;
+				co.grid = this;
+				
+				_ctrlObjects[co.id] = co;
+			}
+		}
+		
+		updateExpressionsUponRowOrColumnChange("rowIndex", location, 0, rows, [null, null, location, null]);
 	}
 	
-	override protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
+	override protected function collectionChange_remove (rows : int, cols : int, e : CollectionEvent) : void
 	{
-		super.collectionChange_remove(row, rows, col, cols);
+		super.collectionChange_remove(rows, cols, e);
+		
+		var row : int, col : int;
 		
 		var n : int = collection.length;
 		
-		/*for (var i : int = rows - n; i < n; ++i)
-		 updateRowObject(i, n - rows);*/
+		var prop : String, co : ControlObject;
 		
-		/*var a : Array = [];
+		for (row = e.location; row < rows; ++row)
+		{
+			for (; col < cols; ++col)
+			{
+				prop = String(Utils.alphabet[col]).toLowerCase();
+				
+				//co = _ctrlObjects[prop + (row + location)];
+				delete _ctrlObjects[prop + (row + location)];
+					//expressionTree.splice(expressionTree.indexOf(co), 1);
+			}
+		}
 		
-		   for each (var co : ControlObject in ctrlObjects)
-		   if (co.rowIndex >= row)
-		   a.push(co);
-		
-		 calc.moveRange(a, 0, -rows + row);*/
-		
-		/*var prop : String;
-		
-		   for (; col < cols; ++col)
-		   {
-		   prop = String(Utils.alphabet[col]).toLowerCase();
-		
-		   for (row = n - rows; row < n; ++row)
-		   delete _ctrlObjects[prop + row];
-		 }*/
-		
-		for (row = n - rows; row < n; ++row)
-			updateExpressionsUponRowOrColumnChange("rowIndex", rows, 0, -1, [null, null, rows, null]);
+		updateExpressionsUponRowOrColumnChange("rowIndex", location, 0, -rows, [null, null, location, null]);
 	}
 	
 	/*
@@ -708,7 +801,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 				var co : ControlObject = ctrlObjects[oid];
 				
 				if (co && co.exp && co.exp.length > 0)
-					IDropInListItemRenderer(itemEditorInstance).listData.label = co.exp;
+					IDropInListItemRenderer(itemEditorInstance).listData.label = co.exp; //co ? co.exp : "";
 			}
 		}
 		
@@ -737,8 +830,6 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	protected function itemEditEndHandler (e : DataGridEvent) : void
 	{
-		return;
-		
 		e.preventDefault();
 		
 		if (itemEditorInstance && e.reason != DataGridEventReason.CANCELLED)

@@ -1226,15 +1226,15 @@ public class PaintGrid extends DataGrid
 				break;
 			
 			case CollectionEventKind.ADD:
-				collectionChange_add(0, ce.items.length, 0, columns.length, ce);
+				collectionChange_add(ce.items.length, columns.length, ce);
 				break;
 			
 			case CollectionEventKind.REMOVE:
-				collectionChange_remove(ce.location, ce.items.length + ce.location, 0, columns.length);
+				collectionChange_remove(ce.items.length, columns.length, ce);
 				break;
 			
 			case CollectionEventKind.REFRESH:
-				collectionChange_refresh(0, collection.length, 0, columns.length);
+				collectionChange_refresh(collection.length, columns.length);
 				break;
 		}
 	}
@@ -1289,9 +1289,10 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
-	protected function collectionChange_add (row : int, rows : int, col : int, cols : int, e : CollectionEvent) : void
+	protected function collectionChange_add (rows : int, cols : int, e : CollectionEvent) : void
 	{
 		var info : Row, cell : CellProperties;
+		var row : int, col : int;
 		
 		for (; row < rows; ++row)
 		{
@@ -1310,9 +1311,12 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
-	protected function collectionChange_remove (row : int, rows : int, col : int, cols : int) : void
+	protected function collectionChange_remove (rows : int, cols : int, e : CollectionEvent) : void
 	{
 		var info : Row, cell : CellProperties;
+		var row : int = e.location, col : int;
+		
+		rows += e.location;
 		
 		for (; row < rows; ++row)
 		{
@@ -1344,9 +1348,10 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
-	protected function collectionChange_refresh (row : int, rows : int, col : int, cols : int) : void
+	protected function collectionChange_refresh (rows : int, cols : int) : void
 	{
 		var info : Row, cell : CellProperties;
+		var row : int, col : int;
 		
 		for (; row < rows; ++row)
 		{

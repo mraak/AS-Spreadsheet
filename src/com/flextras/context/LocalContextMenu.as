@@ -8,6 +8,7 @@ import com.flextras.spreadsheet.Spreadsheet;
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
+import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
 
 import mx.core.mx_internal;
@@ -24,11 +25,11 @@ public class LocalContextMenu extends Menu
 	
 	protected const paste : ContextMenuItem = new ContextMenuItem("Paste ");
 	
-	protected const pasteValue : ContextMenuItem = new ContextMenuItem("Paste Value", true);
+	/*protected const pasteValue : ContextMenuItem = new ContextMenuItem("Paste Value", true);
 	
-	protected const pasteStyles : ContextMenuItem = new ContextMenuItem("Paste Styles");
+	   protected const pasteStyles : ContextMenuItem = new ContextMenuItem("Paste Styles");
 	
-	protected const pasteExpressions : ContextMenuItem = new ContextMenuItem("Paste Expressions");
+	 protected const pasteExpressions : ContextMenuItem = new ContextMenuItem("Paste Expressions");*/
 	
 	protected const disable : ContextMenuItem = new ContextMenuItem("Disable Cell", true);
 	
@@ -42,7 +43,11 @@ public class LocalContextMenu extends Menu
 	
 	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row");
 	
+	protected const clearRow : ContextMenuItem = new ContextMenuItem("Clear Row");
+	
 	protected const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
+	
+	protected const clearColumn : ContextMenuItem = new ContextMenuItem("Clear Column");
 	
 	protected var popup : BasePopup;
 	
@@ -83,6 +88,19 @@ public class LocalContextMenu extends Menu
 			owner.removeRow(c.row);
 	}
 	
+	protected function clearRowHandler (e : ContextMenuEvent) : void
+	{
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var cells : Array = pss.selectedCells && pss.selectedCells.length > 0 ? pss.selectedCells : [cell];
+			
+			for each (var c : CellProperties in cells)
+				pss.clearRowAt(c.row);
+		}
+	}
+	
 	override protected function addColumnHandler (e : ContextMenuEvent) : void
 	{
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
@@ -99,6 +117,19 @@ public class LocalContextMenu extends Menu
 			owner.removeColumn(c.column);
 	}
 	
+	protected function clearColumnHandler (e : ContextMenuEvent) : void
+	{
+		if (owner is Spreadsheet)
+		{
+			var pss : Spreadsheet = Spreadsheet(owner);
+			
+			var cells : Array = pss.selectedCells && pss.selectedCells.length > 0 ? pss.selectedCells : [cell];
+			
+			for each (var c : CellProperties in cells)
+				pss.clearColumn(c.column);
+		}
+	}
+	
 	protected function cutHandler (e : ContextMenuEvent) : void
 	{
 		clipboard.range = setRange();
@@ -113,23 +144,34 @@ public class LocalContextMenu extends Menu
 	
 	protected function pasteHandler (e : ContextMenuEvent) : void
 	{
-		pasteLogic("moveRange");
+		if (popup)
+			PopUpManager.removePopUp(popup);
+		
+		popup = new PastePopup();
+		popup.grid = owner;
+		
+		PopUpManager.addPopUp(popup, popup.grid);
+		PopUpManager.centerPopUp(popup);
+		
+		PastePopup(popup).pasteFunction = pasteLogic;
+	
+		//pasteLogic("moveRange");
 	}
 	
-	protected function pasteValueHandler (e : ContextMenuEvent) : void
-	{
-		pasteLogic("moveRangeValues");
-	}
+	/*protected function pasteValueHandler (e : ContextMenuEvent) : void
+	   {
+	   pasteLogic("moveRangeValues");
+	   }
 	
-	protected function pasteStylesHandler (e : ContextMenuEvent) : void
-	{
-		pasteLogic("moveRangeStyles");
-	}
+	   protected function pasteStylesHandler (e : ContextMenuEvent) : void
+	   {
+	   pasteLogic("moveRangeStyles");
+	   }
 	
-	protected function pasteExpressionsHandler (e : ContextMenuEvent) : void
-	{
-		pasteLogic("moveRangeExpressions");
-	}
+	   protected function pasteExpressionsHandler (e : ContextMenuEvent) : void
+	   {
+	   pasteLogic("moveRangeExpressions");
+	 }*/
 	
 	protected function disableHandler (e : ContextMenuEvent) : void
 	{
@@ -201,9 +243,9 @@ public class LocalContextMenu extends Menu
 		allow &&= clipboard.allowPaste;
 		
 		paste.enabled = allow;
-		pasteValue.enabled = allow;
-		pasteStyles.enabled = allow;
-		pasteExpressions.enabled = allow && owner is Spreadsheet;
+	/*pasteValue.enabled = allow;
+	   pasteStyles.enabled = allow;
+	 pasteExpressions.enabled = allow && owner is Spreadsheet;*/
 	}
 	
 	protected function setGlobalStylesHandler (e : ContextMenuEvent) : void
@@ -225,7 +267,9 @@ public class LocalContextMenu extends Menu
 		super.enabled = value;
 		
 		removeRow.enabled = value;
+		clearRow.enabled = value;
 		removeColumn.enabled = value;
+		clearColumn.enabled = value;
 		setCellStyles.enabled = value;
 		setColumnWidth.enabled = value;
 		setRowHeight.enabled = value;
@@ -241,13 +285,15 @@ public class LocalContextMenu extends Menu
 		super.setContextMenu(component);
 		
 		removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+		clearRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
 		removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
+		clearColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
 		cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
 		paste.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
-		pasteValue.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteValueHandler);
-		pasteStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteStylesHandler);
-		pasteExpressions.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteExpressionsHandler);
+		/*pasteValue.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteValueHandler);
+		   pasteStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteStylesHandler);
+		 pasteExpressions.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteExpressionsHandler);*/
 		disable.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
 		setColumnWidth.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
@@ -255,9 +301,9 @@ public class LocalContextMenu extends Menu
 		
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
-		menu.customItems = [cut, copy, paste, pasteValue, pasteStyles, pasteExpressions,
+		menu.customItems = [cut, copy, paste, /*pasteValue, pasteStyles, pasteExpressions,*/
 							disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight,
-							addRow, removeRow, addColumn, removeColumn];
+							addRow, removeRow, clearRow, addColumn, removeColumn, clearColumn];
 	}
 	
 	override public function unsetContextMenu (component : InteractiveObject) : void
@@ -265,13 +311,15 @@ public class LocalContextMenu extends Menu
 		super.unsetContextMenu(component);
 		
 		removeRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+		clearRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
 		removeColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
+		clearColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
 		cut.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
 		copy.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
 		paste.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
-		pasteValue.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteValueHandler);
-		pasteStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteStylesHandler);
-		pasteExpressions.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteExpressionsHandler);
+		/*pasteValue.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteValueHandler);
+		   pasteStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteStylesHandler);
+		 pasteExpressions.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteExpressionsHandler);*/
 		disable.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
 		setColumnWidth.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
