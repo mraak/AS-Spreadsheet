@@ -126,7 +126,7 @@ public class LocalContextMenu extends Menu
 			var cells : Array = pss.selectedCells && pss.selectedCells.length > 0 ? pss.selectedCells : [cell];
 			
 			for each (var c : CellProperties in cells)
-				pss.clearColumn(c.column);
+				pss.clearColumnAt(c.column);
 		}
 	}
 	

@@ -52,6 +52,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	private var expressionsChanged : Boolean;
 	
+	private var ignoreExpressionUpdate : Boolean;
+	
 	public function Spreadsheet ()
 	{
 		super();
@@ -93,8 +95,12 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	public function updateExpressions () : void
 	{
+
 		expressionsChanged = true;
 		invalidateProperties();
+		ignoreExpressionUpdate = false;
+
+		
 	}
 	
 	public function assignExpression (cellId : String, expression : String) : void
@@ -108,8 +114,12 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		if (o)
 			_expressions.setItemAt(cellObj, _expressions.getItemIndex(o));
-		else if (_expressions)
+		else
+		{
+			cellObj.value = "";
 			_expressions.addItem(cellObj);
+		}
+
 	
 	}
 	
@@ -283,13 +293,21 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		//super.removeRow(index);
 		location = index;
+		clearRowAt(index);
+		//ListCollectionView(collection).removeItemAt(collection.length - 1);
+		callLater(removeLastCollectionItem);
 		
+		
+	}
+	
+	private function removeLastCollectionItem():void
+	{
 		ListCollectionView(collection).removeItemAt(collection.length - 1);
 	}
 	
 	public function clearRowAt (index : int) : void
 	{
-		if (index < 0 || index >= collection.length)
+/*		if (index < 0 || index >= collection.length)
 			return;
 		
 		var prop : String;
@@ -298,7 +316,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		{
 			prop = String(Utils.alphabet[col]).toLowerCase();
 			assignExpression(prop + index, "");
+		}*/
+		
+		var arr:Array = getRowExpressions(index);
+		
+		for each(var co : ControlObject in arr)
+		{
+			assignExpression(co.id, "");
 		}
+		
+		
 	}
 	
 	override public function addColumn (index : int = 0) : int
@@ -420,7 +447,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		return index;
 	}
 	
-	public function clearColumn (index : int) : void
+	public function clearColumnAt (index : int) : void
 	{
 		if (index < 0 || index >= columns.length)
 			return;
@@ -445,35 +472,47 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	// index is an index where the insertion happened
 	private function updateExpressionsUponRowOrColumnChange (indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
-		var oldCopy : Array = [];
 		var newCopy : Array = [];
 		var co : ControlObject;
 		
 		for each (co in expressionTree)
 		{
-			var nco : ControlObject = new ControlObject();
-			var oco : ControlObject = new ControlObject();
+			var cell : Object = new Object();
+			cell.value = "";
 			
 			if (co[indexProp] >= index)
-				nco.id = Utils.moveFieldId(co.id, dx, dy);
+			{
+				cell.cell = Utils.moveFieldId(co.id, dx, dy);
+			}
 			else
-				nco.id = co.id;
-			
-			nco.exp = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
-			
-			oco.id = co.id;
-			
-			//co.ctrl[co.valueProp] = "";
-			newCopy.push(nco);
-			oldCopy.push(oco);
+			{
+				cell.cell = co.id;
+			}
+
+			cell.expression = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
+
+			newCopy.push(cell);
 		}
 		
-		for each (co in oldCopy)
-			this.assignExpression(co.id, "");
-		
-		for each (co in newCopy)
-			this.assignExpression(co.id, co.exp);
+		clearExpressions();
+
+		callLater(assignExpressions, [newCopy]);
 	}
+	
+	public function assignExpressions(expressions : Array):void
+	{
+		for each (var o : Object in expressions)
+			this.assignExpression(o.cell, o.expression);
+	}
+	
+	public function clearExpressions():void
+	{
+		for each (var co : ControlObject in expressionTree)
+		{
+			this.assignExpression(co.id, "");
+		}
+	}
+
 	
 	public function getRowExpressions (index : int) : Array
 	{
@@ -597,8 +636,12 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			var usedCells : Array = [];
 			var e : SpreadsheetEvent;
 			
-			for each (var o : Object in _expressions)
+			c = 0;
+			
+			while (c < _expressions.length)
 			{
+				var o : Object = _expressions.getItemAt(c);
+				
 				var cell : String = o.cell as String;
 				
 				if (usedCells.indexOf(cell) != -1)
@@ -616,7 +659,18 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 						var co : ControlObject = _ctrlObjects[cell];
 						
 						if (o.expression != null)
+						{
 							calc.assignControlExpression(co, o.expression);
+							
+							if (o.expression == "")
+							{
+								_expressions.removeItemAt(c);
+							}
+							else
+							{
+								c ++;
+							}
+						}
 					}
 					else
 					{
@@ -632,6 +686,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 					this.dispatchEvent(e);
 				}
 			}
+			
+			
 			
 			expressionsChanged = false;
 		}
@@ -700,9 +756,10 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 				_ctrlObjects[co.id] = co;
 			}
 		}
-		
+
 		updateExpressionsUponRowOrColumnChange("rowIndex", location, 0, rows, [null, null, location, null]);
 	}
+	
 	
 	override protected function collectionChange_remove (rows : int, cols : int, e : CollectionEvent) : void
 	{
