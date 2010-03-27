@@ -70,10 +70,10 @@ public class Calc extends EventDispatcher
 		if (isValid == "ok")
 		{
 			var res : Number;
-			var debugPoint : int = 0;
 			
+			// TODO: Delete
 			// sheets/grids with labels containing spaces
-			var rxSheetLabel : RegExp = /'[^']+'!/g;
+			//var rxSheetLabel : RegExp = /'[^']+'!/g;
 			
 			// remove white spaces from expression		
 			exp = exp.replace(/\s+/g, "");
@@ -1015,7 +1015,7 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	public function addObject (object : *, valueProp : String, id : String) : void
+	public function addObject (id : String, object : *, valueProp : String) : void
 	{
 		var ctrlObject : ControlObject = new ControlObject();
 		ctrlObject.valueProp = valueProp;
