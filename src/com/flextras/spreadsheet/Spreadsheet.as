@@ -398,7 +398,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		clearColumnAt(index);
 		
-		callLater(removeLastCollectionItem);
+		removeLastColumn();
 	}
 	
 	private function removeLastColumn () : void

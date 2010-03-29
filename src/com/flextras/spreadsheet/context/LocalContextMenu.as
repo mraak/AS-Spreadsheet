@@ -122,7 +122,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.assignExpression(Utils.alphabet[c.column] + c.row, "");
+			owner.assignExpression(String(Utils.alphabet[c.column]).toLowerCase() + c.row, "");
 	}
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
