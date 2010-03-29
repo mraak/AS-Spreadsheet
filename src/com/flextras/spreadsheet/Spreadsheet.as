@@ -310,7 +310,13 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			return;
 		
 		location = index;
+		clearRowAt(index);
 		
+		callLater(removeLastCollectionItem);
+	}
+	
+	private function removeLastCollectionItem () : void
+	{
 		ListCollectionView(collection).removeItemAt(collection.length - 1);
 	}
 	
@@ -320,7 +326,6 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		for each (var co : ControlObject in arr)
 			assignExpression(co.id, "");
-	
 	}
 	
 	override public function insertColumnAt (index : int = 0) : int
@@ -391,6 +396,13 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		location = index;
 		
+		clearColumnAt(index);
+		
+		callLater(removeLastCollectionItem);
+	}
+	
+	private function removeLastColumn () : void
+	{
 		var cols : Array = columns;
 		
 		cols.pop();
