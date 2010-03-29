@@ -1,7 +1,8 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
 import mx.collections.ArrayCollection;
 
+[ExcludeClass]
 [Bindable]
 public class Data
 {

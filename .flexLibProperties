@@ -6,14 +6,14 @@
     <classEntry path="com.flextras.paintgrid.Styles"/>
     <classEntry path="com.flextras.paintgrid.BasicStyles"/>
     <classEntry path="com.flextras.paintgrid.PaintGridRowResizeSkin"/>
-    <classEntry path="com.flextras.context.Menu"/>
-    <classEntry path="com.flextras.context.GlobalContextMenu"/>
-    <classEntry path="com.flextras.context.LocalContextMenu"/>
-    <classEntry path="com.flextras.context.MenuItem"/>
-    <classEntry path="com.flextras.context.StylesPopup"/>
-    <classEntry path="com.flextras.context.WidthPopup"/>
+    <classEntry path="com.flextras.spreadsheet.context.Menu"/>
+    <classEntry path="com.flextras.spreadsheet.context.GlobalContextMenu"/>
+    <classEntry path="com.flextras.spreadsheet.context.LocalContextMenu"/>
+    <classEntry path="com.flextras.spreadsheet.context.MenuItem"/>
+    <classEntry path="com.flextras.spreadsheet.context.StylesPopup"/>
+    <classEntry path="com.flextras.spreadsheet.context.WidthPopup"/>
     <classEntry path="com.flextras.paintgrid.Condition"/>
-    <classEntry path="com.flextras.context.ClipboardData"/>
+    <classEntry path="com.flextras.spreadsheet.context.ClipboardData"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

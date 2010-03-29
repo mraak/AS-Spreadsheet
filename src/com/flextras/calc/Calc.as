@@ -1,6 +1,7 @@
 package com.flextras.calc
 {
 import com.flextras.spreadsheet.ISpreadsheet;
+import com.flextras.spreadsheet.Spreadsheet;
 import com.flextras.spreadsheet.SpreadsheetEvent;
 
 import flash.events.EventDispatcher;
@@ -790,7 +791,7 @@ public class Calc extends EventDispatcher
 		var oldCopyArray : Array = new Array();
 		var co : ControlObject;
 		
-		for each (var ctrl : *in range)
+		for each (var ctrl : * in range)
 		{
 			co = getCtrl(ctrl);
 			
@@ -862,7 +863,7 @@ public class Calc extends EventDispatcher
 		var oldCopyArray : Array = new Array();
 		var co : ControlObject;
 		
-		for each (var ctrl : *in range)
+		for each (var ctrl : * in range)
 		{
 			co = getCtrl(ctrl);
 			

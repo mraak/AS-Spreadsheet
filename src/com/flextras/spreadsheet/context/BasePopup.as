@@ -1,6 +1,6 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
-import com.flextras.paintgrid.PaintGrid;
+import com.flextras.spreadsheet.Spreadsheet;
 
 import flash.events.Event;
 
@@ -10,15 +10,15 @@ import mx.managers.PopUpManager;
 
 public class BasePopup extends TitleWindow
 {
-	protected var _grid : PaintGrid;
+	protected var _grid : Spreadsheet;
 	
 	[Bindable]
-	public function get grid () : PaintGrid
+	public function get grid () : Spreadsheet
 	{
 		return _grid;
 	}
 	
-	public function set grid (value : PaintGrid) : void
+	public function set grid (value : Spreadsheet) : void
 	{
 		if (_grid === value)
 			return;

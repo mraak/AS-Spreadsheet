@@ -1,4 +1,4 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
 
 public class MenuItem

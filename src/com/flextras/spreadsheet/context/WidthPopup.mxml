@@ -2,13 +2,13 @@
 <context:BasePopup xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				   xmlns:s = "library://ns.adobe.com/flex/spark"
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
-				   xmlns:context = "com.flextras.context.*"
-				   title = "Set row height">
+				   xmlns:context="com.flextras.spreadsheet.context.*"
+				   title = "Set column width">
 	<s:HSlider id = "slider"
 			   minimum = "0"
 			   maximum = "300"
 			   stepSize = "1"
-			   value = "{grid.getRowHeightAt(cell.row)}"
+			   value = "{grid.getColumnWidthAt(cell.column)}"
 			   change = "slider_changeHandler(event)" />
 
 	<fx:Script>
@@ -53,17 +53,17 @@
 			
 			override protected function selectedCellsChangedHandler (e : Event) : void
 			{
-				//slider.value = grid.getRowHeightAt(grid.selectedCellProperties.row);
+				//slider.value = grid.getColumnWidthAt(grid.selectedCellProperties.column);
 			}
 			
 			protected function slider_changeHandler (event : Event) : void
 			{
 				if (cells && cells.length > 0)
 					for each (var c : CellProperties in cells)
-						grid.setRowHeightAt(c.row, slider.value);
+						grid.setColumnWidthAt(c.column, slider.value);
 				
 				if (cell)
-					grid.setRowHeightAt(cell.row, slider.value);
+					grid.setColumnWidthAt(cell.column, slider.value);
 			}
 		]]>
 	</fx:Script>

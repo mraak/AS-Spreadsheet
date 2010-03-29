@@ -1,7 +1,7 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
-import com.flextras.paintgrid.PaintGrid;
-import com.flextras.paintgrid.PaintGridItemRenderer;
+import com.flextras.spreadsheet.Spreadsheet;
+import com.flextras.spreadsheet.SpreadsheetItemRenderer;
 
 import flash.display.InteractiveObject;
 import flash.events.ContextMenuEvent;
@@ -15,30 +15,40 @@ public class Menu implements IFlexContextMenu
 {
 	protected var menu : ContextMenu;
 	
+	protected static const defaultMenu : ContextMenu = new ContextMenu;
+	
 	protected var clipboard : ClipboardData;
 	
-	protected const addRow : ContextMenuItem = new ContextMenuItem("Add Row", true);
+	protected const addRow : ContextMenuItem = new ContextMenuItem("Insert Row", true);
 	
-	protected const addColumn : ContextMenuItem = new ContextMenuItem("Add Column");
+	protected const addColumn : ContextMenuItem = new ContextMenuItem("Insert Column", true);
 	
 	public function Menu ()
 	{
+		defaultMenu.hideBuiltInItems();
+		
 		clipboard = ClipboardData.instance;
 	}
 	
-	protected var _owner : PaintGrid;
+	protected var _owner : Spreadsheet;
 	
-	public function get owner () : PaintGrid
+	public function get owner () : Spreadsheet
 	{
 		return _owner;
 	}
 	
-	public function set owner (value : PaintGrid) : void
+	public function set owner (value : Spreadsheet) : void
 	{
 		if (_owner === value)
 			return;
 		
+		if (_owner)
+			_owner.removeEventListener("contextMenuEnabledChanged", contextMenuEnabledHandler);
+		
 		_owner = value;
+		
+		if (value)
+			_owner.addEventListener("contextMenuEnabledChanged", contextMenuEnabledHandler);
 	}
 	
 	private var _target : InteractiveObject;
@@ -55,10 +65,10 @@ public class Menu implements IFlexContextMenu
 		
 		_target = value;
 		
-		if (value is PaintGrid)
-			owner = PaintGrid(value);
-		else if (value is PaintGridItemRenderer)
-			owner = PaintGridItemRenderer(value).dataGrid;
+		if (value is Spreadsheet)
+			owner = Spreadsheet(value);
+		else if (value is SpreadsheetItemRenderer)
+			owner = Spreadsheet(SpreadsheetItemRenderer(value).dataGrid);
 		
 		menu = new ContextMenu();
 		menu.hideBuiltInItems();
@@ -112,6 +122,12 @@ public class Menu implements IFlexContextMenu
 	protected function allowPasteChangedHandler (e : Event) : void
 	{
 	
+	}
+	
+	protected function contextMenuEnabledHandler (e : Event) : void
+	{
+		if (target && owner)
+			target.contextMenu = owner.contextMenuEnabled ? menu : defaultMenu;
 	}
 }
 }

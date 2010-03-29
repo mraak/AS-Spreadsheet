@@ -1,6 +1,6 @@
 package com.flextras.paintgrid
 {
-import com.flextras.context.LocalContextMenu;
+import com.flextras.spreadsheet.context.LocalContextMenu;
 
 import flash.events.Event;
 

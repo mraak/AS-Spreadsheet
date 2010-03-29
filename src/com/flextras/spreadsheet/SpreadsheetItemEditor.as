@@ -26,7 +26,7 @@ public class SpreadsheetItemEditor extends TextInput
 			var co : ControlObject = sheet.ctrlObjects[oid];
 			var v : String = co.ctrl[col];
 			
-			if (v != t && co.exp != t)
+			if (co.exp != t)
 				sheet.assignExpression(oid, t);
 			
 			return v;

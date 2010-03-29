@@ -1,8 +1,6 @@
 package com.flextras.paintgrid
 {
 import com.flextras.calc.Utils;
-import com.flextras.context.GlobalContextMenu;
-import com.flextras.context.LocalContextMenu;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -47,22 +45,10 @@ public class PaintGrid extends DataGrid
 		itemRenderer = new ClassFactory(PaintGridItemRenderer);
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, itemEditBeginningHandler);
-		
-		flexContextMenu = new GlobalContextMenu();
 	}
 	
 	[Bindable]
 	public var doubleClickToEdit : Boolean;
-	
-	public function insertRowAt (index : int) : void
-	{
-	
-	}
-	
-	public function insertColumnAt (index : int) : void
-	{
-	
-	}
 	
 	/**
 	 * Styling API
@@ -184,9 +170,6 @@ public class PaintGrid extends DataGrid
 		
 		if (!(cell = getCellProperties(value, true)))
 			modifiedCells.push(value);
-	
-	/*if (!cell in modifiedCells)
-	 modifiedCells.push(cell);*/
 	}
 	
 	public function setCellPropertiesAt (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
@@ -491,7 +474,7 @@ public class PaintGrid extends DataGrid
 				cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
 			
 			if (cell)
-				cell.enabled = /*o is CellProperties ? CellProperties(o).enabled :*/ !cell.enabled;
+				cell.enabled = !cell.enabled;
 		}
 	}
 	
@@ -520,7 +503,7 @@ public class PaintGrid extends DataGrid
 		callLater(dispatchEvent, [new Event("columnWidthChanged")]);
 	}
 	
-	public function addColumn (index : int = 0) : int
+	public function insertColumnAt (index : int = 0) : int
 	{
 		if (index < 0 || index >= columns.length)
 			return index;
@@ -557,10 +540,10 @@ public class PaintGrid extends DataGrid
 		return index;
 	}
 	
-	public function removeColumn (index : int = 0) : int
+	public function removeColumnAt (index : int = 0) : void
 	{
 		if (index < 0 || index >= columns.length)
-			return index;
+			return;
 		
 		var cols : Array = columns;
 		
@@ -594,8 +577,6 @@ public class PaintGrid extends DataGrid
 		}
 		
 		columns = cols;
-		
-		return index;
 	}
 	
 	/**
@@ -632,7 +613,7 @@ public class PaintGrid extends DataGrid
 		callLater(dispatchEvent, [new Event("rowHeightChanged")]);
 	}
 	
-	public function addRow (value : Object, index : int) : void
+	public function insertRow (value : Object, index : int) : void
 	{
 		if (!value || index < 0 || index >= collection.length)
 			return;
@@ -640,7 +621,7 @@ public class PaintGrid extends DataGrid
 		ListCollectionView(collection).addItemAt(value, index);
 	}
 	
-	public function removeRow (index : int) : void
+	public function removeRowAt (index : int) : void
 	{
 		if (index < 0 || index >= collection.length)
 			return;
@@ -812,21 +793,6 @@ public class PaintGrid extends DataGrid
 				r.cell = info.cells[colNum + horizontalScrollPosition];
 				r.info = info;
 			}
-			
-			var menu : LocalContextMenu = r.cell.menu;
-			
-			if (menu)
-				menu.unsetContextMenu(null);
-			
-			menu = new LocalContextMenu;
-			menu.setContextMenu(r);
-			
-			r.cell.menu = menu;
-			menu.cell = r.cell;
-			
-			r.flexContextMenu = menu;
-			
-			r.invalidateDisplayList();
 		}
 		
 		return item;
@@ -898,33 +864,6 @@ public class PaintGrid extends DataGrid
 	
 	protected var beginEdit : Boolean;
 	
-	/*override protected function mouseUpHandler (event : MouseEvent) : void
-	   {
-	   var r : IListItemRenderer;
-	   var dgColumn : DataGridColumn;
-	
-	   r = mouseEventToItemRenderer(event);
-	
-	   if (r)
-	   {
-	   if (beginEdit)
-	   mouseDoubleClickHandler(event);
-	
-	   var dilr : IDropInListItemRenderer = IDropInListItemRenderer(r);
-	
-	   if (columns[dilr.listData.columnIndex].editable)
-	   {
-	   dgColumn = columns[dilr.listData.columnIndex];
-	   dgColumn.editable = false;
-	   }
-	   }
-	
-	   super.mouseUpHandler(event);
-	
-	   if (dgColumn)
-	   dgColumn.editable = true;
-	 }*/
-	
 	mx_internal var isCtrl : Boolean;
 	
 	mx_internal var isAlt : Boolean;
@@ -944,266 +883,6 @@ public class PaintGrid extends DataGrid
 		isCtrl = event.ctrlKey;
 		isAlt = event.altKey;
 	}
-	
-	/*override protected function moveSelectionHorizontally (code : uint, shiftKey : Boolean, ctrlKey : Boolean) : void
-	   {
-	   var newHorizontalScrollPosition : Number;
-	   var listItem : IListItemRenderer;
-	   var uid : String;
-	   var len : int;
-	   var bSelChanged : Boolean = false;
-	
-	   showCaret = true;
-	
-	   var rowCount : int = listItems.length;
-	   var onscreenRowCount : int = listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom;
-	   var partialRow : int = (rowInfo[rowCount - offscreenExtraRowsBottom - 1].y + rowInfo[rowCount - offscreenExtraRowsBottom - 1].height > listContent.heightExcludingOffsets - listContent.topOffset) ? 1 : 0;
-	   var bUpdateHorizontalScrollPosition : Boolean = false;
-	   bSelectItem = false;
-	
-	   switch (code)
-	   {
-	   case Keyboard.UP:
-	   {
-	   if (caretIndex > 0)
-	   {
-	   caretIndex--;
-	   bSelectItem = true;
-	
-	   if (caretIndex >= lockedRowCount)
-	   bUpdateHorizontalScrollPosition = true;
-	   }
-	   break;
-	   }
-	
-	   case Keyboard.DOWN:
-	   {
-	   if (caretIndex >= lockedRowCount - 1)
-	   {
-	   if (caretIndex < collection.length - 1)
-	   {
-	   caretIndex++;
-	   bUpdateHorizontalScrollPosition = true;
-	   bSelectItem = true;
-	   }
-	   else if ((caretIndex == collection.length - 1) && partialRow)
-	   {
-	   if (verticalScrollPosition < maxHorizontalScrollPosition)
-	   newHorizontalScrollPosition = verticalScrollPosition + 1;
-	   }
-	   }
-	   else if (caretIndex < collection.length - 1)
-	   {
-	   caretIndex++;
-	   bSelectItem = true;
-	   }
-	   break;
-	   }
-	
-	   case Keyboard.PAGE_UP:
-	   {
-	   if (caretIndex > lockedRowCount)
-	   {
-	   // if the caret is on-screen, but not at the top row
-	   // just move the caret to the top row
-	   if (caretIndex > verticalScrollPosition + lockedRowCount && caretIndex < verticalScrollPosition + lockedRowCount + onscreenRowCount)
-	   {
-	   caretIndex = verticalScrollPosition + lockedRowCount;
-	   }
-	   else
-	   {
-	   // paging up is really hard because we don't know how many
-	   // rows to move because of variable row height.  We would have
-	   // to double-buffer a previous screen in order to get this exact
-	   // so we just guess for now based on current rowCount
-	   caretIndex = Math.max(caretIndex - Math.max(onscreenRowCount - partialRow, 1), lockedRowCount);
-	   newHorizontalScrollPosition = Math.max(caretIndex, lockedRowCount) - lockedRowCount;
-	   }
-	   bSelectItem = true;
-	   }
-	   else
-	   {
-	   caretIndex = 0;
-	   bSelectItem = true;
-	   }
-	   break;
-	   }
-	
-	   case Keyboard.PAGE_DOWN:
-	   {
-	   // if the caret is on-screen, but not at the bottom row
-	   // just move the caret to the bottom row (not partial row)
-	   if (caretIndex >= verticalScrollPosition + lockedRowCount && caretIndex < verticalScrollPosition + lockedRowCount + onscreenRowCount - partialRow - 1)
-	   {
-	   }
-	   else
-	   {
-	   // With edge case involving very large rows
-	   // make sure we move forward.
-	   if ((caretIndex - lockedRowCount == verticalScrollPosition) && (onscreenRowCount - partialRow <= 1))
-	   caretIndex++;
-	   newHorizontalScrollPosition = Math.min(Math.max(caretIndex - lockedRowCount, 0), maxHorizontalScrollPosition);
-	   }
-	   bSelectItem = true;
-	   break;
-	   }
-	
-	   case Keyboard.HOME:
-	   {
-	   if (caretIndex > 0)
-	   {
-	   caretIndex = 0;
-	   bSelectItem = true;
-	   newHorizontalScrollPosition = 0;
-	   }
-	   break;
-	   }
-	
-	   case Keyboard.END:
-	   {
-	   if (lockedRowCount >= collection.length)
-	   {
-	   caretIndex = collection.length - 1;
-	   bSelectItem = true;
-	   }
-	   else
-	   {
-	   if (caretIndex < collection.length - 1)
-	   {
-	   caretIndex = collection.length - 1;
-	   bSelectItem = true;
-	   newHorizontalScrollPosition = maxHorizontalScrollPosition;
-	   }
-	   }
-	   break;
-	   }
-	   case Keyboard.SPACE:
-	   {
-	   bUpdateHorizontalScrollPosition = true;
-	   bSelectItem = true;
-	   break;
-	   }
-	   }
-	
-	   if (bUpdateHorizontalScrollPosition)
-	   {
-	   if (caretIndex >= verticalScrollPosition + lockedRowCount + onscreenRowCount - partialRow)
-	   {
-	   if (onscreenRowCount - partialRow == 0)
-	   newHorizontalScrollPosition = Math.min(maxHorizontalScrollPosition, Math.max(caretIndex - lockedRowCount, 0));
-	   else
-	   newHorizontalScrollPosition = Math.min(maxHorizontalScrollPosition, caretIndex - lockedRowCount - onscreenRowCount + partialRow + 1);
-	   }
-	   else if (caretIndex < verticalScrollPosition + lockedRowCount)
-	   newHorizontalScrollPosition = Math.max(caretIndex - lockedRowCount, 0);
-	   }
-	
-	   if (!isNaN(newHorizontalScrollPosition))
-	   {
-	   if (verticalScrollPosition != newHorizontalScrollPosition)
-	   {
-	   var se : ScrollEvent = new ScrollEvent(ScrollEvent.SCROLL);
-	   se.detail = ScrollEventDetail.THUMB_POSITION;
-	   se.direction = ScrollEventDirection.VERTICAL;
-	   se.delta = newHorizontalScrollPosition - verticalScrollPosition;
-	   se.position = newHorizontalScrollPosition;
-	   verticalScrollPosition = newHorizontalScrollPosition;
-	   dispatchEvent(se);
-	   }
-	
-	   // bail if we page faulted
-	   if (!iteratorValid)
-	   {
-	   keySelectionPending = true;
-	   return;
-	   }
-	   }
-	
-	   bShiftKey = shiftKey;
-	   bCtrlKey = ctrlKey;
-	
-	   lastKey = code;
-	
-	   finishKeySelection();
-	   }
-	
-	   override protected function finishKeySelection () : void
-	   {
-	   var uid : String;
-	   var rowCount : int = listItems.length;
-	   var onscreenRowCount : int = listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom;
-	   var partialRow : int = (rowInfo[rowCount - offscreenExtraRowsBottom - 1].y + rowInfo[rowCount - offscreenExtraRowsBottom - 1].height > listContent.heightExcludingOffsets - listContent.topOffset) ? 1 : 0;
-	
-	   if (lastKey == Keyboard.PAGE_DOWN)
-	   {
-	   // set caret to last full row of new screen
-	   // partial rows take what you can get
-	   if (onscreenRowCount - partialRow == 0)
-	   {
-	   caretIndex = Math.min(verticalScrollPosition + lockedRowCount + onscreenRowCount - partialRow, collection.length - 1);
-	   }
-	   else
-	   {
-	   caretIndex = Math.min(verticalScrollPosition + lockedRowCount + onscreenRowCount - partialRow - 1, collection.length - 1);
-	   }
-	   }
-	
-	   var listItem : IListItemRenderer;
-	   var bSelChanged : Boolean = false;
-	
-	   if (bSelectItem && ((caretIndex - verticalScrollPosition >= 0) || (caretIndex < lockedRowCount)))
-	   {
-	   if (caretIndex - lockedRowCount - verticalScrollPosition > Math.max(onscreenRowCount - partialRow - 1, 0))
-	   {
-	   // If we've tried to jump to the end of the list but find that
-	   // maxVerticalScrollPosition was off...try again.
-	   if ((lastKey == Keyboard.END) && (maxVerticalScrollPosition > verticalScrollPosition))
-	   {
-	   caretIndex = caretIndex - 1;
-	   moveSelectionVertically(lastKey, bShiftKey, bCtrlKey);
-	   return;
-	   }
-	   caretIndex = lockedRowCount + onscreenRowCount - partialRow - 1 + verticalScrollPosition;
-	   }
-	
-	   if (caretIndex < lockedRowCount)
-	   listItem = lockedRowContent.listItems[caretIndex][0];
-	   else
-	   listItem = listItems[caretIndex - lockedRowCount - verticalScrollPosition + offscreenExtraRowsTop][0];
-	
-	   if (listItem)
-	   {
-	   uid = itemToUID(listItem.data);
-	
-	   listItem = UIDToItemRenderer(uid);
-	
-	   if (!bCtrlKey || lastKey == Keyboard.SPACE)
-	   {
-	   selectItem(listItem, bShiftKey, bCtrlKey);
-	   bSelChanged = true;
-	   }
-	
-	   if (bCtrlKey)
-	   {
-	   drawItem(listItem, selectedData[uid] != null, uid == highlightUID, true);
-	   }
-	   }
-	   }
-	
-	   if (bSelChanged)
-	   {
-	   var pt : Point = itemRendererToIndices(listItem);
-	   var evt : ListEvent = new ListEvent(ListEvent.CHANGE);
-	
-	   if (pt)
-	   {
-	   evt.columnIndex = pt.x;
-	   evt.rowIndex = pt.y;
-	   }
-	   evt.itemRenderer = listItem;
-	   dispatchEvent(evt);
-	   }
-	 }*/
 	
 	mx_internal function get hScrollBar () : ScrollBar
 	{

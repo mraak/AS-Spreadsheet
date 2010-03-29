@@ -2,14 +2,12 @@
 <context:BasePopup xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				   xmlns:s = "library://ns.adobe.com/flex/spark"
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
-				   xmlns:context = "com.flextras.context.*"
+				   xmlns:context = "com.flextras.spreadsheet.context.*"
 				   title = "Paste">
 	<s:ButtonBar id = "buttonBar"
 				 change = "buttonBar_changeHandler(event)">
 		<s:dataProvider>
 			<s:ArrayCollection>
-				<fx:String>All</fx:String>
-
 				<fx:String>Values</fx:String>
 
 				<fx:String>Styles</fx:String>
@@ -46,11 +44,9 @@
 					case 3:
 						pasteFunction("moveRangeExpressions");
 						break;
-					
-					case 4:
-						closeHandler(null);
-						break;
 				}
+				
+				closeHandler(null);
 			}
 		]]>
 	</fx:Script>

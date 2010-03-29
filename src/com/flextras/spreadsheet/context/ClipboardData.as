@@ -1,4 +1,4 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
 import flash.events.Event;
 import flash.events.EventDispatcher;

@@ -1,4 +1,4 @@
-package com.flextras.context
+package com.flextras.spreadsheet.context
 {
 import com.flextras.paintgrid.CellProperties;
 
