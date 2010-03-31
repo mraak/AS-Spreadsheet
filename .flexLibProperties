@@ -11,7 +11,6 @@
     <classEntry path="com.flextras.spreadsheet.context.LocalContextMenu"/>
     <classEntry path="com.flextras.spreadsheet.context.MenuItem"/>
     <classEntry path="com.flextras.spreadsheet.context.StylesPopup"/>
-    <classEntry path="com.flextras.spreadsheet.context.WidthPopup"/>
     <classEntry path="com.flextras.paintgrid.Condition"/>
     <classEntry path="com.flextras.spreadsheet.context.ClipboardData"/>
   </includeClasses>

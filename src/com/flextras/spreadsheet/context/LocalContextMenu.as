@@ -32,9 +32,7 @@ public class LocalContextMenu extends Menu
 	
 	protected const setGlobalStyles : ContextMenuItem = new ContextMenuItem("Global Styles");
 	
-	protected const setColumnWidth : ContextMenuItem = new ContextMenuItem("Set Column Width", true);
-	
-	protected const setRowHeight : ContextMenuItem = new ContextMenuItem("Set Row Height");
+	protected const setSize : ContextMenuItem = new ContextMenuItem("Set Size", true);
 	
 	protected const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row");
 	
@@ -183,38 +181,21 @@ public class LocalContextMenu extends Menu
 		StylesPopup(popup).cell = cell;
 	}
 	
-	protected function setColumnWidthHandler (e : ContextMenuEvent) : void
+	protected function setSizeHandler (e : ContextMenuEvent) : void
 	{
 		if (popup)
 			PopUpManager.removePopUp(popup);
 		
-		popup = new WidthPopup();
+		popup = new SizePopup();
 		popup.grid = owner;
 		
 		PopUpManager.addPopUp(popup, popup.grid);
 		PopUpManager.centerPopUp(popup);
 		
 		if (owner.selectedCells && owner.selectedCells.length > 0)
-			WidthPopup(popup).cells = owner.selectedCells;
+			SizePopup(popup).cells = owner.selectedCells;
 		
-		WidthPopup(popup).cell = cell;
-	}
-	
-	protected function setRowHeightHandler (e : ContextMenuEvent) : void
-	{
-		if (popup)
-			PopUpManager.removePopUp(popup);
-		
-		popup = new HeightPopup();
-		popup.grid = owner;
-		
-		PopUpManager.addPopUp(popup, popup.grid);
-		PopUpManager.centerPopUp(popup);
-		
-		if (owner.selectedCells && owner.selectedCells.length > 0)
-			HeightPopup(popup).cells = owner.selectedCells;
-		
-		HeightPopup(popup).cell = cell;
+		SizePopup(popup).cell = cell;
 	}
 	
 	protected function cellSelectedHandler (e : Event) : void
@@ -253,8 +234,7 @@ public class LocalContextMenu extends Menu
 		clearColumn.enabled = value;
 		clearCell.enabled = value;
 		setCellStyles.enabled = value;
-		setColumnWidth.enabled = value;
-		setRowHeight.enabled = value;
+		setSize.enabled = value;
 		setGlobalStyles.enabled = value;
 		
 		cellSelectedHandler(null);
@@ -277,13 +257,12 @@ public class LocalContextMenu extends Menu
 		pasteSpecial.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
 		disable.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
-		setColumnWidth.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
-		setRowHeight.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
+		setSize.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
 		
 		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = [cut, copy, paste, pasteSpecial,
-							clearCell, disable, setCellStyles, setGlobalStyles, setColumnWidth, setRowHeight,
+							clearCell, disable, setCellStyles, setGlobalStyles, setSize,
 							addRow, removeRow, clearRow, addColumn, removeColumn, clearColumn];
 	}
 	
@@ -302,8 +281,8 @@ public class LocalContextMenu extends Menu
 		pasteSpecial.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
 		disable.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
-		setColumnWidth.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setColumnWidthHandler);
-		setRowHeight.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setRowHeightHandler);
+		setSize.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
+		
 		setGlobalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		
 		menu.customItems = null;
