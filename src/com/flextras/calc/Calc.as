@@ -719,6 +719,8 @@ public class Calc extends EventDispatcher
 				o.value = _val;
 				dg.expressions.itemUpdated(o, "value", oldValue, _val);
 			}
+			
+			dg.gridDataProvider.itemUpdated(co.ctrl, co.valueProp, oldValue, _val);
 		}
 		
 		currentTarget = null;

@@ -136,7 +136,7 @@ public class Data
 		return random(min, max);
 	}
 	
-	public function random (min : int = 0, max : int = 10) : int
+	public static function random (min : int = 0, max : int = 10) : int
 	{
 		return Math.floor(Math.random() * (max - min)) + min;
 	}

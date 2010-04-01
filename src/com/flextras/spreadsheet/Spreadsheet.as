@@ -11,6 +11,7 @@ import com.flextras.spreadsheet.context.LocalContextMenu;
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
+import flash.utils.describeType;
 
 import mx.collections.ArrayCollection;
 import mx.collections.ListCollectionView;
@@ -20,8 +21,10 @@ import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.controls.listClasses.IListItemRenderer;
 import mx.controls.listClasses.ListBaseContentHolder;
 import mx.core.ClassFactory;
+import mx.core.EventPriority;
 import mx.core.IIMESupport;
 import mx.core.IInvalidating;
+import mx.core.IPropertyChangeNotifier;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.DataGridEvent;
@@ -80,6 +83,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		flexContextMenu = new GlobalContextMenu();
 		
 		addEventListener(DataGridEvent.ITEM_EDIT_BEGIN, itemEditBeginHandler);
+		
+		addEventListener(DataGridEvent.ITEM_EDIT_END, itemEditorItemEditEndHandler);
 		
 		_expressions.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 		
@@ -854,6 +859,109 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		event.itemRenderer = itemEditorInstance;
 		
 		dispatchEvent(event);
+	}
+	
+	private function itemEditorItemEditEndHandler(event:DataGridEvent):void
+	{
+		event.stopImmediatePropagation();
+		
+		if (!event.isDefaultPrevented())
+		{
+			var bChanged:Boolean = false;
+			
+			/*if (event.reason == DataGridEventReason.NEW_COLUMN)
+			{
+				if (!collectionUpdatesDisabled)
+				{
+					collection.disableAutoUpdate();
+					collectionUpdatesDisabled = true;
+				}
+			}
+			else
+			{
+				if (collectionUpdatesDisabled)
+				{
+					collection.enableAutoUpdate();
+					collectionUpdatesDisabled = false;
+				}
+			}*/
+			
+			if (itemEditorInstance && event.reason != DataGridEventReason.CANCELLED)
+			{
+				var newData:Object = itemEditorInstance[columns[event.columnIndex].editorDataField];
+				var property:String = columns[event.columnIndex].dataField;
+				var data:Object = event.itemRenderer.data;
+				var typeInfo:String = "";
+				for each(var variable:XML in describeType(data).variable)
+				{
+					if (property == variable.@name.toString())
+					{
+						typeInfo = variable.@type.toString();
+						break;
+					}
+				}
+				
+				if (typeInfo == "String")
+				{
+					if (!(newData is String))
+						newData = newData.toString();
+				}
+				else if (typeInfo == "uint")
+				{
+					if (!(newData is uint))
+						newData = uint(newData);
+				}
+				else if (typeInfo == "int")
+				{
+					if (!(newData is int))
+						newData = int(newData);
+				}
+				else if (typeInfo == "Number")
+				{
+					if (!(newData is int))
+						newData = Number(newData);
+				}
+				/** Old code assumed that the property would be a simply name that could be dereferenced
+				 * through array notation. Using a method call here provides, minimally, an override
+				 * point where developers could extend this functionality in their own datagrid subclass **/
+				if (property != null && getCurrentDataValue( data, property ) !== newData)
+				{
+					bChanged = setNewValue( data, property, newData, event.columnIndex );
+				}
+				if (bChanged && !(data is IPropertyChangeNotifier || data is XML))
+				{
+					collection.itemUpdated(data, property);
+				}
+				if (event.itemRenderer is IDropInListItemRenderer)
+				{
+					var listData:DataGridListData = DataGridListData(IDropInListItemRenderer(event.itemRenderer).listData);
+					listData.label = columns[event.columnIndex].itemToLabel(data);
+					IDropInListItemRenderer(event.itemRenderer).listData = listData;
+				}
+				event.itemRenderer.data = data;
+			}
+		}
+		else
+		{
+			if (event.reason != DataGridEventReason.OTHER)
+			{
+				if (itemEditorInstance && editedItemPosition)
+				{
+					// edit session is continued so restore focus and selection
+					if (selectedIndex != editedItemPosition.rowIndex)
+						selectedIndex = editedItemPosition.rowIndex;
+					var fm:IFocusManager = focusManager;
+					// trace("setting focus to itemEditorInstance", selectedIndex);
+					if (itemEditorInstance is IFocusManagerComponent)
+						fm.setFocus(IFocusManagerComponent(itemEditorInstance));
+				}
+			}
+		}
+		
+		if (event.reason == DataGridEventReason.OTHER || !event.isDefaultPrevented())
+		{
+			destroyItemEditor();
+		}
 	}
 	
 	override protected function setupColumnItemRenderer (c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
