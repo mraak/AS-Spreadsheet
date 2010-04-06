@@ -32,51 +32,21 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
 	}
 	
-	protected var _condition : Condition;
-	
-	public function get condition () : Condition
-	{
-		return _condition;
-	}
-	
-	public function set condition (value : Condition) : void
-	{
-		if (_condition === value)
-			return;
-		
-		if (_condition)
-		{
-			_condition.removeEventListener("operatorChanged", conditionChanged);
-			_condition.removeEventListener("valueChanged", conditionChanged);
-		}
-		
-		_condition = value;
-		
-		if (value)
-		{
-			value.addEventListener("operatorChanged", conditionChanged);
-			value.addEventListener("valueChanged", conditionChanged);
-		}
-		
-		invalidateDisplayList();
-	}
-	
-	protected function conditionChanged (e : Event) : void
-	{
-		invalidateDisplayList();
-	}
-	
 	protected const styles : CellStyles = new CellStyles(this as PaintGridItemRenderer);
 	
 	protected const globalStyles : CellStyles = new CellStyles(this as PaintGridItemRenderer);
 	
-	protected var _currentStyles : BasicStyles;
+	protected const conditionalStyles : CellStyles = new CellStyles(this as PaintGridItemRenderer);
 	
-	protected var currentStylesChanged : Boolean;
+	protected const globalConditionalStyles : CellStyles = new CellStyles(this as PaintGridItemRenderer);
 	
 	protected const backgroundColorEffect : AnimateColor = new AnimateColor(this);
 	
 	protected const backgroundAlphaEffect : AnimateProperty = new AnimateProperty(this);
+	
+	protected var _currentStyles : BasicStyles;
+	
+	protected var currentStylesChanged : Boolean;
 	
 	protected function get currentStyles () : BasicStyles
 	{
@@ -92,7 +62,6 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		currentStylesChanged = true;
 		
 		invalidateDisplayList();
-	
 	}
 	
 	protected var _currentGlobalStyles : BasicStyles;
@@ -111,6 +80,48 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		_currentGlobalStyles = value;
 		currentGlobalStylesChanged = true;
+		
+		invalidateDisplayList();
+		
+	}
+	
+	protected var _currentConditionalStyles : BasicStyles;
+	
+	protected var currentConditionalStylesChanged : Boolean;
+	
+	protected function get currentConditionalStyles () : BasicStyles
+	{
+		return _currentConditionalStyles;
+	}
+	
+	protected function set currentConditionalStyles (value : BasicStyles) : void
+	{
+		if (value === _currentConditionalStyles)
+			return;
+		
+		_currentConditionalStyles = value;
+		currentConditionalStylesChanged = true;
+		
+		invalidateDisplayList();
+	
+	}
+	
+	protected var _currentGlobalConditionalStyles : BasicStyles;
+	
+	protected var currentGlobalConditionalStylesChanged : Boolean;
+	
+	protected function get currentGlobalConditionalStyles () : BasicStyles
+	{
+		return _currentGlobalConditionalStyles;
+	}
+	
+	protected function set currentGlobalConditionalStyles (value : BasicStyles) : void
+	{
+		if (value === _currentGlobalConditionalStyles)
+			return;
+		
+		_currentGlobalConditionalStyles = value;
+		currentGlobalConditionalStylesChanged = true;
 		
 		invalidateDisplayList();
 	
@@ -204,6 +215,7 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			return;
 		
 		styles.assign(globalStyles);
+		conditionalStyles.assign(globalConditionalStyles);
 		
 		if (_cell)
 		{
@@ -213,6 +225,13 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			_cell.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, rollOverStylesChangedHandler);
 			_cell.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, selectedStylesChangedHandler);
 			_cell.removeEventListener(CellEvent.DISABLED_STYLES_CHANGED, disabledStylesChangedHandler);
+			_cell.removeEventListener(CellEvent.CONDITION_CHANGED, conditionChangedHandler);
+			
+			_cell.condition.removeEventListener("enabledChanged", condition_enabledChangedHandler);
+			_cell.condition.addEventListener(CellEvent.STYLES_CHANGED, condition_stylesChangedHandler);
+			_cell.condition.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, condition_rollOverStylesChangedHandler);
+			_cell.condition.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, condition_selectedStylesChangedHandler);
+			_cell.condition.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, condition_disabledStylesChangedHandler);
 		}
 		
 		_cell = value;
@@ -228,10 +247,28 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			value.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, rollOverStylesChangedHandler);
 			value.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, selectedStylesChangedHandler);
 			value.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, disabledStylesChangedHandler);
+			value.addEventListener(CellEvent.CONDITION_CHANGED, conditionChangedHandler);
+			
+			value.condition.addEventListener("enabledChanged", condition_enabledChangedHandler);
+			value.condition.addEventListener(CellEvent.STYLES_CHANGED, condition_stylesChangedHandler);
+			value.condition.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, condition_rollOverStylesChangedHandler);
+			value.condition.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, condition_selectedStylesChangedHandler);
+			value.condition.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, condition_disabledStylesChangedHandler);
 			
 			styles.apply(value);
+			conditionalStyles.apply(value.condition);
 			
-			currentStyles = value.enabled ? value.selected ? styles.selectedStyles : styles.styles : styles.disabledStyles;
+			currentStyles = value.enabled
+				? value.selected
+					? styles.selectedStyles
+					: styles.styles
+				: styles.disabledStyles;
+			
+			currentConditionalStyles = value.enabled
+				? value.selected
+					? conditionalStyles.selectedStyles
+					: conditionalStyles.styles
+				: conditionalStyles.disabledStyles;
 		}
 	}
 	
@@ -254,6 +291,12 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			_globalCell.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, global_rollOverStylesChangedHandler);
 			_globalCell.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, global_selectedStylesChangedHandler);
 			_globalCell.removeEventListener(CellEvent.DISABLED_STYLES_CHANGED, global_disabledStylesChangedHandler);
+			_globalCell.removeEventListener(CellEvent.CONDITION_CHANGED, global_conditionChangedHandler);
+			
+			_globalCell.condition.removeEventListener(CellEvent.STYLES_CHANGED, global_condition_stylesChangedHandler);
+			_globalCell.condition.removeEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, global_condition_rollOverStylesChangedHandler);
+			_globalCell.condition.removeEventListener(CellEvent.SELECTED_STYLES_CHANGED, global_condition_selectedStylesChangedHandler);
+			_globalCell.condition.removeEventListener(CellEvent.DISABLED_STYLES_CHANGED, global_condition_disabledStylesChangedHandler);
 		}
 		
 		_globalCell = value;
@@ -264,10 +307,27 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			value.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, global_rollOverStylesChangedHandler);
 			value.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, global_selectedStylesChangedHandler);
 			value.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, global_disabledStylesChangedHandler);
+			value.addEventListener(CellEvent.CONDITION_CHANGED, global_conditionChangedHandler);
+			
+			value.condition.addEventListener(CellEvent.STYLES_CHANGED, global_condition_stylesChangedHandler);
+			value.condition.addEventListener(CellEvent.ROLLOVER_STYLES_CHANGED, global_condition_rollOverStylesChangedHandler);
+			value.condition.addEventListener(CellEvent.SELECTED_STYLES_CHANGED, global_condition_selectedStylesChangedHandler);
+			value.condition.addEventListener(CellEvent.DISABLED_STYLES_CHANGED, global_condition_disabledStylesChangedHandler);
 			
 			globalStyles.apply(value);
+			globalConditionalStyles.apply(value.condition);
 			
-			currentGlobalStyles = value.enabled ? value.selected ? globalStyles.selectedStyles : globalStyles.styles : globalStyles.disabledStyles;
+			currentGlobalStyles = value.enabled
+				? value.selected
+					? globalStyles.selectedStyles
+					: globalStyles.styles
+				: globalStyles.disabledStyles;
+			
+			currentGlobalConditionalStyles = value.enabled
+				? value.selected
+					? globalConditionalStyles.selectedStyles
+					: globalConditionalStyles.styles
+				: globalConditionalStyles.disabledStyles;
 		}
 	}
 	
@@ -372,14 +432,45 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		textField.setActualSize(w, h);
 		
-		var hasCondition : Boolean = !condition || !condition.valid || textField && FormulaLogic.compare(parseFloat(textField.text), condition.operator, condition.value);
+		var s : BasicStyles, ss : Styles;
 		
-		var s : BasicStyles = hasCondition ? currentStyles : currentGlobalStyles;
-		var ss : Styles = hasCondition ? styles.styles : globalStyles.styles;
+		if(cell)
+		{
+			if(cell.conditionEnabled && cell.condition.operatorValid && textField && FormulaLogic.compare(parseFloat(cell.condition.leftValid
+				? cell.condition.left : textField.text)
+				, cell.condition.operator
+				, parseFloat(cell.condition.right)))
+			{
+				s = currentConditionalStyles;
+				ss = conditionalStyles.styles;
+			}
+			else
+			{
+				s = currentStyles;
+				ss = styles.styles;
+			}
+		}
+		/*else
+		if(globalCell)
+		{
+			if(globalCell.condition.operatorValid && textField && FormulaLogic.compare(parseFloat(globalCell.condition.leftValid
+				? globalCell.condition.left : textField.text)
+				, globalCell.condition.operator
+				, parseFloat(globalCell.condition.right)))
+			{
+				s = currentGlobalConditionalStyles;
+				ss = globalConditionalStyles.styles;
+			}
+			else
+			{
+				s = currentGlobalStyles;
+				ss = globalStyles.styles;
+			}
+		}*/
 		
 		currentStylesChanged = true;
 		
-		if (currentStyles)
+		if (s)
 		{
 			if (rollOverActive || rollOutActive)
 			{
@@ -448,6 +539,7 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			}
 			
 			currentStylesChanged = false;
+			currentConditionalStylesChanged = false;
 		}
 	
 	/*
@@ -471,6 +563,7 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		currentStyles = styles.rollOverStyles;
 		currentGlobalStyles = globalStyles.rollOverStyles;
+		currentConditionalStyles = conditionalStyles.rollOverStyles;
 		
 		backgroundColorEffect.stop();
 		backgroundAlphaEffect.stop();
@@ -491,6 +584,7 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		currentStyles = styles.styles;
 		currentGlobalStyles = globalStyles.styles;
+		currentConditionalStyles = conditionalStyles.styles;
 		
 		backgroundColorEffect.stop();
 		backgroundAlphaEffect.stop();
@@ -508,11 +602,13 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		{
 			currentStyles = styles.selectedStyles;
 			currentGlobalStyles = globalStyles.selectedStyles;
+			currentConditionalStyles = conditionalStyles.selectedStyles;
 		}
 		else
 		{
 			currentStyles = styles.styles;
 			currentGlobalStyles = globalStyles.styles;
+			currentConditionalStyles = conditionalStyles.styles;
 		}
 	}
 	
@@ -525,11 +621,13 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		{
 			currentStyles = cell.selected ? styles.selectedStyles : styles.styles;
 			currentGlobalStyles = cell.selected ? globalStyles.selectedStyles : globalStyles.styles;
+			currentConditionalStyles = cell.selected ? conditionalStyles.selectedStyles : conditionalStyles.styles;
 		}
 		else
 		{
 			currentStyles = styles.disabledStyles;
 			currentGlobalStyles = globalStyles.disabledStyles;
+			currentConditionalStyles = conditionalStyles.disabledStyles;
 		}
 	}
 	
@@ -551,6 +649,39 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 	protected function disabledStylesChangedHandler (e : CellEvent) : void
 	{
 		styles.disabledStyles.change(e.property, e.newValue);
+	}
+	
+	protected function conditionChangedHandler (e : Event) : void
+	{
+		invalidateDisplayList();
+	}
+	
+	protected function condition_enabledChangedHandler (e : Event) : void
+	{
+		if (!cell)
+			return;
+		
+		cell.enabled = cell.condition.enabled;
+	}
+	
+	protected function condition_stylesChangedHandler (e : CellEvent) : void
+	{
+		conditionalStyles.styles.change(e.property, e.newValue);
+	}
+	
+	protected function condition_rollOverStylesChangedHandler (e : CellEvent) : void
+	{
+		conditionalStyles.rollOverStyles.change(e.property, e.newValue);
+	}
+	
+	protected function condition_selectedStylesChangedHandler (e : CellEvent) : void
+	{
+		conditionalStyles.selectedStyles.change(e.property, e.newValue);
+	}
+	
+	protected function condition_disabledStylesChangedHandler (e : CellEvent) : void
+	{
+		conditionalStyles.disabledStyles.change(e.property, e.newValue);
 	}
 	
 	protected function global_stylesChangedHandler (e : CellEvent) : void
@@ -579,6 +710,39 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalStyles.disabledStyles.change(e.property, e.newValue);
 		
 		styles.disabledStyles.change(e.property, e.newValue);
+	}
+	
+	protected function global_conditionChangedHandler (e : Event) : void
+	{
+		invalidateDisplayList();
+	}
+	
+	protected function global_condition_stylesChangedHandler (e : CellEvent) : void
+	{
+		globalConditionalStyles.styles.change(e.property, e.newValue);
+		
+		globalStyles.styles.change(e.property, e.newValue);
+	}
+	
+	protected function global_condition_rollOverStylesChangedHandler (e : CellEvent) : void
+	{
+		globalConditionalStyles.rollOverStyles.change(e.property, e.newValue);
+		
+		globalStyles.rollOverStyles.change(e.property, e.newValue);
+	}
+	
+	protected function global_condition_selectedStylesChangedHandler (e : CellEvent) : void
+	{
+		globalConditionalStyles.selectedStyles.change(e.property, e.newValue);
+		
+		globalStyles.selectedStyles.change(e.property, e.newValue);
+	}
+	
+	protected function global_condition_disabledStylesChangedHandler (e : CellEvent) : void
+	{
+		globalConditionalStyles.disabledStyles.change(e.property, e.newValue);
+		
+		globalStyles.disabledStyles.change(e.property, e.newValue);
 	}
 	
 	protected function heightChangedHandler (e : Event) : void

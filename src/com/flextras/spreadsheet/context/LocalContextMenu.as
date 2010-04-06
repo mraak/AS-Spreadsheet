@@ -72,7 +72,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.insertRowAt(c.row);
+			owner.insertRowAt(c.location.row);
 	}
 	
 	protected function removeRowHandler (e : ContextMenuEvent) : void
@@ -80,7 +80,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.removeRowAt(c.row);
+			owner.removeRowAt(c.location.row);
 	}
 	
 	protected function clearRowHandler (e : ContextMenuEvent) : void
@@ -88,7 +88,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.clearRowAt(c.row);
+			owner.clearRowAt(c.location.row);
 	}
 	
 	override protected function addColumnHandler (e : ContextMenuEvent) : void
@@ -96,7 +96,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.insertColumnAt(c.column);
+			owner.insertColumnAt(c.location.column);
 	}
 	
 	protected function removeColumnHandler (e : ContextMenuEvent) : void
@@ -104,7 +104,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.removeColumnAt(c.column);
+			owner.removeColumnAt(c.location.column);
 	}
 	
 	protected function clearColumnHandler (e : ContextMenuEvent) : void
@@ -112,7 +112,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.clearColumnAt(c.column);
+			owner.clearColumnAt(c.location.column);
 	}
 	
 	protected function clearCellHandler (e : ContextMenuEvent) : void
@@ -120,7 +120,7 @@ public class LocalContextMenu extends Menu
 		var cells : Array = owner.selectedCells && owner.selectedCells.length > 0 ? owner.selectedCells : [cell];
 		
 		for each (var c : CellProperties in cells)
-			owner.assignExpression(String(Utils.alphabet[c.column]).toLowerCase() + c.row, "");
+			owner.assignExpression(String(Utils.alphabet[c.location.column]).toLowerCase() + c.location.row, "");
 	}
 	
 	protected function cutHandler (e : ContextMenuEvent) : void
@@ -179,6 +179,7 @@ public class LocalContextMenu extends Menu
 			StylesPopup(popup).cells = owner.selectedCells;
 		
 		StylesPopup(popup).cell = cell;
+		StylesPopup(popup).local = true;
 	}
 	
 	protected function setSizeHandler (e : ContextMenuEvent) : void
@@ -317,8 +318,8 @@ public class LocalContextMenu extends Menu
 		
 		for each (var c : CellProperties in cells)
 		{
-			prop = String(Utils.alphabet[c.column]).toLowerCase();
-			id = prop + c.row;
+			prop = String(Utils.alphabet[c.location.column]).toLowerCase();
+			id = prop + c.location.row;
 			
 			co = owner.ctrlObjects[id];
 			
@@ -333,8 +334,8 @@ public class LocalContextMenu extends Menu
 	{
 		var range : Array = getRange(clipboard.range);
 		var o : ControlObject = range[0];
-		var x : int = cell.column - o.colIndex;
-		var y : int = cell.row - o.rowIndex;
+		var x : int = cell.location.column - o.colIndex;
+		var y : int = cell.location.row - o.rowIndex;
 		
 		owner[what](range, x, y, clipboard.performCopy);
 	}

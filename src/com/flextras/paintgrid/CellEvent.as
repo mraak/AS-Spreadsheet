@@ -12,6 +12,8 @@ public class CellEvent extends PropertyChangeEvent
 	
 	public static const DISABLED_STYLES_CHANGED : String = "disabledStylesChanged";
 	
+	public static const CONDITION_CHANGED : String = "conditionChanged";
+	
 	public function CellEvent (type : String, bubbles : Boolean = false, cancelable : Boolean = false, kind : String = null, property : Object = null, oldValue : Object = null, newValue : Object = null, source : Object = null)
 	{
 		super(type, bubbles, cancelable, kind, property, oldValue, newValue, source);

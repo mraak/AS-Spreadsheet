@@ -234,7 +234,7 @@ public class SpreadsheetItemRenderer extends PaintGridItemRenderer
 		var pt : Point = event is MouseEvent ? dataGrid.globalToLocal(new Point(MouseEvent(event).stageX, MouseEvent(event).stageY)) : last;
 		
 		var widthChange : Number = Math.min(Math.max(min.x, pt.x), (dataGrid.width / dataGrid.scaleX) - vsw) - start.x;
-		dataGrid.setColumnWidthAt(cell.column, Math.floor(width + widthChange));
+		dataGrid.setColumnWidthAt(cell.location.column, Math.floor(width + widthChange));
 		
 		invalidateDisplayList();
 	}
@@ -257,7 +257,7 @@ public class SpreadsheetItemRenderer extends PaintGridItemRenderer
 		var pt : Point = event is MouseEvent ? dataGrid.globalToLocal(new Point(MouseEvent(event).stageX, MouseEvent(event).stageY)) : last;
 		
 		var heightChange : Number = Math.min(Math.max(min.y, pt.y), (dataGrid.height / dataGrid.scaleY) - hsw) - start.y;
-		dataGrid.setRowHeightAt(cell.row, Math.floor(height + heightChange));
+		dataGrid.setRowHeightAt(cell.location.row, Math.floor(height + heightChange));
 		
 		invalidateDisplayList();
 	}

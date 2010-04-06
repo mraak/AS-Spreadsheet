@@ -56,7 +56,7 @@ public class CellStyles
 		disabledStyles.assign(value.disabledStyles);
 	}
 	
-	public function apply (value : CellProperties) : void
+	public function apply (value : StylesProxy) : void
 	{
 		if (!value)
 			return;

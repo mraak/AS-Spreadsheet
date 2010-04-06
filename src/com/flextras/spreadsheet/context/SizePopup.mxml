@@ -10,7 +10,7 @@
 					   minimum = "0"
 					   maximum = "300"
 					   stepSize = "1"
-					   value = "{grid.getColumnWidthAt(cell.column)}"
+					   value = "{grid.getColumnWidthAt(cell.location.column)}"
 					   change = "widthSlider_changeHandler(event)" />
 		</mx:FormItem>
 		
@@ -19,7 +19,7 @@
 					   minimum = "0"
 					   maximum = "300"
 					   stepSize = "1"
-					   value = "{grid.getRowHeightAt(cell.row)}"
+					   value = "{grid.getRowHeightAt(cell.location.row)}"
 					   change = "heightSlider_changeHandler(event)" />
 		</mx:FormItem>
 	</mx:Form>
@@ -68,20 +68,20 @@
 			{
 				if (cells && cells.length > 0)
 					for each (var c : CellProperties in cells)
-						grid.setColumnWidthAt(c.column, widthSlider.value);
+						grid.setColumnWidthAt(c.location.column, widthSlider.value);
 				
 				if (cell)
-					grid.setColumnWidthAt(cell.column, widthSlider.value);
+					grid.setColumnWidthAt(cell.location.column, widthSlider.value);
 			}
 			
 			protected function heightSlider_changeHandler (event : Event) : void
 			{
 				if (cells && cells.length > 0)
 					for each (var c : CellProperties in cells)
-					grid.setRowHeightAt(c.row, heightSlider.value);
+					grid.setRowHeightAt(c.location.row, heightSlider.value);
 				
 				if (cell)
-					grid.setRowHeightAt(cell.row, heightSlider.value);
+					grid.setRowHeightAt(cell.location.row, heightSlider.value);
 			}
 		]]>
 	</fx:Script>

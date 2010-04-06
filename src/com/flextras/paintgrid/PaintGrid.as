@@ -1,7 +1,5 @@
 package com.flextras.paintgrid
 {
-import com.flextras.calc.Utils;
-
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -158,7 +156,7 @@ public class PaintGrid extends DataGrid
 		
 		var cell : CellProperties;
 		
-		if ((cell = getCellProperties(value, false)))
+		if ((cell = getCellProperties(value.location, false)))
 			cell.assign(value);
 		
 		updateCell(cell);
@@ -168,7 +166,7 @@ public class PaintGrid extends DataGrid
 	{
 		var cell : CellProperties;
 		
-		if (!(cell = getCellProperties(value, true)))
+		if (!(cell = getCellProperties(value.location, true)))
 			modifiedCells.push(value);
 	}
 	
@@ -342,7 +340,7 @@ public class PaintGrid extends DataGrid
 		var cells : Array = fromUser ? modifiedCells : this.cells;
 		
 		for each (var cell : CellProperties in cells)
-			if (cell.inRange(range))
+			if (cell.location.inRange(range))
 				result.push(cell);
 		
 		return result;
@@ -361,7 +359,7 @@ public class PaintGrid extends DataGrid
 			return;
 		
 		for each (var cell : CellProperties in cells)
-			if (cell.inRange(range))
+			if (cell.location.inRange(range))
 			{
 				cell.styles = new ObjectProxy(styles);
 				cell.rollOverStyles = new ObjectProxy(rollOverStyles);
@@ -384,7 +382,9 @@ public class PaintGrid extends DataGrid
 	 * Conditions API
 	 */
 	
-	protected var _condition : Condition;
+	// TODO :  remove Conditions API
+	
+	/*protected var _condition : Condition;
 	
 	protected var _conditionString : String;
 	
@@ -409,22 +409,24 @@ public class PaintGrid extends DataGrid
 			
 			if (_condition)
 			{
+				_condition.left = o.arg1;
 				_condition.operator = o.op;
-				_condition.value = o.arg2;
+				_condition.right = o.arg2;
 			}
 			else
 				_condition = new Condition(o.op, o.arg2);
 		}
 		else if (_condition)
 		{
+			_condition.left = null;
 			_condition.operator = null;
-			_condition.value = 0;
+			_condition.right = null;
 		}
 		else
 			_condition = new Condition();
 		
 		dispatchEvent(new Event("conditionChanged"));
-	}
+	}*/
 	
 	/**
 	 * Disabled Cells API
@@ -531,7 +533,7 @@ public class PaintGrid extends DataGrid
 				cell = info.cells[i];
 				
 				if (cell)
-					++cell.column;
+					++cell.location.column;
 			}
 		}
 		
@@ -572,7 +574,7 @@ public class PaintGrid extends DataGrid
 				cell = info.cells[i];
 				
 				if (cell)
-					--cell.column;
+					--cell.location.column;
 			}
 		}
 		
@@ -690,8 +692,8 @@ public class PaintGrid extends DataGrid
 		}
 		else if (ctrlKey && shiftKey)
 		{
-			start = selectedCellProperties || new CellLocation();
-			end = currentCell;
+			start = selectedCellProperties.location || new CellLocation();
+			end = currentCell.location;
 			cells = getAllCellPropertiesInRangeBy(start, end, false);
 			
 			for each (cell in cells)
@@ -730,7 +732,7 @@ public class PaintGrid extends DataGrid
 		}
 		else if (shiftKey && !ctrlKey)
 		{
-			start = selectedCellProperties || new CellLocation(), end = currentCell;
+			start = selectedCellProperties.location || new CellLocation(), end = currentCell.location;
 			cells = getAllCellPropertiesInRangeBy(start, end, false);
 			
 			for each (cell in cells)
@@ -786,7 +788,6 @@ public class PaintGrid extends DataGrid
 			
 			r.dataGrid = this;
 			r.globalCell = _globalCellStyles;
-			r.condition = _condition;
 			
 			if (info)
 			{
@@ -1039,8 +1040,8 @@ public class PaintGrid extends DataGrid
 			for (col = 0; col < cols; ++col)
 			{
 				cell = info.cells[col];
-				cell.row = row;
-				cell.column = col;
+				cell.location.row = row;
+				cell.location.column = col;
 			}
 		}
 	}

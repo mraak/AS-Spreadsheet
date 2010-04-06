@@ -207,13 +207,38 @@
 					   change = "updateStyle('indent', event.currentTarget.value);" />
 		</mx:FormItem>
 
-		<mx:FormItem label = "condition"
-					 direction = "horizontal">
-			<s:TextInput text = "{grid.condition}"
-						 change = "grid.condition = event.currentTarget.text" />
-
-			<s:Button label = "Clear"
-					  click = "grid.condition = null" />
+		<mx:FormItem label = "Condition"
+					 enabled="{local}">
+			<s:CheckBox id="checkBox2" selected="{cell.condition.operatorValid}"
+						label="Enable conditions"/>
+			<s:CheckBox id="checkBox"
+						label="Apply defined styles when the following condition is met"
+						change="updateCell()"/>
+			
+			<s:HGroup
+				includeInLayout="{checkBox2.selected}"
+				visible="{checkBox2.selected}">
+				<s:TextInput text = "@{cell.condition.left}" />
+				
+				<s:DropDownList id = "list" prompt="Choose"
+								change = "cell.condition.operator = list.selectedItem.label; updateCell()">
+					<s:dataProvider>
+						<s:ArrayCollection>
+							<fx:Object label = "&lt;" />
+							<fx:Object label = ">" />
+							<fx:Object label = "&lt;=" />
+							<fx:Object label = ">=" />
+							<fx:Object label = "=" />
+							<fx:Object label = "&lt;>" />
+						</s:ArrayCollection>
+					</s:dataProvider>
+				</s:DropDownList>
+				
+				<s:TextInput text = "@{cell.condition.right}" />
+				
+				<s:Button label = "Clear"
+						  click = "cell.condition.clear(); list.selectedIndex = -1;" />
+			</s:HGroup>
 		</mx:FormItem>
 	</mx:Form>
 
@@ -223,6 +248,9 @@
 			
 			import mx.collections.ArrayCollection;
 			import mx.utils.ObjectProxy;
+			
+			[Bindable]
+			public var local:Boolean;
 			
 			[Bindable]
 			protected var styles : ObjectProxy;
@@ -274,7 +302,7 @@
 				if (!cell)
 					return;
 				
-				var c : CellProperties = cells && cells.length > 0 ? cells[0] : cell;
+				var c : StylesProxy = checkBox.selected ? cell.condition : cells && cells.length > 0 ? cells[0] : cell;
 				
 				switch (buttonBar.selectedIndex)
 				{
@@ -294,21 +322,28 @@
 						styles = c.disabledStyles;
 						break;
 				}
+				
+				cell.conditionEnabled = checkBox.selected;
 			}
 			
 			protected function updateStyle (name : String, value : Object) : void
 			{
 				styles[name] = value;
 				
-				if (cells && cells.length > 0)
-					for each (var c : CellProperties in cells)
-						assignStyle(c);
-				
-				if (cell)
-					assignStyle(cell);
+				if(checkBox.selected)
+					assignStyle(cell.condition);
+				else
+				{
+					if (cells && cells.length > 0)
+						for each (var c : CellProperties in cells)
+							assignStyle(c);
+					
+					if (cell)
+						assignStyle(cell);
+				}
 			}
 			
-			protected function assignStyle (cell : CellProperties) : void
+			protected function assignStyle (cell : StylesProxy) : void
 			{
 				switch (buttonBar.selectedIndex)
 				{

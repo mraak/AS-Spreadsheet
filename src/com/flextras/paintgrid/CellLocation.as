@@ -1,8 +1,6 @@
 package com.flextras.paintgrid
 {
-import flash.events.EventDispatcher;
-
-public class CellLocation extends EventDispatcher
+public class CellLocation
 {
 	
 	[Bindable]

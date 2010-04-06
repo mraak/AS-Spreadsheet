@@ -3,8 +3,23 @@ package com.flextras.paintgrid
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-public class Condition extends EventDispatcher
+public class Condition extends StylesProxy
 {
+	protected var _left : String;
+	
+	[Bindable(event="leftChanged")]
+	public function get left () : String
+	{
+		return _left;
+	}
+	
+	public function set left (value : String) : void
+	{
+		_left = value;
+		
+		dispatchEvent(new Event("leftChanged"));
+	}
+	
 	protected var _operator : String;
 	
 	[Bindable(event="operatorChanged")]
@@ -20,30 +35,55 @@ public class Condition extends EventDispatcher
 		dispatchEvent(new Event("operatorChanged"));
 	}
 	
-	protected var _value : int;
+	protected var _right : String;
 	
-	[Bindable(event="valueChanged")]
-	public function get value () : int
+	[Bindable(event="rightChanged")]
+	public function get right () : String
 	{
-		return _value;
+		return _right;
 	}
 	
-	public function set value (value : int) : void
+	public function set right (value : String) : void
 	{
-		_value = value;
+		_right = value;
 		
-		dispatchEvent(new Event("valueChanged"));
+		dispatchEvent(new Event("rightChanged"));
 	}
 	
-	public function Condition (operator : String = null, value : int = 0)
+	public function Condition (left : String = null, operator : String = null, right : String = null, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null)
 	{
+		super(styles, rollOverStyles, selectedStyles, disabledStyles);
+		
+		this.left = left;
 		this.operator = operator;
-		this.value = value;
+		this.right = right;
 	}
 	
-	public function get valid () : Boolean
+	override public function get valid():Boolean
+	{
+		return super.valid && leftValid && operatorValid && rightValid;
+	}
+	
+	public function get leftValid () : Boolean
+	{
+		return left && left.length > 0;
+	}
+	
+	public function get operatorValid () : Boolean
 	{
 		return operator && operator.length > 0;
+	}
+	
+	public function get rightValid () : Boolean
+	{
+		return right && right.length > 0;
+	}
+	
+	public function clear():void
+	{
+		left = null;
+		operator = null;
+		right = null;
 	}
 }
 }

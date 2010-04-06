@@ -352,7 +352,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		for each (var info : Row in infos)
 		{
-			cell = new CellProperties(info.cells[0].row, index);
+			cell = new CellProperties(info.cells[0].location.row, index);
 			
 			info.cells.splice(index, 0, cell);
 			cells.push(cell);
@@ -362,7 +362,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 				cell = info.cells[i];
 				
 				if (cell)
-					++cell.column;
+					++cell.location.column;
 			}
 		}
 		
@@ -435,7 +435,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 				cell = info.cells[i];
 				
 				if (cell)
-					--cell.column;
+					--cell.location.column;
 			}
 		}
 		
@@ -534,7 +534,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			
 			l = Utils.gridFieldToIndexes(co.id);
 			oc = getCellPropertiesAt(l[1], l[0], false);
-			nc = getCellPropertiesAt(oc.row + dy, oc.column + dx, false);
+			nc = getCellPropertiesAt(oc.location.row + dy, oc.location.column + dx, false);
 			
 			if (!nc)
 				continue;
