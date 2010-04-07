@@ -9,7 +9,7 @@ import com.flextras.paintgrid.Row;
 import com.flextras.spreadsheet.context.GlobalContextMenu;
 import com.flextras.spreadsheet.context.LocalContextMenu;
 
-import flash.events.Event;
+import flash.events.Event; 
 import flash.events.KeyboardEvent;
 import flash.utils.describeType;
 
@@ -404,6 +404,10 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		clearColumnAt(index);
 		
 		removeLastColumn();
+		
+		callLater(updateExpressionsUponRowOrColumnChange,["colIndex", location, -1, 0, [location + 1, null, null, null]]);
+		
+		//updateExpressionsUponRowOrColumnChange("colIndex", location, -1, 0, [location + 1, null, null, null]);
 	}
 	
 	private function removeLastColumn () : void
@@ -441,7 +445,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		columns = cols;
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", location, -1, 0, [location, null, null, null]);
+		
 	}
 	
 	public function clearColumnAt (index : int) : void

@@ -25,7 +25,35 @@ import mx.events.TweenEvent;
 import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
-
+/**
+ * You can use PaintGrid in the same way as you use DataGrid, with additional styling options and visual
+ * formatting. 
+ * <br/><br/>
+ * 
+ * To apply style to a particular cell:<br/>
+ * setCellStylesAt(0, 0, {backgroundColor : 0xFF0000, color: 0x00FF00, size : 30});
+ * <br/><br/>
+ * 
+ * To disable cells:<br/>
+ * disabledCells = [new CellLocation(0,0), new CellLocation(1,0)];
+ * <br/><br/>
+ * 
+ * To apply global styles (you can apply global styles through external CSS also):<br/>
+ * setStyle("cellRollOverBackgroundColor", 0xFF0000);<br/>
+ * setStyle("cellSelectedBackgroundColor", 0xCCFF33);<br/>
+ * setStyle("cellDisabledBackgroundColor", 0xFF3333);<br/>
+ * <br/><br/>
+ * 
+ * To set row height:<br>
+ * setRowHeightAt(0, 50);
+ * <br/><br/>
+ * 
+ * To set column width:<br>			
+ * setColumnWidthAt(0, 200);
+ *
+ * 
+ * 
+ * */
 public class PaintGrid extends DataGrid
 {
 	public function PaintGrid ()
@@ -219,7 +247,7 @@ public class PaintGrid extends DataGrid
 		return getCellStyles(location, fromUser);
 	}
 	
-	public function setCellStyles (location : CellLocation, styles : Object = null) : void
+	public function setCellStyles (location : CellLocation, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
 	{
 		if (!location || !location.valid)
 			return;
@@ -227,7 +255,7 @@ public class PaintGrid extends DataGrid
 		setCellStylesAt(location.row, location.column, styles);
 	}
 	
-	public function setCellStylesAt (row : int, column : int, styles : Object = null) : void
+	public function setCellStylesAt (row : int, column : int, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
 	{
 		var cell : CellProperties = new CellProperties(row, column, styles);
 		
@@ -462,8 +490,7 @@ public class PaintGrid extends DataGrid
 	 *
 	 * @param value
 	 *
-	 */
-	
+	 */	
 	public function set disabledCells (value : Array) : void
 	{
 		if (!value || !value.length)
@@ -476,7 +503,10 @@ public class PaintGrid extends DataGrid
 			if (o is CellProperties)
 				cell = getCellProperties(CellProperties(o).location, false);
 			else
-				cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
+				if (o is CellLocation)
+					cell = getCellProperties(CellLocation(o), false);
+				else
+					cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
 			
 			if (cell)
 				cell.enabled = !cell.enabled;
