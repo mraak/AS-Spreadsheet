@@ -2,6 +2,9 @@ package com.flextras.paintgrid
 {
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
+import flash.utils.IExternalizable;
 
 import mx.events.PropertyChangeEvent;
 import mx.events.PropertyChangeEventKind;
@@ -13,6 +16,7 @@ import mx.utils.ObjectProxy;
 [Event(name="rollOverStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="selectedStylesChanged", type="com.flextras.paintgrid.CellEvent")]
 [Event(name="disabledStylesChanged", type="com.flextras.paintgrid.CellEvent")]
+
 public class StylesProxy extends EventDispatcher
 {
 	protected const _styles : ObjectProxy = new ObjectProxy;
@@ -150,6 +154,59 @@ public class StylesProxy extends EventDispatcher
 	protected function getEvent (type : String, e : PropertyChangeEvent) : CellEvent
 	{
 		return new CellEvent(type, false, false, PropertyChangeEventKind.UPDATE, e.property, e.oldValue, e.newValue, this);
+	}
+	
+	public function fromXML(value:XML):void
+	{
+		var styles : XML = value.styles;
+		var rollOverStyles : XML = value.rollOverStyles;
+		var selectedStyles : XML = value.selectedStyles;
+		var disabledStyles : XML = value.disabledStyles;
+		
+		var name:String;
+		
+		for each(name in styles)
+			this.styles[name] = styles.@[name];
+		
+		for each(name in rollOverStyles)
+			this.rollOverStyles[name] = rollOverStyles.@[name];
+		
+		for each(name in selectedStyles)
+			this.selectedStyles[name] = selectedStyles.@[name];
+		
+		for each(name in disabledStyles)
+			this.disabledStyles[name] = disabledStyles.@[name];
+	}
+	
+	public function toXML():XML
+	{
+		var result:XML = <StylesProxy/>;
+		
+		var styles : XML = <Styles/>;
+		var rollOverStyles : XML = <RollOverStyles/>;
+		var selectedStyles : XML = <SelectedStyles/>;
+		var disabledStyles : XML = <DisabledStyles/>;
+		
+		var name:String;
+		
+		for each(name in this.styles		) styles.@[name]		 = this.styles[name];
+		for each(name in this.rollOverStyles) rollOverStyles.@[name] = this.rollOverStyles[name];
+		for each(name in this.selectedStyles) selectedStyles.@[name] = this.selectedStyles[name];
+		for each(name in this.disabledStyles) disabledStyles.@[name] = this.disabledStyles[name];
+		
+		if(styles.attributes().length())
+			result.styles.* += styles;
+		
+		if(rollOverStyles.attributes().length())
+			result.rollOverStyles.* += rollOverStyles;
+		
+		if(selectedStyles.attributes().length())
+			result.selectedStyles.* += selectedStyles;
+		
+		if(disabledStyles.attributes().length())
+			result.disabledStyles.* += disabledStyles;
+		
+		return result;
 	}
 }
 }

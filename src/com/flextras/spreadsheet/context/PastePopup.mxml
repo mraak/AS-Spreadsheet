@@ -30,18 +30,14 @@
 				switch (event.newIndex)
 				{
 					case 0:
-						pasteFunction("moveRange");
-						break;
-					
-					case 1:
 						pasteFunction("moveRangeValues");
 						break;
 					
-					case 2:
+					case 1:
 						pasteFunction("moveRangeStyles");
 						break;
 					
-					case 3:
+					case 2:
 						pasteFunction("moveRangeExpressions");
 						break;
 				}

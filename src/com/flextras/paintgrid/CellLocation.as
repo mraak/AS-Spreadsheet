@@ -1,5 +1,6 @@
 package com.flextras.paintgrid
 {
+
 public class CellLocation
 {
 	
@@ -36,6 +37,17 @@ public class CellLocation
 	public function get valid () : Boolean
 	{
 		return row > -1 && column > -1;
+	}
+	
+	public function fromXML(value:XML):void
+	{
+		row = value.@row;
+		column = value.@column;
+	}
+	
+	public function toXML():XML
+	{
+		return <CellLocation row={row} column={column}/>;
 	}
 }
 }

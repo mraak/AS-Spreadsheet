@@ -4,6 +4,9 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
+import flash.utils.IExternalizable;
 
 import mx.collections.ListCollectionView;
 import mx.controls.DataGrid;
@@ -470,8 +473,8 @@ public class PaintGrid extends DataGrid
 		
 		for each (var o : Object in value)
 		{
-			if (o is CellLocation)
-				cell = getCellProperties(o as CellLocation, false);
+			if (o is CellProperties)
+				cell = getCellProperties(CellProperties(o).location, false);
 			else
 				cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
 			
@@ -1044,6 +1047,29 @@ public class PaintGrid extends DataGrid
 				cell.location.column = col;
 			}
 		}
+	}
+	
+	public function fromXML(value:XML):void
+	{
+	}
+	
+	public function toXML():XML
+	{
+		var result:XML = <PaintGrid/>;
+		
+		var cells : XMLList = new XMLList();
+		
+		for each(var cell:CellProperties in this.modifiedCells) cells += cell.toXML();
+		
+		var globalStyles:XML = globalCellStyles.toXML();
+		
+		if(cells.length())
+			result.cells.* += cells;
+		
+		if(globalStyles.length())
+			result.globalStyles.* += globalStyles;
+		
+		return result;
 	}
 }
 }

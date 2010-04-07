@@ -1,7 +1,6 @@
 package com.flextras.paintgrid
 {
 import flash.events.Event;
-import flash.events.EventDispatcher;
 
 public class Condition extends StylesProxy
 {
@@ -84,6 +83,27 @@ public class Condition extends StylesProxy
 		left = null;
 		operator = null;
 		right = null;
+	}
+	
+	override public function fromXML(value:XML):void
+	{
+		super.fromXML(value.styles);
+		
+		left = value.@left;
+		operator = value.@operator;
+		right = value.@right;
+	}
+	
+	override public function toXML():XML
+	{
+		var result:XML = <Condition left={left} operator={operator} right={right}/>;
+		
+		var styles:XML = super.toXML();
+		
+		if(styles.children().length())
+			result.styles.* += styles;
+		
+		return result;
 	}
 }
 }

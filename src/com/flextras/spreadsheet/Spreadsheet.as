@@ -21,7 +21,6 @@ import mx.controls.listClasses.IDropInListItemRenderer;
 import mx.controls.listClasses.IListItemRenderer;
 import mx.controls.listClasses.ListBaseContentHolder;
 import mx.core.ClassFactory;
-import mx.core.EventPriority;
 import mx.core.IIMESupport;
 import mx.core.IInvalidating;
 import mx.core.IPropertyChangeNotifier;
@@ -43,6 +42,7 @@ use namespace mx_internal;
  * objects and collections as variables in the calculations.
  *
  * */
+
 public class Spreadsheet extends PaintGrid implements ISpreadsheet
 {
 	private var _rowCount : int = 15;
@@ -989,6 +989,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		}
 		
 		return item;
+	}
+	
+	override public function fromXML(value:XML):void
+	{
+		super.fromXML(value);
+	}
+	
+	override public function toXML():XML
+	{
+		return super.toXML();
 	}
 }
 }

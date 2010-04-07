@@ -4,19 +4,16 @@ import com.flextras.spreadsheet.context.LocalContextMenu;
 
 import flash.events.Event;
 
-import mx.events.PropertyChangeEvent;
-import mx.events.PropertyChangeEventKind;
-import mx.utils.ObjectProxy;
-
 [Event(name="selectedChanged", type="flash.events.Event")]
 [Event(name="conditionChanged", type="com.flextras.paintgrid.CellEvent")]
+
 public class CellProperties extends StylesProxy
 {
+	public const location:CellLocation = new CellLocation;
+	
 	//[Bindable(event="conditionChanged")]
 	public const condition:Condition = new Condition;
 	//public var hasCondition:Boolean;
-	
-	public const location:CellLocation = new CellLocation;
 	
 	public function CellProperties (row : int = 0, column : int = 0, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null, condition:Condition = null)
 	{
@@ -112,6 +109,34 @@ public class CellProperties extends StylesProxy
 	protected function condition_changeHandler (e : Event) : void
 	{
 		dispatchEvent(new CellEvent(CellEvent.CONDITION_CHANGED));
+	}
+	
+	override public function fromXML(value:XML):void
+	{
+		super.fromXML(value.styles);
+		
+		location.fromXML(value.location);
+		condition.fromXML(value.condition);
+	}
+	
+	override public function toXML():XML
+	{
+		var result:XML = <CellProperties/>;
+		
+		var location:XML = this.location.toXML();
+		var condition:XML = this.condition.toXML();
+		var styles:XML = super.toXML();
+		
+		if(location.attributes().length())
+			result.location.* += location;
+		
+		if(condition.children().length())
+			result.condition.* += condition;
+		
+		if(styles.children().length())
+			result.styles.* += styles;
+		
+		return result;
 	}
 }
 }

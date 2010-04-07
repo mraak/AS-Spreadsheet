@@ -1,6 +1,6 @@
 package com.flextras.paintgrid
 {
-
+	
 public class CellRange
 {
 	public var start : CellLocation;
@@ -27,6 +27,28 @@ public class CellRange
 			return false;
 		
 		return start.valid && end.valid;
+	}
+	
+	public function fromXML(value:XML):void
+	{
+		start.fromXML(value.start);
+		end.fromXML(value.end);
+	}
+	
+	public function toXML():XML
+	{
+		var result:XML = <CellRange/>;
+		
+		var start:XML = this.start.toXML();
+		var end:XML = this.end.toXML();
+		
+		if(start.attributes().length())
+			result.start.* += start;
+		
+		if(end.attributes().length())
+			result.end.* += end;
+		
+		return result;
 	}
 }
 }
