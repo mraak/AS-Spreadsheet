@@ -434,6 +434,9 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		var s : BasicStyles, ss : Styles;
 		
+		s = currentGlobalStyles;
+		ss = globalStyles.styles;
+		
 		if(cell)
 		{
 			if(cell.conditionEnabled && cell.condition.operatorValid && textField && FormulaLogic.compare(parseFloat(cell.condition.leftValid
@@ -610,6 +613,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			currentGlobalStyles = globalStyles.styles;
 			currentConditionalStyles = conditionalStyles.styles;
 		}
+		
+		invalidateDisplayList();
 	}
 	
 	protected function enabledChangedHandler (e : Event) : void
@@ -629,26 +634,36 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			currentGlobalStyles = globalStyles.disabledStyles;
 			currentConditionalStyles = conditionalStyles.disabledStyles;
 		}
+		
+		invalidateDisplayList();
 	}
 	
 	protected function stylesChangedHandler (e : CellEvent) : void
 	{
 		styles.styles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function rollOverStylesChangedHandler (e : CellEvent) : void
 	{
 		styles.rollOverStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function selectedStylesChangedHandler (e : CellEvent) : void
 	{
 		styles.selectedStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function disabledStylesChangedHandler (e : CellEvent) : void
 	{
 		styles.disabledStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function conditionChangedHandler (e : Event) : void
@@ -662,26 +677,36 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 			return;
 		
 		cell.enabled = cell.condition.enabled;
+		
+		invalidateDisplayList();
 	}
 	
 	protected function condition_stylesChangedHandler (e : CellEvent) : void
 	{
 		conditionalStyles.styles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function condition_rollOverStylesChangedHandler (e : CellEvent) : void
 	{
 		conditionalStyles.rollOverStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function condition_selectedStylesChangedHandler (e : CellEvent) : void
 	{
 		conditionalStyles.selectedStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function condition_disabledStylesChangedHandler (e : CellEvent) : void
 	{
 		conditionalStyles.disabledStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_stylesChangedHandler (e : CellEvent) : void
@@ -689,6 +714,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalStyles.styles.change(e.property, e.newValue);
 		
 		styles.styles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_rollOverStylesChangedHandler (e : CellEvent) : void
@@ -696,6 +723,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalStyles.rollOverStyles.change(e.property, e.newValue);
 		
 		styles.rollOverStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_selectedStylesChangedHandler (e : CellEvent) : void
@@ -703,6 +732,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalStyles.selectedStyles.change(e.property, e.newValue);
 		
 		styles.selectedStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_disabledStylesChangedHandler (e : CellEvent) : void
@@ -710,6 +741,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalStyles.disabledStyles.change(e.property, e.newValue);
 		
 		styles.disabledStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_conditionChangedHandler (e : Event) : void
@@ -722,6 +755,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalConditionalStyles.styles.change(e.property, e.newValue);
 		
 		globalStyles.styles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_condition_rollOverStylesChangedHandler (e : CellEvent) : void
@@ -729,6 +764,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalConditionalStyles.rollOverStyles.change(e.property, e.newValue);
 		
 		globalStyles.rollOverStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_condition_selectedStylesChangedHandler (e : CellEvent) : void
@@ -736,6 +773,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalConditionalStyles.selectedStyles.change(e.property, e.newValue);
 		
 		globalStyles.selectedStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function global_condition_disabledStylesChangedHandler (e : CellEvent) : void
@@ -743,6 +782,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		globalConditionalStyles.disabledStyles.change(e.property, e.newValue);
 		
 		globalStyles.disabledStyles.change(e.property, e.newValue);
+		
+		invalidateDisplayList();
 	}
 	
 	protected function heightChangedHandler (e : Event) : void
@@ -852,6 +893,8 @@ public class PaintGridItemRenderer extends UIComponent implements IListItemRende
 		
 		if ((value = getStyle("cellDisabledBackgroundAlpha")) || (value = getStyle("backgroundDisabledAlpha")))
 			globalStyles.disabledStyles.backgroundAlpha = value as Number;
+		
+		invalidateDisplayList();
 	}
 }
 }

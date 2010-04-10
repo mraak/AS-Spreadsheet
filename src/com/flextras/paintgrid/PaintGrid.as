@@ -1,5 +1,7 @@
 package com.flextras.paintgrid
 {
+import com.flextras.calc.Utils;
+
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -93,9 +95,9 @@ public class PaintGrid extends DataGrid
 	 * Array of CellProperties
 	 */
 	
-	/*public function getAllCellProperties (fromUser : Boolean = true) : Array
+	/*public function getAllCellProperties (modified : Boolean = true) : Array
 	   {
-	   return fromUser ? modifiedCells : cells;
+	   return modified ? modifiedCells : cells;
 	   }
 	
 	   public function setAllCellProperties (cells : Array) : void
@@ -116,12 +118,12 @@ public class PaintGrid extends DataGrid
 	 *
 	 */
 	
-	public function get selectedCellProperties () : CellProperties
+	public function get lastSelectedCell () : CellProperties
 	{
 		return _selectedCell;
 	}
 	
-	public function set selectedCellProperties (cell : CellProperties) : void
+	public function set lastSelectedCell (cell : CellProperties) : void
 	{
 		if (_selectedCell === cell)
 			return;
@@ -131,53 +133,22 @@ public class PaintGrid extends DataGrid
 		dispatchEvent(new Event("selectedCellPropertiesChange"));
 	}
 	
-	public function set selectedCellsStyles (styles : Object) : void
-	{
-		for each (var cell : CellProperties in _selectedCells)
-			cell.styles = new ObjectProxy(styles);
-	}
-	
-	public function set selectedCellsRollOverStyles (styles : Object) : void
-	{
-		for each (var cell : CellProperties in _selectedCells)
-			cell.rollOverStyles = new ObjectProxy(styles);
-	}
-	
-	public function set selectedCellsSelectedStyles (styles : Object) : void
-	{
-		for each (var cell : CellProperties in _selectedCells)
-			cell.selectedStyles = new ObjectProxy(styles);
-	}
-	
-	public function set selectedCellsDisabledStyles (styles : Object) : void
-	{
-		for each (var cell : CellProperties in _selectedCells)
-			cell.disabledStyles = new ObjectProxy(styles);
-	}
-	
 	/**
 	 * Instance of CellProperties
 	 */
 	
-	public function getCellProperties (at : CellLocation, fromUser : Boolean = true) : CellProperties
+	public function getCellProperties (at : CellLocation, modified : Boolean = true) : CellProperties
 	{
 		if (!at || !at.valid)
 			return null;
 		
-		var cells : Array = fromUser ? modifiedCells : this.cells;
+		var cells : Array = modified ? modifiedCells : this.cells;
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.equalLocation(at))
 				return cell;
 		
 		return null;
-	}
-	
-	public function getCellPropertiesAt (row : int, column : int, fromUser : Boolean = true) : CellProperties
-	{
-		var location : CellLocation = new CellLocation(row, column);
-		
-		return getCellProperties(location, fromUser);
 	}
 	
 	public function setCellProperties (value : CellProperties) : void
@@ -199,13 +170,6 @@ public class PaintGrid extends DataGrid
 		
 		if (!(cell = getCellProperties(value.location, true)))
 			modifiedCells.push(value);
-	}
-	
-	public function setCellPropertiesAt (row : int, column : int, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
-	{
-		var cell : CellProperties = new CellProperties(row, column, styles, rollOverStyles, selectedStyles, disabledStyles);
-		
-		setCellProperties(cell);
 	}
 	
 	/**
@@ -230,9 +194,9 @@ public class PaintGrid extends DataGrid
 		dispatchEvent(new Event("globalCellStylesChanged"));
 	}
 	
-	public function getCellStyles (at : CellLocation, fromUser : Boolean = true) : Object
+	public function getCellStyles (at : CellLocation, modified : Boolean = true) : Object
 	{
-		var cell : CellProperties = getCellProperties(at, fromUser);
+		var cell : CellProperties = getCellProperties(at, modified);
 		
 		if (!cell)
 			return null;
@@ -240,120 +204,21 @@ public class PaintGrid extends DataGrid
 		return cell.styles;
 	}
 	
-	public function getCellStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
-	{
-		var location : CellLocation = new CellLocation(row, column);
-		
-		return getCellStyles(location, fromUser);
-	}
-	
 	public function setCellStyles (location : CellLocation, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
 	{
 		if (!location || !location.valid)
 			return;
 		
-		setCellStylesAt(location.row, location.column, styles);
-	}
-	
-	public function setCellStylesAt (row : int, column : int, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
-	{
-		var cell : CellProperties = new CellProperties(row, column, styles);
+		var c:Condition;
 		
-		setCellProperties(cell);
-	}
-	
-	public function getCellRollOverStyles (at : CellLocation, fromUser : Boolean = true) : Object
-	{
-		var cell : CellProperties = getCellProperties(at, fromUser);
+		if (condition)
+		{
+			var o : Object = Utils.breakComparisonInput(condition);
+			
+			c = new Condition(o.arg1, o.op, o.arg2, conditionalStyles);
+		}
 		
-		if (!cell)
-			return null;
-		
-		return cell.rollOverStyles;
-	}
-	
-	public function getCellRollOverStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
-	{
-		var location : CellLocation = new CellLocation(row, column);
-		
-		return getCellRollOverStyles(location, fromUser);
-	}
-	
-	public function setCellRollOverStyles (location : CellLocation, styles : Object = null) : void
-	{
-		if (!location || !location.valid)
-			return;
-		
-		setCellRollOverStylesAt(location.row, location.column, styles);
-	}
-	
-	public function setCellRollOverStylesAt (row : int, column : int, styles : Object = null) : void
-	{
-		var cell : CellProperties = new CellProperties(row, column, null, styles);
-		
-		setCellProperties(cell);
-	}
-	
-	public function getCellSelectedStyles (at : CellLocation, fromUser : Boolean = true) : Object
-	{
-		var cell : CellProperties = getCellProperties(at, fromUser);
-		
-		if (!cell)
-			return null;
-		
-		return cell.selectedStyles;
-	}
-	
-	public function getCellSelectedStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
-	{
-		var location : CellLocation = new CellLocation(row, column);
-		
-		return getCellSelectedStyles(location, fromUser);
-	}
-	
-	public function setCellSelectedStyles (location : CellLocation, styles : Object = null) : void
-	{
-		if (!location || !location.valid)
-			return;
-		
-		setCellSelectedStylesAt(location.row, location.column, styles);
-	}
-	
-	public function setCellSelectedStylesAt (row : int, column : int, styles : Object = null) : void
-	{
-		var cell : CellProperties = new CellProperties(row, column, null, null, styles);
-		
-		setCellProperties(cell);
-	}
-	
-	public function getCellDisabledStyles (at : CellLocation, fromUser : Boolean = true) : Object
-	{
-		var cell : CellProperties = getCellProperties(at, fromUser);
-		
-		if (!cell)
-			return null;
-		
-		return cell.disabledStyles;
-	}
-	
-	public function getCellDisabledStylesAt (row : int, column : int, fromUser : Boolean = true) : Object
-	{
-		var location : CellLocation = new CellLocation(row, column);
-		
-		return getCellDisabledStyles(location, fromUser);
-	}
-	
-	public function setCellDisabledStyles (location : CellLocation, styles : Object = null) : void
-	{
-		if (!location || !location.valid)
-			return;
-		
-		setCellDisabledStylesAt(location.row, location.column, styles);
-	}
-	
-	public function setCellDisabledStylesAt (row : int, column : int, styles : Object = null) : void
-	{
-		var cell : CellProperties = new CellProperties(row, column, null, null, null, styles);
+		var cell : CellProperties = new CellProperties(location.row, location.column, styles, null, null, null, c);
 		
 		setCellProperties(cell);
 	}
@@ -362,13 +227,13 @@ public class PaintGrid extends DataGrid
 	 * Array of CellProperties in Range
 	 */
 	
-	public function getAllCellPropertiesInRange (range : CellRange, fromUser : Boolean = true) : Array
+	public function getCellPropertiesInRange (range : CellRange, modified : Boolean = true) : Array
 	{
 		if (!range || !range.valid)
 			return null;
 		
 		var result : Array = [];
-		var cells : Array = fromUser ? modifiedCells : this.cells;
+		var cells : Array = modified ? modifiedCells : this.cells;
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.location.inRange(range))
@@ -377,87 +242,19 @@ public class PaintGrid extends DataGrid
 		return result;
 	}
 	
-	public function getAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation, fromUser : Boolean = true) : Array
+	public function setCellPropertiesInRange (range : CellRange, properties:CellProperties) : void
 	{
-		var range : CellRange = new CellRange(start, end);
-		
-		return getAllCellPropertiesInRange(range, fromUser);
-	}
-	
-	public function setAllCellPropertiesInRange (range : CellRange, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object = null) : void
-	{
-		if (!range || !range.valid)
+		if (!range || !range.valid || !properties || !properties.valid)
 			return;
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.location.inRange(range))
 			{
-				cell.styles = new ObjectProxy(styles);
-				cell.rollOverStyles = new ObjectProxy(rollOverStyles);
-				cell.selectedStyles = new ObjectProxy(selectedStyles);
-				cell.disabledStyles = new ObjectProxy(disabledStyles);
+				cell.assign(properties);
 				
 				updateCell(cell);
 			}
 	}
-	
-	public function setAllCellPropertiesInRangeBy (start : CellLocation, end : CellLocation, styles : Object = null, rollOverStyles : Object = null, selectedStyles : Object = null, disabledStyles : Object =
-												   null) : void
-	{
-		var range : CellRange = new CellRange(start, end);
-		
-		setAllCellPropertiesInRange(range, styles, rollOverStyles, selectedStyles, disabledStyles);
-	}
-	
-	/**
-	 * Conditions API
-	 */
-	
-	// TODO :  remove Conditions API
-	
-	/*protected var _condition : Condition;
-	
-	protected var _conditionString : String;
-	
-	[Bindable(event="conditionChanged")]
-	public function get condition () : String
-	{
-		return _conditionString;
-	}
-	
-	public function set condition (value : String) : void
-	{
-		if (_conditionString == value)
-			return;
-		
-		_conditionString = value;
-		
-		//_condition = null;
-		
-		if (value)
-		{
-			var o : Object = Utils.breakComparisonInput(value);
-			
-			if (_condition)
-			{
-				_condition.left = o.arg1;
-				_condition.operator = o.op;
-				_condition.right = o.arg2;
-			}
-			else
-				_condition = new Condition(o.op, o.arg2);
-		}
-		else if (_condition)
-		{
-			_condition.left = null;
-			_condition.operator = null;
-			_condition.right = null;
-		}
-		else
-			_condition = new Condition();
-		
-		dispatchEvent(new Event("conditionChanged"));
-	}*/
 	
 	/**
 	 * Disabled Cells API
@@ -493,10 +290,11 @@ public class PaintGrid extends DataGrid
 	 */	
 	public function set disabledCells (value : Array) : void
 	{
-		if (!value || !value.length)
-			return;
-		
 		var cell : CellProperties;
+		var cells:Array = disabledCells;
+		
+		for each (cell in cells)
+			cell.enabled = true;
 		
 		for each (var o : Object in value)
 		{
@@ -506,10 +304,10 @@ public class PaintGrid extends DataGrid
 				if (o is CellLocation)
 					cell = getCellProperties(CellLocation(o), false);
 				else
-					cell = getCellPropertiesAt(o.rowIndex, o.columnIndex, false);
+					cell = getCellProperties(new CellLocation(o.rowIndex, o.columnIndex), false);
 			
 			if (cell)
-				cell.enabled = !cell.enabled;
+				cell.enabled = false;
 		}
 	}
 	
@@ -592,9 +390,9 @@ public class PaintGrid extends DataGrid
 			cell = info.cells.splice(index, 1)[0];
 			cell.release();
 			
-			if (selectedCellProperties === cell)
+			if (lastSelectedCell === cell)
 			{
-				selectedCellProperties = null;
+				lastSelectedCell = null;
 				
 				i = selectedCells.indexOf(cell);
 				selectedCells.splice(i, 1);
@@ -696,7 +494,7 @@ public class PaintGrid extends DataGrid
 		if (isAlt)
 			return retval;
 		
-		var currentCell : CellProperties, oldCell : CellProperties = selectedCellProperties;
+		var currentCell : CellProperties, oldCell : CellProperties = lastSelectedCell;
 		var i : int, arr : Array;
 		var start : CellLocation, end : CellLocation;
 		var cells : Array, cell : CellProperties;
@@ -725,9 +523,9 @@ public class PaintGrid extends DataGrid
 		}
 		else if (ctrlKey && shiftKey)
 		{
-			start = selectedCellProperties.location || new CellLocation();
+			start = lastSelectedCell.location || new CellLocation();
 			end = currentCell.location;
-			cells = getAllCellPropertiesInRangeBy(start, end, false);
+			cells = getCellPropertiesInRange(new CellRange(start, end), false);
 			
 			for each (cell in cells)
 				if ((i = _selectedCells.indexOf(cell)) > -1)
@@ -765,8 +563,8 @@ public class PaintGrid extends DataGrid
 		}
 		else if (shiftKey && !ctrlKey)
 		{
-			start = selectedCellProperties.location || new CellLocation(), end = currentCell.location;
-			cells = getAllCellPropertiesInRangeBy(start, end, false);
+			start = lastSelectedCell.location || new CellLocation(), end = currentCell.location;
+			cells = getCellPropertiesInRange(new CellRange(start, end), false);
 			
 			for each (cell in cells)
 				if ((i = _selectedCells.indexOf(cell)) < 0)
@@ -776,7 +574,7 @@ public class PaintGrid extends DataGrid
 				}
 		}
 		
-		selectedCellProperties = currentCell;
+		lastSelectedCell = currentCell;
 		selectedRenderer.invalidateDisplayList();
 		dispatchEvent(new Event("selectedCellsChanged"));
 		
@@ -965,9 +763,9 @@ public class PaintGrid extends DataGrid
 				cell = info.cells.pop();
 				cell.release();
 				
-				if (selectedCellProperties === cell)
+				if (lastSelectedCell === cell)
 				{
-					selectedCellProperties = null;
+					lastSelectedCell = null;
 					
 					col = selectedCells.indexOf(cell);
 					selectedCells.splice(col, 1);
@@ -1040,9 +838,9 @@ public class PaintGrid extends DataGrid
 				cell = info.cells.pop();
 				cell.release();
 				
-				if (selectedCellProperties === cell)
+				if (lastSelectedCell === cell)
 				{
-					selectedCellProperties = null;
+					lastSelectedCell = null;
 					
 					col = selectedCells.indexOf(cell);
 					selectedCells.splice(col, 1);

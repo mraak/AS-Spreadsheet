@@ -3,13 +3,14 @@ package com.flextras.spreadsheet
 import com.flextras.calc.Calc;
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
+import com.flextras.paintgrid.CellLocation;
 import com.flextras.paintgrid.CellProperties;
 import com.flextras.paintgrid.PaintGrid;
 import com.flextras.paintgrid.Row;
 import com.flextras.spreadsheet.context.GlobalContextMenu;
 import com.flextras.spreadsheet.context.LocalContextMenu;
 
-import flash.events.Event; 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.utils.describeType;
 
@@ -424,9 +425,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			cell = info.cells.splice(location, 1)[0];
 			cell.release();
 			
-			if (selectedCellProperties === cell)
+			if (lastSelectedCell === cell)
 			{
-				selectedCellProperties = null;
+				lastSelectedCell = null;
 				
 				i = selectedCells.indexOf(cell);
 				selectedCells.splice(i, 1);
@@ -534,11 +535,11 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			co = calc.getCtrl(ctrl);
 			
 			if (!co.grid)
-				throw(new Error("Only objects within ISpreadsheet can be moved"));
+				throw new Error("Only objects within ISpreadsheet can be moved");
 			
 			l = Utils.gridFieldToIndexes(co.id);
-			oc = getCellPropertiesAt(l[1], l[0], false);
-			nc = getCellPropertiesAt(oc.location.row + dy, oc.location.column + dx, false);
+			oc = getCellProperties(new CellLocation(l[1], l[0]), false);
+			nc = getCellProperties(new CellLocation(oc.location.row + dy, oc.location.column + dx), false);
 			
 			if (!nc)
 				continue;

@@ -7,10 +7,31 @@ import flash.events.Event;
 [Event(name="selectedChanged", type="flash.events.Event")]
 [Event(name="conditionChanged", type="com.flextras.paintgrid.CellEvent")]
 
+/**
+ * Whenever you want to apply some cell specific properties this is the right place to do it.
+ * You can modify almost any style supported by older Flash Text Engine or modify background related styles
+ * and thats true for all four states (normal, over, selected, disabled), but there's a catch:
+ * font related styles (kerning, spacing, ...) can only be set in "styles" property - which is for "normal" state
+ * every other state will be ignored.
+ */
 public class CellProperties extends StylesProxy
 {
+	/**
+	 * Location (row, column) of target cell
+	 */	
 	public const location:CellLocation = new CellLocation;
 	
+	/**
+	 * Condition of target cell
+	 * 
+	 * Operator and right side of expression are required
+	 * (example '= 1 + 2' -
+	 * '1' is left side of expression,
+	 * '+' is an operator,
+	 * '2' is right side of expression)
+	 * 
+	 * left side of expression is optional (if provided condition will take its value instead of cell's)
+	 */	
 	//[Bindable(event="conditionChanged")]
 	public const condition:Condition = new Condition;
 	//public var hasCondition:Boolean;
@@ -32,6 +53,11 @@ public class CellProperties extends StylesProxy
 	protected var _conditionEnabled:Boolean;
 	
 	[Bindable(event="conditionsChanged")]
+	/**
+	 * This property must be set to true if you want to use conditions
+	 * or false if you don't want to.
+	 * @return 
+	 */	
 	public function get conditionEnabled():Boolean
 	{
 		return _conditionEnabled;
@@ -44,6 +70,9 @@ public class CellProperties extends StylesProxy
 		condition_changeHandler(null);
 	}
 
+	/**
+	 * @private
+	 */	
 	override public function release () : void
 	{
 		super.release();
@@ -52,6 +81,10 @@ public class CellProperties extends StylesProxy
 			menu.unsetContextMenu(null);
 	}
 	
+	/**
+	 * Modify it if you want to enable / disable target cell
+	 * @param value
+	 */	
 	override public function set enabled (value : Boolean) : void
 	{
 		if (menu)
@@ -62,6 +95,9 @@ public class CellProperties extends StylesProxy
 	
 	protected var _menu : LocalContextMenu;
 	
+	/**
+	 * @private
+	 */	
 	public function get menu () : LocalContextMenu
 	{
 		return _menu;
@@ -81,6 +117,10 @@ public class CellProperties extends StylesProxy
 	protected var _selected : Boolean;
 	
 	[Bindable(event="selectedChanged")]
+	/**
+	 * true if selected otherwise false
+	 * @return 
+	 */	
 	public function get selected () : Boolean
 	{
 		return _selected;
@@ -96,11 +136,20 @@ public class CellProperties extends StylesProxy
 		dispatchEvent(new Event("selectedChanged"));
 	}
 	
+	/**
+	 * @private
+	 * @param cell
+	 * @return 
+	 */	
 	public function equalLocation (cell : CellLocation) : Boolean
 	{
 		return location.equal(cell);
 	}
 	
+	/**
+	 * @private
+	 * @return 
+	 */	
 	override public function get valid () : Boolean
 	{
 		return super.valid;
@@ -111,6 +160,10 @@ public class CellProperties extends StylesProxy
 		dispatchEvent(new CellEvent(CellEvent.CONDITION_CHANGED));
 	}
 	
+	/**
+	 * @private
+	 * @param value
+	 */	
 	override public function fromXML(value:XML):void
 	{
 		super.fromXML(value.styles);
@@ -119,6 +172,10 @@ public class CellProperties extends StylesProxy
 		condition.fromXML(value.condition);
 	}
 	
+	/**
+	 * @private
+	 * @return 
+	 */	
 	override public function toXML():XML
 	{
 		var result:XML = <CellProperties/>;
