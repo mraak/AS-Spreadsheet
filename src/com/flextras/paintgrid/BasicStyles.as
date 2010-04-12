@@ -32,6 +32,7 @@ public class BasicStyles
 	
 	protected var _foregroundColor : uint;
 	
+	[Bindable]
 	public function get foregroundColor () : uint
 	{
 		return _foregroundColor;
@@ -48,6 +49,7 @@ public class BasicStyles
 	
 	protected var _foregroundAlpha : Number;
 	
+	[Bindable]
 	public function get foregroundAlpha () : Number
 	{
 		return _foregroundAlpha;
@@ -83,6 +85,7 @@ public class BasicStyles
 	
 	protected var _backgroundColor : uint;
 	
+	[Bindable]
 	public function get backgroundColor () : uint
 	{
 		return _backgroundColor;
@@ -99,6 +102,7 @@ public class BasicStyles
 	
 	protected var _backgroundAlpha : Number;
 	
+	[Bindable]
 	public function get backgroundAlpha () : Number
 	{
 		return _backgroundAlpha;

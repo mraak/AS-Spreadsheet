@@ -18,7 +18,7 @@ import spark.effects.AnimateColor;
 
 use namespace mx_internal;
 
-public class PaintGridItemRenderer extends UIComponent implements IListItemRenderer, IDropInListItemRenderer
+public class PaintGridItemRenderer extends UIComponent implements IPaintGridItemRenderer, IListItemRenderer, IDropInListItemRenderer
 {
 	public function PaintGridItemRenderer ()
 	{

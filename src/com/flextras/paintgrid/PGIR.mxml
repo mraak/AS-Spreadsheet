@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:MXDataGridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						  xmlns:s="library://ns.adobe.com/flex/spark" 
+						  xmlns:mx="library://ns.adobe.com/flex/mx" 
+						  focusEnabled="true"
+						  implements="com.flextras.paintgrid.IPaintGridItemRenderer"
+						  xmlns:paintgrid="com.flextras.paintgrid.*"
+						  enabled="{cell.enabled}"
+						  autoDrawBackground="false">
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="hovered"/>
+		<s:State name="selected"/>
+		<s:State name="disabled"/>
+	</s:states>
+	
+	<s:transitions>
+		<s:Transition effect="{effect}"/>
+	</s:transitions>
+	
+	<fx:Declarations>
+		<s:Parallel id="effect" target="{lbl}" duration="250">
+			<s:AnimateColor/>
+			<s:AnimateColor colorPropertyName="backgroundColor"/>
+			<s:Animate>
+				<s:SimpleMotionPath property="textAlpha"/>
+				<s:SimpleMotionPath property="backgroundAlpha"/>
+			</s:Animate>
+		</s:Parallel>
+		
+		<fx:Boolean id="conditionActive">{cell.conditionEnabled
+			&amp;&amp; cell.condition.operatorValid
+			&amp;&amp; FormulaLogic.compare(parseFloat(cell.condition.leftValid
+			? cell.condition.left : dataGridListData.label)
+			, cell.condition.operator, parseFloat(cell.condition.right))}</fx:Boolean>
+	</fx:Declarations>
+	
+	<s:Label id="lbl"
+			 top="0" left="0" right="0" bottom="0"
+			 text="{dataGridListData.label}"
+			 
+			 color.normal  ="{conditionActive ? cell.condition.styles.color : cell.styles.color || globalCell.styles.color}"
+			 color.hovered ="{conditionActive ? cell.condition.styles.color : cell.rollOverStyles.color || globalCell.rollOverStyles.color}"
+			 color.selected="{conditionActive ? cell.condition.styles.color : cell.selectedStyles.color || globalCell.selectedStyles.color}"
+			 color.disabled="{conditionActive ? cell.condition.styles.color : cell.disabledStyles.color || globalCell.disabledStyles.color}"
+			 
+			 textAlpha.normal  ="{conditionActive ? cell.condition.styles.alpha : cell.styles.alpha || globalCell.styles.alpha}"
+			 textAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.alpha : cell.rollOverStyles.alpha || globalCell.rollOverStyles.alpha}"
+			 textAlpha.selected="{conditionActive ? cell.condition.selectedStyles.alpha : cell.selectedStyles.alpha || globalCell.selectedStyles.alpha}"
+			 textAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.alpha : cell.disabledStyles.alpha || globalCell.disabledStyles.alpha}"
+			 
+			 backgroundColor.normal  ="{conditionActive ? cell.condition.styles.backgroundColor : cell.styles.backgroundColor || globalCell.styles.backgroundColor}"
+			 backgroundColor.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundColor : cell.rollOverStyles.backgroundColor || globalCell.rollOverStyles.backgroundColor}"
+			 backgroundColor.selected="{conditionActive ? cell.condition.selectedStyles.backgroundColor : cell.selectedStyles.backgroundColor || globalCell.selectedStyles.backgroundColor}"
+			 backgroundColor.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundColor : cell.disabledStyles.backgroundColor || globalCell.disabledStyles.backgroundColor}"
+			 
+			 backgroundAlpha.normal  ="{conditionActive ? cell.condition.styles.backgroundAlpha : cell.styles.backgroundAlpha || globalCell.styles.backgroundAlpha}"
+			 backgroundAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundAlpha : cell.rollOverStyles.backgroundAlpha || globalCell.rollOverStyles.backgroundAlpha}"
+			 backgroundAlpha.selected="{conditionActive ? cell.condition.selectedStyles.backgroundAlpha : cell.selectedStyles.backgroundAlpha || globalCell.selectedStyles.backgroundAlpha}"
+			 backgroundAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundAlpha : cell.disabledStyles.backgroundAlpha || globalCell.disabledStyles.backgroundAlpha}"
+			 
+			 fontFamily="{conditionActive ? cell.condition.styles.family : cell.styles.family || globalCell.styles.family}"
+			 
+			 fontSize="{conditionActive ? cell.condition.styles.size : cell.styles.size || globalCell.styles.size}"
+			 
+			 textAlign="{conditionActive ? cell.condition.styles.align : cell.styles.align || globalCell.styles.align}"
+			 
+			 fontWeight="{conditionActive ? cell.condition.styles.weight : cell.styles.weight || globalCell.styles.weight}"
+			 
+			 fontStyle="{conditionActive ? cell.condition.styles.style : cell.styles.style || globalCell.styles.style}"
+			 
+			 kerning="{conditionActive ? cell.condition.styles.kerning : cell.styles.kerning || globalCell.styles.kerning}"
+			 
+			 textDecoration="{conditionActive ? cell.condition.styles.decoration : cell.styles.decoration || globalCell.styles.decoration}"
+			 
+			 minHeight="{isNaN(info.height) ? 20 : info.height}"
+			 
+			 verticalAlign="middle"
+			 />
+	
+	<fx:Script>
+		<![CDATA[
+			import com.flextras.calc.FormulaLogic;
+			
+			protected var _dataGrid : PaintGrid;
+			
+			public function get dataGrid () : PaintGrid
+			{
+				return _dataGrid;
+			}
+			
+			public function set dataGrid (value : PaintGrid) : void
+			{
+				if (_dataGrid === value)
+					return;
+				
+				_dataGrid = value;
+			}
+			
+			protected var _info : Row;
+			
+			[Bindable]
+			public function get info () : Row
+			{
+				return _info;
+			}
+			
+			public function set info (value : Row) : void
+			{
+				if (value === _info)
+					return;
+				
+				_info = value;
+			}
+			
+			protected var _cell : CellProperties;
+			
+			[Bindable]
+			public function get cell () : CellProperties
+			{
+				return _cell;
+			}
+			
+			public function set cell (value : CellProperties) : void
+			{
+				if (!value || value === _cell)
+					return;
+				
+				_cell = value;
+			}
+			
+			protected var _globalCell : CellProperties;
+			
+			[Bindable]
+			public function get globalCell () : CellProperties
+			{
+				return _globalCell;
+			}
+			
+			public function set globalCell (value : CellProperties) : void
+			{
+				if (!value || value === _globalCell)
+					return;
+				
+				_globalCell = value;
+			}
+		]]>
+	</fx:Script>
+</s:MXDataGridItemRenderer>

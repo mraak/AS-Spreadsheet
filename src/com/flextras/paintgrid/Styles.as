@@ -30,6 +30,7 @@ public class Styles extends BasicStyles
 	
 	protected var _align : String;
 	
+	[Bindable]
 	public function get align () : String
 	{
 		return _align;
@@ -46,6 +47,7 @@ public class Styles extends BasicStyles
 	
 	protected var _antiAliasType : String;
 	
+	[Bindable]
 	public function get antiAliasType () : String
 	{
 		return _antiAliasType;
@@ -62,6 +64,7 @@ public class Styles extends BasicStyles
 	
 	protected var _decoration : String;
 	
+	[Bindable]
 	public function get decoration () : String
 	{
 		return _decoration;
@@ -78,6 +81,7 @@ public class Styles extends BasicStyles
 	
 	protected var _family : String;
 	
+	[Bindable]
 	public function get family () : String
 	{
 		return _family;
@@ -94,6 +98,7 @@ public class Styles extends BasicStyles
 	
 	protected var _gridFitType : String;
 	
+	[Bindable]
 	public function get gridFitType () : String
 	{
 		return _gridFitType;
@@ -110,6 +115,7 @@ public class Styles extends BasicStyles
 	
 	protected var _indent : int;
 	
+	[Bindable]
 	public function get indent () : int
 	{
 		return _indent;
@@ -126,6 +132,7 @@ public class Styles extends BasicStyles
 	
 	protected var _kerning : Boolean;
 	
+	[Bindable]
 	public function get kerning () : Boolean
 	{
 		return _kerning;
@@ -142,6 +149,7 @@ public class Styles extends BasicStyles
 	
 	protected var _sharpness : Number;
 	
+	[Bindable]
 	public function get sharpness () : Number
 	{
 		return _sharpness;
@@ -158,6 +166,7 @@ public class Styles extends BasicStyles
 	
 	protected var _size : uint;
 	
+	[Bindable]
 	public function get size () : uint
 	{
 		return _size;
@@ -174,6 +183,7 @@ public class Styles extends BasicStyles
 	
 	protected var _spacing : int;
 	
+	[Bindable]
 	public function get spacing () : int
 	{
 		return _spacing;
@@ -190,6 +200,7 @@ public class Styles extends BasicStyles
 	
 	protected var _style : String;
 	
+	[Bindable]
 	public function get style () : String
 	{
 		return _style;
@@ -206,6 +217,7 @@ public class Styles extends BasicStyles
 	
 	protected var _thickness : Number;
 	
+	[Bindable]
 	public function get thickness () : Number
 	{
 		return _thickness;
@@ -222,6 +234,7 @@ public class Styles extends BasicStyles
 	
 	protected var _weight : String;
 	
+	[Bindable]
 	public function get weight () : String
 	{
 		return _weight;

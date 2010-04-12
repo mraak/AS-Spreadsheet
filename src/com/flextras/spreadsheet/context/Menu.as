@@ -1,5 +1,6 @@
 package com.flextras.spreadsheet.context
 {
+import com.flextras.paintgrid.IPaintGridItemRenderer;
 import com.flextras.spreadsheet.Spreadsheet;
 import com.flextras.spreadsheet.SpreadsheetItemRenderer;
 
@@ -67,8 +68,8 @@ public class Menu implements IFlexContextMenu
 		
 		if (value is Spreadsheet)
 			owner = Spreadsheet(value);
-		else if (value is SpreadsheetItemRenderer)
-			owner = Spreadsheet(SpreadsheetItemRenderer(value).dataGrid);
+		else if (value is IPaintGridItemRenderer)
+			owner = Spreadsheet(IPaintGridItemRenderer(value).dataGrid);
 		
 		menu = new ContextMenu();
 		menu.hideBuiltInItems();

@@ -1,6 +1,7 @@
 package com.flextras.paintgrid
 {
 import com.flextras.calc.Utils;
+import com.flextras.spreadsheet.context.LocalContextMenu;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -19,6 +20,7 @@ import mx.controls.listClasses.ListBaseContentHolder;
 import mx.controls.scrollClasses.ScrollBar;
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
+import mx.core.UIComponent;
 import mx.core.mx_internal;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
@@ -485,7 +487,7 @@ public class PaintGrid extends DataGrid
 		return _selectedCells;
 	}
 	
-	protected var selectedRenderer : PaintGridItemRenderer;
+	protected var selectedRenderer : IPaintGridItemRenderer;
 	
 	override protected function selectItem (item : IListItemRenderer, shiftKey : Boolean, ctrlKey : Boolean, transition : Boolean = true) : Boolean
 	{
@@ -499,9 +501,9 @@ public class PaintGrid extends DataGrid
 		var start : CellLocation, end : CellLocation;
 		var cells : Array, cell : CellProperties;
 		
-		if (item is PaintGridItemRenderer)
+		if (item is IPaintGridItemRenderer)
 		{
-			selectedRenderer = PaintGridItemRenderer(item);
+			selectedRenderer = IPaintGridItemRenderer(item);
 			currentCell = selectedRenderer.cell;
 		}
 		
@@ -575,7 +577,7 @@ public class PaintGrid extends DataGrid
 		}
 		
 		lastSelectedCell = currentCell;
-		selectedRenderer.invalidateDisplayList();
+		if(selectedRenderer is UIComponent) UIComponent(selectedRenderer).invalidateDisplayList();
 		dispatchEvent(new Event("selectedCellsChanged"));
 		
 		return retval;
@@ -612,10 +614,10 @@ public class PaintGrid extends DataGrid
 		
 		item.styleName = this;
 		
-		if (item is PaintGridItemRenderer)
+		if (item is IPaintGridItemRenderer)
 		{
 			var info : Row = getInfoByUID(uid);
-			var r : PaintGridItemRenderer = PaintGridItemRenderer(item);
+			var r : IPaintGridItemRenderer = IPaintGridItemRenderer(item);
 			
 			r.dataGrid = this;
 			r.globalCell = _globalCellStyles;
@@ -649,10 +651,10 @@ public class PaintGrid extends DataGrid
 	
 	protected function itemEditBeginningHandler (e : DataGridEvent) : void
 	{
-		if (!(e.itemRenderer is PaintGridItemRenderer))
+		if (!(e.itemRenderer is IPaintGridItemRenderer))
 			return;
 		
-		var r : PaintGridItemRenderer = PaintGridItemRenderer(e.itemRenderer);
+		var r : IPaintGridItemRenderer = IPaintGridItemRenderer(e.itemRenderer);
 		var cell : CellProperties = r.cell;
 		
 		if (!cell || !cell.enabled || !beginEdit)

@@ -12,14 +12,19 @@ import mx.core.UIComponent;
 
 public class CellStyles
 {
+	[Bindable]
 	public var defaultStyles : Styles;
 	
+	[Bindable]
 	public var styles : Styles;
 	
+	[Bindable]
 	public var rollOverStyles : BasicStyles;
 	
+	[Bindable]
 	public var selectedStyles : BasicStyles;
 	
+	[Bindable]
 	public var disabledStyles : BasicStyles;
 	
 	public function CellStyles (owner : UIComponent)

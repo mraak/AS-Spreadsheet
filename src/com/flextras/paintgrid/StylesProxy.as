@@ -74,6 +74,9 @@ public class StylesProxy extends EventDispatcher
 	
 	public function set styles (value : ObjectProxy) : void
 	{
+		if(_styles === value)
+			return;
+		
 		for (var style : String in value)
 			_styles[style] = value[style];
 	}
@@ -86,6 +89,9 @@ public class StylesProxy extends EventDispatcher
 	
 	public function set rollOverStyles (value : ObjectProxy) : void
 	{
+		if(_rollOverStyles === value)
+			return;
+		
 		for (var rollOverStyle : String in value)
 			_rollOverStyles[rollOverStyle] = value[rollOverStyle];
 	}
@@ -98,6 +104,9 @@ public class StylesProxy extends EventDispatcher
 	
 	public function set selectedStyles (value : ObjectProxy) : void
 	{
+		if(_selectedStyles === value)
+			return;
+		
 		for (var selectedStyle : String in value)
 			_selectedStyles[selectedStyle] = value[selectedStyle];
 	}
@@ -110,6 +119,9 @@ public class StylesProxy extends EventDispatcher
 	
 	public function set disabledStyles (value : ObjectProxy) : void
 	{
+		if(_disabledStyles === value)
+			return;
+		
 		for (var disabledStyle : String in value)
 			_disabledStyles[disabledStyle] = value[disabledStyle];
 	}
