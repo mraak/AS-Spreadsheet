@@ -163,6 +163,12 @@ public class PaintGrid extends DataGrid
 		if ((cell = getCellProperties(value.location, false)))
 			cell.assign(value);
 		
+		if(value.condition)
+		{
+			cell.conditionEnabled = true;
+			cell.condition.assign(value.condition);
+		}
+		
 		updateCell(cell);
 	}
 	
@@ -211,16 +217,20 @@ public class PaintGrid extends DataGrid
 		if (!location || !location.valid)
 			return;
 		
-		var c:Condition;
+		var c:Condition, cell : CellProperties;
 		
 		if (condition)
 		{
 			var o : Object = Utils.breakComparisonInput(condition);
 			
 			c = new Condition(o.arg1, o.op, o.arg2, conditionalStyles);
+			cell = getCellProperties(location, false);
+			cell.conditionEnabled = true;
+			cell.condition.assign(c);
+			cell.styles = new ObjectProxy(styles);
 		}
 		
-		var cell : CellProperties = new CellProperties(location.row, location.column, styles, null, null, null, c);
+		cell ||= new CellProperties(location.row, location.column, styles, null, null, null, c);
 		
 		setCellProperties(cell);
 	}
