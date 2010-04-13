@@ -1,5 +1,6 @@
 package com.flextras.spreadsheet
 {
+import com.flextras.paintgrid.IPaintGridItemRenderer;
 import com.flextras.paintgrid.PaintGridItemRenderer;
 import com.flextras.paintgrid.PaintGridRowResizeSkin;
 
@@ -19,7 +20,7 @@ import mx.skins.halo.DataGridColumnResizeSkin;
 
 use namespace mx_internal;
 
-public class SpreadsheetItemRenderer extends PaintGridItemRenderer
+public class SpreadsheetItemRenderer extends PaintGridItemRenderer implements ISpreadsheetItemRenderer
 {
 	
 	private var resizeCursorID : int = CursorManager.NO_CURSOR;
@@ -41,6 +42,12 @@ public class SpreadsheetItemRenderer extends PaintGridItemRenderer
 		super();
 		
 		minHeight = 20;
+	}
+	
+	[Bindable]
+	public function get showSeparators():Boolean
+	{
+		return verticalSeparator.visible;
 	}
 	
 	public function set showSeparators (value : Boolean) : void

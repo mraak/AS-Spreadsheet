@@ -13,6 +13,7 @@
   </compiler>
   <applications>
     <application path="Spreadsheet.as"/>
+    <application path="SpreadsheetExample.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>

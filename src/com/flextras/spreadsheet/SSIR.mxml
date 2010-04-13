@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paintgrid:PGIR xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:paintgrid="com.flextras.paintgrid.*"
+				implements="com.flextras.spreadsheet.ISpreadsheetItemRenderer"
+				focusEnabled="true"
+				>
+	<paintgrid:states>
+		<s:State name="normal"/>
+		<s:State name="hovered"/>
+		<s:State name="selected"/>
+		<s:State name="disabled"/>
+	</paintgrid:states>
+	
+	<s:Label id="lbl"
+			 top="0" left="0" right="0" bottom="0"
+			 text="{dataGridListData.label}"
+			 
+			 color.normal  ="{conditionActive ? cell.condition.styles.color : cell.styles.color || globalCell.styles.color}"
+			 color.hovered ="{conditionActive ? cell.condition.styles.color : cell.rollOverStyles.color || globalCell.rollOverStyles.color}"
+			 color.selected="{conditionActive ? cell.condition.styles.color : cell.selectedStyles.color || globalCell.selectedStyles.color}"
+			 color.disabled="{conditionActive ? cell.condition.styles.color : cell.disabledStyles.color || globalCell.disabledStyles.color}"
+			 
+			 textAlpha.normal  ="{conditionActive ? cell.condition.styles.alpha : cell.styles.alpha || globalCell.styles.alpha}"
+			 textAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.alpha : cell.rollOverStyles.alpha || globalCell.rollOverStyles.alpha}"
+			 textAlpha.selected="{conditionActive ? cell.condition.selectedStyles.alpha : cell.selectedStyles.alpha || globalCell.selectedStyles.alpha}"
+			 textAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.alpha : cell.disabledStyles.alpha || globalCell.disabledStyles.alpha}"
+			 
+			 backgroundColor.normal  ="{conditionActive ? cell.condition.styles.backgroundColor : cell.styles.backgroundColor || globalCell.styles.backgroundColor}"
+			 backgroundColor.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundColor : cell.rollOverStyles.backgroundColor || globalCell.rollOverStyles.backgroundColor}"
+			 backgroundColor.selected="{conditionActive ? cell.condition.selectedStyles.backgroundColor : cell.selectedStyles.backgroundColor || globalCell.selectedStyles.backgroundColor}"
+			 backgroundColor.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundColor : cell.disabledStyles.backgroundColor || globalCell.disabledStyles.backgroundColor}"
+			 
+			 backgroundAlpha.normal  ="{conditionActive ? cell.condition.styles.backgroundAlpha : cell.styles.backgroundAlpha || globalCell.styles.backgroundAlpha}"
+			 backgroundAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundAlpha : cell.rollOverStyles.backgroundAlpha || globalCell.rollOverStyles.backgroundAlpha}"
+			 backgroundAlpha.selected="{conditionActive ? cell.condition.selectedStyles.backgroundAlpha : cell.selectedStyles.backgroundAlpha || globalCell.selectedStyles.backgroundAlpha}"
+			 backgroundAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundAlpha : cell.disabledStyles.backgroundAlpha || globalCell.disabledStyles.backgroundAlpha}"
+			 
+			 fontFamily="{conditionActive ? cell.condition.styles.family : cell.styles.family || globalCell.styles.family}"
+			 
+			 fontSize="{conditionActive ? cell.condition.styles.size : cell.styles.size || globalCell.styles.size}"
+			 
+			 textAlign="{conditionActive ? cell.condition.styles.align : cell.styles.align || globalCell.styles.align}"
+			 
+			 fontWeight="{conditionActive ? cell.condition.styles.weight : cell.styles.weight || globalCell.styles.weight}"
+			 
+			 fontStyle="{conditionActive ? cell.condition.styles.style : cell.styles.style || globalCell.styles.style}"
+			 
+			 kerning="{conditionActive ? cell.condition.styles.kerning : cell.styles.kerning || globalCell.styles.kerning}"
+			 
+			 textDecoration="{conditionActive ? cell.condition.styles.decoration : cell.styles.decoration || globalCell.styles.decoration}"
+			 
+			 minHeight="{isNaN(info.height) ? 20 : info.height}"
+			 
+			 verticalAlign="middle"
+			 />
+	
+	<s:Rect id="verticalSeparator"
+			width="5"
+			top="0" right="0" bottom="0"
+			fill="{fill}"
+			visible="{showSeparators}"
+			includeInLayout="{showSeparators}"/>
+	
+	<s:Rect id="horizontalSeparator"
+			height="5"
+			left="0" right="5" bottom="0"
+			fill="{fill}"
+			visible="{showSeparators}"
+			includeInLayout="{showSeparators}"/>
+	
+	<fx:Declarations>
+		<s:SolidColor id="fill" alpha=".4"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.graphics.SolidColor;
+			
+			protected var _showSeparators:Boolean;
+			
+			[Bindable]
+			public function get showSeparators():Boolean
+			{
+				return _showSeparators;
+			}
+			
+			public function set showSeparators(value:Boolean):void
+			{
+				_showSeparators = value;
+			}
+		]]>
+	</fx:Script>
+</paintgrid:PGIR>

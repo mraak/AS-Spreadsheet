@@ -29,35 +29,14 @@ import mx.events.TweenEvent;
 import mx.utils.ObjectProxy;
 
 use namespace mx_internal;
+
 /**
  * You can use PaintGrid in the same way as you use DataGrid, with additional styling options and visual
  * formatting. 
  * <br/><br/>
- * 
- * To apply style to a particular cell:<br/>
- * setCellStylesAt(0, 0, {backgroundColor : 0xFF0000, color: 0x00FF00, size : 30});
- * <br/><br/>
- * 
- * To disable cells:<br/>
- * disabledCells = [new CellLocation(0,0), new CellLocation(1,0)];
- * <br/><br/>
- * 
- * To apply global styles (you can apply global styles through external CSS also):<br/>
- * setStyle("cellRollOverBackgroundColor", 0xFF0000);<br/>
- * setStyle("cellSelectedBackgroundColor", 0xCCFF33);<br/>
- * setStyle("cellDisabledBackgroundColor", 0xFF3333);<br/>
- * <br/><br/>
- * 
- * To set row height:<br>
- * setRowHeightAt(0, 50);
- * <br/><br/>
- * 
- * To set column width:<br>			
- * setColumnWidthAt(0, 200);
  *
- * 
- * 
- * */
+ * @includeExample PaintGridExample.txt
+ */
 public class PaintGrid extends DataGrid
 {
 	public function PaintGrid ()
@@ -81,6 +60,11 @@ public class PaintGrid extends DataGrid
 	}
 	
 	[Bindable]
+	/**
+	 * 
+	 * @return 
+	 * 
+	 */	
 	public var doubleClickToEdit : Boolean;
 	
 	/**
@@ -88,9 +72,17 @@ public class PaintGrid extends DataGrid
 	 */
 	
 	[ArrayElementType("CellProperties")]
+	
+	/**
+	 * @private
+	 */	
 	protected var cells : Array = [];
 	
 	[ArrayElementType("CellProperties")]
+	
+	/**
+	 * @private
+	 */	
 	protected var modifiedCells : Array = [];
 	
 	/**
@@ -108,6 +100,9 @@ public class PaintGrid extends DataGrid
 	   setCellProperties(cell);
 	 }*/
 	
+	/**
+	 * @private
+	 */	
 	protected var _selectedCell : CellProperties;
 	
 	[Bindable(event="selectedCellPropertiesChange")]
@@ -115,9 +110,9 @@ public class PaintGrid extends DataGrid
 	/**
 	 *
 	 * Returns currently selected cell properties
-	 *
 	 * @return
-	 *
+	 * 
+	 * @see com.flextras.paintgrid.CellProperties
 	 */
 	
 	public function get lastSelectedCell () : CellProperties
@@ -125,6 +120,10 @@ public class PaintGrid extends DataGrid
 		return _selectedCell;
 	}
 	
+	/**
+	 * 
+	 * @param cell
+	 */	
 	public function set lastSelectedCell (cell : CellProperties) : void
 	{
 		if (_selectedCell === cell)
@@ -136,9 +135,13 @@ public class PaintGrid extends DataGrid
 	}
 	
 	/**
-	 * Instance of CellProperties
-	 */
-	
+	 * 
+	 * @param at
+	 * @param modified
+	 * @return 
+	 * 
+	 * @see com.flextras.paintgrid.CellLocation
+	 */	
 	public function getCellProperties (at : CellLocation, modified : Boolean = true) : CellProperties
 	{
 		if (!at || !at.valid)
@@ -153,6 +156,12 @@ public class PaintGrid extends DataGrid
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * 
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function setCellProperties (value : CellProperties) : void
 	{
 		if (!value || !value.valid)
@@ -172,6 +181,9 @@ public class PaintGrid extends DataGrid
 		updateCell(cell);
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected function updateCell (value : CellProperties) : void
 	{
 		var cell : CellProperties;
@@ -184,14 +196,29 @@ public class PaintGrid extends DataGrid
 	 * wrappers
 	 */
 	
+	/**
+	 * @private
+	 */	
 	protected const _globalCellStyles : CellProperties = new CellProperties();
 	
 	[Bindable(event="globalCellStylesChanged")]
+	/**
+	 * 
+	 * @return 
+	 * 
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function get globalCellStyles () : CellProperties
 	{
 		return _globalCellStyles;
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * 
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function set globalCellStyles (value : CellProperties) : void
 	{
 		if (value === _globalCellStyles)
@@ -202,6 +229,14 @@ public class PaintGrid extends DataGrid
 		dispatchEvent(new Event("globalCellStylesChanged"));
 	}
 	
+	/**
+	 * 
+	 * @param at
+	 * @param modified
+	 * @return 
+	 * 
+	 * @see com.flextras.paintgrid.CellLocation
+	 */	
 	public function getCellStyles (at : CellLocation, modified : Boolean = true) : Object
 	{
 		var cell : CellProperties = getCellProperties(at, modified);
@@ -212,6 +247,15 @@ public class PaintGrid extends DataGrid
 		return cell.styles;
 	}
 	
+	/**
+	 * 
+	 * @param location
+	 * @param styles
+	 * @param condition
+	 * @param conditionalStyles
+	 * 
+	 * @see com.flextras.paintgrid.CellLocation
+	 */	
 	public function setCellStyles (location : CellLocation, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
 	{
 		if (!location || !location.valid)
@@ -236,9 +280,14 @@ public class PaintGrid extends DataGrid
 	}
 	
 	/**
-	 * Array of CellProperties in Range
-	 */
-	
+	 * 
+	 * @param range
+	 * @param modified
+	 * @return 
+	 * 
+	 * @see com.flextras.paintgrid.CellRange
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function getCellPropertiesInRange (range : CellRange, modified : Boolean = true) : Array
 	{
 		if (!range || !range.valid)
@@ -254,6 +303,14 @@ public class PaintGrid extends DataGrid
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param range
+	 * @param properties
+	 * 
+	 * @see com.flextras.paintgrid.CellRange
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function setCellPropertiesInRange (range : CellRange, properties:CellProperties) : void
 	{
 		if (!range || !range.valid || !properties || !properties.valid)
@@ -277,8 +334,8 @@ public class PaintGrid extends DataGrid
 	 *
 	 * @return
 	 *
+	 * @see com.flextras.paintgrid.CellProperties
 	 */
-	
 	public function get disabledCells () : Array
 	{
 		var result : Array = [];
@@ -299,6 +356,8 @@ public class PaintGrid extends DataGrid
 	 *
 	 * @param value
 	 *
+	 * @see com.flextras.paintgrid.CellLocation
+	 * @see com.flextras.paintgrid.CellProperties
 	 */	
 	public function set disabledCells (value : Array) : void
 	{
@@ -328,6 +387,12 @@ public class PaintGrid extends DataGrid
 	 */
 	
 	[Bindable(event="columnWidthChanged")]
+	/**
+	 * 
+	 * @param index
+	 * @return 
+	 * 
+	 */	
 	public function getColumnWidthAt (index : int) : Number
 	{
 		if (index < 0 || index >= columns.length)
@@ -338,6 +403,12 @@ public class PaintGrid extends DataGrid
 		return col ? col.width : -1;
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * @param value
+	 * 
+	 */	
 	public function setColumnWidthAt (index : int, value : Number) : void
 	{
 		if (index < 0 || index >= columns.length || value < 0)
@@ -348,6 +419,12 @@ public class PaintGrid extends DataGrid
 		callLater(dispatchEvent, [new Event("columnWidthChanged")]);
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * @return 
+	 * 
+	 */	
 	public function insertColumnAt (index : int = 0) : int
 	{
 		if (index < 0 || index >= columns.length)
@@ -385,6 +462,11 @@ public class PaintGrid extends DataGrid
 		return index;
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * 
+	 */	
 	public function removeColumnAt (index : int = 0) : void
 	{
 		if (index < 0 || index >= columns.length)
@@ -429,6 +511,12 @@ public class PaintGrid extends DataGrid
 	 */
 	
 	[Bindable(event="rowHeightChanged")]
+	/**
+	 * 
+	 * @param index
+	 * @return 
+	 * 
+	 */	
 	public function getRowHeightAt (index : int) : Number
 	{
 		if (index < 0 || index >= collection.length)
@@ -439,6 +527,12 @@ public class PaintGrid extends DataGrid
 		return info ? info.height : -1;
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * @param value
+	 * 
+	 */	
 	public function setRowHeightAt (index : int, value : Number) : void
 	{
 		if (index < 0 || index >= collection.length || value < 0)
@@ -458,6 +552,12 @@ public class PaintGrid extends DataGrid
 		callLater(dispatchEvent, [new Event("rowHeightChanged")]);
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @param index
+	 * 
+	 */	
 	public function insertRow (value : Object, index : int) : void
 	{
 		if (!value || index < 0 || index >= collection.length)
@@ -466,6 +566,11 @@ public class PaintGrid extends DataGrid
 		ListCollectionView(collection).addItemAt(value, index);
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * 
+	 */	
 	public function removeRowAt (index : int) : void
 	{
 		if (index < 0 || index >= collection.length)
@@ -475,8 +580,14 @@ public class PaintGrid extends DataGrid
 	}
 	
 	[ArrayElementType("Row")]
+	/**
+	 * @private
+	 */	
 	protected var infos : Array = [];
 	
+	/**
+	 * @private
+	 */	
 	protected function getInfoByUID (value : String) : Row
 	{
 		if (!value || !value.length)
@@ -489,16 +600,31 @@ public class PaintGrid extends DataGrid
 		return null;
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected var _selectedCells : Array = [];
 	
 	[Bindable(event="selectedCellsChanged")]
+	/**
+	 * 
+	 * @return 
+	 * 
+	 * @see com.flextras.paintgrid.CellProperties
+	 */	
 	public function get selectedCells () : Array
 	{
 		return _selectedCells;
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected var selectedRenderer : IPaintGridItemRenderer;
 	
+	/**
+	 * @private
+	 */	
 	override protected function selectItem (item : IListItemRenderer, shiftKey : Boolean, ctrlKey : Boolean, transition : Boolean = true) : Boolean
 	{
 		var retval : Boolean = super.selectItem(item, shiftKey, ctrlKey, transition);
@@ -593,6 +719,9 @@ public class PaintGrid extends DataGrid
 		return retval;
 	}
 	
+	/**
+	 * @private
+	 */	
 	override mx_internal function shiftColumns (oldIndex : int, newIndex : int, trigger : Event = null) : void
 	{
 		super.shiftColumns(oldIndex, newIndex, trigger);
@@ -615,6 +744,9 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * @private
+	 */	
 	override protected function setupColumnItemRenderer (c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
 	{
 		var item : IListItemRenderer = super.setupColumnItemRenderer(c, contentHolder, rowNum, colNum, data, uid);
@@ -642,11 +774,17 @@ public class PaintGrid extends DataGrid
 		return item;
 	}
 	
+	/**
+	 * @private
+	 */	
 	override protected function drawSelectionIndicator (indicator : Sprite, x : Number, y : Number, width : Number, height : Number, color : uint, itemRenderer : IListItemRenderer) : void
 	{
 	
 	}
 	
+	/**
+	 * @private
+	 */	
 	override mx_internal function selectionTween_updateHandler (event : TweenEvent) : void
 	{
 	
@@ -658,7 +796,6 @@ public class PaintGrid extends DataGrid
 	 * @param e
 	 *
 	 */
-	
 	protected function itemEditBeginningHandler (e : DataGridEvent) : void
 	{
 		if (!(e.itemRenderer is IPaintGridItemRenderer))
@@ -673,6 +810,9 @@ public class PaintGrid extends DataGrid
 		beginEdit = false;
 	}
 	
+	/**
+	 * @private
+	 */	
 	override protected function mouseDoubleClickHandler (event : MouseEvent) : void
 	{
 		var dataGridEvent : DataGridEvent;
@@ -704,14 +844,29 @@ public class PaintGrid extends DataGrid
 		super.mouseDoubleClickHandler(event);
 	}
 	
+	/**
+	 * @private
+	 */	
 	mx_internal var preventFromEditing : Boolean;
 	
+	/**
+	 * @private
+	 */	
 	protected var beginEdit : Boolean;
 	
+	/**
+	 * @private
+	 */	
 	mx_internal var isCtrl : Boolean;
 	
+	/**
+	 * @private
+	 */	
 	mx_internal var isAlt : Boolean;
 	
+	/**
+	 * @private
+	 */	
 	override protected function keyDownHandler (event : KeyboardEvent) : void
 	{
 		super.keyDownHandler(event);
@@ -720,6 +875,9 @@ public class PaintGrid extends DataGrid
 		isAlt = event.altKey;
 	}
 	
+	/**
+	 * @private
+	 */	
 	override protected function keyUpHandler (event : KeyboardEvent) : void
 	{
 		super.keyUpHandler(event);
@@ -728,11 +886,17 @@ public class PaintGrid extends DataGrid
 		isAlt = event.altKey;
 	}
 	
+	/**
+	 * @private
+	 */	
 	mx_internal function get hScrollBar () : ScrollBar
 	{
 		return horizontalScrollBar;
 	}
 	
+	/**
+	 * @private
+	 */	
 	override protected function collectionChangeHandler (event : Event) : void
 	{
 		super.collectionChangeHandler(event);
@@ -762,6 +926,9 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected function collectionChange_reset (rows : int, cols : int) : void
 	{
 		var row : int, col : int, info : Row, cell : CellProperties;
@@ -812,6 +979,9 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected function collectionChange_add (rows : int, cols : int, e : CollectionEvent) : void
 	{
 		var info : Row, cell : CellProperties;
@@ -834,6 +1004,9 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected function collectionChange_remove (rows : int, cols : int, e : CollectionEvent) : void
 	{
 		var info : Row, cell : CellProperties;
@@ -871,6 +1044,9 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * @private
+	 */	
 	protected function collectionChange_refresh (rows : int, cols : int) : void
 	{
 		var info : Row, cell : CellProperties;
@@ -889,10 +1065,20 @@ public class PaintGrid extends DataGrid
 		}
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * 
+	 */	
 	public function fromXML(value:XML):void
 	{
 	}
 	
+	/**
+	 * 
+	 * @return 
+	 * 
+	 */	
 	public function toXML():XML
 	{
 		var result:XML = <PaintGrid/>;

@@ -15,6 +15,8 @@
     <classEntry path="com.flextras.spreadsheet.context.ClipboardData"/>
     <classEntry path="com.flextras.paintgrid.PGIR"/>
     <classEntry path="com.flextras.paintgrid.IPaintGridItemRenderer"/>
+    <classEntry path="com.flextras.spreadsheet.SSIR"/>
+    <classEntry path="com.flextras.spreadsheet.ISpreadsheetItemRenderer"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

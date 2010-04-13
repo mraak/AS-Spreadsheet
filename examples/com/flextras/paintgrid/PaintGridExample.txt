@@ -1,0 +1,16 @@
+To apply style to a particular cell:
+setCellStylesAt(0, 0, {backgroundColor : 0xFF0000, color: 0x00FF00, size : 30});
+
+To disable cells:
+disabledCells = [new CellLocation(0,0), new CellLocation(1,0)];
+
+To apply global styles (you can apply global styles through external CSS also):
+setStyle("cellRollOverBackgroundColor", 0xFF0000);
+setStyle("cellSelectedBackgroundColor", 0xCCFF33);
+setStyle("cellDisabledBackgroundColor", 0xFF3333);
+
+To set row height:
+setRowHeightAt(0, 50);
+
+To set column width:			
+setColumnWidthAt(0, 200);
