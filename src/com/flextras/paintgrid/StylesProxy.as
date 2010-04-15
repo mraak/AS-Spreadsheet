@@ -10,6 +10,7 @@ import mx.events.PropertyChangeEvent;
 import mx.events.PropertyChangeEventKind;
 import mx.utils.ObjectProxy;
 
+[Event(name="change", type="flash.events.Event")]
 [Event(name="enabledChanged", type="flash.events.Event")]
 [Event(name="selectedChanged", type="flash.events.Event")]
 [Event(name="stylesChanged", type="com.flextras.paintgrid.CellEvent")]
@@ -146,11 +147,15 @@ public class StylesProxy extends EventDispatcher
 	protected function styles_changeHandler (e : PropertyChangeEvent) : void
 	{
 		dispatchEvent(getEvent(CellEvent.STYLES_CHANGED, e));
+		
+		changeHandler();
 	}
 	
 	protected function rollOverStyles_changeHandler (e : PropertyChangeEvent) : void
 	{
 		dispatchEvent(getEvent(CellEvent.ROLLOVER_STYLES_CHANGED, e));
+		
+		changeHandler();
 	}
 	
 	protected function selectedStyles_changeHandler (e : PropertyChangeEvent) : void
@@ -161,6 +166,13 @@ public class StylesProxy extends EventDispatcher
 	protected function disabledStyles_changeHandler (e : PropertyChangeEvent) : void
 	{
 		dispatchEvent(getEvent(CellEvent.DISABLED_STYLES_CHANGED, e));
+		
+		changeHandler();
+	}
+	
+	protected function changeHandler():void
+	{
+		dispatchEvent(new Event(Event.CHANGE));
 	}
 	
 	protected function getEvent (type : String, e : PropertyChangeEvent) : CellEvent
@@ -201,10 +213,10 @@ public class StylesProxy extends EventDispatcher
 		
 		var name:String;
 		
-		for each(name in this.styles		) styles.@[name]		 = this.styles[name];
-		for each(name in this.rollOverStyles) rollOverStyles.@[name] = this.rollOverStyles[name];
-		for each(name in this.selectedStyles) selectedStyles.@[name] = this.selectedStyles[name];
-		for each(name in this.disabledStyles) disabledStyles.@[name] = this.disabledStyles[name];
+		for (name in this.styles		) styles.@[name]		 = this.styles[name];
+		for (name in this.rollOverStyles) rollOverStyles.@[name] = this.rollOverStyles[name];
+		for (name in this.selectedStyles) selectedStyles.@[name] = this.selectedStyles[name];
+		for (name in this.disabledStyles) disabledStyles.@[name] = this.disabledStyles[name];
 		
 		if(styles.attributes().length())
 			result.styles.* += styles;

@@ -496,6 +496,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		for each (var info : Row in infos)
 		{
 			cell = new CellProperties(info.cells[0].location.row, index);
+			cell.addEventListener(Event.CHANGE, cell_changeHandler);
 			
 			info.cells.splice(index, 0, cell);
 			cells.push(cell);
@@ -571,6 +572,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		for each (var info : Row in infos)
 		{
 			cell = info.cells.splice(location, 1)[0];
+			cell.removeEventListener(Event.CHANGE, cell_changeHandler);
 			cell.release();
 			
 			if (lastSelectedCell === cell)

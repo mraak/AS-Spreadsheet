@@ -4,7 +4,6 @@
 				xmlns:mx="library://ns.adobe.com/flex/mx"
 				xmlns:paintgrid="com.flextras.paintgrid.*"
 				implements="com.flextras.spreadsheet.ISpreadsheetItemRenderer"
-				focusEnabled="true"
 				>
 	<paintgrid:states>
 		<s:State name="normal"/>
@@ -56,19 +55,23 @@
 			 verticalAlign="middle"
 			 />
 	
-	<s:Rect id="verticalSeparator"
-			width="5"
-			top="0" right="0" bottom="0"
-			fill="{fill}"
-			visible="{showSeparators}"
-			includeInLayout="{showSeparators}"/>
+	<s:Group id="verticalSeparator"
+				width="5"
+				top="0" right="0" bottom="0"
+				visible="{showSeparators}"
+				includeInLayout="{showSeparators}">
+		<s:Rect fill="{fill}"
+				left="0" top="0" right="0" bottom="0"/>
+	</s:Group>
 	
-	<s:Rect id="horizontalSeparator"
-			height="5"
-			left="0" right="5" bottom="0"
-			fill="{fill}"
-			visible="{showSeparators}"
-			includeInLayout="{showSeparators}"/>
+	<s:Group id="horizontalSeparator"
+			 height="5"
+			 left="0" right="5" bottom="0"
+			 visible="{showSeparators}"
+			 includeInLayout="{showSeparators}">
+		<s:Rect fill="{fill}"
+				left="0" top="0" right="0" bottom="0"/>
+	</s:Group>
 	
 	<fx:Declarations>
 		<s:SolidColor id="fill" alpha=".4"/>
@@ -76,7 +79,21 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.flextras.paintgrid.PaintGridRowResizeSkin;
+			
+			import mx.core.IFlexDisplayObject;
+			import mx.core.IVisualElement;
+			import mx.events.SandboxMouseEvent;
 			import mx.graphics.SolidColor;
+			import mx.managers.CursorManager;
+			import mx.managers.CursorManagerPriority;
+			import mx.skins.halo.DataGridColumnResizeSkin;
+			
+			protected var resizeCursorID : int = CursorManager.NO_CURSOR;
+			protected var resizeGraphic : IFlexDisplayObject;
+			protected var start : Point = new Point();
+			protected var min : Point = new Point();
+			protected var last : Point;
 			
 			protected var _showSeparators:Boolean;
 			
@@ -89,6 +106,218 @@
 			public function set showSeparators(value:Boolean):void
 			{
 				_showSeparators = value;
+			}
+			
+			protected function drawResizeGraphic (x : Number, y : Number, w : Number, h : Number, resizeSkinClass : Class) : void
+			{
+				resizeGraphic = new resizeSkinClass();
+				
+				if (resizeGraphic is Sprite)
+					Sprite(resizeGraphic).mouseEnabled = false;
+				
+				dataGrid.addChild(DisplayObject(resizeGraphic));
+				
+				resizeGraphic.move(x, y);
+				resizeGraphic.setActualSize(isNaN(w) ? resizeGraphic.measuredWidth : w, isNaN(h) ? resizeGraphic.measuredHeight : h);
+			}
+			
+			protected function clearResizeGraphic () : void
+			{
+				dataGrid.removeChild(DisplayObject(resizeGraphic));
+				resizeGraphic = null;
+			}
+			
+			override mx_internal function elementAdded(element:IVisualElement, index:int, notifyListeners:Boolean=true):void
+			{
+				super.mx_internal::elementAdded(element, index, notifyListeners);
+				
+				if(element === verticalSeparator)
+				{
+					element.addEventListener(MouseEvent.MOUSE_OVER, verticalSeparator_mouseOverHandler);
+					element.addEventListener(MouseEvent.MOUSE_OUT, separator_mouseOutHandler);
+					element.addEventListener(MouseEvent.MOUSE_DOWN, verticalSeparator_mouseDownHandler);
+				}
+				
+				if(element === horizontalSeparator)
+				{
+					element.addEventListener(MouseEvent.MOUSE_OVER, horizontalSeparator_mouseOverHandler);
+					element.addEventListener(MouseEvent.MOUSE_OUT, separator_mouseOutHandler);
+					element.addEventListener(MouseEvent.MOUSE_DOWN, horizontalSeparator_mouseDownHandler);
+				}
+			}
+			
+			override mx_internal function elementRemoved(element:IVisualElement, index:int, notifyListeners:Boolean=true):void
+			{
+				super.mx_internal::elementRemoved(element, index, notifyListeners);
+				
+				if(element === verticalSeparator)
+				{
+					element.removeEventListener(MouseEvent.MOUSE_OVER, verticalSeparator_mouseOverHandler);
+					element.removeEventListener(MouseEvent.MOUSE_OUT, separator_mouseOutHandler);
+					element.removeEventListener(MouseEvent.MOUSE_DOWN, verticalSeparator_mouseDownHandler);
+				}
+				
+				if(element === horizontalSeparator)
+				{
+					element.removeEventListener(MouseEvent.MOUSE_OVER, horizontalSeparator_mouseOverHandler);
+					element.removeEventListener(MouseEvent.MOUSE_OUT, separator_mouseOutHandler);
+					element.removeEventListener(MouseEvent.MOUSE_DOWN, horizontalSeparator_mouseDownHandler);
+				}
+			}
+			
+			protected function verticalSeparator_mouseOverHandler (event : MouseEvent) : void
+			{
+				dataGrid.mx_internal::preventFromEditing = true;
+				
+				var stretchCursorClass : Class = getStyle("stretchCursor");
+				resizeCursorID = cursorManager.setCursor(stretchCursorClass, CursorManagerPriority.HIGH, 0, 0);
+				
+				var cursorHolder : DisplayObject = systemManager.cursorChildren.getChildByName("cursorHolder");
+				
+				if (cursorHolder)
+					cursorHolder.rotation = 0;
+			}
+			
+			protected function horizontalSeparator_mouseOverHandler (event : MouseEvent) : void
+			{
+				dataGrid.mx_internal::preventFromEditing = true;
+				
+				var stretchCursorClass : Class = getStyle("stretchCursor");
+				resizeCursorID = cursorManager.setCursor(stretchCursorClass, CursorManagerPriority.HIGH, 0, 0);
+				
+				var cursorHolder : DisplayObject = systemManager.cursorChildren.getChildByName("cursorHolder");
+				
+				if (cursorHolder)
+					cursorHolder.rotation = 90;
+			}
+			
+			protected function separator_mouseOutHandler (event : MouseEvent) : void
+			{
+				dataGrid.mx_internal::preventFromEditing = false;
+				
+				cursorManager.removeCursor(resizeCursorID);
+			}
+			
+			protected function verticalSeparator_mouseDownHandler (event : MouseEvent) : void
+			{
+				start.x = DisplayObject(event.target).x + x;
+				last = dataGrid.globalToLocal(new Point(event.stageX, event.stageY));
+				
+				min.x = x + minWidth;
+				
+				var sbRoot : DisplayObject = systemManager.getSandboxRoot();
+				sbRoot.addEventListener(MouseEvent.MOUSE_MOVE, columnResizingHandler, true);
+				sbRoot.addEventListener(MouseEvent.MOUSE_UP, verticalSeparator_mouseUpHandler, true);
+				sbRoot.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, verticalSeparator_mouseUpHandler);
+				systemManager.deployMouseShields(true);
+				
+				drawResizeGraphic(start.x, 0, NaN, dataGrid.height / dataGrid.scaleY, DataGridColumnResizeSkin);
+			}
+			
+			protected function horizontalSeparator_mouseDownHandler (event : MouseEvent) : void
+			{
+				start.y = DisplayObject(event.target).y + y;
+				last = dataGrid.globalToLocal(new Point(event.stageX, event.stageY));
+				
+				min.y = y + minHeight;
+				
+				var sbRoot : DisplayObject = systemManager.getSandboxRoot();
+				sbRoot.addEventListener(MouseEvent.MOUSE_MOVE, rowResizingHandler, true);
+				sbRoot.addEventListener(MouseEvent.MOUSE_UP, horizontalSeparator_mouseUpHandler, true);
+				sbRoot.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, horizontalSeparator_mouseUpHandler);
+				systemManager.deployMouseShields(true);
+				
+				drawResizeGraphic(0, start.y, dataGrid.width / dataGrid.scaleX, NaN, PaintGridRowResizeSkin);
+			}
+			
+			protected function columnResizingHandler (event : MouseEvent) : void
+			{
+				if (!event.buttonDown)
+				{
+					verticalSeparator_mouseUpHandler(event);
+					return;
+				}
+				
+				var vsw : int = dataGrid.mx_internal::vScrollBar ? dataGrid.mx_internal::vScrollBar.width : 0;
+				
+				last = dataGrid.globalToLocal(new Point(event.stageX, event.stageY));
+				resizeGraphic.move(Math.min(Math.max(min.x, last.x), (dataGrid.width / dataGrid.scaleX) - vsw), 0);
+			}
+			
+			protected function rowResizingHandler (event : MouseEvent) : void
+			{
+				if (!event.buttonDown)
+				{
+					horizontalSeparator_mouseUpHandler(event);
+					return;
+				}
+				
+				var hsw : int = dataGrid.mx_internal::hScrollBar ? dataGrid.mx_internal::hScrollBar.height : 0;
+				
+				last = dataGrid.globalToLocal(new Point(event.stageX, event.stageY));
+				resizeGraphic.move(0, Math.min(Math.max(min.y, last.y), (dataGrid.height / dataGrid.scaleY) - hsw));
+			}
+			
+			protected function verticalSeparator_mouseUpHandler (event : Event) : void
+			{
+				if (!enabled || !dataGrid.resizableColumns)
+					return;
+				
+				var sbRoot : DisplayObject = systemManager.getSandboxRoot();
+				sbRoot.removeEventListener(MouseEvent.MOUSE_MOVE, columnResizingHandler, true);
+				sbRoot.removeEventListener(MouseEvent.MOUSE_UP, verticalSeparator_mouseUpHandler, true);
+				sbRoot.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, verticalSeparator_mouseUpHandler);
+				systemManager.deployMouseShields(false);
+				
+				clearResizeGraphic();
+				
+				var vsw : int = dataGrid.mx_internal::vScrollBar ? dataGrid.mx_internal::vScrollBar.width : 0;
+				
+				var pt : Point = event is MouseEvent ? dataGrid.globalToLocal(new Point(MouseEvent(event).stageX, MouseEvent(event).stageY)) : last;
+				
+				var widthChange : Number = Math.min(Math.max(min.x, pt.x), (dataGrid.width / dataGrid.scaleX) - vsw) - start.x;
+				dataGrid.setColumnWidthAt(cell.location.column, Math.floor(width + widthChange));
+				
+				invalidateDisplayList();
+			}
+			
+			protected function horizontalSeparator_mouseUpHandler (event : Event) : void
+			{
+				if (!enabled || !dataGrid.resizableColumns)
+					return;
+				
+				var sbRoot : DisplayObject = systemManager.getSandboxRoot();
+				sbRoot.removeEventListener(MouseEvent.MOUSE_MOVE, rowResizingHandler, true);
+				sbRoot.removeEventListener(MouseEvent.MOUSE_UP, horizontalSeparator_mouseUpHandler, true);
+				sbRoot.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, horizontalSeparator_mouseUpHandler);
+				systemManager.deployMouseShields(false);
+				
+				clearResizeGraphic();
+				
+				var hsw : int = dataGrid.mx_internal::hScrollBar ? dataGrid.mx_internal::hScrollBar.height : 0;
+				
+				var pt : Point = event is MouseEvent ? dataGrid.globalToLocal(new Point(MouseEvent(event).stageX, MouseEvent(event).stageY)) : last;
+				
+				var heightChange : Number = Math.min(Math.max(min.y, pt.y), (dataGrid.height / dataGrid.scaleY) - hsw) - start.y;
+				dataGrid.setRowHeightAt(cell.location.row, Math.floor(height + heightChange));
+				
+				invalidateDisplayList();
+			}
+			
+			override protected function itemRenderer_rollOverHandler(event:MouseEvent):void
+			{
+				super.itemRenderer_rollOverHandler(event);
+				
+				if(!selected)
+					currentState = "hovered";
+			}
+			
+			override protected function itemRenderer_rollOutHandler(event:MouseEvent):void
+			{
+				super.itemRenderer_rollOutHandler(event);
+				
+				if(!selected)
+					currentState = "normal";
 			}
 		]]>
 	</fx:Script>

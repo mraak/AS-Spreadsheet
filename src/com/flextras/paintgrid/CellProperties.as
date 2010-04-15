@@ -32,7 +32,7 @@ public class CellProperties extends StylesProxy
 	 * 
 	 * left side of expression is optional (if provided condition will take its value instead of cell's)
 	 */	
-	//[Bindable(event="conditionChanged")]
+	[Bindable(event="conditionChanged")]
 	public const condition:Condition = new Condition;
 	//public var hasCondition:Boolean;
 	
@@ -158,6 +158,8 @@ public class CellProperties extends StylesProxy
 	protected function condition_changeHandler (e : Event) : void
 	{
 		dispatchEvent(new CellEvent(CellEvent.CONDITION_CHANGED));
+		
+		changeHandler();
 	}
 	
 	/**

@@ -82,6 +82,8 @@
 		<![CDATA[
 			import com.flextras.calc.FormulaLogic;
 			
+			public namespace mx_internal = "http://www.adobe.com/2006/flex/mx/internal";
+			
 			protected var _dataGrid : PaintGrid;
 			
 			public function get dataGrid () : PaintGrid
@@ -143,6 +145,11 @@
 					return;
 				
 				_globalCell = value;
+			}
+			
+			override mx_internal function drawBackground():void
+			{
+				//super.mx_internal::drawBackground();
 			}
 		]]>
 	</fx:Script>

@@ -177,19 +177,6 @@ public class PaintGrid extends DataGrid
 			cell.conditionEnabled = true;
 			cell.condition.assign(value.condition);
 		}
-		
-		updateCell(cell);
-	}
-	
-	/**
-	 * @private
-	 */	
-	protected function updateCell (value : CellProperties) : void
-	{
-		var cell : CellProperties;
-		
-		if (!(cell = getCellProperties(value.location, true)))
-			modifiedCells.push(value);
 	}
 	
 	/**
@@ -318,11 +305,7 @@ public class PaintGrid extends DataGrid
 		
 		for each (var cell : CellProperties in cells)
 			if (cell.location.inRange(range))
-			{
 				cell.assign(properties);
-				
-				updateCell(cell);
-			}
 	}
 	
 	/**
@@ -444,6 +427,7 @@ public class PaintGrid extends DataGrid
 		for each (var info : Row in infos)
 		{
 			cell = new CellProperties(info.cells[0].row, index);
+			cell.addEventListener(Event.CHANGE, cell_changeHandler);
 			
 			info.cells.splice(index, 0, cell);
 			cells.push(cell);
@@ -482,6 +466,7 @@ public class PaintGrid extends DataGrid
 		for each (var info : Row in infos)
 		{
 			cell = info.cells.splice(index, 1)[0];
+			cell.removeEventListener(Event.CHANGE, cell_changeHandler);
 			cell.release();
 			
 			if (lastSelectedCell === cell)
@@ -544,7 +529,7 @@ public class PaintGrid extends DataGrid
 			return;
 		
 		info.height = value;
-		rowInfo[index - verticalScrollPosition].height = value;
+		//rowInfo[index - verticalScrollPosition].height = value;
 		
 		itemsSizeChanged = true;
 		invalidateDisplayList();
@@ -774,6 +759,11 @@ public class PaintGrid extends DataGrid
 		return item;
 	}
 	
+	override protected function drawHighlightIndicator(indicator:Sprite, x:Number, y:Number, width:Number, height:Number, color:uint, itemRenderer:IListItemRenderer):void
+	{
+		
+	}
+	
 	/**
 	 * @private
 	 */	
@@ -940,6 +930,7 @@ public class PaintGrid extends DataGrid
 			while (info.cells.length)
 			{
 				cell = info.cells.pop();
+				cell.removeEventListener(Event.CHANGE, cell_changeHandler);
 				cell.release();
 				
 				if (lastSelectedCell === cell)
@@ -970,6 +961,7 @@ public class PaintGrid extends DataGrid
 			for (col = 0; col < cols; ++col)
 			{
 				cell = new CellProperties(row, col);
+				cell.addEventListener(Event.CHANGE, cell_changeHandler);
 				info.cells[col] = cell;
 				
 				cells.push(cell);
@@ -995,6 +987,7 @@ public class PaintGrid extends DataGrid
 			for (col = 0; col < cols; ++col)
 			{
 				cell = new CellProperties(row + e.location, col);
+				cell.addEventListener(Event.CHANGE, cell_changeHandler);
 				info.cells[col] = cell;
 				
 				cells.push(cell);
@@ -1022,6 +1015,7 @@ public class PaintGrid extends DataGrid
 			{
 				cell = info.cells.pop();
 				cell.release();
+				cell.removeEventListener(Event.CHANGE, cell_changeHandler);
 				
 				if (lastSelectedCell === cell)
 				{
@@ -1096,6 +1090,16 @@ public class PaintGrid extends DataGrid
 			result.globalStyles.* += globalStyles;
 		
 		return result;
+	}
+	
+	protected function cell_changeHandler(e:Event):void
+	{
+		var cell:CellProperties = e.target as CellProperties;
+		
+		if(!cell) return;
+		
+		if(modifiedCells && modifiedCells.indexOf(cell) < 0)
+			modifiedCells.push(cell);
 	}
 }
 }
