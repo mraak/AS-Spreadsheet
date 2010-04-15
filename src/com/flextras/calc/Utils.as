@@ -14,7 +14,7 @@ public class Utils
 										  "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ",
 										  "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ"];
 	
-	public static var rgxNotAllowed : RegExp = /[^a-zA-Z0-9!\s\+\-\*\/\.\(\)\:\,=<>"']/g;
+	public static var rgxNotAllowed : RegExp = /[^a-zA-Z0-9!\s\+\-\*\/\^\.\(\)\:\,=<>"']/g;
 	
 	public function Utils ()
 	{
@@ -342,16 +342,16 @@ public class Utils
 	public static function repairOperators (exp : String) : String
 	{
 		
-		var rx : RegExp = /([\*\+\/\-]{2,})/g;
+		var rx : RegExp = /([\^\*\+\/\-]{2,})/g;
 		
 		exp = exp.replace(rx, useFirstOp);
 		
-		rx = /(\()([\*\+\/\-!]+)([A-Za-z0-9~])/g;
+		rx = /(\()([\^\*\+\/\-!]+)([A-Za-z0-9~])/g;
 		
 		exp = exp.replace(rx, "$1$3");
 		
 		//TODO: temporarily removed * and !
-		rx = /([A-Za-z0-9~])([\+\/\-!]+)(\))/g;
+		rx = /([A-Za-z0-9~])([\^\+\/\-!]+)(\))/g;
 		
 		exp = exp.replace(rx, "$1$3");
 		

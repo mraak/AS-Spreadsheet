@@ -144,7 +144,7 @@ public class Calc extends EventDispatcher
 		
 		var exp : String = arguments[0];
 		
-		var ops : RegExp = /[\/\*\+\-~]+/g;
+		var ops : RegExp = /[\/\*\+\-\^~]+/g;
 		var a : Array = exp.match(ops)
 		
 		if (exp.substr(0, 1) != "(")
@@ -164,9 +164,22 @@ public class Calc extends EventDispatcher
 			exp = exp.replace(/[\(\)]/g, "");
 			
 			// find a simple expression with operator, one operand on the left, and one operand on the right
+			// this RegExp takes care of ^ operator
+			// example: 4+5*4^3, results in finding first 4^3, then 5*4 in the second while iteration
+			var regex : RegExp = /([a-zA-Z0-9~!\.]+)(\^)([a-zA-Z0-9~!\.]+)/g;
+			
+			// do while there are no more operators.
+			// function called to replace this expression with a numeric string is solveSimple
+			while (exp.indexOf("^") != -1)
+			{
+				exp = exp.replace(regex, solveSimple);
+			}
+			
+			
+			// find a simple expression with operator, one operand on the left, and one operand on the right
 			// this RegExp takes care of * and / operators
 			// example: 4+5*4*3, results in finding first 5*4, then 20*3 in the second while iteration
-			var regex : RegExp = /([a-zA-Z0-9~!\.]+)([\*\/])([a-zA-Z0-9~!\.]+)/g;
+			regex = /([a-zA-Z0-9~!\.]+)([\*\/])([a-zA-Z0-9~!\.]+)/g;
 			
 			// do while there are no more operators.
 			// function called to replace this expression with a numeric string is solveSimple
@@ -361,6 +374,10 @@ public class Calc extends EventDispatcher
 			
 			case "/":
 				res = left / right;
+				break;
+			
+			case "^":
+				res = Math.pow(left, right);
 				break;
 		}
 		
