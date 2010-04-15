@@ -17,6 +17,7 @@
     <classEntry path="com.flextras.paintgrid.IPaintGridItemRenderer"/>
     <classEntry path="com.flextras.spreadsheet.SSIR"/>
     <classEntry path="com.flextras.spreadsheet.ISpreadsheetItemRenderer"/>
+    <classEntry path="com.flextras.calc.FormulaConst"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
