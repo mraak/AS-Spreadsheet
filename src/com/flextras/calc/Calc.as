@@ -214,25 +214,13 @@ public class Calc extends EventDispatcher
 		var range : Array = new Array();
 		var args : Array = new Array();
 		
-		if (exp == "")
+		
+		if (FormulaConst.functions.indexOf(formula.toLowerCase()) > -1)
 		{
-			// TODO: Move this into FormulaReturn.solveNA
-			if (formula == "NA")
-			{
-				exp = "'" + FormulaBasic.solve(formula, args) + "'";
-				return exp;
-			}
-			else
-			{
-				var erev1 : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.WARNING);
-				erev1.message = "Function not valid: " + exp;
-				this.dispatchEvent(erev1);
-				return exp;
-			}
-			
+			exp = FormulaConst.solve(formula);
 		}
 		
-		if (FormulaBasic.functions.indexOf(formula.toLowerCase()) > -1)
+		else if (FormulaBasic.functions.indexOf(formula.toLowerCase()) > -1)
 		{
 			Utils.calc = this;
 			
@@ -262,6 +250,7 @@ public class Calc extends EventDispatcher
 			exp = FormulaBasic.solve(formula, args);
 			
 		}
+		
 		else if (FormulaLogic.functions.indexOf(formula.toLowerCase()) > -1)
 		{
 			

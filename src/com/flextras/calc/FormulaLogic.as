@@ -1,6 +1,10 @@
 package com.flextras.calc
 {
-
+/**
+ * This class contains static functions for solving formulas that contain some 
+ * form of boolean logic.
+ * 
+ * */
 public class FormulaLogic
 {
 	

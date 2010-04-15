@@ -1,5 +1,10 @@
 package com.flextras.calc
 {
+	/**
+	 * This class contains static functions for solving wide range of formulas, as 
+	 * found in other popular spreadsheet applications.
+	 * 
+	 * */
 	public class FormulaBasic
 	{
 		public static const SUM:String 		= "sum";
@@ -11,11 +16,9 @@ package com.flextras.calc
 		public static const CEIL:String 	= "ceil";
 		public static const COUNT:String 	= "count";
 		public static const MEDIAN:String 	= "median";
-		public static const NA:String 		= "na";
-		
 		
 		public static const functions:Array = [SUM, AVERAGE, MAX, MIN, ROUND, FLOOR, CEIL,
-											COUNT, MEDIAN, NA];
+												COUNT, MEDIAN];
 		
 		public function FormulaBasic()
 		{
@@ -37,7 +40,7 @@ package com.flextras.calc
 			if(formula == CEIL) res = solveCEIL(args);
 			if(formula == COUNT) res = solveCOUNT(args);
 			if(formula == MEDIAN) res = solveMEDIAN(args);
-			if(formula == NA) res = solveNA();
+			
 			
 			
 			return res;
@@ -143,10 +146,5 @@ package com.flextras.calc
 			return med.toString();
 		}
 		
-		public static function solveNA():String
-		{
-			return "#NA";
-		}
-
 	}
 }
