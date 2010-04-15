@@ -15,6 +15,22 @@ import mx.events.FlexEvent;
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
+/**
+ * Calc is the main class for performing all the calculation logic. It can evaluate 
+ * mathematical expressions from strings and calculate the result. It can register various
+ * objects, Flex controls, or Flash components and use them as operands in the expression.
+ * <br/><br/>
+ * It supports these operators: ^, *, /, +, -. It uses the following order of precedence:<br/>
+ * 1. ^ <br/>
+ * 2. *, / <br/>
+ * 3. +, - <br/>
+ * <br/>
+ * It can also solve wide range of formulas, such as SUM, MEDIAN, PI, etc.<br/>
+ * @see com.flextras.calc.FormulaBasic
+ * @see com.flextras.calc.FormulaLogic
+ * @see com.flextras.calc.FormulaConst
+ * 
+ * */
 public class Calc extends EventDispatcher
 {
 	private var _gridCollection : Object;
