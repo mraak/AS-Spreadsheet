@@ -72,7 +72,7 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Call this method to solve the math expression. Supports +, -, *, / operators.
+	 * Call this method to solve the math expression. 
 	 * Also supports negative numbers. Supports formulas like SUM(2,3), MAX(a1:d3), etc.
 	 *
 	 * returns: Number, which is the numerical solution to expression
@@ -111,7 +111,7 @@ public class Calc extends EventDispatcher
 				repairedExpression = Utils.repairExpression(exp);
 			
 			// find the innermost brackets, also see if brackets are part of formula - SUM(args)
-			var rxParen : RegExp = /([A-Z]*)\([^()]*\)/g;
+			var rxParen : RegExp = /([A-Za-z]*)\([^()]*\)/g;
 			
 			// repeat while all the brackets are gone, method called to replace brackets with a value is solveParen
 			while (exp.indexOf("(") != -1)
