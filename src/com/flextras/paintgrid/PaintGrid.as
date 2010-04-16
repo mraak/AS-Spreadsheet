@@ -772,6 +772,15 @@ public class PaintGrid extends DataGrid
 	
 	}
 	
+	/*override protected function drawItem(item:IListItemRenderer,
+										 selected:Boolean = false,
+										 highlighted:Boolean = false,
+										 caret:Boolean = false,
+										 transition:Boolean = false):void
+	{
+		
+	}*/
+	
 	/**
 	 * @private
 	 */	

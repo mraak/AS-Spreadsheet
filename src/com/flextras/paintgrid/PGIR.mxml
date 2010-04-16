@@ -151,6 +151,35 @@
 			{
 				//super.mx_internal::drawBackground();
 			}
+			
+			protected var _hovered:Boolean;
+			
+			override protected function itemRenderer_rollOverHandler(event:MouseEvent):void
+			{
+				super.itemRenderer_rollOverHandler(event);
+				
+				/* if(!selected)
+					currentState = "hovered"; */
+				
+				_hovered = true;
+			}
+			
+			override protected function itemRenderer_rollOutHandler(event:MouseEvent):void
+			{
+				super.itemRenderer_rollOutHandler(event);
+				
+				/* if(!selected)
+					currentState = "normal"; */
+				
+				_hovered = false;
+			}
+			
+			override protected function stateChanged(oldState:String, newState:String, recursive:Boolean):void
+			{
+				/* if(newState != "selected")
+					c */
+				trace(oldState, newState);
+			}
 		]]>
 	</fx:Script>
 </s:MXDataGridItemRenderer>

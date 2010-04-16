@@ -8,7 +8,7 @@
 	<paintgrid:states>
 		<s:State name="normal"/>
 		<s:State name="hovered"/>
-		<s:State name="selected"/>
+		<s:State name="selecteds"/>
 		<s:State name="disabled"/>
 	</paintgrid:states>
 	
@@ -18,22 +18,22 @@
 			 
 			 color.normal  ="{conditionActive ? cell.condition.styles.color : cell.styles.color || globalCell.styles.color}"
 			 color.hovered ="{conditionActive ? cell.condition.styles.color : cell.rollOverStyles.color || globalCell.rollOverStyles.color}"
-			 color.selected="{conditionActive ? cell.condition.styles.color : cell.selectedStyles.color || globalCell.selectedStyles.color}"
+			 color.selecteds="{conditionActive ? cell.condition.styles.color : cell.selectedStyles.color || globalCell.selectedStyles.color}"
 			 color.disabled="{conditionActive ? cell.condition.styles.color : cell.disabledStyles.color || globalCell.disabledStyles.color}"
 			 
 			 textAlpha.normal  ="{conditionActive ? cell.condition.styles.alpha : cell.styles.alpha || globalCell.styles.alpha}"
 			 textAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.alpha : cell.rollOverStyles.alpha || globalCell.rollOverStyles.alpha}"
-			 textAlpha.selected="{conditionActive ? cell.condition.selectedStyles.alpha : cell.selectedStyles.alpha || globalCell.selectedStyles.alpha}"
+			 textAlpha.selecteds="{conditionActive ? cell.condition.selectedStyles.alpha : cell.selectedStyles.alpha || globalCell.selectedStyles.alpha}"
 			 textAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.alpha : cell.disabledStyles.alpha || globalCell.disabledStyles.alpha}"
 			 
 			 backgroundColor.normal  ="{conditionActive ? cell.condition.styles.backgroundColor : cell.styles.backgroundColor || globalCell.styles.backgroundColor}"
 			 backgroundColor.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundColor : cell.rollOverStyles.backgroundColor || globalCell.rollOverStyles.backgroundColor}"
-			 backgroundColor.selected="{conditionActive ? cell.condition.selectedStyles.backgroundColor : cell.selectedStyles.backgroundColor || globalCell.selectedStyles.backgroundColor}"
+			 backgroundColor.selecteds="{conditionActive ? cell.condition.selectedStyles.backgroundColor : cell.selectedStyles.backgroundColor || globalCell.selectedStyles.backgroundColor}"
 			 backgroundColor.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundColor : cell.disabledStyles.backgroundColor || globalCell.disabledStyles.backgroundColor}"
 			 
 			 backgroundAlpha.normal  ="{conditionActive ? cell.condition.styles.backgroundAlpha : cell.styles.backgroundAlpha || globalCell.styles.backgroundAlpha}"
 			 backgroundAlpha.hovered ="{conditionActive ? cell.condition.rollOverStyles.backgroundAlpha : cell.rollOverStyles.backgroundAlpha || globalCell.rollOverStyles.backgroundAlpha}"
-			 backgroundAlpha.selected="{conditionActive ? cell.condition.selectedStyles.backgroundAlpha : cell.selectedStyles.backgroundAlpha || globalCell.selectedStyles.backgroundAlpha}"
+			 backgroundAlpha.selecteds="{conditionActive ? cell.condition.selectedStyles.backgroundAlpha : cell.selectedStyles.backgroundAlpha || globalCell.selectedStyles.backgroundAlpha}"
 			 backgroundAlpha.disabled="{conditionActive ? cell.condition.disabledStyles.backgroundAlpha : cell.disabledStyles.backgroundAlpha || globalCell.disabledStyles.backgroundAlpha}"
 			 
 			 fontFamily="{conditionActive ? cell.condition.styles.family : cell.styles.family || globalCell.styles.family}"
@@ -81,6 +81,7 @@
 		<![CDATA[
 			import com.flextras.paintgrid.PaintGridRowResizeSkin;
 			
+			import mx.controls.listClasses.ListBase;
 			import mx.core.IFlexDisplayObject;
 			import mx.core.IVisualElement;
 			import mx.events.SandboxMouseEvent;
@@ -304,21 +305,34 @@
 				invalidateDisplayList();
 			}
 			
-			override protected function itemRenderer_rollOverHandler(event:MouseEvent):void
+			/* override public function invalidateDisplayList():void
 			{
-				super.itemRenderer_rollOverHandler(event);
+				super.invalidateDisplayList();
 				
-				if(!selected)
-					currentState = "hovered";
-			}
-			
-			override protected function itemRenderer_rollOutHandler(event:MouseEvent):void
-			{
-				super.itemRenderer_rollOutHandler(event);
-				
-				if(!selected)
-					currentState = "normal";
-			}
+				if (listData)
+				{
+					// see if we need to change state.  This is the only invalidation method guaranteed to be
+					// called.  We set up the renderers properties here so no matter what validation method gets
+					// called first, the properties are set up accordingly.
+					var listBase:mx.controls.listClasses.ListBase = mx.controls.listClasses.ListBase(listData.owner);
+					
+					if (listBase)
+					{
+						showsCaret = listBase.isItemShowingCaret(data);
+						
+						if(_hovered)
+						{trace("ok");
+							selected = listBase.isItemSelected(data);
+							super.hovered = listBase.isItemHighlighted(data);
+						}
+						else
+						{
+							selected = false;
+							super.hovered = false;
+						}
+					}
+				}
+			} */
 		]]>
 	</fx:Script>
 </paintgrid:PGIR>
