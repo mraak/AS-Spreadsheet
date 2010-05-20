@@ -46,10 +46,39 @@ use namespace mx_internal;
  */
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
+
+[Exclude(name="insertRow", kind="method")] 
+
 /**
- * Spreadsheet allows you to visauly and programatically use features and calculations found in
- * Excel and other Spreadsheet programs. It is divided into rows and columns and can accept other
- * objects and collections as variables in the calculations.
+ * The Flextras Spreadsheet component allows you to develop spreadsheet style applications.  
+ * It supports basic arithmetic and many Excel-style formulas, such as the sum function.  
+ * You can easily populate it with your own data and the component can conform to your data source.  
+ * External components such as TextInputs and Sliders can be referenced inside cells and formulas to create a flexible approach.
+ * 
+ * The Spreadsheet supports Flex 3 and Flex 4, so <a href="http://www.flextras.com/?event=RegistrationForm">register to download our free developer edition today</a>.
+ * 
+ * <h2>Uses in the Real World</h2>
+ * <ul>
+ * <li>Create a financial spreadsheet for things such as cash flow forecasts.</li>
+ * <li>Create Applications similar to the Google Docs Spreadsheet or Adobe Tables. </li>
+ * </ul>
+ * 
+ * @mxml
+ * 
+ *  <p>The <code>&lt;flextras:Calendar&gt;</code> tag inherits all the tag attributes
+ *  of its superclass, and adds the following tag attributes:</p>
+ * 
+ *  <pre>
+ *  &lt;flextras:Spreadsheet
+ *    <b>Properties</b>
+ * 
+ *    
+ *    <b>Events</b>
+ * 		error="<i>No default</i>"
+ * 		warning="<i>No default</i>"
+ *  /&gt;
+ *  </pre>
+ *  
  * 
  * @includeExample SpreadsheetExample.txt
  * @includeExample SpreadsheetExample.mxml
@@ -59,6 +88,13 @@ use namespace mx_internal;
  */
 public class Spreadsheet extends PaintGrid implements ISpreadsheet
 {
+
+	// *************************************************
+	// To Developer: Write a line or two about each of these variables and what the purposes is
+	// even if we don't want to publicly document then it will help for folks who have the source
+	// *************************************************
+	
+	
 	/**
 	 * @private
 	 */	
@@ -99,6 +135,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	 */	
 	protected var ignoreExpressionUpdate : Boolean;
 	
+	/**
+	 * Constructor.
+	 */
 	public function Spreadsheet ()
 	{
 		super();
@@ -136,11 +175,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	[Bindable(event="contextMenuEnabledChanged")]
 	/**
-	 * Enables custom context menu
+	 * This property specifies whether or not the Context Menu is displayed when someone right clicks in a cell in the Spreadsheet.  
 	 * 
-	 * @return true if enabled, otherwise false
-	 * 
-	 * @default true
 	 */	
 	public function get contextMenuEnabled () : Boolean
 	{
@@ -149,7 +185,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * 
-	 * @param value
+	 * @private
 	 * 
 	 */	
 	public function set contextMenuEnabled (value : Boolean) : void
@@ -178,7 +214,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	/////////////////////////////////////
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */	
 	public function updateExpressions () : void
 	{
@@ -190,14 +226,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
+	 * @inheritDoc
 	 * 
-	 * 
-	 * @param cellId Valid format is "[column index in alphabetical form][row index in numerical form]".
-	 * "a1" for example points to column 0 and row 1.
-	 * 
-	 * @param expression Actual expression of which result will be seen in the target cell.
-	 * To remove existing expression type null | ""
-	 * 
+	 * @see #assignExpressions
 	 */	
 	public function assignExpression (cellId : String, expression : String) : void
 	{
@@ -212,7 +243,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */	
 	public function getCell (cellId : String) : Object
 	{
@@ -278,6 +309,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	 */	
 	override public function set columnCount (value : int) : void
 	{
+		
 		if (_columnCount == value)
 			return;
 		
@@ -291,9 +323,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	[Bindable(event="calcChanged")]
 	/**
-	 * @return 
-	 * 
-	 * @see com.flextras.calc.Calc
+	 * @inheritDoc
 	 */	
 	public function get calc () : Calc
 	{
@@ -301,8 +331,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * 
-	 * @param value
+	 * @private 
 	 */	
 	public function set calc (value : Calc) : void
 	{
@@ -329,9 +358,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	[Bindable(event="expressionsChanged")]
 	/**
-	 * 
-	 * @return 
-	 * 
+	 * @inheritDoc
 	 */	
 	public function get expressions () : ArrayCollection
 	{
@@ -339,9 +366,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * 
-	 * @param value
-	 * 
+	 * @private
 	 */	
 	public function set expressions (value : ArrayCollection) : void
 	{
@@ -378,7 +403,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */	
 	public function get ctrlObjects () : Object
 	{
@@ -386,7 +411,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */	
 	public function get gridDataProvider () : ArrayCollection
 	{
@@ -394,7 +419,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */	
 	public function get expressionTree () : Array
 	{
@@ -402,7 +427,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * @protected
+	 * @inheritDoc
 	 */	
 	override public function set columns (value : Array) : void
 	{
@@ -416,8 +441,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
+	 * This is the location to add the new row.
 	 * 
-	 * @param index
+	 * @param index This is the location to add the new row.
 	 * 
 	 */	
 	public function insertRowAt (index : int) : void
@@ -430,8 +456,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		ListCollectionView(collection).addItemAt(createRow, collection.length);
 	}
 	
+	
 	/**
-	 * @inheritDoc
+	 * @private
 	 */	
 	override public function insertRow (value : Object, index : int) : void
 	{
@@ -461,8 +488,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
+	 * This method will remove all the expressions in the specified row.  
 	 * 
-	 * @param index
+	 * @param index This is the location of the row for which all expressions will be removed.
 	 * 
 	 */	
 	public function clearRowAt (index : int) : void
@@ -600,8 +628,9 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
+	 * This method will remove all the expressions in the specified column.  
 	 * 
-	 * @param index
+	 * @param index This is the location of the column for which all expressions will be removed.
 	 * 
 	 */	
 	public function clearColumnAt (index : int) : void
@@ -646,9 +675,15 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
+	 * This method will add multiple expressions to the specified locations.  
+	 * Each object in the expressions array should include a cell property to specify the location and an expression property.  
 	 * 
-	 * @param expressions
+	 * For more information on the cell and expression, see the expressions property.
 	 * 
+	 * @param expressions An array of objects 
+	 * 
+	 * @see #assignExpression
+	 * @see #expressions 
 	 */	
 	public function assignExpressions (expressions : Array) : void
 	{

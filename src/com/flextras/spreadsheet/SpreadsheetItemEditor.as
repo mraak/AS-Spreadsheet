@@ -5,13 +5,24 @@ import com.flextras.calc.Utils;
 
 import mx.controls.TextInput;
 
+/**
+ * This the default itemEditor for the Flextras Spreadsheet class.
+ * 
+ * @see com.flextras.calendar.Spreadsheet  
+ */
 public class SpreadsheetItemEditor extends TextInput
 {
+	/**
+	 * Constructor. 
+	 */
 	public function SpreadsheetItemEditor ()
 	{
 		super();
 	}
 	
+	/**
+	 * 
+	 */
 	public function get actualValue () : String
 	{
 		var t : String = text;
