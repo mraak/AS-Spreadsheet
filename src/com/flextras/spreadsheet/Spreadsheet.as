@@ -47,48 +47,48 @@ use namespace mx_internal;
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
 
-[Exclude(name="insertRow", kind="method")] 
+[Exclude(name="insertRow", kind="method")]
 
 /**
- * The Flextras Spreadsheet component allows you to develop spreadsheet style applications.  
- * It supports basic arithmetic and many Excel-style formulas, such as the sum function.  
- * You can easily populate it with your own data and the component can conform to your data source.  
+ * The Flextras Spreadsheet component allows you to develop spreadsheet style applications.
+ * It supports basic arithmetic and many Excel-style formulas, such as the sum function.
+ * You can easily populate it with your own data and the component can conform to your data source.
  * External components such as TextInputs and Sliders can be referenced inside cells and formulas to create a flexible approach.
- * 
+ *
  * The Spreadsheet supports Flex 3 and Flex 4, so <a href="http://www.flextras.com/?event=RegistrationForm">register to download our free developer edition today</a>.
- * 
+ *
  * <h2>Uses in the Real World</h2>
  * <ul>
  * <li>Create a financial spreadsheet for things such as cash flow forecasts.</li>
  * <li>Create Applications similar to the Google Docs Spreadsheet or Adobe Tables. </li>
  * </ul>
- * 
+ *
  * @mxml
- * 
+ *
  *  <p>The <code>&lt;flextras:Calendar&gt;</code> tag inherits all the tag attributes
  *  of its superclass, and adds the following tag attributes:</p>
- * 
+ *
  *  <pre>
  *  &lt;flextras:Spreadsheet
  *    <b>Properties</b>
- * 
- *    
+ *
+ *
  *    <b>Events</b>
  * 		error="<i>No default</i>"
  * 		warning="<i>No default</i>"
  *  /&gt;
  *  </pre>
- *  
- * 
+ *
+ *
  * @includeExample SpreadsheetExample.txt
  * @includeExample SpreadsheetExample.mxml
- * 
+ *
  * @see com.flextras.paintgrid.PaintGrid
  * @see com.flextras.spreadsheet.ISpreadsheet
  */
 public class Spreadsheet extends PaintGrid implements ISpreadsheet
 {
-
+	
 	// *************************************************
 	// To Developer: Write a line or two about each of these variables and what the purposes is
 	// even if we don't want to publicly document then it will help for folks who have the source
@@ -97,48 +97,48 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _rowCount : int = 15;
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _columnCount : int = 7;
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _calc : Calc;
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected const _expressionTree : Array = [];
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _ctrlObjects : Object = {};
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _expressions : ArrayCollection = new ArrayCollection();
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var expressionsChanged : Boolean;
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var ignoreExpressionUpdate : Boolean;
 	
 	/**
 	 * Constructor.
 	 */
-	public function Spreadsheet ()
+	public function Spreadsheet()
 	{
 		super();
 		
@@ -170,25 +170,25 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var _contextMenuEnabled : Boolean = true;
 	
 	[Bindable(event="contextMenuEnabledChanged")]
 	/**
-	 * This property specifies whether or not the Context Menu is displayed when someone right clicks in a cell in the Spreadsheet.  
-	 * 
-	 */	
-	public function get contextMenuEnabled () : Boolean
+	 * This property specifies whether or not the Context Menu is displayed when someone right clicks in a cell in the Spreadsheet.
+	 *
+	 */
+	public function get contextMenuEnabled() : Boolean
 	{
 		return _contextMenuEnabled;
 	}
 	
 	/**
-	 * 
+	 *
 	 * @private
-	 * 
-	 */	
-	public function set contextMenuEnabled (value : Boolean) : void
+	 *
+	 */
+	public function set contextMenuEnabled(value : Boolean) : void
 	{
 		if (_contextMenuEnabled == value)
 			return;
@@ -200,8 +200,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function createChildren () : void
+	 */
+	override protected function createChildren() : void
 	{
 		super.createChildren();
 		
@@ -215,8 +215,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	public function updateExpressions () : void
+	 */
+	public function updateExpressions() : void
 	{
 		
 		expressionsChanged = true;
@@ -227,10 +227,10 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 * 
+	 *
 	 * @see #assignExpressions
-	 */	
-	public function assignExpression (cellId : String, expression : String) : void
+	 */
+	public function assignExpression(cellId : String, expression : String) : void
 	{
 		var o : Object = getCell(cellId);
 		
@@ -244,8 +244,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	public function getCell (cellId : String) : Object
+	 */
+	public function getCell(cellId : String) : Object
 	{
 		for each (var o : Object in _expressions)
 			if (o.cell == cellId)
@@ -260,22 +260,22 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var rowCountChanged : Boolean;
 	
 	[Bindable(event="rowCountChanged")]
 	/**
 	 * @inheritDoc
-	 */	
-	override public function get rowCount () : int
+	 */
+	override public function get rowCount() : int
 	{
 		return _rowCount;
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function set rowCount (value : int) : void
+	 */
+	override public function set rowCount(value : int) : void
 	{
 		super.rowCount = value;
 		
@@ -292,22 +292,22 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var columnCountChanged : Boolean;
 	
 	[Bindable(event="columnCountChanged")]
 	/**
 	 * @inheritDoc
-	 */	
-	override public function get columnCount () : int
+	 */
+	override public function get columnCount() : int
 	{
 		return _columnCount;
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function set columnCount (value : int) : void
+	 */
+	override public function set columnCount(value : int) : void
 	{
 		
 		if (_columnCount == value)
@@ -324,16 +324,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	[Bindable(event="calcChanged")]
 	/**
 	 * @inheritDoc
-	 */	
-	public function get calc () : Calc
+	 */
+	public function get calc() : Calc
 	{
 		return _calc;
 	}
 	
 	/**
-	 * @private 
-	 */	
-	public function set calc (value : Calc) : void
+	 * @private
+	 */
+	public function set calc(value : Calc) : void
 	{
 		if (_calc === value)
 			return;
@@ -359,16 +359,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	[Bindable(event="expressionsChanged")]
 	/**
 	 * @inheritDoc
-	 */	
-	public function get expressions () : ArrayCollection
+	 */
+	public function get expressions() : ArrayCollection
 	{
 		return _expressions;
 	}
 	
 	/**
 	 * @private
-	 */	
-	public function set expressions (value : ArrayCollection) : void
+	 */
+	public function set expressions(value : ArrayCollection) : void
 	{
 		if (_expressions === value)
 			return;
@@ -404,32 +404,32 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	public function get ctrlObjects () : Object
+	 */
+	public function get ctrlObjects() : Object
 	{
 		return _ctrlObjects;
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	public function get gridDataProvider () : ArrayCollection
+	 */
+	public function get gridDataProvider() : ArrayCollection
 	{
 		return collection as ArrayCollection;
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	public function get expressionTree () : Array
+	 */
+	public function get expressionTree() : Array
 	{
 		return _expressionTree;
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function set columns (value : Array) : void
+	 */
+	override public function set columns(value : Array) : void
 	{
 		for each (var column : DataGridColumn in value)
 		{
@@ -442,11 +442,11 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * This is the location to add the new row.
-	 * 
+	 *
 	 * @param index This is the location to add the new row.
-	 * 
-	 */	
-	public function insertRowAt (index : int) : void
+	 *
+	 */
+	public function insertRowAt(index : int) : void
 	{
 		if (index < 0 || index >= collection.length)
 			return;
@@ -459,16 +459,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override public function insertRow (value : Object, index : int) : void
+	 */
+	override public function insertRow(value : Object, index : int) : void
 	{
 		throw new Error("Method insertRow is not supported in Spreadsheet, use instead insertRowAt");
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function removeRowAt (index : int) : void
+	 */
+	override public function removeRowAt(index : int) : void
 	{
 		if (index < 0 || index >= collection.length)
 			return;
@@ -481,19 +481,19 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function removeLastCollectionItem () : void
+	 */
+	protected function removeLastCollectionItem() : void
 	{
 		ListCollectionView(collection).removeItemAt(collection.length - 1);
 	}
 	
 	/**
-	 * This method will remove all the expressions in the specified row.  
-	 * 
+	 * This method will remove all the expressions in the specified row.
+	 *
 	 * @param index This is the location of the row for which all expressions will be removed.
-	 * 
-	 */	
-	public function clearRowAt (index : int) : void
+	 *
+	 */
+	public function clearRowAt(index : int) : void
 	{
 		var arr : Array = getRowExpressions(index);
 		
@@ -503,8 +503,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function insertColumnAt (index : int = 0) : int
+	 */
+	override public function insertColumnAt(index : int = 0) : int
 	{
 		if (index < 0 || index >= columns.length)
 			return index;
@@ -568,8 +568,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function removeColumnAt (index : int = 0) : void
+	 */
+	override public function removeColumnAt(index : int = 0) : void
 	{
 		if (index < 0 || index >= columns.length)
 			return;
@@ -580,15 +580,15 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		
 		removeLastColumn();
 		
-		callLater(updateExpressionsUponRowOrColumnChange,["colIndex", location, -1, 0, [location + 1, null, null, null]]);
-		
+		callLater(updateExpressionsUponRowOrColumnChange, ["colIndex", location, -1, 0, [location + 1, null, null, null]]);
+	
 		//updateExpressionsUponRowOrColumnChange("colIndex", location, -1, 0, [location + 1, null, null, null]);
 	}
 	
 	/**
 	 * @private
-	 */	
-	protected function removeLastColumn () : void
+	 */
+	protected function removeLastColumn() : void
 	{
 		var cols : Array = columns;
 		
@@ -623,17 +623,17 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 		}
 		
 		columns = cols;
-		
-		
+	
+	
 	}
 	
 	/**
-	 * This method will remove all the expressions in the specified column.  
-	 * 
+	 * This method will remove all the expressions in the specified column.
+	 *
 	 * @param index This is the location of the column for which all expressions will be removed.
-	 * 
-	 */	
-	public function clearColumnAt (index : int) : void
+	 *
+	 */
+	public function clearColumnAt(index : int) : void
 	{
 		if (index < 0 || index >= columns.length)
 			return;
@@ -648,8 +648,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	// index is an index where the insertion happened
 	/**
 	 * @private
-	 */	
-	protected function updateExpressionsUponRowOrColumnChange (indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
+	 */
+	protected function updateExpressionsUponRowOrColumnChange(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		var newCopy : Array = [];
 		var co : ControlObject;
@@ -675,17 +675,17 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	}
 	
 	/**
-	 * This method will add multiple expressions to the specified locations.  
-	 * Each object in the expressions array should include a cell property to specify the location and an expression property.  
-	 * 
+	 * This method will add multiple expressions to the specified locations.
+	 * Each object in the expressions array should include a cell property to specify the location and an expression property.
+	 *
 	 * For more information on the cell and expression, see the expressions property.
-	 * 
-	 * @param expressions An array of objects 
-	 * 
+	 *
+	 * @param expressions An array of objects
+	 *
 	 * @see #assignExpression
-	 * @see #expressions 
-	 */	
-	public function assignExpressions (expressions : Array) : void
+	 * @see #expressions
+	 */
+	public function assignExpressions(expressions : Array) : void
 	{
 		for each (var o : Object in expressions)
 			this.assignExpression(o.cell, o.expression);
@@ -693,8 +693,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	public function clearExpressions () : void
+	 */
+	public function clearExpressions() : void
 	{
 		for each (var co : ControlObject in expressionTree)
 			this.assignExpression(co.id, "");
@@ -702,8 +702,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	public function getRowExpressions (index : int) : Array
+	 */
+	public function getRowExpressions(index : int) : Array
 	{
 		var ra : Array = [];
 		
@@ -716,8 +716,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	public function moveRange (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	 */
+	public function moveRange(range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
 		moveRangeExpressions(range, dx, dy, copy);
 		moveRangeStyles(range, dx, dy, copy);
@@ -725,24 +725,24 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	public function moveRangeValues (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	 */
+	public function moveRangeValues(range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
 		calc.moveRangeValues(range, dx, dy, copy);
 	}
 	
 	/**
 	 * @private
-	 */	
-	public function moveRangeExpressions (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	 */
+	public function moveRangeExpressions(range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
 		calc.moveRange(range, dx, dy, copy);
 	}
 	
 	/**
 	 * @private
-	 */	
-	public function moveRangeStyles (range : Array, dx : int, dy : int, copy : Boolean = false) : void
+	 */
+	public function moveRangeStyles(range : Array, dx : int, dy : int, copy : Boolean = false) : void
 	{
 		var co : ControlObject, l : Array, oc : CellProperties, nc : CellProperties;
 		
@@ -773,8 +773,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function createRowsAndColumns () : void
+	 */
+	protected function createRowsAndColumns() : void
 	{
 		var arr : ArrayCollection = new ArrayCollection();
 		
@@ -786,8 +786,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function get createRow () : Object
+	 */
+	protected function get createRow() : Object
 	{
 		var o : Object = {};
 		
@@ -799,8 +799,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function measure () : void
+	 */
+	override protected function measure() : void
 	{
 		super.measure();
 		
@@ -810,16 +810,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function updateDisplayList (w : Number, h : Number) : void
+	 */
+	override protected function updateDisplayList(w : Number, h : Number) : void
 	{
 		super.updateDisplayList(w, h);
 	}
 	
 	/**
 	 * @private
-	 */	
-	override protected function commitProperties () : void
+	 */
+	override protected function commitProperties() : void
 	{
 		super.commitProperties();
 		
@@ -909,8 +909,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function collectionChange_reset (rows : int, cols : int) : void
+	 */
+	override protected function collectionChange_reset(rows : int, cols : int) : void
 	{
 		super.collectionChange_reset(rows, cols);
 		
@@ -944,13 +944,13 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
+	 */
 	protected var location : int;
 	
 	/**
 	 * @private
-	 */	
-	override protected function collectionChange_add (rows : int, cols : int, e : CollectionEvent) : void
+	 */
+	override protected function collectionChange_add(rows : int, cols : int, e : CollectionEvent) : void
 	{
 		super.collectionChange_add(rows, cols, e);
 		
@@ -985,8 +985,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function collectionChange_remove (rows : int, cols : int, e : CollectionEvent) : void
+	 */
+	override protected function collectionChange_remove(rows : int, cols : int, e : CollectionEvent) : void
 	{
 		super.collectionChange_remove(rows, cols, e);
 		
@@ -1034,8 +1034,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function expressionsChangeHandler (e : CollectionEvent) : void
+	 */
+	protected function expressionsChangeHandler(e : CollectionEvent) : void
 	{
 		updateExpressions();
 		
@@ -1044,24 +1044,24 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function onCalcError (event : SpreadsheetEvent) : void
+	 */
+	protected function onCalcError(event : SpreadsheetEvent) : void
 	{
 		this.dispatchEvent(event);
 	}
 	
 	/**
 	 * @private
-	 */	
-	protected function onCalcWarning (event : SpreadsheetEvent) : void
+	 */
+	protected function onCalcWarning(event : SpreadsheetEvent) : void
 	{
 		this.dispatchEvent(event);
 	}
 	
 	/**
 	 * @private
-	 */	
-	override protected function keyDownHandler (event : KeyboardEvent) : void
+	 */
+	override protected function keyDownHandler(event : KeyboardEvent) : void
 	{
 		super.keyDownHandler(event);
 		
@@ -1071,8 +1071,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function keyUpHandler (event : KeyboardEvent) : void
+	 */
+	override protected function keyUpHandler(event : KeyboardEvent) : void
 	{
 		super.keyUpHandler(event);
 		
@@ -1082,8 +1082,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function itemEditBeginHandler (e : DataGridEvent) : void
+	 */
+	protected function itemEditBeginHandler(e : DataGridEvent) : void
 	{
 		e.preventDefault();
 		
@@ -1129,39 +1129,40 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	protected function itemEditorItemEditEndHandler(event:DataGridEvent):void
+	 */
+	protected function itemEditorItemEditEndHandler(event : DataGridEvent) : void
 	{
 		event.stopImmediatePropagation();
 		
 		if (!event.isDefaultPrevented())
 		{
-			var bChanged:Boolean = false;
+			var bChanged : Boolean = false;
 			
 			/*if (event.reason == DataGridEventReason.NEW_COLUMN)
-			{
-				if (!collectionUpdatesDisabled)
-				{
-					collection.disableAutoUpdate();
-					collectionUpdatesDisabled = true;
-				}
-			}
-			else
-			{
-				if (collectionUpdatesDisabled)
-				{
-					collection.enableAutoUpdate();
-					collectionUpdatesDisabled = false;
-				}
-			}*/
+			   {
+			   if (!collectionUpdatesDisabled)
+			   {
+			   collection.disableAutoUpdate();
+			   collectionUpdatesDisabled = true;
+			   }
+			   }
+			   else
+			   {
+			   if (collectionUpdatesDisabled)
+			   {
+			   collection.enableAutoUpdate();
+			   collectionUpdatesDisabled = false;
+			   }
+			 }*/
 			
 			if (itemEditorInstance && event.reason != DataGridEventReason.CANCELLED)
 			{
-				var newData:Object = itemEditorInstance[columns[event.columnIndex].editorDataField];
-				var property:String = columns[event.columnIndex].dataField;
-				var data:Object = event.itemRenderer.data;
-				var typeInfo:String = "";
-				for each(var variable:XML in describeType(data).variable)
+				var newData : Object = itemEditorInstance[columns[event.columnIndex].editorDataField];
+				var property : String = columns[event.columnIndex].dataField;
+				var data : Object = event.itemRenderer.data;
+				var typeInfo : String = "";
+				
+				for each (var variable : XML in describeType(data).variable)
 				{
 					if (property == variable.@name.toString())
 					{
@@ -1190,20 +1191,23 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 					if (!(newData is int))
 						newData = Number(newData);
 				}
+				
 				/** Old code assumed that the property would be a simply name that could be dereferenced
 				 * through array notation. Using a method call here provides, minimally, an override
 				 * point where developers could extend this functionality in their own datagrid subclass **/
-				if (property != null && getCurrentDataValue( data, property ) !== newData)
+				if (property != null && getCurrentDataValue(data, property) !== newData)
 				{
-					bChanged = setNewValue( data, property, newData, event.columnIndex );
+					bChanged = setNewValue(data, property, newData, event.columnIndex);
 				}
+				
 				if (bChanged && !(data is IPropertyChangeNotifier || data is XML))
 				{
 					collection.itemUpdated(data, property);
 				}
+				
 				if (event.itemRenderer is IDropInListItemRenderer)
 				{
-					var listData:DataGridListData = DataGridListData(IDropInListItemRenderer(event.itemRenderer).listData);
+					var listData : DataGridListData = DataGridListData(IDropInListItemRenderer(event.itemRenderer).listData);
 					listData.label = columns[event.columnIndex].itemToLabel(data);
 					IDropInListItemRenderer(event.itemRenderer).listData = listData;
 				}
@@ -1219,7 +1223,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 					// edit session is continued so restore focus and selection
 					if (selectedIndex != editedItemPosition.rowIndex)
 						selectedIndex = editedItemPosition.rowIndex;
-					var fm:IFocusManager = focusManager;
+					var fm : IFocusManager = focusManager;
+					
 					// trace("setting focus to itemEditorInstance", selectedIndex);
 					if (itemEditorInstance is IFocusManagerComponent)
 						fm.setFocus(IFocusManagerComponent(itemEditorInstance));
@@ -1235,8 +1240,8 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @private
-	 */	
-	override protected function setupColumnItemRenderer (c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
+	 */
+	override protected function setupColumnItemRenderer(c : DataGridColumn, contentHolder : ListBaseContentHolder, rowNum : int, colNum : int, data : Object, uid : String) : IListItemRenderer
 	{
 		var item : IListItemRenderer = super.setupColumnItemRenderer(c, contentHolder, rowNum, colNum, data, uid);
 		
@@ -1255,7 +1260,7 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 			r.cell.menu = menu;
 			menu.cell = r.cell;
 			
-			if(r is UIComponent)
+			if (r is UIComponent)
 			{
 				UIComponent(r).flexContextMenu = menu;
 				
@@ -1268,16 +1273,16 @@ public class Spreadsheet extends PaintGrid implements ISpreadsheet
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function fromXML(value:XML):void
+	 */
+	override public function fromXML(value : XML) : void
 	{
 		super.fromXML(value);
 	}
 	
 	/**
 	 * @inheritDoc
-	 */	
-	override public function toXML():XML
+	 */
+	override public function toXML() : XML
 	{
 		return super.toXML();
 	}
