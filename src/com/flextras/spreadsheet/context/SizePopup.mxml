@@ -1,4 +1,7 @@
 <?xml version = "1.0" encoding = "utf-8"?>
+<!---
+
+-->
 <context:BasePopup xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				   xmlns:s = "library://ns.adobe.com/flex/spark"
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
@@ -28,14 +31,22 @@
 		<![CDATA[
 			import com.flextras.paintgrid.CellProperties;
 			
+			/**
+			 * @private
+			 */			
 			protected var _cell : CellProperties;
 			
 			[Bindable("cellChanged")]
+			/**
+			 * This is a reference to the cell being resized in the spreadsheet.
+			 */			
 			public function get cell () : CellProperties
 			{
 				return _cell;
 			}
-			
+			/**
+			 * @private
+			 */			
 			public function set cell (value : CellProperties) : void
 			{
 				if (_cell === value)
@@ -46,14 +57,23 @@
 				dispatchEvent(new Event("cellChanged"));
 			}
 			
+			/**
+			 * @private
+			 */			
 			protected var _cells : Array;
 			
 			[Bindable("cellsChanged")]
+			/**
+			 * This is an array of cells that are selected the spreadsheet.
+			 */			
 			public function get cells () : Array
 			{
 				return _cells;
 			}
 			
+			/**
+			 * @private
+			 */			
 			public function set cells (value : Array) : void
 			{
 				if (_cells === value)

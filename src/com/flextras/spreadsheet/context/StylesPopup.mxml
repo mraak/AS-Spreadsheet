@@ -1,4 +1,8 @@
 <?xml version = "1.0" encoding = "utf-8"?>
+<!---
+This is a default popup for editing styles in the Flextras Spreadsheet.
+@see com.flextras.spreadsheet.Spreadsheet
+-->
 <context:BasePopup xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				   xmlns:s = "library://ns.adobe.com/flex/spark"
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
@@ -24,6 +28,9 @@
 							change = "updateStyle('decoration', event.currentTarget.selectedValue);" />
 	</fx:Declarations>
 
+	<!---
+		This is a default navigation bar for popup.
+	-->
 	<s:ButtonBar id = "buttonBar"
 				 selectedIndex = "0"
 				 enabled = "{!!cell}"
@@ -250,19 +257,34 @@
 			import mx.utils.ObjectProxy;
 			
 			[Bindable]
+			/**
+			 * 
+			 */
 			public var local:Boolean;
 			
 			[Bindable]
+			/**
+			 * 
+			 */
 			protected var styles : ObjectProxy;
 			
+			/**
+			 * @private
+			 */
 			protected var _cell : CellProperties;
 			
 			[Bindable("cellChanged")]
+			/**
+			 * This is a reference to the cell being resized in the spreadsheet.
+			 */
 			public function get cell () : CellProperties
 			{
 				return _cell;
 			}
 			
+			/**
+			 * @private
+			 */
 			public function set cell (value : CellProperties) : void
 			{
 				if (_cell === value)
@@ -276,14 +298,23 @@
 				dispatchEvent(new Event("cellChanged"));
 			}
 			
+			/**
+			 * @private
+			 */
 			protected var _cells : Array;
 			
 			[Bindable("cellsChanged")]
+			/**
+			 * This is an array of cells that are selected the spreadsheet.
+			 */
 			public function get cells () : Array
 			{
 				return _cells;
 			}
 			
+			/**
+			 * @private
+			 */
 			public function set cells (value : Array) : void
 			{
 				if (_cells === value)
@@ -297,6 +328,9 @@
 				dispatchEvent(new Event("cellsChanged"));
 			}
 			
+			/**
+			 * This method will update the style options displayed in this popup from the selected cell in the spreadsheet.
+			 */
 			public function updateCell () : void
 			{
 				if (!cell)
@@ -326,6 +360,9 @@
 				cell.conditionEnabled = checkBox.selected;
 			}
 			
+			/**
+			 * This method will update the cell’s styles based on selections made in this popup.
+			 */
 			protected function updateStyle (name : String, value : Object) : void
 			{
 				styles[name] = value;
@@ -343,6 +380,9 @@
 				}
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function assignStyle (cell : StylesProxy) : void
 			{
 				switch (buttonBar.selectedIndex)
