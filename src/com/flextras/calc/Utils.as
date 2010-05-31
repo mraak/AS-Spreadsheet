@@ -16,12 +16,12 @@ public class Utils
 	
 	public static var rgxNotAllowed : RegExp = /[^a-zA-Z0-9!\s\+\-\*\/\^\.\(\)\:\,=<>"']/g;
 	
-	public function Utils ()
+	public function Utils()
 	{
 		//TODO: implement function
 	}
 	
-	public static function checkValidExpression (exp : String) : String
+	public static function checkValidExpression(exp : String) : String
 	{
 		var err : String = "ok";
 		
@@ -58,7 +58,7 @@ public class Utils
 	 * From "a0" to [0,0], from "f6" to [5,6]
 	 *
 	 * */
-	public static function gridFieldToIndexes (fieldId : String) : Array
+	public static function gridFieldToIndexes(fieldId : String) : Array
 	{
 		var sheet : String;
 		
@@ -81,7 +81,7 @@ public class Utils
 		return [intCol, intRow, sheet, col, row, (col + row)]
 	}
 	
-	public static function moveFieldId (fieldId : String, dx : int, dy : int) : String
+	public static function moveFieldId(fieldId : String, dx : int, dy : int) : String
 	{
 		var origOp : String = fieldId;
 		
@@ -115,7 +115,7 @@ public class Utils
 		return moveOp;
 	}
 	
-	public static function moveExpression (co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
+	public static function moveExpression(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
 	{
 		var exp : String = co.exp;
 		var srx : String = "";
@@ -160,7 +160,86 @@ public class Utils
 		return exp;
 	}
 	
-	public static function resolveFieldsRange (fields : String) : Array
+	public static function moveExpression3(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
+	{
+		var exp : String = co.exp;
+		var srx : String = "";
+		
+		var fc : int = -1;
+		var tc : int = -1;
+		var fr : int = -1;
+		var tr : int = -1;
+		
+		if (excludeRule)
+		{
+			fc = excludeRule[0] ? excludeRule[0] : -1;
+			tc = excludeRule[1] ? excludeRule[1] : -1;
+			fr = excludeRule[2] ? excludeRule[2] : -1;
+			tr = excludeRule[3] ? excludeRule[3] : -1;
+		}
+		
+		orepl = new Object();
+		
+		for each (var op : ControlObject in co.ctrlOperands)
+		{
+			if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
+				(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
+			{
+				var origOp : String = op.id;
+				var moveOp : String = moveFieldId(origOp, dx, dy);
+				orepl[origOp] = moveOp ? moveOp : origOp;
+				srx += "(" + origOp + ")";
+			}
+		}
+		
+		if (srx != "")
+		{
+			srx = srx.replace(/\)\(/g, ")|(");
+			
+			var rx : RegExp = new RegExp(srx, "g");
+			exp = exp.replace(rx, frepl);
+		}
+		return exp;
+	}
+	
+	public static function moveExpression2(co : ControlObject, dx : int, dy : int) : String
+	{
+		var exp : String = co.exp;
+		var srx : String = "";
+		
+		orepl = new Object();
+		
+		for each (var op : ControlObject in co.ctrlOperands)
+		{
+			if (co.grid)
+			{
+				if (op.oldID)
+				{
+					origOp = op.oldID;
+					moveOp = op.id;
+				}
+				else
+				{
+					var origOp : String = op.id;
+					var moveOp : String = moveFieldId(origOp, dx, dy);
+				}
+				
+				srx += "(" + origOp + ")";
+				orepl[origOp] = moveOp ? moveOp : origOp;
+			}
+		}
+		
+		if (srx != "")
+		{
+			srx = srx.replace(/\)\(/g, ")|(");
+			
+			var rx : RegExp = new RegExp(srx, "g");
+			exp = exp.replace(rx, frepl);
+		}
+		return exp;
+	}
+	
+	public static function resolveFieldsRange(fields : String) : Array
 	{
 		var range : Array = new Array();
 		
@@ -190,7 +269,7 @@ public class Utils
 		return range;
 	}
 	
-	public static function resolveWildCardRange (fields : String) : Array
+	public static function resolveWildCardRange(fields : String) : Array
 	{
 		var arr : Array = new Array();
 		
@@ -228,7 +307,7 @@ public class Utils
 		return arr;
 	}
 	
-	public static function resolveRange (range : Array) : Array
+	public static function resolveRange(range : Array) : Array
 	{
 		
 		var ra : Array = new Array();
@@ -295,7 +374,7 @@ public class Utils
 		return ra;
 	}
 	
-	public static function resolveCollectionRange (range : Array) : Array
+	public static function resolveCollectionRange(range : Array) : Array
 	{
 		var arr : Array = new Array();
 		
@@ -327,7 +406,7 @@ public class Utils
 	
 	}
 	
-	private static function frepl () : String
+	private static function frepl() : String
 	{
 		return orepl[arguments[0]];
 	}
@@ -339,7 +418,7 @@ public class Utils
 	 * Secondly, it attempts to repair redundant operators in parenthesis,
 	 * e.g.: (*5+6/), result: (5+6)
 	 * */
-	public static function repairOperators (exp : String) : String
+	public static function repairOperators(exp : String) : String
 	{
 		
 		var rx : RegExp = /([\^\*\+\/\-]{2,})/g;
@@ -358,7 +437,7 @@ public class Utils
 		return exp;
 	}
 	
-	private static function useFirstOp (... args) : String
+	private static function useFirstOp(... args) : String
 	{
 		var ops : String = args[0];
 		ops = ops.replace(/!/g, "");
@@ -368,7 +447,7 @@ public class Utils
 		return ops;
 	}
 	
-	public static function repairExpression (exp : String) : String
+	public static function repairExpression(exp : String) : String
 	{
 		exp = exp.replace(/~/g, "-");
 		
@@ -378,7 +457,7 @@ public class Utils
 		return exp;
 	}
 	
-	public static function breakComparisonInput (input : String) : Object
+	public static function breakComparisonInput(input : String) : Object
 	{
 		var ro : Object = new Object();
 		
@@ -406,7 +485,7 @@ public class Utils
 		return ro;
 	}
 	
-	private static function doBreakCompInput () : String
+	private static function doBreakCompInput() : String
 	{
 		var args : Array = arguments;
 		
@@ -421,7 +500,7 @@ public class Utils
 	 * <b>Example:</b><br/> isString("s"), returns <i>false</i><br/> isString(""s""), returns <i>true</i>
 	 *
 	 * */
-	public static function isString (input : String) : Boolean
+	public static function isString(input : String) : Boolean
 	{
 		var b : Boolean;
 		var len : int = input.length;
@@ -439,7 +518,7 @@ public class Utils
 		return b;
 	}
 	
-	public static function stripStringQuotes (input : String) : String
+	public static function stripStringQuotes(input : String) : String
 	{
 		var rs : String;
 		var len : int = input.length;
@@ -453,7 +532,7 @@ public class Utils
 		return rs;
 	}
 	
-	public static function repl () : void
+	public static function repl() : void
 	{
 		var str : String = "my bicycle and my house are better than your bicycle and your house";
 		//var str:String = "your bicycle and your house are better than his bicycle and his house";
@@ -476,7 +555,7 @@ public class Utils
 		str = str.replace(rx, frepl);
 	}
 	
-	public static function set calc (value : Calc) : void
+	public static function set calc(value : Calc) : void
 	{
 		_calc = value;
 	

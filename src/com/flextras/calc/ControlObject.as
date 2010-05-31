@@ -21,7 +21,21 @@ public class ControlObject extends EventDispatcher
 	
 	private var _exp : String = "";
 	
-	public var id : String;
+	protected var _id : String;
+	public var oldID : String;
+	
+	public function get id() : String
+	{
+		return _id;
+	}
+	
+	public function set id(value : String) : void
+	{
+		oldID = _id;
+		
+		_id = value;
+	}
+	
 	
 	public var valueProp : String;
 	
@@ -40,23 +54,23 @@ public class ControlObject extends EventDispatcher
 	// PaintGrid helper
 	//public var info : Row;
 	
-	public function ControlObject (target : IEventDispatcher = null)
+	public function ControlObject(target : IEventDispatcher = null)
 	{
 		//TODO: implement function
 		super(target);
 	}
 	
-	public function set exp (val : String) : void
+	public function set exp(val : String) : void
 	{
 		_exp = val;
 	}
 	
-	public function get exp () : String
+	public function get exp() : String
 	{
 		return _exp;
 	}
 	
-	public function get toolTipLabelTree () : String
+	public function get toolTipLabelTree() : String
 	{
 		var se : String = (_exp) ? _exp : "";
 		var sv : String = ctrl[valueProp];
@@ -70,7 +84,7 @@ public class ControlObject extends EventDispatcher
 		return gr + id + ":  " + sv + se;
 	}
 	
-	public function get toolTipLabel () : String
+	public function get toolTipLabel() : String
 	{
 		var c : String = "class: " + UIComponent(ctrl).className;
 		return c + "\nid: " + id + "\n" + toolTipLabelTree;
