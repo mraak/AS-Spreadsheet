@@ -1,0 +1,79 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<s:ItemRenderer xmlns:fx = "http://ns.adobe.com/mxml/2009"
+				xmlns:s = "library://ns.adobe.com/flex/spark"
+				xmlns:mx = "library://ns.adobe.com/flex/mx"
+				xmlns:utils = "com.flextras.spreadsheet.utils.*"
+				autoDrawBackground = "false">
+
+	<s:states>
+		<s:State name = "normal" />
+		<s:State name = "hovered" />
+		<s:State name = "selected" />
+		<s:State name = "disabled" />
+	</s:states>
+
+	<s:Rect left = "0"
+			top = "0"
+			right = "{edgeSize}"
+			bottom = "0"
+			includeIn = "selected">
+		<s:fill>
+			<s:LinearGradient rotation = "90">
+				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(0xCCCCCC, 50)}" />
+				<s:GradientEntry color = "0xCCCCCC" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<s:Group id = "border"
+			 top = "0"
+			 right = "0"
+			 bottom = "0"
+			 mouseOver = "resizeManager.mouseOverHandler(event)"
+			 mouseOut = "resizeManager.mouseOutHandler(event)"
+			 mouseDown = "resizeManager.mouseDownHandler(event)"
+			 mouseUp = "resizeManager.mouseUpHandler(event)">
+		<s:Rect top = "0"
+				bottom = "0"
+				width = "{edgeSize}">
+			<s:fill>
+				<s:SolidColor color = "0x999999" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+
+	<s:Label horizontalCenter = "0"
+			 verticalCenter = "3"
+			 text = "{data}"
+			 color = "0x333333"
+			 fontWeight = "bold"
+			 fontSize = "18" />
+
+	<fx:Declarations>
+		<fx:uint id = "edgeSize">{resizeManager.handlersVisible ? 4 : 2}</fx:uint>
+
+		<utils:ResizeManager id = "resizeManager"
+							 target = "{this}"
+							 offset = "{new Point(-8,-6)}"
+							 mouseMoveHandler = "{border_mouseMoveHandler}" />
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import com.flextras.spreadsheet.Spreadsheet;
+			import com.flextras.spreadsheet.core.spreadsheet;
+			
+			import mx.utils.ColorUtil;
+			
+			use namespace spreadsheet;
+			
+			protected const host : Spreadsheet = Spreadsheet.instance;
+			
+			protected function border_mouseMoveHandler(event : MouseEvent) : void
+			{
+				host.setColumnWidthAt(itemIndex, globalToLocal(new Point(event.stageX, event.stageY)).x);
+			}
+		]]>
+	</fx:Script>
+
+</s:ItemRenderer>

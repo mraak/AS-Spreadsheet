@@ -1,0 +1,381 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<s:ItemRenderer xmlns:fx = "http://ns.adobe.com/mxml/2009"
+				xmlns:s = "library://ns.adobe.com/flex/spark"
+				xmlns:mx = "library://ns.adobe.com/flex/mx"
+				xmlns:flextras = "com.flextras.*"
+				xmlns:context = "com.flextras.spreadsheet.context.*"
+				xmlns:utils = "com.flextras.spreadsheet.utils.*"
+				minWidth = "100"
+				minHeight = "20"
+				cut = "cutHandler(event)"
+				copy = "copyHandler(event)"
+				paste = "pasteHandler(event)"
+				flexContextMenu = "{cell.menu}"
+				doubleClickEnabled = "{text.enabled}"
+				doubleClick = "focused = true; text.setFocus();"
+				autoDrawBackground = "false">
+
+	<s:transitions>
+		<s:Transition fromState = "hovered"
+					  toState = "normal">
+			<s:AnimateColor target = "{backgroundColorEntry}" />
+		</s:Transition>
+	</s:transitions>
+
+	<s:states>
+		<s:State name = "normal" />
+		<s:State name = "hovered" />
+		<s:State name = "selected" />
+		<s:State name = "disabled" />
+	</s:states>
+
+	<s:Rect id = "l"
+			left = "0"
+			top = "0"
+			bottom = "{edgeSize}"
+			width = "{leftWeightStyle}">
+		<s:fill>
+			<s:SolidColor color = "{leftColorStyle}"
+						  alpha = "{leftAlphaStyle}" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect id = "t"
+			left = "0"
+			top = "0"
+			right = "{edgeSize}"
+			height = "{topWeightStyle}">
+		<s:fill>
+			<s:SolidColor color = "{topColorStyle}"
+						  alpha = "{topAlphaStyle}" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect id = "r"
+			top = "0"
+			right = "{edgeSize}"
+			bottom = "{edgeSize}"
+			width = "{rightWeightStyle}">
+		<s:fill>
+			<s:SolidColor color = "{rightColorStyle}"
+						  alpha = "{rightAlphaStyle}" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect id = "b"
+			left = "0"
+			right = "{edgeSize}"
+			bottom = "{edgeSize}"
+			height = "{bottomWeightStyle}">
+		<s:fill>
+			<s:SolidColor color = "{bottomColorStyle}"
+						  alpha = "{bottomAlphaStyle}" />
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect left = "{l.width}"
+			top = "{t.height}"
+			right = "{r.width+edgeSize}"
+			bottom = "{b.height+edgeSize}">
+		<s:fill>
+			<s:LinearGradient rotation = "90">
+				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(backgroundColorEntry.color, 50)}"
+								 alpha = "{backgroundAlphaStyle}" />
+				<s:GradientEntry id = "backgroundColorEntry"
+								 color = "{backgroundColorStyle}"
+								 alpha = "{backgroundAlphaStyle}" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<s:Group id = "columnResize"
+			 top = "0"
+			 right = "0"
+			 bottom = "{edgeSize}"
+			 mouseOver = "columnResizeManager.mouseOverHandler(event)"
+			 mouseOut = "columnResizeManager.mouseOutHandler(event)"
+			 mouseDown = "columnResizeManager.mouseDownHandler(event)"
+			 mouseUp = "columnResizeManager.mouseUpHandler(event)"
+			 visible = "{edgeResizeManager.handlersVisible}"
+			 includeInLayout = "{edgeResizeManager.handlersVisible}">
+		<s:Rect top = "0"
+				bottom = "0"
+				width = "{edgeSize}">
+			<s:fill>
+				<s:SolidColor color = "0x999999" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+
+	<s:Group id = "rowResize"
+			 left = "0"
+			 right = "{edgeSize}"
+			 bottom = "0"
+			 mouseOver = "rowResizeManager.mouseOverHandler(event)"
+			 mouseOut = "rowResizeManager.mouseOutHandler(event)"
+			 mouseDown = "rowResizeManager.mouseDownHandler(event)"
+			 mouseUp = "rowResizeManager.mouseUpHandler(event)"
+			 visible = "{edgeResizeManager.handlersVisible}"
+			 includeInLayout = "{edgeResizeManager.handlersVisible}">
+		<s:Rect left = "0"
+				right = "0"
+				height = "{edgeSize}">
+			<s:fill>
+				<s:SolidColor color = "0x999999" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+
+	<s:Group id = "edgeResize"
+			 right = "0"
+			 bottom = "0"
+			 mouseOver = "edgeResizeManager.mouseOverHandler(event)"
+			 mouseOut = "edgeResizeManager.mouseOutHandler(event)"
+			 mouseDown = "edgeResizeManager.mouseDownHandler(event)"
+			 mouseUp = "edgeResizeManager.mouseUpHandler(event)"
+			 visible = "{edgeResizeManager.handlersVisible}"
+			 includeInLayout = "{edgeResizeManager.handlersVisible}">
+		<s:Rect width = "{edgeSize}"
+				height = "{edgeSize}">
+			<s:fill>
+				<s:SolidColor color = "0x999999" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+
+	<flextras:ResizableRichEditableText id = "text"
+										enabled = "{cell.enabled}"
+										keyDown = "text_keyDownHandler(event)"
+										left = "{l.width}"
+										right = "{r.width+edgeSize}"
+										top = "{t.height}"
+										bottom = "{b.height+edgeSize}"
+										mouseEnabled = "{focused}"
+										focusEnabled = "{focused}"
+										mouseFocusEnabled = "{focused}"
+										text = "{focused ? cell.expression : cell.value}"
+										color = "{colorStyle}"
+										alpha = "{alphaStyle}"
+										fontWeight = "{boldStyle ? 'bold' : 'normal'}"
+										fontStyle = "{italicStyle ? 'italic' : 'normal'}"
+										textDecoration = "{underlineStyle ? 'underline' : 'none'}"
+										textAlign = "{horizontalAlignStyle}"
+										verticalAlign = "{verticalAlignStyle}"
+										fontSize = "{sizeStyle}"
+										focusOut = "cell.expression = text.text; focused = false;" />
+
+	<fx:Declarations>
+		<fx:Boolean id = "focused" />
+		<fx:Boolean id = "conditionActive">{condition.active}</fx:Boolean>
+
+		<fx:uint id = "colorStyle">{conditionActive ? conditionStyles.color : styles.color}</fx:uint>
+		<fx:Number id = "alphaStyle">{conditionActive ? conditionStyles.alpha : styles.alpha}</fx:Number>
+		<fx:uint id = "backgroundColorStyle">{conditionActive ? conditionStyles.backgroundColor : styles.backgroundColor}</fx:uint>
+		<fx:Number id = "backgroundAlphaStyle">{conditionActive ? conditionStyles.backgroundAlpha : styles.backgroundAlpha}</fx:Number>
+		<fx:Boolean id = "boldStyle">{styles.bold}</fx:Boolean>
+		<fx:Boolean id = "italicStyle">{styles.italic}</fx:Boolean>
+		<fx:Boolean id = "underlineStyle">{styles.underline}</fx:Boolean>
+		<fx:String id = "horizontalAlignStyle">{styles.horizontalAlign}</fx:String>
+		<fx:String id = "verticalAlignStyle">{styles.verticalAlign}</fx:String>
+		<fx:uint id = "sizeStyle">{styles.size}</fx:uint>
+
+		<fx:uint id = "leftColorStyle">{borderLeft.color}</fx:uint>
+		<fx:Number id = "leftAlphaStyle">{borderLeft.alpha}</fx:Number>
+		<fx:Number id = "leftWeightStyle">{borderLeft.weight}</fx:Number>
+
+		<fx:uint id = "topColorStyle">{borderTop.color}</fx:uint>
+		<fx:Number id = "topAlphaStyle">{borderTop.alpha}</fx:Number>
+		<fx:Number id = "topWeightStyle">{borderTop.weight}</fx:Number>
+
+		<fx:uint id = "rightColorStyle">{borderRight.color}</fx:uint>
+		<fx:Number id = "rightAlphaStyle">{borderRight.alpha}</fx:Number>
+		<fx:Number id = "rightWeightStyle">{borderRight.weight}</fx:Number>
+
+		<fx:uint id = "bottomColorStyle">{borderBottom.color}</fx:uint>
+		<fx:Number id = "bottomAlphaStyle">{borderBottom.alpha}</fx:Number>
+		<fx:Number id = "bottomWeightStyle">{borderBottom.weight}</fx:Number>
+
+		<fx:uint id = "edgeSize">{edgeResizeManager.handlersVisible ? 2 : 0}</fx:uint>
+
+		<utils:ResizeManager id = "columnResizeManager"
+							 target = "{this}"
+							 offset = "{new Point(-8,-6)}"
+							 mouseMoveHandler = "{columnResize_mouseMoveHandler}" />
+
+		<utils:ResizeManager id = "rowResizeManager"
+							 target = "{this}"
+							 offset = "{new Point(6,-8)}"
+							 rotation = "90"
+							 mouseMoveHandler = "{rowResize_mouseMoveHandler}" />
+
+		<utils:ResizeManager id = "edgeResizeManager"
+							 target = "{this}"
+							 offset = "{new Point(-2,-10)}"
+							 rotation = "45"
+							 mouseMoveHandler = "{edgeResize_mouseMoveHandler}" />
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import com.flextras.spreadsheet.Spreadsheet;
+			import com.flextras.spreadsheet.core.spreadsheet;
+			import com.flextras.spreadsheet.vos.BorderSide;
+			import com.flextras.spreadsheet.vos.Cell;
+			import com.flextras.spreadsheet.vos.CellStyles;
+			import com.flextras.spreadsheet.vos.Condition;
+			import com.flextras.spreadsheet.vos.Styles;
+			import com.flextras.spreadsheet.vos.StylesState;
+			
+			import mx.utils.ColorUtil;
+			
+			use namespace spreadsheet;
+			
+			protected const host : Spreadsheet = Spreadsheet.instance;
+			
+			[Bindable]
+			protected var cell : Cell;
+			
+			[Bindable]
+			protected var condition : Condition;
+			
+			[Bindable]
+			protected var conditionStyles : Styles;
+			
+			[Bindable]
+			protected var styles : StylesState;
+			
+			[Bindable]
+			protected var normalStyles : StylesState;
+			
+			[Bindable]
+			protected var hoveredStyles : StylesState;
+			
+			[Bindable]
+			protected var selectedStyles : StylesState;
+			
+			[Bindable]
+			protected var disabledStyles : StylesState;
+			
+			[Bindable]
+			protected var borderLeft : BorderSide;
+			
+			[Bindable]
+			protected var borderTop : BorderSide;
+			
+			[Bindable]
+			protected var borderRight : BorderSide;
+			
+			[Bindable]
+			protected var borderBottom : BorderSide;
+			
+			override protected function stateChanged(oldState : String, newState : String, recursive : Boolean) : void
+			{
+				super.stateChanged(oldState, newState, recursive);
+				
+				switch (newState)
+				{
+					case "normal":
+						styles = normalStyles;
+						break;
+					
+					case "hovered":
+						styles = hoveredStyles;
+						break;
+					
+					case "selected":
+						styles = selectedStyles;
+						break;
+					
+					case "disabled":
+						styles = disabledStyles;
+						break;
+				}
+				
+				borderLeft = styles.border.left;
+				borderTop = styles.border.top;
+				borderRight = styles.border.right;
+				borderBottom = styles.border.bottom;
+			}
+			
+			override public function set data(value : Object) : void
+			{
+				super.data = value;
+				
+				if (!value)
+					return;
+				
+				cell = Cell(value);
+				
+				if (text)
+					text.text = cell.value;
+				
+				var styles : CellStyles = cell.styles;
+				
+				normalStyles = styles.normal;
+				hoveredStyles = styles.hovered;
+				selectedStyles = styles.selected;
+				disabledStyles = styles.disabled;
+				
+				condition = cell.condition;
+				conditionStyles = condition.styles;
+			}
+			
+			protected function cutHandler(event : Event) : void
+			{
+				cell.menu.cutHandler();
+			}
+			
+			protected function copyHandler(event : Event) : void
+			{
+				cell.menu.copyHandler();
+			}
+			
+			protected function pasteHandler(event : Event) : void
+			{
+				cell.menu.pasteHandler();
+			}
+			
+			protected function columnResize_mouseMoveHandler(event : MouseEvent) : void
+			{
+				host.setColumnWidthAt(cell.bounds.right, calculateSize(event).x);
+			}
+			
+			protected function rowResize_mouseMoveHandler(event : MouseEvent) : void
+			{
+				host.setRowHeightAt(cell.bounds.bottom, calculateSize(event).y);
+			}
+			
+			protected function edgeResize_mouseMoveHandler(event : MouseEvent) : void
+			{
+				var point : Point = calculateSize(event);
+				
+				host.setColumnWidthAt(cell.bounds.right, point.x);
+				host.setRowHeightAt(cell.bounds.bottom, point.y);
+			}
+			
+			protected function calculateSize(event : MouseEvent) : Point
+			{
+				var point : Point = globalToLocal(new Point(event.stageX, event.stageY));
+				
+				for (var i : int = cell.bounds.x, n : int = cell.bounds.right; i < n; ++i)
+					point.x -= host.getColumnWidthAt(i);
+				
+				for (i = cell.bounds.y, n = cell.bounds.bottom; i < n; ++i)
+					point.y -= host.getRowHeightAt(i);
+				
+				return point;
+			}
+			
+			protected function text_keyDownHandler(event : KeyboardEvent) : void
+			{
+				if (!event.altKey && event.keyCode == Keyboard.ENTER)
+				{
+					event.stopImmediatePropagation();
+					
+					setFocus();
+				}
+			}
+		]]>
+	</fx:Script>
+
+</s:ItemRenderer>
