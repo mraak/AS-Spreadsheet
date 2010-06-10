@@ -45,6 +45,7 @@ public class ControlObject extends EventDispatcher
 	
 	public var ctrlOperands : Array = new Array();
 	
+	[Transient]
 	public var grid : ISpreadsheet;
 	
 	public var collection : *;
