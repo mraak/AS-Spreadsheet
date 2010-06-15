@@ -30,7 +30,14 @@ import flash.events.EventDispatcher;
  */
 public class BorderSide extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
+	 * Constructor.
 	 *
 	 * @param color
 	 * @param alpha
@@ -45,6 +52,27 @@ public class BorderSide extends EventDispatcher
 		this.weight = weight;
 		this.visible = visible;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 */
+	protected var visibleWeight : Number;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Styles
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
 	
 	/**
 	 *
@@ -77,6 +105,10 @@ public class BorderSide extends EventDispatcher
 		dispatchEvent(new Event("colorChanged"));
 	}
 	
+	//----------------------------------
+	//  alpha
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -107,6 +139,10 @@ public class BorderSide extends EventDispatcher
 		
 		dispatchEvent(new Event("alphaChanged"));
 	}
+	
+	//----------------------------------
+	//  weight
+	//----------------------------------
 	
 	/**
 	 *
@@ -147,10 +183,9 @@ public class BorderSide extends EventDispatcher
 			visible = false;
 	}
 	
-	/**
-	 * @private
-	 */
-	protected var visibleWeight : Number;
+	//----------------------------------
+	//  visible
+	//----------------------------------
 	
 	/**
 	 *
@@ -190,6 +225,12 @@ public class BorderSide extends EventDispatcher
 		
 		dispatchEvent(new Event("visibleChanged"));
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *

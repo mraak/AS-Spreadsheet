@@ -10,7 +10,14 @@ import flash.events.EventDispatcher;
  */
 public class Border extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
+	 * Constructor.
 	 *
 	 * @param color
 	 * @param alpha
@@ -41,6 +48,16 @@ public class Border extends EventDispatcher
 		this.right = right;
 		this.bottom = bottom;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Sides
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  left
+	//----------------------------------
 	
 	/**
 	 *
@@ -94,6 +111,10 @@ public class Border extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  top
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -145,6 +166,10 @@ public class Border extends EventDispatcher
 			dispatchEvent(new Event("topChanged"));
 		}
 	}
+	
+	//----------------------------------
+	//  right
+	//----------------------------------
 	
 	/**
 	 *
@@ -198,6 +223,10 @@ public class Border extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  bottom
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -250,6 +279,16 @@ public class Border extends EventDispatcher
 		}
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Write-only properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -260,6 +299,10 @@ public class Border extends EventDispatcher
 	{
 		left.color = top.color = right.color = bottom.color = value;
 	}
+	
+	//----------------------------------
+	//  alpha
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -272,6 +315,10 @@ public class Border extends EventDispatcher
 		left.alpha = top.alpha = right.alpha = bottom.alpha = value;
 	}
 	
+	//----------------------------------
+	//  weight
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -283,6 +330,10 @@ public class Border extends EventDispatcher
 		left.weight = top.weight = right.weight = bottom.weight = value;
 	}
 	
+	//----------------------------------
+	//  visible
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -293,6 +344,12 @@ public class Border extends EventDispatcher
 	{
 		left.visible = top.visible = right.visible = bottom.visible = value;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *

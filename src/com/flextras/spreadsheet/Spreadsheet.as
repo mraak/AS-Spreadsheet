@@ -34,6 +34,10 @@ import spark.components.supportClasses.SkinnableComponent;
 
 use namespace spreadsheet;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.ERROR
  */
@@ -45,7 +49,6 @@ use namespace spreadsheet;
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
 [DefaultProperty("expressions")]
-
 /**
  * The Flextras Spreadsheet component allows you to develop spreadsheet style applications.
  * It supports basic arithmetic and many Excel-style formulas, such as the sum function.
@@ -191,7 +194,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Class properties
+	//  Properties
 	//
 	//--------------------------------------------------------------------------
 	
@@ -813,7 +816,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Class methods
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -1541,7 +1544,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Methods
+	//  Private methods
 	//
 	//--------------------------------------------------------------------------
 	

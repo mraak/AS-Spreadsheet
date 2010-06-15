@@ -325,7 +325,7 @@ public class Menu implements IFlexContextMenu
 		
 		return items && items.length > 0
 			? Vector.<Cell>(items)
-			: new Vector.<Cell>(cell);
+			: new <Cell>[cell];
 	}
 }
 }

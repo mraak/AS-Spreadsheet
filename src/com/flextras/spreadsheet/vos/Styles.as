@@ -6,6 +6,10 @@ import flash.events.EventDispatcher;
 import flashx.textLayout.formats.TextAlign;
 import flashx.textLayout.formats.VerticalAlign;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
 /**
  *
  */
@@ -62,7 +66,14 @@ import flashx.textLayout.formats.VerticalAlign;
  */
 public class Styles extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
+	 * Constructor.
 	 *
 	 * @param color
 	 * @param alpha
@@ -99,6 +110,16 @@ public class Styles extends EventDispatcher
 		this.size = size;
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -129,6 +150,10 @@ public class Styles extends EventDispatcher
 		
 		dispatchEvent(new Event("colorChanged"));
 	}
+	
+	//----------------------------------
+	//  alpha
+	//----------------------------------
 	
 	/**
 	 *
@@ -161,6 +186,10 @@ public class Styles extends EventDispatcher
 		dispatchEvent(new Event("alphaChanged"));
 	}
 	
+	//----------------------------------
+	//  backgroundColor
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -191,6 +220,10 @@ public class Styles extends EventDispatcher
 		
 		dispatchEvent(new Event("backgroundColorChanged"));
 	}
+	
+	//----------------------------------
+	//  backgroundAlpha
+	//----------------------------------
 	
 	/**
 	 *
@@ -223,6 +256,10 @@ public class Styles extends EventDispatcher
 		dispatchEvent(new Event("backgroundAlphaChanged"));
 	}
 	
+	//----------------------------------
+	//  bold
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -253,6 +290,10 @@ public class Styles extends EventDispatcher
 		
 		dispatchEvent(new Event("boldChanged"));
 	}
+	
+	//----------------------------------
+	//  italic
+	//----------------------------------
 	
 	/**
 	 *
@@ -285,6 +326,10 @@ public class Styles extends EventDispatcher
 		dispatchEvent(new Event("italicChanged"));
 	}
 	
+	//----------------------------------
+	//  underline
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -315,6 +360,10 @@ public class Styles extends EventDispatcher
 		
 		dispatchEvent(new Event("underlineChanged"));
 	}
+	
+	//----------------------------------
+	//  horizontalAlign
+	//----------------------------------
 	
 	/**
 	 *
@@ -347,6 +396,10 @@ public class Styles extends EventDispatcher
 		dispatchEvent(new Event("horizontalAlignChanged"));
 	}
 	
+	//----------------------------------
+	//  verticalAlign
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -378,6 +431,10 @@ public class Styles extends EventDispatcher
 		dispatchEvent(new Event("verticalAlignChanged"));
 	}
 	
+	//----------------------------------
+	//  size
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -408,6 +465,12 @@ public class Styles extends EventDispatcher
 		
 		dispatchEvent(new Event("sizeChanged"));
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *

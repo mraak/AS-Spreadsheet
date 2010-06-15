@@ -13,7 +13,14 @@ import flashx.textLayout.formats.VerticalAlign;
  */
 public class CellStyles extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
+	 * Constructor.
 	 *
 	 * @param color
 	 * @param alpha
@@ -67,6 +74,16 @@ public class CellStyles extends EventDispatcher
 		this.disabled = disabled;
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: States
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  normal
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -118,6 +135,10 @@ public class CellStyles extends EventDispatcher
 			dispatchEvent(new Event("normalChanged"));
 		}
 	}
+	
+	//----------------------------------
+	//  hovered
+	//----------------------------------
 	
 	/**
 	 *
@@ -171,6 +192,10 @@ public class CellStyles extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  selected
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -222,6 +247,10 @@ public class CellStyles extends EventDispatcher
 			dispatchEvent(new Event("selectedChanged"));
 		}
 	}
+	
+	//----------------------------------
+	//  disabled
+	//----------------------------------
 	
 	/**
 	 *
@@ -275,6 +304,16 @@ public class CellStyles extends EventDispatcher
 		}
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Write-only properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -285,6 +324,10 @@ public class CellStyles extends EventDispatcher
 	{
 		normal.color = hovered.color = selected.color = disabled.color = value;
 	}
+	
+	//----------------------------------
+	//  alpha
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -297,6 +340,10 @@ public class CellStyles extends EventDispatcher
 		normal.alpha = hovered.alpha = selected.alpha = disabled.alpha = value;
 	}
 	
+	//----------------------------------
+	//  backgroundColor
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -307,6 +354,10 @@ public class CellStyles extends EventDispatcher
 	{
 		normal.backgroundColor = hovered.backgroundColor = selected.backgroundColor = disabled.backgroundColor = value;
 	}
+	
+	//----------------------------------
+	//  backgroundAlpha
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -319,6 +370,10 @@ public class CellStyles extends EventDispatcher
 		normal.backgroundAlpha = hovered.backgroundAlpha = selected.backgroundAlpha = disabled.backgroundAlpha = value;
 	}
 	
+	//----------------------------------
+	//  bold
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -329,6 +384,10 @@ public class CellStyles extends EventDispatcher
 	{
 		normal.bold = hovered.bold = selected.bold = disabled.bold = value;
 	}
+	
+	//----------------------------------
+	//  italic
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -341,6 +400,10 @@ public class CellStyles extends EventDispatcher
 		normal.italic = hovered.italic = selected.italic = disabled.italic = value;
 	}
 	
+	//----------------------------------
+	//  underline
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -351,6 +414,10 @@ public class CellStyles extends EventDispatcher
 	{
 		normal.underline = hovered.underline = selected.underline = disabled.underline = value;
 	}
+	
+	//----------------------------------
+	//  horizontalAlign
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -363,6 +430,10 @@ public class CellStyles extends EventDispatcher
 		normal.horizontalAlign = hovered.horizontalAlign = selected.horizontalAlign = disabled.horizontalAlign = value;
 	}
 	
+	//----------------------------------
+	//  verticalAlign
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -374,6 +445,10 @@ public class CellStyles extends EventDispatcher
 		normal.verticalAlign = hovered.verticalAlign = selected.verticalAlign = disabled.verticalAlign = value;
 	}
 	
+	//----------------------------------
+	//  size
+	//----------------------------------
+	
 	[Transient]
 	/**
 	 *
@@ -384,6 +459,10 @@ public class CellStyles extends EventDispatcher
 	{
 		normal.size = hovered.size = selected.size = disabled.size = value;
 	}
+	
+	//----------------------------------
+	//  border
+	//----------------------------------
 	
 	[Transient]
 	/**
@@ -418,6 +497,12 @@ public class CellStyles extends EventDispatcher
 		_selected.borderObject = value;
 		_disabled.borderObject = value;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *

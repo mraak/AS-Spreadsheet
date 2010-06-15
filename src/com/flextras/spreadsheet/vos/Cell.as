@@ -31,24 +31,17 @@ use namespace spreadsheet;
  */
 public class Cell extends EventDispatcher implements IExternalizable
 {
-	/**
-	 *
-	 */
-	spreadsheet var owner : IEventDispatcher;
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 */
-	spreadsheet var width : Number, height : Number;
-	
-	public const menu : Menu = new Menu(Cell(this));
-	
-	spreadsheet const controlObject : ControlObject = new ControlObject(Cell(this));
-	
-	/**
+	 * Constructor.
 	 *
 	 * @param owner
-	 * @param rectangle
+	 * @param bounds
 	 *
 	 */
 	public function Cell(owner : IEventDispatcher = null, bounds : Rectangle = null)
@@ -84,29 +77,41 @@ public class Cell extends EventDispatcher implements IExternalizable
 		_condition.addEventListener("rightChanged", conditionChanged);
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
 	 *
+	 */
+	spreadsheet var owner : IEventDispatcher;
+	
+	/**
 	 *
 	 */
-	spreadsheet function release() : void
-	{
-		if (!owner)
-			return;
-		
-		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
-		
-		owner.removeEventListener(ColumnEvent.INSERTED, columnInserted);
-		owner.removeEventListener(ColumnEvent.REMOVED, columnRemoved);
-		owner.removeEventListener(ColumnEvent.RESIZED, columnResized);
-		
-		owner.removeEventListener(RowEvent.INSERTED, rowInserted);
-		owner.removeEventListener(RowEvent.REMOVED, rowRemoved);
-		owner.removeEventListener(RowEvent.RESIZED, rowResized);
-		
-		//_condition.removeEventListener("leftChanged", conditionChanged);
-		_condition.removeEventListener("operatorChanged", conditionChanged);
-		_condition.removeEventListener("rightChanged", conditionChanged);
-	}
+	spreadsheet var width : Number, height : Number;
+	
+	/**
+	 *
+	 */
+	public const menu : Menu = new Menu(Cell(this));
+	
+	/**
+	 *
+	 */
+	spreadsheet const controlObject : ControlObject = new ControlObject(Cell(this));
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  styles
+	//----------------------------------
 	
 	/**
 	 *
@@ -160,6 +165,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		}
 	}
 	
+	//----------------------------------
+	//  condition
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -211,6 +220,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		}
 	}
 	
+	//----------------------------------
+	//  contextMenuEnabled
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -241,6 +254,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		dispatchEvent(new Event("contextMenuEnabledChanged"));
 	}
+	
+	//----------------------------------
+	//  enabled
+	//----------------------------------
 	
 	/**
 	 *
@@ -275,6 +292,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent(new Event("enabledChanged"));
 	}
 	
+	//----------------------------------
+	//  value
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -307,6 +328,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		dispatchEvent(new Event("valueChanged"));
 	}
+	
+	//----------------------------------
+	//  expression
+	//----------------------------------
 	
 	/**
 	 *
@@ -344,6 +369,97 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent(new Event("expressionChanged"));
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Read-only properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  id
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get id() : String
+	{
+		return controlObject.id;
+	}
+	
+	//----------------------------------
+	//  columnIndex
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get columnIndex() : uint
+	{
+		return _bounds.x;
+	}
+	
+	//----------------------------------
+	//  rowIndex
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get rowIndex() : uint
+	{
+		return _bounds.y;
+	}
+	
+	//----------------------------------
+	//  columnSpan
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get columnSpan() : uint
+	{
+		return _bounds.width;
+	}
+	
+	//----------------------------------
+	//  rowSpan
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get rowSpan() : uint
+	{
+		return _bounds.height;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Private properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  bounds
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -358,6 +474,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		return _bounds;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Private methods
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *
@@ -395,60 +517,245 @@ public class Cell extends EventDispatcher implements IExternalizable
 		setBounds(new Rectangle(value.x, value.y, value.width, value.height));
 	}
 	
-	[Transient]
 	/**
 	 *
-	 * @return
+	 * @param amount
 	 *
 	 */
-	public function get id() : String
+	protected function moveHorizontally(amount : uint) : void
 	{
-		return controlObject.id;
+		_bounds.x = amount; //.offset(amount, 0);
+		
+		controlObject.colIndex = amount;
+		controlObject.col = String(Utils.alphabet[amount]).toLowerCase();
+		
+		controlObject.id = controlObject.col + controlObject.row;
 	}
 	
-	[Transient]
 	/**
 	 *
-	 * @return
+	 * @param amount
 	 *
 	 */
-	public function get columnIndex() : uint
+	protected function moveVertically(amount : uint) : void
 	{
-		return _bounds.x;
+		_bounds.y = amount; //.offset(0, amount);
+		
+		controlObject.rowIndex = amount;
+		controlObject.row = String(amount);
+		
+		controlObject.id = controlObject.col + controlObject.row;
 	}
 	
-	[Transient]
 	/**
 	 *
-	 * @return
+	 * @param amount
 	 *
 	 */
-	public function get rowIndex() : uint
+	protected function resizeHorizontally(amount : uint) : void
 	{
-		return _bounds.y;
+		if (amount < 0)
+			return;
+		
+		_bounds.width = amount; //+=
 	}
 	
-	[Transient]
 	/**
 	 *
-	 * @return
+	 * @param amount
 	 *
 	 */
-	public function get columnSpan() : uint
+	protected function resizeVertically(amount : uint) : void
 	{
-		return _bounds.width;
+		if (amount < 0)
+			return;
+		
+		_bounds.height = amount; //+=
 	}
 	
-	[Transient]
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
 	 *
-	 * @return
+	 * @param value
 	 *
 	 */
-	public function get rowSpan() : uint
+	public function assign(value : Cell) : void
 	{
-		return _bounds.height;
+		if (!value)
+			return;
+		
+		styles = value.styles;
+		condition = value.condition;
+		
+		contextMenuEnabled = value.contextMenuEnabled;
+		enabled = value.enabled;
+		this.value = value.value;
+		expression = value.expression;
+		bounds.width = value.bounds.width;
+		bounds.height = value.bounds.height;
 	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function assignObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		if (value is Cell)
+		{
+			assign(Cell(value));
+			
+			return;
+		}
+		
+		if (value.hasOwnProperty("styles"))
+			stylesObject = value.styles;
+		
+		if (value.hasOwnProperty("condition"))
+			conditionObject = value.condition;
+		
+		if (value.hasOwnProperty("contextMenuEnabled"))
+			contextMenuEnabled = Boolean(value.contextMenuEnabled);
+		
+		if (value.hasOwnProperty("enabled"))
+			enabled = Boolean(value.enabled);
+		
+		if (value.hasOwnProperty("value"))
+			this.value = String(value.value);
+		
+		if (value.hasOwnProperty("expression"))
+			expression = String(value.expression);
+		
+		if (value.hasOwnProperty("bounds"))
+		{
+			if (value.hasOwnProperty("width"))
+				bounds.width = uint(value.bounds.width);
+			
+			if (value.hasOwnProperty("height"))
+				bounds.height = uint(value.bounds.height);
+		}
+		else
+		{
+			if (value.hasOwnProperty("columnSpan"))
+				bounds.width = uint(value.columnSpan);
+			
+			if (value.hasOwnProperty("rowSpan"))
+				bounds.width = uint(value.rowSpan);
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Reset
+	//
+	//--------------------------------------------------------------------------
+	
+	public function clear() : void
+	{
+		expression = "";
+		value = null;
+		enabled = true;
+		
+		styles = new CellStyles;
+		condition = new Condition;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		if (!owner)
+			return;
+		
+		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
+		
+		owner.removeEventListener(ColumnEvent.INSERTED, columnInserted);
+		owner.removeEventListener(ColumnEvent.REMOVED, columnRemoved);
+		owner.removeEventListener(ColumnEvent.RESIZED, columnResized);
+		
+		owner.removeEventListener(RowEvent.INSERTED, rowInserted);
+		owner.removeEventListener(RowEvent.REMOVED, rowRemoved);
+		owner.removeEventListener(RowEvent.RESIZED, rowResized);
+		
+		//_condition.removeEventListener("leftChanged", conditionChanged);
+		_condition.removeEventListener("operatorChanged", conditionChanged);
+		_condition.removeEventListener("rightChanged", conditionChanged);
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Serialization
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param input
+	 *
+	 */
+	public function readExternal(input : IDataInput) : void
+	{
+		styles = input.readObject();
+		condition = input.readObject();
+		var co : ControlObject = input.readObject();
+		controlObject.children = co.children;
+		controlObject.collection = co.collection;
+		controlObject.ctrlOperands = co.ctrlOperands;
+		controlObject.dependants = co.dependants;
+		contextMenuEnabled = input.readBoolean();
+		enabled = input.readBoolean();
+		setBoundsObject(input.readObject());
+		
+		var length : uint = input.readUnsignedInt();
+		
+		expression = length > 0 ? input.readUTFBytes(length) : "";
+	}
+	
+	/**
+	 *
+	 * @param output
+	 *
+	 */
+	public function writeExternal(output : IDataOutput) : void
+	{
+		output.writeObject(styles);
+		output.writeObject(condition);
+		output.writeObject(controlObject);
+		output.writeBoolean(contextMenuEnabled);
+		output.writeBoolean(enabled);
+		output.writeObject(bounds);
+		
+		if (expression && expression.length > 0)
+		{
+			output.writeUnsignedInt(expression.length);
+			output.writeUTFBytes(expression);
+		}
+		else
+			output.writeUnsignedInt(0);
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Event handlers
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *
@@ -561,182 +868,6 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		if (condition.operatorValid && condition.rightValid)
 			condition.active = FormulaLogic.compare(left, condition.operator, condition.right);
-	}
-	
-	/**
-	 *
-	 * @param amount
-	 *
-	 */
-	protected function moveHorizontally(amount : uint) : void
-	{
-		_bounds.x = amount; //.offset(amount, 0);
-		
-		controlObject.colIndex = amount;
-		controlObject.col = String(Utils.alphabet[amount]).toLowerCase();
-		
-		controlObject.id = controlObject.col + controlObject.row;
-	}
-	
-	/**
-	 *
-	 * @param amount
-	 *
-	 */
-	protected function moveVertically(amount : uint) : void
-	{
-		_bounds.y = amount; //.offset(0, amount);
-		
-		controlObject.rowIndex = amount;
-		controlObject.row = String(amount);
-		
-		controlObject.id = controlObject.col + controlObject.row;
-	}
-	
-	/**
-	 *
-	 * @param amount
-	 *
-	 */
-	protected function resizeHorizontally(amount : uint) : void
-	{
-		if (amount < 0)
-			return;
-		
-		_bounds.width = amount; //+=
-	}
-	
-	/**
-	 *
-	 * @param amount
-	 *
-	 */
-	protected function resizeVertically(amount : uint) : void
-	{
-		if (amount < 0)
-			return;
-		
-		_bounds.height = amount; //+=
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function assign(value : Cell) : void
-	{
-		if (!value)
-			return;
-		
-		styles = value.styles;
-		condition = value.condition;
-		
-		contextMenuEnabled = value.contextMenuEnabled;
-		enabled = value.enabled;
-		this.value = value.value;
-		expression = value.expression;
-		bounds.width = value.bounds.width;
-		bounds.height = value.bounds.height;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function assignObject(value : Object) : void
-	{
-		if (!value)
-			return;
-		
-		if (value is Cell)
-		{
-			assign(Cell(value));
-			
-			return;
-		}
-		
-		if (value.hasOwnProperty("styles"))
-			stylesObject = value.styles;
-		
-		if (value.hasOwnProperty("condition"))
-			conditionObject = value.condition;
-		
-		if (value.hasOwnProperty("contextMenuEnabled"))
-			contextMenuEnabled = Boolean(value.contextMenuEnabled);
-		
-		if (value.hasOwnProperty("enabled"))
-			enabled = Boolean(value.enabled);
-		
-		if (value.hasOwnProperty("value"))
-			this.value = String(value.value);
-		
-		if (value.hasOwnProperty("expression"))
-			expression = String(value.expression);
-		
-		if (value.hasOwnProperty("bounds"))
-		{
-			if (value.hasOwnProperty("width"))
-				bounds.width = uint(value.bounds.width);
-			
-			if (value.hasOwnProperty("height"))
-				bounds.height = uint(value.bounds.height);
-		}
-		else
-		{
-			if (value.hasOwnProperty("columnSpan"))
-				bounds.width = uint(value.columnSpan);
-			
-			if (value.hasOwnProperty("rowSpan"))
-				bounds.width = uint(value.rowSpan);
-		}
-	}
-	
-	public function clear() : void
-	{
-		expression = "";
-		value = null;
-		enabled = true;
-		
-		styles = new CellStyles;
-		condition = new Condition;
-	}
-	
-	public function readExternal(input : IDataInput) : void
-	{
-		styles = input.readObject();
-		condition = input.readObject();
-		var co : ControlObject = input.readObject();
-		controlObject.children = co.children;
-		controlObject.collection = co.collection;
-		controlObject.ctrlOperands = co.ctrlOperands;
-		controlObject.dependants = co.dependants;
-		contextMenuEnabled = input.readBoolean();
-		enabled = input.readBoolean();
-		setBoundsObject(input.readObject());
-		
-		var length : uint = input.readUnsignedInt();
-		
-		expression = length > 0 ? input.readUTFBytes(length) : "";
-	}
-	
-	public function writeExternal(output : IDataOutput) : void
-	{
-		output.writeObject(styles);
-		output.writeObject(condition);
-		output.writeObject(controlObject);
-		output.writeBoolean(contextMenuEnabled);
-		output.writeBoolean(enabled);
-		output.writeObject(bounds);
-		
-		if (expression && expression.length > 0)
-		{
-			output.writeUnsignedInt(expression.length);
-			output.writeUTFBytes(expression);
-		}
-		else
-			output.writeUnsignedInt(0);
 	}
 }
 }

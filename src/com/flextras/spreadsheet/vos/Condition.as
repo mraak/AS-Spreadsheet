@@ -25,7 +25,14 @@ import flash.events.EventDispatcher;
  */
 public class Condition extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
+	 * Constructor.
 	 *
 	 * @param left
 	 * @param operator
@@ -42,6 +49,16 @@ public class Condition extends EventDispatcher
 		this.styles = styles;
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  active
+	//----------------------------------
+	
 	[Bindable]
 	/**
 	 *
@@ -49,6 +66,10 @@ public class Condition extends EventDispatcher
 	 *
 	 */
 	public var active : Boolean;
+	
+	//----------------------------------
+	//  styles
+	//----------------------------------
 	
 	/**
 	 *
@@ -102,6 +123,10 @@ public class Condition extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  left
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -132,6 +157,10 @@ public class Condition extends EventDispatcher
 		
 		dispatchEvent(new Event("leftChanged"));
 	}
+	
+	//----------------------------------
+	//  operator
+	//----------------------------------
 	
 	/**
 	 *
@@ -164,6 +193,10 @@ public class Condition extends EventDispatcher
 		dispatchEvent(new Event("operatorChanged"));
 	}
 	
+	//----------------------------------
+	//  right
+	//----------------------------------
+	
 	/**
 	 *
 	 */
@@ -195,6 +228,16 @@ public class Condition extends EventDispatcher
 		dispatchEvent(new Event("rightChanged"));
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Read-only properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  leftValid
+	//----------------------------------
+	
 	[Transient]
 	[Bindable(event="leftChanged")]
 	/**
@@ -206,6 +249,10 @@ public class Condition extends EventDispatcher
 	{
 		return !isNaN(_left);
 	}
+	
+	//----------------------------------
+	//  operatorValid
+	//----------------------------------
 	
 	[Transient]
 	[Bindable(event="operatorChanged")]
@@ -219,6 +266,10 @@ public class Condition extends EventDispatcher
 		return _operator && _operator.length > 0;
 	}
 	
+	//----------------------------------
+	//  rightValid
+	//----------------------------------
+	
 	[Transient]
 	[Bindable(event="rightChanged")]
 	/**
@@ -230,6 +281,10 @@ public class Condition extends EventDispatcher
 	{
 		return !isNaN(_right);
 	}
+	
+	//----------------------------------
+	//  Valid
+	//----------------------------------
 	
 	[Transient]
 	[Bindable(event="leftChanged")]
@@ -244,6 +299,12 @@ public class Condition extends EventDispatcher
 	{
 		return leftValid && operatorValid && rightValid;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Assignment
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *
