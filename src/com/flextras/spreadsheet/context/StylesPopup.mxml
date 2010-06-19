@@ -3,7 +3,6 @@
 				   xmlns:s = "library://ns.adobe.com/flex/spark"
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
 				   xmlns:context = "com.flextras.spreadsheet.context.*"
-				   title = "Set cell styles"
 				   paddingLeft = "10"
 				   paddingTop = "10"
 				   paddingRight = "10"

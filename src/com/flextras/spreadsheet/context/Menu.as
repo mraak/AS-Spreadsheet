@@ -23,25 +23,26 @@ public class Menu implements IFlexContextMenu
 	public const cut : ContextMenuItem = new ContextMenuItem("Cut ");
 	public const copy : ContextMenuItem = new ContextMenuItem("Copy ");
 	public const paste : ContextMenuItem = new ContextMenuItem("Paste ");
-	public const pasteSpecial : ContextMenuItem = new ContextMenuItem("Paste Special");
+	public const pasteSpecial : ContextMenuItem = new ContextMenuItem("Paste special");
 	
 	public const disable : ContextMenuItem = new ContextMenuItem("Disable Cell");
 	
 	public const setCellStyles : ContextMenuItem = new ContextMenuItem("Formatting", true);
-	
 	public const setConditionalStyles : ContextMenuItem = new ContextMenuItem("Conditional Formatting");
 	
-	public const setSize : ContextMenuItem = new ContextMenuItem("Set Size", true);
+	public const setGlobalStyles : ContextMenuItem = new ContextMenuItem("Global formatting", true);
 	
-	public const addRow : ContextMenuItem = new ContextMenuItem("Insert Row", true);
-	public const removeRow : ContextMenuItem = new ContextMenuItem("Remove Row");
-	public const clearRow : ContextMenuItem = new ContextMenuItem("Clear Row");
+	public const setSize : ContextMenuItem = new ContextMenuItem("Set size", true);
 	
-	public const addColumn : ContextMenuItem = new ContextMenuItem("Insert Column", true);
-	public const removeColumn : ContextMenuItem = new ContextMenuItem("Remove Column");
-	public const clearColumn : ContextMenuItem = new ContextMenuItem("Clear Column");
+	public const addRow : ContextMenuItem = new ContextMenuItem("Insert row", true);
+	public const removeRow : ContextMenuItem = new ContextMenuItem("Remove row");
+	public const clearRow : ContextMenuItem = new ContextMenuItem("Clear row");
 	
-	public const clearCell : ContextMenuItem = new ContextMenuItem("Clear Cell", true);
+	public const addColumn : ContextMenuItem = new ContextMenuItem("Insert column", true);
+	public const removeColumn : ContextMenuItem = new ContextMenuItem("Remove column");
+	public const clearColumn : ContextMenuItem = new ContextMenuItem("Clear column");
+	
+	public const clearCell : ContextMenuItem = new ContextMenuItem("Clear cell", true);
 	
 	protected var menu : ContextMenu;
 	
@@ -102,10 +103,11 @@ public class Menu implements IFlexContextMenu
 		disable.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
 		setConditionalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
+		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		setSize.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
 		
 		menu.customItems = [cut, copy, paste, pasteSpecial,
-							clearCell, disable, setCellStyles, setConditionalStyles, setSize,
+							clearCell, disable, setCellStyles, setConditionalStyles, setGlobalStyles, setSize,
 							addRow, removeRow, clearRow, addColumn, removeColumn, clearColumn];
 	}
 	
@@ -127,6 +129,7 @@ public class Menu implements IFlexContextMenu
 		disable.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
 		setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
 		setConditionalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
+		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
 		setSize.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
 		
 		menu.customItems = null;
@@ -241,11 +244,16 @@ public class Menu implements IFlexContextMenu
 			return;
 		
 		var cells : Vector.<Cell> = clipboard.range;
+		
+		if(!cells)
+			return;
+		
 		var o : Object;
 		
-		var i : int = 1, n : int = cells.length;
+		var i : uint = 1, n : uint = cells.length;
 		var target : Cell = cells[0];
-		var startColumn : int = target.columnIndex, startRow : int = target.rowIndex;
+		var startColumn : uint = target.columnIndex, startRow : uint = target.rowIndex;
+		var endColumn : uint, endRow : uint;
 		
 		for (; i < n; ++i)
 		{
@@ -253,15 +261,30 @@ public class Menu implements IFlexContextMenu
 			
 			startColumn = Math.min(startColumn, target.columnIndex);
 			startRow = Math.min(startRow, target.rowIndex);
+			
+			endColumn = Math.max(endColumn, target.bounds.right);
+			endRow = Math.max(endRow, target.bounds.bottom);
 		}
 		
 		var offset : Point = new Point(cell.bounds.x - startColumn, cell.bounds.y - startRow);
+		
+		endColumn += startColumn + offset.x + 1;
+		endRow += startRow + offset.y;
+		
+		if(endColumn > host.columnCount)
+			host.columnCount = endColumn;
+		
+		if(endRow > host.rowCount)
+			host.rowCount = endRow;
+		
+		host.validateProperties();
 		
 		for (i = 0; i < n; ++i)
 		{
 			target = host.getCellAt(cells[i].bounds.x + offset.x, cells[i].bounds.y + offset.y);
 			
 			if (target)
+			{
 				if (!method)
 					target.assign(cells[i]);
 				else
@@ -272,9 +295,10 @@ public class Menu implements IFlexContextMenu
 					
 					target.assignObject(o);
 				}
-			
-			if (!method || method == "expression")
-				target.expression = Utils.moveExpression(cells[i].controlObject, offset.x, offset.y);
+				
+				if (!method || method == "expression")
+					target.expression = Utils.moveExpression(cells[i].controlObject, offset.x, offset.y);
+			}
 		}
 	}
 	
@@ -285,12 +309,20 @@ public class Menu implements IFlexContextMenu
 	
 	protected function setCellStylesHandler(e : ContextMenuEvent) : void
 	{
-		createPopup(StylesPopup);
+		var popup:StylesPopup = StylesPopup(createPopup(StylesPopup));
+		popup.title = "Set cell styles";
 	}
 	
 	protected function setConditionalStylesHandler(e : ContextMenuEvent) : void
 	{
 		createPopup(ConditionalStylesPopup);
+	}
+	
+	protected function setGlobalStylesHandler(e : ContextMenuEvent) : void
+	{
+		var popup:StylesPopup = StylesPopup(createPopup(StylesPopup, false));
+		popup.cell = host.globalCell;
+		popup.title = "Set global styles";
 	}
 	
 	protected function setSizeHandler(e : ContextMenuEvent) : void
@@ -303,15 +335,19 @@ public class Menu implements IFlexContextMenu
 		paste.enabled = pasteSpecial.enabled = clipboard.allowPaste;
 	}
 	
-	protected function createPopup(type : Class) : BasePopup
+	protected function createPopup(type : Class, populate:Boolean = true) : BasePopup
 	{
 		if (popup)
 			PopUpManager.removePopUp(popup);
 		
 		popup = new type();
 		popup.grid = host;
+		
+		if(populate)
+		{
 		popup.cells = cells;
 		popup.cell = cell || cells[0];
+		}
 		
 		PopUpManager.addPopUp(popup, popup.grid);
 		PopUpManager.centerPopUp(popup);

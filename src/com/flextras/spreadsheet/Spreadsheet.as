@@ -127,6 +127,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		instance = this;
 		
 		expressions = new ArrayCollection;
+		
+		globalCell.styles.normal.backgroundColor = 0xF6F6F6;
+		globalCell.styles.hovered.backgroundColor = 0xCCCCCC;
+		globalCell.styles.selected.backgroundColor = 0xCCFF33;
+		globalCell.styles.disabled.backgroundColor = 0xFF3333;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -812,6 +817,58 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		dispatchEvent(new Event("rowCountChanged"));
 		
 		invalidateProperties();
+	}
+	
+	//----------------------------------
+	//  globalStyles
+	//----------------------------------
+	
+	public const globalCell : Cell = new Cell;
+	
+	[Bindable(event="globalStylesChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get globalStyles() : CellStyles
+	{
+		return globalCell.styles;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set globalStyles(value : CellStyles) : void
+	{
+		if (!value)
+			return;
+		
+		globalCell.styles.assign(value);
+		
+		dispatchEvent(new Event("globalStylesChanged"));
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set globalStylesObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		if (value is CellStyles)
+			globalStyles = CellStyles(value);
+		else
+		{
+			globalCell.styles.assignObject(value);
+			
+			dispatchEvent(new Event("globalStylesChanged"));
+		}
 	}
 	
 	//--------------------------------------------------------------------------
@@ -1582,7 +1639,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function addCell(columnIndex : uint, rowIndex : uint) : void
 	{
-		_cells.addItem(new Cell(this, new Rectangle(columnIndex, rowIndex)));
+		var cell : Cell = new Cell(this, new Rectangle(columnIndex, rowIndex));
+		cell.globalStyles = globalCell.styles;
+		
+		_cells.addItem(cell);
 	}
 	
 	//----------------------------------

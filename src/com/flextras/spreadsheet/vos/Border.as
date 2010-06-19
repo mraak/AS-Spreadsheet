@@ -1,7 +1,35 @@
 package com.flextras.spreadsheet.vos
 {
+import com.flextras.spreadsheet.core.spreadsheet;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
+
+use namespace spreadsheet;
+
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ *
+ */
+[Event(name="leftChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="topChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="rightChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="bottomChanged", type="flash.events.Event")]
 
 [RemoteClass]
 /**
@@ -281,7 +309,7 @@ public class Border extends EventDispatcher
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Write-only properties
+	//  Write-only properties: Styles
 	//
 	//--------------------------------------------------------------------------
 	
@@ -343,6 +371,50 @@ public class Border extends EventDispatcher
 	public function set visible(value : Boolean) : void
 	{
 		left.visible = top.visible = right.visible = bottom.visible = value;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Global styles
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : Border) : void
+	{
+		if (value)
+		{
+			_left.global = value._left;
+			_top.global = value._top;
+			_right.global = value._right;
+			_bottom.global = value._bottom;
+		}
+		else
+		{
+			_left.global = null;
+			_top.global = null;
+			_right.global = null;
+			_bottom.global = null;
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 	
 	//--------------------------------------------------------------------------

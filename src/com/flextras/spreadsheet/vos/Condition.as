@@ -1,7 +1,11 @@
 package com.flextras.spreadsheet.vos
 {
+import com.flextras.spreadsheet.core.spreadsheet;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
+
+use namespace spreadsheet;
 
 /**
  *
@@ -298,6 +302,40 @@ public class Condition extends EventDispatcher
 	public function get valid() : Boolean
 	{
 		return leftValid && operatorValid && rightValid;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Global styles
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : Condition) : void
+	{
+		if (value)
+			_styles.global = value._styles;
+		else
+			_styles.global = null;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 	
 	//--------------------------------------------------------------------------

@@ -21,6 +21,40 @@ import flash.utils.IExternalizable;
 
 use namespace spreadsheet;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ *
+ */
+[Event(name="stylesChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="conditionChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="contextMenuEnabledChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="enabledChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="valueChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="expressionChanged", type="flash.events.Event")]
+
 [RemoteClass]
 /**
  * Whenever you want to apply some cell specific properties this is the right place to do it.
@@ -53,11 +87,6 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.valueProp = "value";
 		
 		setBounds(bounds);
-		
-		styles.normal.backgroundColor = 0xF6F6F6;
-		styles.hovered.backgroundColor = 0xCCCCCC;
-		styles.selected.backgroundColor = 0xCCFF33;
-		styles.disabled.backgroundColor = 0xFF3333;
 		
 		if (!owner)
 			return;
@@ -575,6 +604,81 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	//--------------------------------------------------------------------------
 	//
+	//  Properties: Global styles
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set globalStyles(value : CellStyles) : void
+	{
+		_styles.global = value;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set globalCondition(value : Condition) : void
+	{
+		_condition.global = value;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Reset
+	//
+	//--------------------------------------------------------------------------
+	
+	public function clear() : void
+	{
+		expression = "";
+		value = null;
+		enabled = true;
+		
+		styles = new CellStyles;
+		condition = new Condition;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		if (!owner)
+			return;
+		
+		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
+		
+		owner.removeEventListener(ColumnEvent.INSERTED, columnInserted);
+		owner.removeEventListener(ColumnEvent.REMOVED, columnRemoved);
+		owner.removeEventListener(ColumnEvent.RESIZED, columnResized);
+		
+		owner.removeEventListener(RowEvent.INSERTED, rowInserted);
+		owner.removeEventListener(RowEvent.REMOVED, rowRemoved);
+		owner.removeEventListener(RowEvent.RESIZED, rowResized);
+		
+		//_condition.removeEventListener("leftChanged", conditionChanged);
+		_condition.removeEventListener("operatorChanged", conditionChanged);
+		_condition.removeEventListener("rightChanged", conditionChanged);
+		
+		globalStyles = null;
+		globalCondition = null;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
 	//  Methods: Assignment
 	//
 	//--------------------------------------------------------------------------
@@ -651,52 +755,6 @@ public class Cell extends EventDispatcher implements IExternalizable
 			if (value.hasOwnProperty("rowSpan"))
 				bounds.width = uint(value.rowSpan);
 		}
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Reset
-	//
-	//--------------------------------------------------------------------------
-	
-	public function clear() : void
-	{
-		expression = "";
-		value = null;
-		enabled = true;
-		
-		styles = new CellStyles;
-		condition = new Condition;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	spreadsheet function release() : void
-	{
-		if (!owner)
-			return;
-		
-		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
-		
-		owner.removeEventListener(ColumnEvent.INSERTED, columnInserted);
-		owner.removeEventListener(ColumnEvent.REMOVED, columnRemoved);
-		owner.removeEventListener(ColumnEvent.RESIZED, columnResized);
-		
-		owner.removeEventListener(RowEvent.INSERTED, rowInserted);
-		owner.removeEventListener(RowEvent.REMOVED, rowRemoved);
-		owner.removeEventListener(RowEvent.RESIZED, rowResized);
-		
-		//_condition.removeEventListener("leftChanged", conditionChanged);
-		_condition.removeEventListener("operatorChanged", conditionChanged);
-		_condition.removeEventListener("rightChanged", conditionChanged);
 	}
 	
 	//--------------------------------------------------------------------------

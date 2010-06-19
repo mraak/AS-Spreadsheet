@@ -1,9 +1,22 @@
 package com.flextras.spreadsheet.vos
 {
+import com.flextras.spreadsheet.core.spreadsheet;
+
 import flash.events.Event;
 
 import flashx.textLayout.formats.TextAlign;
 import flashx.textLayout.formats.VerticalAlign;
+
+use namespace spreadsheet;
+
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ *
+ */
+[Event(name="borderChanged", type="flash.events.Event")]
 
 [RemoteClass]
 /**
@@ -110,6 +123,47 @@ public class StylesState extends Styles
 			
 			dispatchEvent(new Event("borderChanged"));
 		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Global styles
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	override spreadsheet function set global(value : Styles) : void
+	{
+		super.global = value;
+		
+		if (value)
+		{
+			if (value is StylesState)
+				_border.global = StylesState(value)._border;
+		}
+		else
+			_border.global = null;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	override spreadsheet function release() : void
+	{
+		super.release();
+		
+		global = null;
 	}
 	
 	//--------------------------------------------------------------------------

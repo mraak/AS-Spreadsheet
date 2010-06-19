@@ -1,10 +1,38 @@
 package com.flextras.spreadsheet.vos
 {
+import com.flextras.spreadsheet.core.spreadsheet;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
 import flashx.textLayout.formats.TextAlign;
 import flashx.textLayout.formats.VerticalAlign;
+
+use namespace spreadsheet;
+
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ *
+ */
+[Event(name="normalChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="hoveredChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="selectedChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="disabledChanged", type="flash.events.Event")]
 
 [RemoteClass]
 /**
@@ -306,7 +334,7 @@ public class CellStyles extends EventDispatcher
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Write-only properties
+	//  Write-only properties: Styles
 	//
 	//--------------------------------------------------------------------------
 	
@@ -496,6 +524,70 @@ public class CellStyles extends EventDispatcher
 		_hovered.borderObject = value;
 		_selected.borderObject = value;
 		_disabled.borderObject = value;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties: Global styles
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _global : CellStyles;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get global() : CellStyles
+	{
+		return _global;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : CellStyles) : void
+	{
+		if (_global === value)
+			return;
+		
+		_global = value;
+		
+		if (value)
+		{
+			_normal.global = value._normal;
+			_hovered.global = value._hovered;
+			_selected.global = value._selected;
+			_disabled.global = value._disabled;
+		}
+		else
+		{
+			_normal.global = null;
+			_hovered.global = null;
+			_selected.global = null;
+			_disabled.global = null;
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods: Cleanup
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 	
 	//--------------------------------------------------------------------------
