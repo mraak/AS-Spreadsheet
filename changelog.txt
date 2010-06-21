@@ -1,0 +1,62 @@
+Differences between tag 0.92 and 0.93:
+
+- com.flextras.paintgrid package is now part of spreadsheet:
+  - BasicStyles and Styles were replaced with com.flextras.spreadsheet.vos.Styles:
+    - properties:
+      - foregroundColor has changed to color
+      - foregroundAlpha has changed to alpha
+      - backgroundColor is still the same
+      - backgroundAlpha is still the same
+      - antiAliasType was removed
+      - family was removed
+      - gridFitType was removed
+      - sharpness was removed
+      - size is still the same
+      - style has changed to italic and from string to boolean
+      - thickness was removed
+      - weight has changed to bold and from string to boolean
+      - kerning was removed
+      - spacing was removed
+      - align has changed to horizontalAlign
+      - decoration has changed to underline and from string to boolean
+      - indent was removed
+    
+    - methods:
+      - apply has changed to assignObject
+  
+  - Condition was slightly modified and can be found in com.flextras.spreadsheet.vos
+    package as Condition.
+  - CellProperties was rewritten and can be found in com.flextras.spreadsheet.vos
+    package as Cell.
+  - CellStyles was rewritten and can be found in com.flextras.spreadsheet.vos
+    package as CellStyles.
+  - CellEvent, CellLocation, CellRange, IPaintGridItemRenderer, PaintGrid,
+    PaintGridItemRenderer, PaintGridRowResizeSkin, PGIR, Row, StylesProxy were removed
+
+- com.flextras.spreadsheet package was rewritten:
+  - except for ISpreadsheet and SpreadsheetEvent (backward compatibility and calc
+    dependancies)
+  
+  - ISpreadsheetItemRenderer was removed
+  - SpreadsheetItemEditor and SpreadsheetItemRenderer were rewritten and are now part of
+    com.flextras.spreadsheet.itemRenderers.GridItemRenderer
+  - new Spreadsheet has been rewritten from ground up and shares with old Spreadsheet
+    very few things:
+    - they both implements ISpreadsheet interface (nearly identical implementation)
+    - they're both using the same calc library
+    - nearly identical frontend:
+      - same api for disabling cells (except for Vector.<Cell> vs Array)
+      - same column width / row height apis
+      - same column / row count apis
+      - same column / row managment (insertion, deletion, cleanup) apis
+      - similar cell, range styles apis (Point instead of CellLocation, Rectangle
+        instead of CellRange)
+
+  - ... what they don't have in common:
+    - new Spreadsheet is Flex 4 only
+    - everything visual is located and handled in skin parts (column / row headers,
+      grid), item renderers, layouts
+    - global styles are handled differently
+    - everything related to cells has been moved into Cell class, where each instance
+      handles different events (whether an row was inserted, in which case that
+      particular instance of Cell class updates itself - if needed; etc) on its own.
