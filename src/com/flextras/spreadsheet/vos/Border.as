@@ -79,9 +79,122 @@ public class Border extends EventDispatcher
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties: Sides
+	//  Properties
 	//
 	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  alpha
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set alpha(value : Number) : void
+	{
+		left.alpha = top.alpha = right.alpha = bottom.alpha = value;
+	}
+	
+	//----------------------------------
+	//  bottom
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected const _bottom : BorderSide = new BorderSide;
+	
+	[Bindable(event="bottomChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get bottom() : BorderSide
+	{
+		return _bottom;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set bottom(value : BorderSide) : void
+	{
+		if (_bottom === value)
+			return;
+		
+		_bottom.assign(value);
+		
+		dispatchEvent(new Event("bottomChanged"));
+	}
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set bottomObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		if (value is BorderSide)
+			bottom = BorderSide(value);
+		else
+		{
+			_bottom.assignObject(value);
+			
+			dispatchEvent(new Event("bottomChanged"));
+		}
+	}
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set color(value : uint) : void
+	{
+		left.color = top.color = right.color = bottom.color = value;
+	}
+	
+	//----------------------------------
+	//  global
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : Border) : void
+	{
+		if (value)
+		{
+			_left.global = value._left;
+			_top.global = value._top;
+			_right.global = value._right;
+			_bottom.global = value._bottom;
+		}
+		else
+		{
+			_left.global = null;
+			_top.global = null;
+			_right.global = null;
+			_bottom.global = null;
+		}
+	}
 	
 	//----------------------------------
 	//  left
@@ -136,62 +249,6 @@ public class Border extends EventDispatcher
 			_left.assignObject(value);
 			
 			dispatchEvent(new Event("leftChanged"));
-		}
-	}
-	
-	//----------------------------------
-	//  top
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected const _top : BorderSide = new BorderSide;
-	
-	[Bindable(event="topChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get top() : BorderSide
-	{
-		return _top;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set top(value : BorderSide) : void
-	{
-		if (_top === value)
-			return;
-		
-		_top.assign(value);
-		
-		dispatchEvent(new Event("topChanged"));
-	}
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set topObject(value : Object) : void
-	{
-		if (!value)
-			return;
-		
-		if (value is BorderSide)
-			top = BorderSide(value);
-		else
-		{
-			_top.assignObject(value);
-			
-			dispatchEvent(new Event("topChanged"));
 		}
 	}
 	
@@ -252,23 +309,23 @@ public class Border extends EventDispatcher
 	}
 	
 	//----------------------------------
-	//  bottom
+	//  top
 	//----------------------------------
 	
 	/**
 	 *
 	 */
-	protected const _bottom : BorderSide = new BorderSide;
+	protected const _top : BorderSide = new BorderSide;
 	
-	[Bindable(event="bottomChanged")]
+	[Bindable(event="topChanged")]
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	public function get bottom() : BorderSide
+	public function get top() : BorderSide
 	{
-		return _bottom;
+		return _top;
 	}
 	
 	/**
@@ -276,14 +333,14 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bottom(value : BorderSide) : void
+	public function set top(value : BorderSide) : void
 	{
-		if (_bottom === value)
+		if (_top === value)
 			return;
 		
-		_bottom.assign(value);
+		_top.assign(value);
 		
-		dispatchEvent(new Event("bottomChanged"));
+		dispatchEvent(new Event("topChanged"));
 	}
 	
 	[Transient]
@@ -292,70 +349,19 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bottomObject(value : Object) : void
+	public function set topObject(value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
-			bottom = BorderSide(value);
+			top = BorderSide(value);
 		else
 		{
-			_bottom.assignObject(value);
+			_top.assignObject(value);
 			
-			dispatchEvent(new Event("bottomChanged"));
+			dispatchEvent(new Event("topChanged"));
 		}
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Write-only properties: Styles
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  color
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set color(value : uint) : void
-	{
-		left.color = top.color = right.color = bottom.color = value;
-	}
-	
-	//----------------------------------
-	//  alpha
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set alpha(value : Number) : void
-	{
-		left.alpha = top.alpha = right.alpha = bottom.alpha = value;
-	}
-	
-	//----------------------------------
-	//  weight
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set weight(value : Number) : void
-	{
-		left.weight = top.weight = right.weight = bottom.weight = value;
 	}
 	
 	//----------------------------------
@@ -373,53 +379,24 @@ public class Border extends EventDispatcher
 		left.visible = top.visible = right.visible = bottom.visible = value;
 	}
 	
-	//--------------------------------------------------------------------------
-	//
-	//  Properties: Global styles
-	//
-	//--------------------------------------------------------------------------
+	//----------------------------------
+	//  weight
+	//----------------------------------
 	
+	[Transient]
 	/**
 	 *
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : Border) : void
+	public function set weight(value : Number) : void
 	{
-		if (value)
-		{
-			_left.global = value._left;
-			_top.global = value._top;
-			_right.global = value._right;
-			_bottom.global = value._bottom;
-		}
-		else
-		{
-			_left.global = null;
-			_top.global = null;
-			_right.global = null;
-			_bottom.global = null;
-		}
+		left.weight = top.weight = right.weight = bottom.weight = value;
 	}
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	spreadsheet function release() : void
-	{
-		global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Assignment
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -479,6 +456,15 @@ public class Border extends EventDispatcher
 		
 		if (value.hasOwnProperty("bottom"))
 			bottomObject = value.bottom;
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 }
 }

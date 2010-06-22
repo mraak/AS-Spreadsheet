@@ -72,6 +72,194 @@ public class Condition extends EventDispatcher
 	public var active : Boolean;
 	
 	//----------------------------------
+	//  global
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : Condition) : void
+	{
+		if (value)
+			_styles.global = value._styles;
+		else
+			_styles.global = null;
+	}
+	
+	//----------------------------------
+	//  left
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _left : Number;
+	
+	[Bindable(event="leftChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get left() : Number
+	{
+		return _left;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set left(value : Number) : void
+	{
+		if (_left == value)
+			return;
+		
+		_left = value;
+		
+		dispatchEvent(new Event("leftChanged"));
+	}
+	
+	//----------------------------------
+	//  leftValid
+	//----------------------------------
+	
+	[Transient]
+	[Bindable(event="leftChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get leftValid() : Boolean
+	{
+		return !isNaN(_left);
+	}
+	
+	//----------------------------------
+	//  operator
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _operator : String;
+	
+	[Bindable(event="operatorChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get operator() : String
+	{
+		return _operator;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set operator(value : String) : void
+	{
+		if (_operator == value)
+			return;
+		
+		_operator = value;
+		
+		dispatchEvent(new Event("operatorChanged"));
+	}
+	
+	//----------------------------------
+	//  operatorValid
+	//----------------------------------
+	
+	[Transient]
+	[Bindable(event="operatorChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get operatorValid() : Boolean
+	{
+		return _operator && _operator.length > 0;
+	}
+	
+	//----------------------------------
+	//  right
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _right : Number;
+	
+	[Bindable(event="rightChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get right() : Number
+	{
+		return _right;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set right(value : Number) : void
+	{
+		if (_right == value)
+			return;
+		
+		_right = value;
+		
+		dispatchEvent(new Event("rightChanged"));
+	}
+	
+	//----------------------------------
+	//  rightValid
+	//----------------------------------
+	
+	[Transient]
+	[Bindable(event="rightChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get rightValid() : Boolean
+	{
+		return !isNaN(_right);
+	}
+	
+	//----------------------------------
+	//  Valid
+	//----------------------------------
+	
+	[Transient]
+	[Bindable(event="leftChanged")]
+	[Bindable(event="operatorChanged")]
+	[Bindable(event="rightChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get valid() : Boolean
+	{
+		return leftValid && operatorValid && rightValid;
+	}
+	
+	//----------------------------------
 	//  styles
 	//----------------------------------
 	
@@ -127,220 +315,9 @@ public class Condition extends EventDispatcher
 		}
 	}
 	
-	//----------------------------------
-	//  left
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _left : Number;
-	
-	[Bindable(event="leftChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get left() : Number
-	{
-		return _left;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set left(value : Number) : void
-	{
-		if (_left == value)
-			return;
-		
-		_left = value;
-		
-		dispatchEvent(new Event("leftChanged"));
-	}
-	
-	//----------------------------------
-	//  operator
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _operator : String;
-	
-	[Bindable(event="operatorChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get operator() : String
-	{
-		return _operator;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set operator(value : String) : void
-	{
-		if (_operator == value)
-			return;
-		
-		_operator = value;
-		
-		dispatchEvent(new Event("operatorChanged"));
-	}
-	
-	//----------------------------------
-	//  right
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _right : Number;
-	
-	[Bindable(event="rightChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get right() : Number
-	{
-		return _right;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set right(value : Number) : void
-	{
-		if (_right == value)
-			return;
-		
-		_right = value;
-		
-		dispatchEvent(new Event("rightChanged"));
-	}
-	
 	//--------------------------------------------------------------------------
 	//
-	//  Read-only properties
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  leftValid
-	//----------------------------------
-	
-	[Transient]
-	[Bindable(event="leftChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get leftValid() : Boolean
-	{
-		return !isNaN(_left);
-	}
-	
-	//----------------------------------
-	//  operatorValid
-	//----------------------------------
-	
-	[Transient]
-	[Bindable(event="operatorChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get operatorValid() : Boolean
-	{
-		return _operator && _operator.length > 0;
-	}
-	
-	//----------------------------------
-	//  rightValid
-	//----------------------------------
-	
-	[Transient]
-	[Bindable(event="rightChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get rightValid() : Boolean
-	{
-		return !isNaN(_right);
-	}
-	
-	//----------------------------------
-	//  Valid
-	//----------------------------------
-	
-	[Transient]
-	[Bindable(event="leftChanged")]
-	[Bindable(event="operatorChanged")]
-	[Bindable(event="rightChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get valid() : Boolean
-	{
-		return leftValid && operatorValid && rightValid;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Properties: Global styles
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	spreadsheet function set global(value : Condition) : void
-	{
-		if (value)
-			_styles.global = value._styles;
-		else
-			_styles.global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	spreadsheet function release() : void
-	{
-		global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Assignment
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -389,6 +366,15 @@ public class Condition extends EventDispatcher
 		
 		if (value.hasOwnProperty("styles"))
 			stylesObject = value.styles;
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 }
 }

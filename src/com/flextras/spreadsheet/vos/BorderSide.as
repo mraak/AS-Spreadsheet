@@ -70,48 +70,9 @@ public class BorderSide extends EventDispatcher
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties: Styles
+	//  Properties
 	//
 	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  color
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _color : uint;
-	
-	protected var colorChanged : Boolean;
-	
-	[Bindable(event="colorChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get color() : uint
-	{
-		return colorChanged || !_global ? _color : _global._color;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set color(value : uint) : void
-	{
-		if (color == value)
-			return;
-		
-		_color = value;
-		
-		colorChanged = true;
-		
-		dispatchColorChangedEvent();
-	}
 	
 	//----------------------------------
 	//  alpha
@@ -153,25 +114,25 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	//----------------------------------
-	//  weight
+	//  color
 	//----------------------------------
 	
 	/**
 	 *
 	 */
-	protected var _weight : Number = 1;
+	protected var _color : uint;
 	
-	protected var weightChanged : Boolean;
+	protected var colorChanged : Boolean;
 	
-	[Bindable(event="weightChanged")]
+	[Bindable(event="colorChanged")]
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	public function get weight() : Number
+	public function get color() : uint
 	{
-		return weightChanged || !_global ? _weight : _global._weight;
+		return colorChanged || !_global ? _color : _global._color;
 	}
 	
 	/**
@@ -179,24 +140,64 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set weight(value : Number) : void
+	public function set color(value : uint) : void
 	{
-		if (weight == value)
+		if (color == value)
 			return;
 		
-		_weight = value;
+		_color = value;
 		
-		weightChanged = true;
+		colorChanged = true;
 		
-		dispatchWeightChangedEvent();
+		dispatchColorChangedEvent();
+	}
+	
+	//----------------------------------
+	//  global
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _global : BorderSide;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get global() : BorderSide
+	{
+		return _global;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : BorderSide) : void
+	{
+		if (_global === value)
+			return;
 		
-		if (value > 0)
+		if (_global)
 		{
-			visibleWeight = value;
-			visible = true;
+			_global.removeEventListener("colorChanged", global_colorChangedHandler);
+			_global.removeEventListener("alphaChanged", global_alphaChangedHandler);
+			_global.removeEventListener("weightChanged", global_weightChangedHandler);
+			_global.removeEventListener("visibleChanged", global_visibleChangedHandler);
 		}
-		else
-			visible = false;
+		
+		_global = value;
+		
+		if (value)
+		{
+			value.addEventListener("colorChanged", global_colorChangedHandler);
+			value.addEventListener("alphaChanged", global_alphaChangedHandler);
+			value.addEventListener("weightChanged", global_weightChangedHandler);
+			value.addEventListener("visibleChanged", global_visibleChangedHandler);
+		}
 	}
 	
 	//----------------------------------
@@ -246,25 +247,26 @@ public class BorderSide extends EventDispatcher
 		dispatchVisibleChangedEvent();
 	}
 	
-	//--------------------------------------------------------------------------
-	//
-	//  Properties: Global styles
-	//
-	//--------------------------------------------------------------------------
+	//----------------------------------
+	//  weight
+	//----------------------------------
 	
 	/**
 	 *
 	 */
-	protected var _global : BorderSide;
+	protected var _weight : Number = 1;
 	
+	protected var weightChanged : Boolean;
+	
+	[Bindable(event="weightChanged")]
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	spreadsheet function get global() : BorderSide
+	public function get weight() : Number
 	{
-		return _global;
+		return weightChanged || !_global ? _weight : _global._weight;
 	}
 	
 	/**
@@ -272,90 +274,29 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : BorderSide) : void
+	public function set weight(value : Number) : void
 	{
-		if (_global === value)
+		if (weight == value)
 			return;
 		
-		if (_global)
-		{
-			_global.removeEventListener("colorChanged", global_colorChangedHandler);
-			_global.removeEventListener("alphaChanged", global_alphaChangedHandler);
-			_global.removeEventListener("weightChanged", global_weightChangedHandler);
-			_global.removeEventListener("visibleChanged", global_visibleChangedHandler);
-		}
+		_weight = value;
 		
-		_global = value;
+		weightChanged = true;
 		
-		if (value)
+		dispatchWeightChangedEvent();
+		
+		if (value > 0)
 		{
-			value.addEventListener("colorChanged", global_colorChangedHandler);
-			value.addEventListener("alphaChanged", global_alphaChangedHandler);
-			value.addEventListener("weightChanged", global_weightChangedHandler);
-			value.addEventListener("visibleChanged", global_visibleChangedHandler);
+			visibleWeight = value;
+			visible = true;
 		}
+		else
+			visible = false;
 	}
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Methods: Event dispatchers
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	protected function dispatchColorChangedEvent() : void
-	{
-		dispatchEvent(new Event("colorChanged"));
-	}
-	
-	/**
-	 *
-	 *
-	 */
-	protected function dispatchAlphaChangedEvent() : void
-	{
-		dispatchEvent(new Event("alphaChanged"));
-	}
-	
-	/**
-	 *
-	 *
-	 */
-	protected function dispatchWeightChangedEvent() : void
-	{
-		dispatchEvent(new Event("weightChanged"));
-	}
-	
-	/**
-	 *
-	 *
-	 */
-	protected function dispatchVisibleChangedEvent() : void
-	{
-		dispatchEvent(new Event("visibleChanged"));
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	spreadsheet function release() : void
-	{
-		global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Assignment
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -405,9 +346,54 @@ public class BorderSide extends EventDispatcher
 			visible = Boolean(value.visible);
 	}
 	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchAlphaChangedEvent() : void
+	{
+		dispatchEvent(new Event("alphaChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchColorChangedEvent() : void
+	{
+		dispatchEvent(new Event("colorChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchVisibleChangedEvent() : void
+	{
+		dispatchEvent(new Event("visibleChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchWeightChangedEvent() : void
+	{
+		dispatchEvent(new Event("weightChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
+	}
+	
 	//--------------------------------------------------------------------------
 	//
-	//  Event handlers: Global styles
+	//  Event handlers
 	//
 	//--------------------------------------------------------------------------
 	

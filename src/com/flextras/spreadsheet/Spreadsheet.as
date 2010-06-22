@@ -136,1689 +136,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Skin Parts
-	//
-	//--------------------------------------------------------------------------
-	
-	[SkinPart(required="false")]
-	/**
-	 *
-	 */
-	public var columnHeader : List;
-	
-	[SkinPart(required="false")]
-	/**
-	 *
-	 */
-	public var rowHeader : List;
-	
-	[SkinPart(required="true")]
-	[Bindable]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public var grid : GridList;
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Variables
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 */
-	protected var doSort : Boolean;
-	
-	/**
-	 *
-	 */
-	protected var notifyChildren : Boolean;
-	
-	/**
-	 *
-	 */
-	protected var shiftActive : Boolean;
-	
-	/**
-	 *
-	 */
-	protected var expressionTreeCopy : Object;
-	
-	/**
-	 *
-	 */
-	protected var columns : Array;
-	
-	/**
-	 *
-	 */
-	protected var rows : Array;
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Properties
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  cells
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected const _cells : ArrayCollection = new ArrayCollection;
-	
-	/**
-	 *
-	 */
-	protected var cellsChanged : Boolean;
-	
-	[Bindable(event="cellsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get cells() : ArrayCollection
-	{
-		return _cells;
-	}
-	
-	/**
-	 * @private
-	 */
-	public function get gridDataProvider() : ArrayCollection
-	{
-		return _cells;
-	}
-	
-	//----------------------------------
-	//  disabledCells
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _disabledCells : Vector.<Cell>;
-	
-	[Bindable(event="disabledCellsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get disabledCells() : Vector.<Cell>
-	{
-		return _disabledCells;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set disabledCells(value : Vector.<Cell>) : void
-	{
-		if (_disabledCells === value)
-			return;
-		
-		for each (var cell : Cell in _disabledCells)
-			cell.enabled = true;
-		
-		_disabledCells = value;
-		
-		for each (cell in value)
-			cell.enabled = false;
-		
-		dispatchEvent(new Event("disabledCellsChanged"));
-	}
-	
-	//----------------------------------
-	//  indexedCells
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _indexedCells : Object;
-	
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get indexedCells() : Object
-	{
-		return _indexedCells;
-	}
-	
-	//----------------------------------
-	//  spans
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _spans : Array;
-	
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get spans() : Array
-	{
-		return _spans;
-	}
-	
-	//----------------------------------
-	//  uniqueCells
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _uniqueCells : Array;
-	
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get uniqueCells() : Array
-	{
-		return _uniqueCells;
-	}
-	
-	//----------------------------------
-	//  calc
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	protected var _calc : Calc;
-	
-	[Bindable(event="calcChanged")]
-	/**
-	 * @return
-	 *
-	 * @see com.flextras.calc.Calc
-	 */
-	public function get calc() : Calc
-	{
-		return _calc;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 */
-	public function set calc(value : Calc) : void
-	{
-		if (_calc === value)
-			return;
-		
-		if (_calc)
-		{
-			_calc.removeEventListener(SpreadsheetEvent.ERROR, onCalcError);
-			_calc.removeEventListener(SpreadsheetEvent.WARNING, onCalcWarning);
-		}
-		
-		_calc = value;
-		
-		if (value)
-		{
-			value.addSpreadsheet(this);
-			value.addEventListener(SpreadsheetEvent.ERROR, onCalcError);
-			value.addEventListener(SpreadsheetEvent.WARNING, onCalcWarning);
-		}
-		
-		dispatchEvent(new Event("calcChanged"));
-	}
-	
-	//----------------------------------
-	//  expressions
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	protected var _expressions : ArrayCollection;
-	
-	/**
-	 * @private
-	 */
-	protected var expressionsChanged : Boolean;
-	
-	[Bindable(event="expressionsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get expressions() : ArrayCollection
-	{
-		return _expressions;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set expressions(value : ArrayCollection) : void
-	{
-		if (_expressions === value)
-			return;
-		
-		var oldValue : ArrayCollection = _expressions;
-		
-		if (_expressions)
-			_expressions.removeEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
-		
-		_expressions = value;
-		
-		if (value)
-		{
-			var ov : Object, o : Object, found : Boolean;
-			
-			for each (ov in oldValue)
-			{
-				found = false;
-				
-				for each (o in value)
-					if (ov.cell == o.cell)
-						found = true;
-				
-				if (!found)
-					value.addItem(ov);
-			}
-			
-			value.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
-			
-			value.refresh();
-		}
-	}
-	
-	//----------------------------------
-	//  expressionTree
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	protected const _expressionTree : Array = [];
-	
-	/**
-	 * @private
-	 */
-	public function get expressionTree() : Array
-	{
-		return _expressionTree;
-	}
-	
-	//----------------------------------
-	//  ctrlObjects
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	protected var _ctrlObjects : Object = {};
-	
-	/**
-	 * @private
-	 */
-	public function get ctrlObjects() : Object
-	{
-		return _ctrlObjects;
-	}
-	
-	//----------------------------------
-	//  columnWidths
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _columnWidths : Array;
-	
-	/**
-	 *
-	 */
-	protected const columnWidthsCollection : ArrayCollection = new ArrayCollection;
-	
-	[Bindable(event="columnWidthsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get columnWidths() : Array
-	{
-		return _columnWidths;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	spreadsheet function set columnWidths(value : Array) : void
-	{
-		if (_columnWidths === value)
-			return;
-		
-		_columnWidths = value;
-		
-		var array : Array = [];
-		
-		for (var i : uint, n : uint = value.length; i < n; ++i)
-			array.push(Utils.alphabet[i]);
-		
-		columnWidthsCollection.source = array;
-		
-		dispatchEvent(new Event("columnWidthsChanged"));
-	}
-	
-	//----------------------------------
-	//  preferredColumnWidths
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _preferredColumnWidths : Array = [];
-	
-	[Bindable(event="preferredColumnWidthsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get preferredColumnWidths() : Array
-	{
-		return _preferredColumnWidths;
-	}
-	
-	//----------------------------------
-	//  columnWidth
-	//----------------------------------
-	
-	[Bindable(event="columnWidthsChanged")]
-	[Bindable(event="preferredColumnWidthsChanged")]
-	/**
-	 *
-	 * @param index
-	 * @return
-	 *
-	 */
-	public function getColumnWidthAt(index : uint) : Number
-	{
-		if (isColumnIndexInvalid(index))
-			return NaN;
-		
-		var value : Number = _preferredColumnWidths[index];
-		
-		if (isNaN(value))
-		{
-			if (_columnWidths)
-			{
-				var columnWidth : CellWidth = _columnWidths[index];
-				
-				if (columnWidth)
-					value = columnWidth.value;
-				else
-					value = new CellWidth().value;
-			}
-			else
-				value = new CellWidth().value;
-		}
-		
-		return value;
-	}
-	
-	/**
-	 *
-	 * @param index
-	 * @param value
-	 *
-	 */
-	public function setColumnWidthAt(index : uint, value : Number) : void
-	{
-		if (isColumnIndexInvalid(index))
-			return;
-		
-		_preferredColumnWidths[index] = value;
-		
-		grid.dataGroup.invalidateDisplayList();
-		
-		dispatchEvent(new Event("preferredColumnWidthsChanged"));
-	}
-	
-	//----------------------------------
-	//  rowHeights
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _rowHeights : Array;
-	
-	/**
-	 *
-	 */
-	protected const rowHeightsCollection : ArrayCollection = new ArrayCollection;
-	
-	[Bindable(event="rowHeightsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get rowHeights() : Array
-	{
-		return _rowHeights;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	spreadsheet function set rowHeights(value : Array) : void
-	{
-		if (_rowHeights === value)
-			return;
-		
-		_rowHeights = value;
-		
-		var array : Array = [];
-		
-		for (var i : uint, n : uint = value.length; i < n; ++i)
-			array.push(i);
-		
-		rowHeightsCollection.source = array;
-		
-		dispatchEvent(new Event("rowHeightsChanged"));
-	}
-	
-	//----------------------------------
-	//  preferredRowHeights
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _preferredRowHeights : Array = [];
-	
-	[Bindable(event="preferredRowHeightsChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get preferredRowHeights() : Array
-	{
-		return _preferredRowHeights;
-	}
-	
-	//----------------------------------
-	//  rowHeight
-	//----------------------------------
-	
-	[Bindable(event="rowHeightsChanged")]
-	[Bindable(event="preferredRowHeightsChanged")]
-	/**
-	 *
-	 * @param index
-	 * @return
-	 *
-	 */
-	public function getRowHeightAt(index : uint) : Number
-	{
-		if (isRowIndexInvalid(index))
-			return NaN;
-		
-		var value : Number = _preferredRowHeights[index];
-		
-		if (isNaN(value))
-		{
-			if (_rowHeights)
-			{
-				var rowHeight : CellHeight = _rowHeights[index];
-				
-				if (rowHeight)
-					value = rowHeight.value;
-				else
-					value = new CellHeight().value;
-			}
-			else
-				value = new CellHeight().value;
-		}
-		
-		return value;
-	}
-	
-	/**
-	 *
-	 * @param index
-	 * @param value
-	 *
-	 */
-	public function setRowHeightAt(index : uint, value : Number) : void
-	{
-		if (isRowIndexInvalid(index))
-			return;
-		
-		_preferredRowHeights[index] = value;
-		
-		grid.dataGroup.invalidateDisplayList();
-		
-		dispatchEvent(new Event("preferredRowHeightsChanged"));
-	}
-	
-	//----------------------------------
-	//  columnCount
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var oldColumnCount : uint;
-	
-	/**
-	 *
-	 */
-	protected var _columnCount : uint = 10;
-	
-	/**
-	 *
-	 */
-	protected var columnCountChanged : Boolean = true;
-	
-	[Bindable(event="columnCountChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get columnCount() : uint
-	{
-		return _columnCount;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set columnCount(value : uint) : void
-	{
-		if (value < 0 || _columnCount == value)
-			return;
-		
-		_columnCount = value;
-		columnCountChanged = true;
-		
-		dispatchEvent(new Event("columnCountChanged"));
-		
-		invalidateProperties();
-	}
-	
-	//----------------------------------
-	//  rowCount
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected var oldRowCount : uint;
-	
-	/**
-	 *
-	 */
-	protected var _rowCount : uint = 10;
-	
-	/**
-	 *
-	 */
-	protected var rowCountChanged : Boolean = true;
-	
-	[Bindable(event="rowCountChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get rowCount() : uint
-	{
-		return _rowCount;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set rowCount(value : uint) : void
-	{
-		if (value < 0 || _rowCount == value)
-			return;
-		
-		_rowCount = value;
-		rowCountChanged = true;
-		
-		dispatchEvent(new Event("rowCountChanged"));
-		
-		invalidateProperties();
-	}
-	
-	//----------------------------------
-	//  globalStyles
-	//----------------------------------
-	
-	public const globalCell : Cell = new Cell;
-	
-	[Bindable(event="globalStylesChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get globalStyles() : CellStyles
-	{
-		return globalCell.styles;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set globalStyles(value : CellStyles) : void
-	{
-		if (!value)
-			return;
-		
-		globalCell.styles.assign(value);
-		
-		dispatchEvent(new Event("globalStylesChanged"));
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set globalStylesObject(value : Object) : void
-	{
-		if (!value)
-			return;
-		
-		if (value is CellStyles)
-			globalStyles = CellStyles(value);
-		else
-		{
-			globalCell.styles.assignObject(value);
-			
-			dispatchEvent(new Event("globalStylesChanged"));
-		}
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  insertColumn
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function insertColumnAt(index : uint) : void
-	{
-		if (isColumnIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new ColumnEvent(ColumnEvent.INSERT, index));
-	}
-	
-	//----------------------------------
-	//  removeColumn
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function removeColumnAt(index : uint) : void
-	{
-		if (isColumnIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new ColumnEvent(ColumnEvent.REMOVE, index));
-	}
-	
-	//----------------------------------
-	//  clearColumn
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function clearColumnAt(index : uint) : void
-	{
-		if (isColumnIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new ColumnEvent(ColumnEvent.CLEAR, index));
-	}
-	
-	//----------------------------------
-	//  insertRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function insertRowAt(index : uint) : void
-	{
-		if (isRowIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new RowEvent(RowEvent.INSERT, index));
-	}
-	
-	//----------------------------------
-	//  removeRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function removeRowAt(index : uint) : void
-	{
-		if (isRowIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new RowEvent(RowEvent.REMOVE, index));
-	}
-	
-	//----------------------------------
-	//  clearRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 *
-	 */
-	public function clearRowAt(index : uint) : void
-	{
-		if (isRowIndexInvalid(index))
-			return;
-		
-		dispatchEvent(new RowEvent(RowEvent.CLEAR, index));
-	}
-	
-	//----------------------------------
-	//  cell
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 * @return
-	 *
-	 */
-	// TODO: rename!
-	public function _getCell(location : Point) : Cell
-	{
-		if (!location)
-			return null;
-		
-		return getCellAt(location.x, location.y);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
-	 */
-	public function getCellAt(columnIndex : uint, rowIndex : uint) : Cell
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
-			return null;
-		
-		return _indexedCells[columnIndex + "|" + rowIndex];
-	}
-	
-	//----------------------------------
-	//  clearCell
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 *
-	 */
-	public function clearCell(location : Point) : void
-	{
-		if (!location)
-			return;
-		
-		clearCellAt(location.x, location.y);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	public function clearCellAt(columnIndex : uint, rowIndex : uint) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
-			return;
-		
-		var cell : Cell = getCellAt(columnIndex, rowIndex);
-		
-		if (!cell)
-			return;
-		
-		cell.clear();
-	}
-	
-	//----------------------------------
-	//  resizeCell
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param bounds
-	 *
-	 */
-	public function resizeCell(bounds : Rectangle) : void
-	{
-		if (!bounds)
-			return;
-		
-		resizeCellAt(bounds.x, bounds.y, bounds.width, bounds.height);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 *
-	 */
-	public function resizeCellAt(columnIndex : uint, rowIndex : uint, columnSpan : uint = 0, rowSpan : uint = 0) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
-			return;
-		
-		dispatchEvent(new CellEvent(CellEvent.RESIZE, new CellEventData(new Rectangle(columnIndex, rowIndex, columnSpan, rowSpan))));
-	}
-	
-	//----------------------------------
-	//  cellStyles
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 * @return
-	 *
-	 */
-	public function getCellStyles(location : Point) : CellStyles
-	{
-		if (!location)
-			return null;
-		
-		return getCellStylesAt(location.x, location.y);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
-	 */
-	public function getCellStylesAt(columnIndex : uint, rowIndex : uint) : CellStyles
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
-			return null;
-		
-		return getCellAt(columnIndex, rowIndex).styles;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param styles
-	 *
-	 */
-	public function setCellStyles(location : Point, styles : CellStyles) : void
-	{
-		if (!location || !styles)
-			return;
-		
-		setCellStylesAt(location.x, location.y, styles);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param styles
-	 *
-	 */
-	public function setCellStylesAt(columnIndex : uint, rowIndex : uint, styles : CellStyles) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !styles)
-			return;
-		
-		getCellAt(columnIndex, rowIndex).styles = styles;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param styles
-	 *
-	 */
-	public function setCellStylesObject(location : Point, styles : Object) : void
-	{
-		if (!location || !styles)
-			return;
-		
-		setCellStylesObjectAt(location.x, location.y, styles);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param styles
-	 *
-	 */
-	public function setCellStylesObjectAt(columnIndex : uint, rowIndex : uint, styles : Object) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !styles)
-			return;
-		
-		getCellAt(columnIndex, rowIndex).stylesObject = styles;
-	}
-	
-	//----------------------------------
-	//  rangeStyles
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 * @return
-	 *
-	 */
-	public function getRangeStyles(location : Rectangle) : Vector.<CellStyles>
-	{
-		if (!location)
-			return null;
-		
-		return getRangeStylesAt(location.x, location.y, location.width, location.height);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @return
-	 *
-	 */
-	public function getRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<CellStyles>
-	{
-		if (isColumnIndexInvalid(columnIndex)
-			|| isRowIndexInvalid(rowIndex)
-			|| columnSpan < 0
-			|| rowSpan < 0)
-			return null;
-		
-		var result : Vector.<CellStyles> = new Vector.<CellStyles>;
-		var c : uint = columnIndex, cs : uint = c + columnSpan;
-		var r : uint = rowIndex, rs : uint = r + rowSpan;
-		
-		for (; c <= cs; ++c)
-			for (r = rowIndex; r <= rs; ++r)
-				result.push(getCellStylesAt(c, r));
-		
-		return result;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param styles
-	 *
-	 */
-	public function setRangeStyles(location : Rectangle, styles : CellStyles) : void
-	{
-		if (!location || !styles)
-			return;
-		
-		setRangeStylesAt(location.x, location.y, location.width, location.height, styles);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @param styles
-	 *
-	 */
-	public function setRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, styles : CellStyles) : void
-	{
-		if (!styles)
-			return;
-		
-		var result : Vector.<CellStyles> = getRangeStylesAt(columnIndex, rowIndex, columnSpan, rowSpan);
-		
-		if (!result)
-			return;
-		
-		for (var i : uint, n : uint = result.length; i < n; ++i)
-			result[i].assign(styles);
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param styles
-	 *
-	 */
-	public function setRangeStylesObject(location : Rectangle, styles : Object) : void
-	{
-		if (!location || !styles)
-			return;
-		
-		setRangeStylesObjectAt(location.x, location.y, location.width, location.height, styles);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @param styles
-	 *
-	 */
-	public function setRangeStylesObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
-	{
-		if (!styles)
-			return;
-		
-		var result : Vector.<CellStyles> = getRangeStylesAt(columnIndex, rowIndex, columnSpan, rowSpan);
-		
-		if (!result)
-			return;
-		
-		for (var i : uint, n : uint = result.length; i < n; ++i)
-			result[i].assignObject(styles);
-	}
-	
-	//----------------------------------
-	//  cellCondition
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 * @return
-	 *
-	 */
-	public function getCellCondition(location : Point) : Condition
-	{
-		if (!location)
-			return null;
-		
-		return getCellConditionAt(location.x, location.y);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
-	 */
-	public function getCellConditionAt(columnIndex : uint, rowIndex : uint) : Condition
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
-			return null;
-		
-		return getCellAt(columnIndex, rowIndex).condition;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param condition
-	 *
-	 */
-	public function setCellCondition(location : Point, condition : Condition) : void
-	{
-		if (!location || !condition)
-			return;
-		
-		setCellConditionAt(location.x, location.y, condition);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param condition
-	 *
-	 */
-	public function setCellConditionAt(columnIndex : uint, rowIndex : uint, condition : Condition) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !condition)
-			return;
-		
-		getCellAt(columnIndex, rowIndex).condition = condition;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param condition
-	 *
-	 */
-	public function setCellConditionObject(location : Point, condition : Object) : void
-	{
-		if (!location || !condition)
-			return;
-		
-		setCellConditionObjectAt(location.x, location.y, condition);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param condition
-	 *
-	 */
-	public function setCellConditionObjectAt(columnIndex : uint, rowIndex : uint, condition : Object) : void
-	{
-		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !condition)
-			return;
-		
-		getCellAt(columnIndex, rowIndex).conditionObject = condition;
-	}
-	
-	//----------------------------------
-	//  rangeCondition
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param location
-	 * @return
-	 *
-	 */
-	public function getRangeConditions(location : Rectangle) : Vector.<Condition>
-	{
-		if (!location)
-			return null;
-		
-		return getRangeConditionsAt(location.x, location.y, location.width, location.height);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @return
-	 *
-	 */
-	public function getRangeConditionsAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
-	{
-		if (isColumnIndexInvalid(columnIndex)
-			|| isRowIndexInvalid(rowIndex)
-			|| columnSpan < 0
-			|| rowSpan < 0)
-			return null;
-		
-		var result : Vector.<Condition> = new Vector.<Condition>;
-		var c : uint = columnIndex, cs : uint = c + columnSpan;
-		var r : uint = rowIndex, rs : uint = r + rowSpan;
-		
-		for (; c <= cs; ++c)
-			for (r = rowIndex; r <= rs; ++r)
-				result.push(getCellConditionAt(c, r));
-		
-		return result;
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param styles
-	 *
-	 */
-	public function setRangeCondition(location : Rectangle, condition : Condition) : void
-	{
-		if (!location || !condition)
-			return;
-		
-		setRangeConditionAt(location.x, location.y, location.width, location.height, condition);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @param condition
-	 *
-	 */
-	public function setRangeConditionAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
-	{
-		if (!condition)
-			return;
-		
-		var result : Vector.<Condition> = getRangeConditionsAt(columnIndex, rowIndex, columnSpan, rowSpan);
-		
-		if (!result)
-			return;
-		
-		for (var i : uint, n : uint = result.length; i < n; ++i)
-			result[i].assign(condition);
-	}
-	
-	/**
-	 *
-	 * @param location
-	 * @param condition
-	 *
-	 */
-	public function setRangeConditionObject(location : Rectangle, condition : Object) : void
-	{
-		if (!location || !condition)
-			return;
-		
-		setRangeConditionObjectAt(location.x, location.y, location.width, location.height, condition);
-	}
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param columnSpan
-	 * @param rowSpan
-	 * @param condition
-	 *
-	 */
-	public function setRangeConditionObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
-	{
-		if (!condition)
-			return;
-		
-		var result : Vector.<Condition> = getRangeConditionsAt(columnIndex, rowIndex, columnSpan, rowSpan);
-		
-		if (!result)
-			return;
-		
-		for (var i : uint, n : uint = result.length; i < n; ++i)
-			result[i].assignObject(condition);
-	}
-	
-	//----------------------------------
-	//  expression cell
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	public function getCell(cellId : String) : Object
-	{
-		if (!cellId)
-			return null;
-		
-		cellId = cellId.toLowerCase();
-		
-		for each (var o : Object in _expressions)
-			if (o.cell == cellId)
-				return o;
-		
-		return null;
-	}
-	
-	//----------------------------------
-	//  assignExpressions
-	//----------------------------------
-	
-	/**
-	 * This method will add multiple expressions to the specified locations.
-	 * Each object in the expressions array should include a cell property to specify the location and an expression property.
-	 *
-	 * For more information on the cell and expression, see the expressions property.
-	 *
-	 * @param expressions An array of objects
-	 *
-	 * @see #assignExpression
-	 * @see #expressions
-	 */
-	public function assignExpressions(expressions : Array) : void
-	{
-		for each (var o : Object in expressions)
-			this.assignExpression(o.cell, o.expression);
-	}
-	
-	//----------------------------------
-	//  assignExpression
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param cellId Valid format is "[column index in alphabetical form][row index in numerical form]".
-	 * "a1" for example points to column 0 and row 1.
-	 *
-	 * @param expression Actual expression of which result will be seen in the target cell.
-	 * To remove existing expression type null | ""
-	 *
-	 */
-	public function assignExpression(cellId : String, expression : String) : void
-	{
-		if (!cellId)
-			return;
-		
-		cellId = cellId.toLowerCase();
-		
-		if (expression)
-			expression = expression.toLowerCase();
-		
-		var o : Object = getCell(cellId);
-		
-		var cellObj : Object = {cell: cellId, expression: expression, value: ""};
-		
-		if (o)
-			_expressions.setItemAt(cellObj, _expressions.getItemIndex(o));
-		else
-			_expressions.addItem(cellObj);
-	}
-	
-	//----------------------------------
-	//  clearExpressions
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	public function clearExpressions() : void
-	{
-		/*for each (var co : ControlObject in _ctrlObjects)
-		 co.oldID = null;*/
-		
-		expressionTreeCopy = ObjectUtil.copy(_expressionTree);
-		
-		for each (var co : ControlObject in expressionTree)
-			this.assignExpression(co.id, "");
-		
-		_expressions.removeAll();
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Private methods
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 * @param value
-	 * @return
-	 *
-	 */
-	protected function isColumnIndexInvalid(value : uint) : Boolean
-	{
-		return value < 0 || value >= _columnCount;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 * @return
-	 *
-	 */
-	protected function isRowIndexInvalid(value : uint) : Boolean
-	{
-		return value < 0 || value >= _rowCount;
-	}
-	
-	//----------------------------------
-	//  addCell
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function addCell(columnIndex : uint, rowIndex : uint) : void
-	{
-		var cell : Cell = new Cell(this, new Rectangle(columnIndex, rowIndex));
-		cell.globalStyles = globalCell.styles;
-		
-		_cells.addItem(cell);
-	}
-	
-	//----------------------------------
-	//  removeCell
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function removeCell(columnIndex : uint, rowIndex : uint) : void
-	{
-		Cell(_cells.removeItemAt(_cells.getItemIndex(getCellAt(columnIndex, rowIndex)))).release();
-	}
-	
-	//----------------------------------
-	//  addColumn
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function addColumn(index : uint, columnCount : uint, rowCount : uint) : void
-	{
-		if (notifyChildren && index < columnCount - 1)
-			dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, index));
-		
-		for (var i : uint; i < rowCount; ++i)
-			addCell(index, i);
-	}
-	
-	//----------------------------------
-	//  removeColumn
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function removeColumn(index : uint, columnCount : uint, rowCount : uint) : void
-	{
-		if (notifyChildren)
-			dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, index));
-		
-		for (var i : uint; i < rowCount; ++i)
-			removeCell(index, i);
-	}
-	
-	//----------------------------------
-	//  addRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function addRow(index : uint, columnCount : uint, rowCount : uint) : void
-	{
-		if (notifyChildren && index < rowCount - 1)
-			dispatchEvent(new RowEvent(RowEvent.INSERTED, index));
-		
-		for (var i : uint; i < columnCount; ++i)
-			addCell(i, index);
-	}
-	
-	//----------------------------------
-	//  removeRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
-	 *
-	 */
-	protected function removeRow(index : uint, columnCount : uint, rowCount : uint) : void
-	{
-		if (notifyChildren)
-			dispatchEvent(new RowEvent(RowEvent.REMOVED, index));
-		
-		for (var i : uint; i < columnCount; ++i)
-			removeCell(i, index);
-	}
-	
-	/**
-	 *
-	 *
-	 */
-	protected function refresh() : void
-	{
-		cellsChanged = true;
-		
-		invalidateProperties();
-	}
-	
-	/**
-	 * @private
-	 */
-	public function updateExpressions() : void
-	{
-		expressionsChanged = true;
-		
-		invalidateProperties();
-	}
-	
-	protected function updateExpressionsUponRowOrColumnChange(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
-	{
-		var newCopy : Array = [];
-		var co : ControlObject;
-		
-		for each (co in expressionTreeCopy)
-		{
-			var cell : Object = new Object();
-			cell.value = "";
-			
-			if (co[indexProp] >= index)
-				cell.cell = Utils.moveFieldId(co.id, dx, dy);
-			else
-				cell.cell = co.id;
-			
-			cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
-			
-			newCopy.push(cell);
-		}
-		
-		assignExpressions(newCopy);
-	}
-	
-	/**
-	 *
-	 */
-	protected var ids : Array;
-	
-	/**
-	 *
-	 * @param index
-	 * @return
-	 *
-	 */
-	spreadsheet function getIdByIndex(index : uint) : String
-	{
-		return ids[index];
-	}
-	
-	/**
-	 *
-	 */
-	protected var _elementIndex : Object;
-	
-	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
-	 */
-	spreadsheet function getElementIndex(columnIndex : uint, rowIndex : int) : int
-	{
-		return _elementIndex[columnIndex + "|" + rowIndex] || -1;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
 	//  Overridden methods
 	//
 	//--------------------------------------------------------------------------
@@ -1990,6 +307,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		}
 	}
 	
+	override protected function createChildren() : void
+	{
+		super.createChildren();
+		
+		calc = new Calc;
+	}
+	
 	/**
 	 *
 	 * @param partName
@@ -2052,137 +376,1026 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		}
 	}
 	
-	override protected function createChildren() : void
-	{
-		super.createChildren();
-		
-		calc = new Calc;
-	}
-	
 	//--------------------------------------------------------------------------
 	//
-	//  Event handlers: Cell
+	//  Skin Parts
 	//
 	//--------------------------------------------------------------------------
 	
-	//----------------------------------
-	//  resizeCell
-	//----------------------------------
+	[SkinPart(required="false")]
+	/**
+	 *
+	 */
+	public var columnHeader : List;
+	
+	[SkinPart(required="false")]
+	/**
+	 *
+	 */
+	public var rowHeader : List;
+	
+	[SkinPart(required="true")]
+	[Bindable]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public var grid : GridList;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
 	
 	/**
 	 *
-	 * @param e
-	 *
 	 */
-	protected function resizeCellHandler(e : CellEvent) : void
-	{
-		if (!e || !e.data)
-			return;
-		
-		var amount : Rectangle = e.data.resizeAmount;
-		
-		if (isColumnIndexInvalid(amount.x) || isRowIndexInvalid(amount.y))
-			return;
-		
-		var cell : Cell = getCellAt(amount.x, amount.y);
-		
-		notifyChildren = false;
-		
-		if (cell.bounds.right + 1 > _columnCount)
-			columnCount = cell.bounds.right + 1;
-		
-		if (cell.bounds.bottom + 1 > _rowCount)
-			rowCount = cell.bounds.bottom + 1;
-		
-		doSort = true;
-		
-		refresh();
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Event handlers: Column
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  insertColumn
-	//----------------------------------
+	protected var doSort : Boolean;
 	
 	/**
 	 *
-	 * @param e
+	 */
+	protected var notifyChildren : Boolean;
+	
+	/**
 	 *
 	 */
-	protected function insertColumnHandler(e : ColumnEvent) : void
+	protected var shiftActive : Boolean;
+	
+	/**
+	 *
+	 */
+	protected var expressionTreeCopy : Object;
+	
+	/**
+	 *
+	 */
+	protected var columns : Array;
+	
+	/**
+	 *
+	 */
+	protected var rows : Array;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  calc
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _calc : Calc;
+	
+	[Bindable(event="calcChanged")]
+	/**
+	 * @return
+	 *
+	 * @see com.flextras.calc.Calc
+	 */
+	public function get calc() : Calc
 	{
-		if (!e)
+		return _calc;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 */
+	public function set calc(value : Calc) : void
+	{
+		if (_calc === value)
 			return;
 		
-		var index : uint = e.index;
-		
-		if (isColumnIndexInvalid(index))
-			return;
-		
-		clearExpressions();
-		
-		addColumn(index, _columnCount, _rowCount);
-		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredColumnWidths)
+		if (_calc)
 		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredColumnWidths[i];
+			_calc.removeEventListener(SpreadsheetEvent.ERROR, onCalcError);
+			_calc.removeEventListener(SpreadsheetEvent.WARNING, onCalcWarning);
 		}
 		
-		_preferredColumnWidths = array;
+		_calc = value;
 		
-		oldColumnCount = ++columnCount;
+		if (value)
+		{
+			value.addSpreadsheet(this);
+			value.addEventListener(SpreadsheetEvent.ERROR, onCalcError);
+			value.addEventListener(SpreadsheetEvent.WARNING, onCalcWarning);
+		}
+		
+		dispatchEvent(new Event("calcChanged"));
 	}
 	
 	//----------------------------------
-	//  removeColumn
+	//  cells
 	//----------------------------------
 	
 	/**
 	 *
-	 * @param e
+	 */
+	protected const _cells : ArrayCollection = new ArrayCollection;
+	
+	/**
 	 *
 	 */
-	protected function removeColumnHandler(e : ColumnEvent) : void
+	protected var cellsChanged : Boolean;
+	
+	[Bindable(event="cellsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get cells() : ArrayCollection
 	{
-		if (!e)
+		return _cells;
+	}
+	
+	//----------------------------------
+	//  columnCount
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var oldColumnCount : uint;
+	
+	/**
+	 *
+	 */
+	protected var _columnCount : uint = 10;
+	
+	/**
+	 *
+	 */
+	protected var columnCountChanged : Boolean = true;
+	
+	[Bindable(event="columnCountChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get columnCount() : uint
+	{
+		return _columnCount;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set columnCount(value : uint) : void
+	{
+		if (value < 0 || _columnCount == value)
 			return;
 		
-		var index : uint = e.index;
+		_columnCount = value;
+		columnCountChanged = true;
 		
-		if (isColumnIndexInvalid(index))
+		dispatchEvent(new Event("columnCountChanged"));
+		
+		invalidateProperties();
+	}
+	
+	//----------------------------------
+	//  columnWidths
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _columnWidths : Array;
+	
+	/**
+	 *
+	 */
+	protected const columnWidthsCollection : ArrayCollection = new ArrayCollection;
+	
+	[Bindable(event="columnWidthsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get columnWidths() : Array
+	{
+		return _columnWidths;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set columnWidths(value : Array) : void
+	{
+		if (_columnWidths === value)
 			return;
 		
-		clearExpressions();
+		_columnWidths = value;
 		
-		removeColumn(index, _columnCount, _rowCount);
+		var array : Array = [];
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0, [index, null, null, null]);
+		for (var i : uint, n : uint = value.length; i < n; ++i)
+			array.push(Utils.alphabet[i]);
 		
-		var array : Array = [], i : Number;
+		columnWidthsCollection.source = array;
 		
-		for (var k : String in _preferredColumnWidths)
+		dispatchEvent(new Event("columnWidthsChanged"));
+	}
+	
+	//----------------------------------
+	//  ctrlObjects
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _ctrlObjects : Object = {};
+	
+	/**
+	 * @private
+	 */
+	public function get ctrlObjects() : Object
+	{
+		return _ctrlObjects;
+	}
+	
+	//----------------------------------
+	//  disabledCells
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _disabledCells : Vector.<Cell>;
+	
+	[Bindable(event="disabledCellsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get disabledCells() : Vector.<Cell>
+	{
+		return _disabledCells;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set disabledCells(value : Vector.<Cell>) : void
+	{
+		if (_disabledCells === value)
+			return;
+		
+		for each (var cell : Cell in _disabledCells)
+			cell.enabled = true;
+		
+		_disabledCells = value;
+		
+		for each (cell in value)
+			cell.enabled = false;
+		
+		dispatchEvent(new Event("disabledCellsChanged"));
+	}
+	
+	//----------------------------------
+	//  expressions
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _expressions : ArrayCollection;
+	
+	/**
+	 * @private
+	 */
+	protected var expressionsChanged : Boolean;
+	
+	[Bindable(event="expressionsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get expressions() : ArrayCollection
+	{
+		return _expressions;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set expressions(value : ArrayCollection) : void
+	{
+		if (_expressions === value)
+			return;
+		
+		var oldValue : ArrayCollection = _expressions;
+		
+		if (_expressions)
+			_expressions.removeEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
+		
+		_expressions = value;
+		
+		if (value)
 		{
-			i = parseInt(k);
+			var ov : Object, o : Object, found : Boolean;
 			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredColumnWidths[i];
+			for each (ov in oldValue)
+			{
+				found = false;
+				
+				for each (o in value)
+					if (ov.cell == o.cell)
+						found = true;
+				
+				if (!found)
+					value.addItem(ov);
+			}
+			
+			value.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
+			
+			value.refresh();
 		}
+	}
+	
+	//----------------------------------
+	//  expressionTree
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected const _expressionTree : Array = [];
+	
+	/**
+	 * @private
+	 */
+	public function get expressionTree() : Array
+	{
+		return _expressionTree;
+	}
+	
+	//----------------------------------
+	//  globalStyles
+	//----------------------------------
+	
+	public const globalCell : Cell = new Cell;
+	
+	[Bindable(event="globalStylesChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get globalStyles() : CellStyles
+	{
+		return globalCell.styles;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set globalStyles(value : CellStyles) : void
+	{
+		if (!value)
+			return;
 		
-		_preferredColumnWidths = array;
+		globalCell.styles.assign(value);
 		
-		oldColumnCount = --columnCount;
+		dispatchEvent(new Event("globalStylesChanged"));
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set globalStylesObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		if (value is CellStyles)
+			globalStyles = CellStyles(value);
+		else
+		{
+			globalCell.styles.assignObject(value);
+			
+			dispatchEvent(new Event("globalStylesChanged"));
+		}
+	}
+	
+	//----------------------------------
+	//  gridDataProvider
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	public function get gridDataProvider() : ArrayCollection
+	{
+		return _cells;
+	}
+	
+	//----------------------------------
+	//  indexedCells
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _indexedCells : Object;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get indexedCells() : Object
+	{
+		return _indexedCells;
+	}
+	
+	//----------------------------------
+	//  preferredColumnWidths
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _preferredColumnWidths : Array = [];
+	
+	[Bindable(event="preferredColumnWidthsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get preferredColumnWidths() : Array
+	{
+		return _preferredColumnWidths;
+	}
+	
+	//----------------------------------
+	//  preferredRowHeights
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _preferredRowHeights : Array = [];
+	
+	[Bindable(event="preferredRowHeightsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get preferredRowHeights() : Array
+	{
+		return _preferredRowHeights;
+	}
+	
+	//----------------------------------
+	//  rowCount
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var oldRowCount : uint;
+	
+	/**
+	 *
+	 */
+	protected var _rowCount : uint = 10;
+	
+	/**
+	 *
+	 */
+	protected var rowCountChanged : Boolean = true;
+	
+	[Bindable(event="rowCountChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get rowCount() : uint
+	{
+		return _rowCount;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set rowCount(value : uint) : void
+	{
+		if (value < 0 || _rowCount == value)
+			return;
+		
+		_rowCount = value;
+		rowCountChanged = true;
+		
+		dispatchEvent(new Event("rowCountChanged"));
+		
+		invalidateProperties();
+	}
+	
+	//----------------------------------
+	//  rowHeights
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _rowHeights : Array;
+	
+	/**
+	 *
+	 */
+	protected const rowHeightsCollection : ArrayCollection = new ArrayCollection;
+	
+	[Bindable(event="rowHeightsChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get rowHeights() : Array
+	{
+		return _rowHeights;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set rowHeights(value : Array) : void
+	{
+		if (_rowHeights === value)
+			return;
+		
+		_rowHeights = value;
+		
+		var array : Array = [];
+		
+		for (var i : uint, n : uint = value.length; i < n; ++i)
+			array.push(i);
+		
+		rowHeightsCollection.source = array;
+		
+		dispatchEvent(new Event("rowHeightsChanged"));
+	}
+	
+	//----------------------------------
+	//  spans
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _spans : Array;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get spans() : Array
+	{
+		return _spans;
+	}
+	
+	//----------------------------------
+	//  uniqueCells
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _uniqueCells : Array;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get uniqueCells() : Array
+	{
+		return _uniqueCells;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  addCell
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function addCell(columnIndex : uint, rowIndex : uint) : void
+	{
+		var cell : Cell = new Cell(this, new Rectangle(columnIndex, rowIndex));
+		cell.globalStyles = globalCell.styles;
+		
+		_cells.addItem(cell);
+	}
+	
+	//----------------------------------
+	//  addColumn
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param index
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function addColumn(index : uint, columnCount : uint, rowCount : uint) : void
+	{
+		if (notifyChildren && index < columnCount - 1)
+			dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, index));
+		
+		for (var i : uint; i < rowCount; ++i)
+			addCell(index, i);
+	}
+	
+	//----------------------------------
+	//  addRow
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param index
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function addRow(index : uint, columnCount : uint, rowCount : uint) : void
+	{
+		if (notifyChildren && index < rowCount - 1)
+			dispatchEvent(new RowEvent(RowEvent.INSERTED, index));
+		
+		for (var i : uint; i < columnCount; ++i)
+			addCell(i, index);
+	}
+	
+	//----------------------------------
+	//  assignExpression
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param cellId Valid format is "[column index in alphabetical form][row index in numerical form]".
+	 * "a1" for example points to column 0 and row 1.
+	 *
+	 * @param expression Actual expression of which result will be seen in the target cell.
+	 * To remove existing expression type null | ""
+	 *
+	 */
+	public function assignExpression(cellId : String, expression : String) : void
+	{
+		if (!cellId)
+			return;
+		
+		cellId = cellId.toLowerCase();
+		
+		if (expression)
+			expression = expression.toLowerCase();
+		
+		var o : Object = getCell(cellId);
+		
+		var cellObj : Object = {cell: cellId, expression: expression, value: ""};
+		
+		if (o)
+			_expressions.setItemAt(cellObj, _expressions.getItemIndex(o));
+		else
+			_expressions.addItem(cellObj);
+	}
+	
+	//----------------------------------
+	//  assignExpressions
+	//----------------------------------
+	
+	/**
+	 * This method will add multiple expressions to the specified locations.
+	 * Each object in the expressions array should include a cell property to specify the location and an expression property.
+	 *
+	 * For more information on the cell and expression, see the expressions property.
+	 *
+	 * @param expressions An array of objects
+	 *
+	 * @see #assignExpression
+	 * @see #expressions
+	 */
+	public function assignExpressions(expressions : Array) : void
+	{
+		for each (var o : Object in expressions)
+			this.assignExpression(o.cell, o.expression);
+	}
+	
+	//----------------------------------
+	//  expression cell
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	public function getCell(cellId : String) : Object
+	{
+		if (!cellId)
+			return null;
+		
+		cellId = cellId.toLowerCase();
+		
+		for each (var o : Object in _expressions)
+			if (o.cell == cellId)
+				return o;
+		
+		return null;
+	}
+	
+	//----------------------------------
+	//  cell
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	// TODO: rename!
+	public function _getCell(location : Point) : Cell
+	{
+		if (!location)
+			return null;
+		
+		return getCellAt(location.x, location.y);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @return
+	 *
+	 */
+	public function getCellAt(columnIndex : uint, rowIndex : uint) : Cell
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return null;
+		
+		return _indexedCells[columnIndex + "|" + rowIndex];
+	}
+	
+	//----------------------------------
+	//  cellCondition
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	public function getCellCondition(location : Point) : Condition
+	{
+		if (!location)
+			return null;
+		
+		return getCellConditionAt(location.x, location.y);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @return
+	 *
+	 */
+	public function getCellConditionAt(columnIndex : uint, rowIndex : uint) : Condition
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return null;
+		
+		return getCellAt(columnIndex, rowIndex).condition;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param condition
+	 *
+	 */
+	public function setCellCondition(location : Point, condition : Condition) : void
+	{
+		if (!location || !condition)
+			return;
+		
+		setCellConditionAt(location.x, location.y, condition);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param condition
+	 *
+	 */
+	public function setCellConditionAt(columnIndex : uint, rowIndex : uint, condition : Condition) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !condition)
+			return;
+		
+		getCellAt(columnIndex, rowIndex).condition = condition;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param condition
+	 *
+	 */
+	public function setCellConditionObject(location : Point, condition : Object) : void
+	{
+		if (!location || !condition)
+			return;
+		
+		setCellConditionObjectAt(location.x, location.y, condition);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param condition
+	 *
+	 */
+	public function setCellConditionObjectAt(columnIndex : uint, rowIndex : uint, condition : Object) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !condition)
+			return;
+		
+		getCellAt(columnIndex, rowIndex).conditionObject = condition;
+	}
+	
+	//----------------------------------
+	//  cellStyles
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	public function getCellStyles(location : Point) : CellStyles
+	{
+		if (!location)
+			return null;
+		
+		return getCellStylesAt(location.x, location.y);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @return
+	 *
+	 */
+	public function getCellStylesAt(columnIndex : uint, rowIndex : uint) : CellStyles
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return null;
+		
+		return getCellAt(columnIndex, rowIndex).styles;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param styles
+	 *
+	 */
+	public function setCellStyles(location : Point, styles : CellStyles) : void
+	{
+		if (!location || !styles)
+			return;
+		
+		setCellStylesAt(location.x, location.y, styles);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param styles
+	 *
+	 */
+	public function setCellStylesAt(columnIndex : uint, rowIndex : uint, styles : CellStyles) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !styles)
+			return;
+		
+		getCellAt(columnIndex, rowIndex).styles = styles;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param styles
+	 *
+	 */
+	public function setCellStylesObject(location : Point, styles : Object) : void
+	{
+		if (!location || !styles)
+			return;
+		
+		setCellStylesObjectAt(location.x, location.y, styles);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param styles
+	 *
+	 */
+	public function setCellStylesObjectAt(columnIndex : uint, rowIndex : uint, styles : Object) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex) || !styles)
+			return;
+		
+		getCellAt(columnIndex, rowIndex).stylesObject = styles;
+	}
+	
+	//----------------------------------
+	//  clearCell
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 *
+	 */
+	public function clearCell(location : Point) : void
+	{
+		if (!location)
+			return;
+		
+		clearCellAt(location.x, location.y);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	public function clearCellAt(columnIndex : uint, rowIndex : uint) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return;
+		
+		var cell : Cell = getCellAt(columnIndex, rowIndex);
+		
+		if (!cell)
+			return;
+		
+		cell.clear();
 	}
 	
 	//----------------------------------
@@ -2191,123 +1404,35 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	/**
 	 *
-	 * @param e
+	 * @param index
 	 *
 	 */
-	protected function clearColumnHandler(e : ColumnEvent) : void
+	public function clearColumnAt(index : uint) : void
 	{
-		if (!e)
-			return;
-		
-		var index : uint = e.index;
-		
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		var row : Array = columns[index];
-		
-		for each (var cell : Cell in row)
-			cell.clear();
+		dispatchEvent(new ColumnEvent(ColumnEvent.CLEAR, index));
 	}
 	
 	//----------------------------------
-	//  resizeColumn
+	//  clearExpressions
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
-	protected function resizeColumnHandler(e : ColumnEvent) : void
+	public function clearExpressions() : void
 	{
-	
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Event handlers: Row
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  insertRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param e
-	 *
-	 */
-	protected function insertRowHandler(e : RowEvent) : void
-	{
-		if (!e)
-			return;
+		/*for each (var co : ControlObject in _ctrlObjects)
+		 co.oldID = null;*/
 		
-		var index : uint = e.index;
+		expressionTreeCopy = ObjectUtil.copy(_expressionTree);
 		
-		if (isRowIndexInvalid(index))
-			return;
+		for each (var co : ControlObject in expressionTree)
+			this.assignExpression(co.id, "");
 		
-		clearExpressions();
-		
-		addRow(index, _columnCount, _rowCount);
-		
-		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null, null, index, null]);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredRowHeights)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredRowHeights[i];
-		}
-		
-		_preferredRowHeights = array;
-		
-		oldRowCount = ++rowCount;
-	}
-	
-	//----------------------------------
-	//  removeRow
-	//----------------------------------
-	
-	/**
-	 *
-	 * @param e
-	 *
-	 */
-	protected function removeRowHandler(e : RowEvent) : void
-	{
-		if (!e)
-			return;
-		
-		var index : uint = e.index;
-		
-		if (isRowIndexInvalid(index))
-			return;
-		
-		clearExpressions();
-		
-		removeRow(index, _columnCount, _rowCount);
-		
-		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, -1, [null, null, index, null]);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredRowHeights)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredRowHeights[i];
-		}
-		
-		_preferredRowHeights = array;
-		
-		oldRowCount = --rowCount;
+		_expressions.removeAll();
 	}
 	
 	//----------------------------------
@@ -2316,67 +1441,617 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	/**
 	 *
-	 * @param e
+	 * @param index
 	 *
 	 */
-	protected function clearRowHandler(e : RowEvent) : void
+	public function clearRowAt(index : uint) : void
 	{
-		if (!e)
-			return;
-		
-		var index : uint = e.index;
-		
 		if (isRowIndexInvalid(index))
 			return;
 		
-		var column : Array = rows[index];
-		
-		for each (var cell : Cell in column)
-			cell.clear();
+		dispatchEvent(new RowEvent(RowEvent.CLEAR, index));
 	}
 	
 	//----------------------------------
-	//  resizeRow
+	//  columnWidth
+	//----------------------------------
+	
+	[Bindable(event="columnWidthsChanged")]
+	[Bindable(event="preferredColumnWidthsChanged")]
+	/**
+	 *
+	 * @param index
+	 * @return
+	 *
+	 */
+	public function getColumnWidthAt(index : uint) : Number
+	{
+		if (isColumnIndexInvalid(index))
+			return NaN;
+		
+		var value : Number = _preferredColumnWidths[index];
+		
+		if (isNaN(value))
+		{
+			if (_columnWidths)
+			{
+				var columnWidth : CellWidth = _columnWidths[index];
+				
+				if (columnWidth)
+					value = columnWidth.value;
+				else
+					value = new CellWidth().value;
+			}
+			else
+				value = new CellWidth().value;
+		}
+		
+		return value;
+	}
+	
+	/**
+	 *
+	 * @param index
+	 * @param value
+	 *
+	 */
+	public function setColumnWidthAt(index : uint, value : Number) : void
+	{
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		_preferredColumnWidths[index] = value;
+		
+		grid.dataGroup.invalidateDisplayList();
+		
+		dispatchEvent(new Event("preferredColumnWidthsChanged"));
+	}
+	
+	/**
+	 *
+	 */
+	protected var _elementIndex : Object;
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @return
+	 *
+	 */
+	spreadsheet function getElementIndex(columnIndex : uint, rowIndex : int) : int
+	{
+		return _elementIndex[columnIndex + "|" + rowIndex] || -1;
+	}
+	
+	/**
+	 *
+	 */
+	protected var ids : Array;
+	
+	/**
+	 *
+	 * @param index
+	 * @return
+	 *
+	 */
+	spreadsheet function getIdByIndex(index : uint) : String
+	{
+		return ids[index];
+	}
+	
+	/**
+	 *
+	 * @param value
+	 * @return
+	 *
+	 */
+	protected function isColumnIndexInvalid(value : uint) : Boolean
+	{
+		return value < 0 || value >= _columnCount;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 * @return
+	 *
+	 */
+	protected function isRowIndexInvalid(value : uint) : Boolean
+	{
+		return value < 0 || value >= _rowCount;
+	}
+	
+	//----------------------------------
+	//  insertColumn
 	//----------------------------------
 	
 	/**
 	 *
-	 * @param e
+	 * @param index
 	 *
 	 */
-	protected function resizeRowHandler(e : RowEvent) : void
+	public function insertColumnAt(index : uint) : void
 	{
-	
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		dispatchEvent(new ColumnEvent(ColumnEvent.INSERT, index));
 	}
 	
-	//--------------------------------------------------------------------------
-	//
-	//  Event handlers: Keyboard
-	//
-	//--------------------------------------------------------------------------
+	//----------------------------------
+	//  insertRow
+	//----------------------------------
 	
-	override protected function keyDownHandler(event : KeyboardEvent) : void
+	/**
+	 *
+	 * @param index
+	 *
+	 */
+	public function insertRowAt(index : uint) : void
 	{
-		if (event.ctrlKey && event.shiftKey && String.fromCharCode(event.charCode) == "r")
+		if (isRowIndexInvalid(index))
+			return;
+		
+		dispatchEvent(new RowEvent(RowEvent.INSERT, index));
+	}
+	
+	//----------------------------------
+	//  rangeCondition
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	public function getRangeConditions(location : Rectangle) : Vector.<Condition>
+	{
+		if (!location)
+			return null;
+		
+		return getRangeConditionsAt(location.x, location.y, location.width, location.height);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @return
+	 *
+	 */
+	public function getRangeConditionsAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
+	{
+		if (isColumnIndexInvalid(columnIndex)
+			|| isRowIndexInvalid(rowIndex)
+			|| columnSpan < 0
+			|| rowSpan < 0)
+			return null;
+		
+		var result : Vector.<Condition> = new Vector.<Condition>;
+		var c : uint = columnIndex, cs : uint = c + columnSpan;
+		var r : uint = rowIndex, rs : uint = r + rowSpan;
+		
+		for (; c <= cs; ++c)
+			for (r = rowIndex; r <= rs; ++r)
+				result.push(getCellConditionAt(c, r));
+		
+		return result;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param styles
+	 *
+	 */
+	public function setRangeCondition(location : Rectangle, condition : Condition) : void
+	{
+		if (!location || !condition)
+			return;
+		
+		setRangeConditionAt(location.x, location.y, location.width, location.height, condition);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @param condition
+	 *
+	 */
+	public function setRangeConditionAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
+	{
+		if (!condition)
+			return;
+		
+		var result : Vector.<Condition> = getRangeConditionsAt(columnIndex, rowIndex, columnSpan, rowSpan);
+		
+		if (!result)
+			return;
+		
+		for (var i : uint, n : uint = result.length; i < n; ++i)
+			result[i].assign(condition);
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param condition
+	 *
+	 */
+	public function setRangeConditionObject(location : Rectangle, condition : Object) : void
+	{
+		if (!location || !condition)
+			return;
+		
+		setRangeConditionObjectAt(location.x, location.y, location.width, location.height, condition);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @param condition
+	 *
+	 */
+	public function setRangeConditionObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
+	{
+		if (!condition)
+			return;
+		
+		var result : Vector.<Condition> = getRangeConditionsAt(columnIndex, rowIndex, columnSpan, rowSpan);
+		
+		if (!result)
+			return;
+		
+		for (var i : uint, n : uint = result.length; i < n; ++i)
+			result[i].assignObject(condition);
+	}
+	
+	//----------------------------------
+	//  rangeStyles
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	public function getRangeStyles(location : Rectangle) : Vector.<CellStyles>
+	{
+		if (!location)
+			return null;
+		
+		return getRangeStylesAt(location.x, location.y, location.width, location.height);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @return
+	 *
+	 */
+	public function getRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<CellStyles>
+	{
+		if (isColumnIndexInvalid(columnIndex)
+			|| isRowIndexInvalid(rowIndex)
+			|| columnSpan < 0
+			|| rowSpan < 0)
+			return null;
+		
+		var result : Vector.<CellStyles> = new Vector.<CellStyles>;
+		var c : uint = columnIndex, cs : uint = c + columnSpan;
+		var r : uint = rowIndex, rs : uint = r + rowSpan;
+		
+		for (; c <= cs; ++c)
+			for (r = rowIndex; r <= rs; ++r)
+				result.push(getCellStylesAt(c, r));
+		
+		return result;
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param styles
+	 *
+	 */
+	public function setRangeStyles(location : Rectangle, styles : CellStyles) : void
+	{
+		if (!location || !styles)
+			return;
+		
+		setRangeStylesAt(location.x, location.y, location.width, location.height, styles);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @param styles
+	 *
+	 */
+	public function setRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, styles : CellStyles) : void
+	{
+		if (!styles)
+			return;
+		
+		var result : Vector.<CellStyles> = getRangeStylesAt(columnIndex, rowIndex, columnSpan, rowSpan);
+		
+		if (!result)
+			return;
+		
+		for (var i : uint, n : uint = result.length; i < n; ++i)
+			result[i].assign(styles);
+	}
+	
+	/**
+	 *
+	 * @param location
+	 * @param styles
+	 *
+	 */
+	public function setRangeStylesObject(location : Rectangle, styles : Object) : void
+	{
+		if (!location || !styles)
+			return;
+		
+		setRangeStylesObjectAt(location.x, location.y, location.width, location.height, styles);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @param styles
+	 *
+	 */
+	public function setRangeStylesObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
+	{
+		if (!styles)
+			return;
+		
+		var result : Vector.<CellStyles> = getRangeStylesAt(columnIndex, rowIndex, columnSpan, rowSpan);
+		
+		if (!result)
+			return;
+		
+		for (var i : uint, n : uint = result.length; i < n; ++i)
+			result[i].assignObject(styles);
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function refresh() : void
+	{
+		cellsChanged = true;
+		
+		invalidateProperties();
+	}
+	
+	//----------------------------------
+	//  removeCell
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function removeCell(columnIndex : uint, rowIndex : uint) : void
+	{
+		Cell(_cells.removeItemAt(_cells.getItemIndex(getCellAt(columnIndex, rowIndex)))).release();
+	}
+	
+	//----------------------------------
+	//  removeColumn
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param index
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function removeColumn(index : uint, columnCount : uint, rowCount : uint) : void
+	{
+		if (notifyChildren)
+			dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, index));
+		
+		for (var i : uint; i < rowCount; ++i)
+			removeCell(index, i);
+	}
+	
+	/**
+	 *
+	 * @param index
+	 *
+	 */
+	public function removeColumnAt(index : uint) : void
+	{
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		dispatchEvent(new ColumnEvent(ColumnEvent.REMOVE, index));
+	}
+	
+	//----------------------------------
+	//  removeRow
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param index
+	 * @param columnIndex
+	 * @param rowIndex
+	 *
+	 */
+	protected function removeRow(index : uint, columnCount : uint, rowCount : uint) : void
+	{
+		if (notifyChildren)
+			dispatchEvent(new RowEvent(RowEvent.REMOVED, index));
+		
+		for (var i : uint; i < columnCount; ++i)
+			removeCell(i, index);
+	}
+	
+	/**
+	 *
+	 * @param index
+	 *
+	 */
+	public function removeRowAt(index : uint) : void
+	{
+		if (isRowIndexInvalid(index))
+			return;
+		
+		dispatchEvent(new RowEvent(RowEvent.REMOVE, index));
+	}
+	
+	//----------------------------------
+	//  resizeCell
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param bounds
+	 *
+	 */
+	public function resizeCell(bounds : Rectangle) : void
+	{
+		if (!bounds)
+			return;
+		
+		resizeCellAt(bounds.x, bounds.y, bounds.width, bounds.height);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 *
+	 */
+	public function resizeCellAt(columnIndex : uint, rowIndex : uint, columnSpan : uint = 0, rowSpan : uint = 0) : void
+	{
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return;
+		
+		dispatchEvent(new CellEvent(CellEvent.RESIZE, new CellEventData(new Rectangle(columnIndex, rowIndex, columnSpan, rowSpan))));
+	}
+	
+	//----------------------------------
+	//  rowHeight
+	//----------------------------------
+	
+	[Bindable(event="rowHeightsChanged")]
+	[Bindable(event="preferredRowHeightsChanged")]
+	/**
+	 *
+	 * @param index
+	 * @return
+	 *
+	 */
+	public function getRowHeightAt(index : uint) : Number
+	{
+		if (isRowIndexInvalid(index))
+			return NaN;
+		
+		var value : Number = _preferredRowHeights[index];
+		
+		if (isNaN(value))
 		{
-			if (!shiftActive)
+			if (_rowHeights)
 			{
-				shiftActive = true;
+				var rowHeight : CellHeight = _rowHeights[index];
 				
-				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.SHOW_HANDLERS));
+				if (rowHeight)
+					value = rowHeight.value;
+				else
+					value = new CellHeight().value;
 			}
 			else
-			{
-				shiftActive = false;
-				
-				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.HIDE_HANDLERS));
-			}
+				value = new CellHeight().value;
 		}
+		
+		return value;
+	}
+	
+	/**
+	 *
+	 * @param index
+	 * @param value
+	 *
+	 */
+	public function setRowHeightAt(index : uint, value : Number) : void
+	{
+		if (isRowIndexInvalid(index))
+			return;
+		
+		_preferredRowHeights[index] = value;
+		
+		grid.dataGroup.invalidateDisplayList();
+		
+		dispatchEvent(new Event("preferredRowHeightsChanged"));
+	}
+	
+	/**
+	 * @private
+	 */
+	public function updateExpressions() : void
+	{
+		expressionsChanged = true;
+		
+		invalidateProperties();
+	}
+	
+	protected function updateExpressionsUponRowOrColumnChange(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
+	{
+		var newCopy : Array = [];
+		var co : ControlObject;
+		
+		for each (co in expressionTreeCopy)
+		{
+			var cell : Object = new Object();
+			cell.value = "";
+			
+			if (co[indexProp] >= index)
+				cell.cell = Utils.moveFieldId(co.id, dx, dy);
+			else
+				cell.cell = co.id;
+			
+			cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
+			
+			newCopy.push(cell);
+		}
+		
+		assignExpressions(newCopy);
 	}
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Event handlers: Changes
+	//  Event handlers
 	//
 	//--------------------------------------------------------------------------
 	
@@ -2420,6 +2095,48 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param e
 	 *
 	 */
+	protected function clearColumnHandler(e : ColumnEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		var row : Array = columns[index];
+		
+		for each (var cell : Cell in row)
+			cell.clear();
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function clearRowHandler(e : RowEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isRowIndexInvalid(index))
+			return;
+		
+		var column : Array = rows[index];
+		
+		for each (var cell : Cell in column)
+			cell.clear();
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
 	protected function expressionsChangeHandler(e : CollectionEvent) : void
 	{
 		updateExpressions();
@@ -2427,11 +2144,96 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		dispatchEvent(new Event("expressionsChanged"));
 	}
 	
-	//--------------------------------------------------------------------------
-	//
-	//  Event handlers: Calc
-	//
-	//--------------------------------------------------------------------------
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function insertColumnHandler(e : ColumnEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		clearExpressions();
+		
+		addColumn(index, _columnCount, _rowCount);
+		
+		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredColumnWidths)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index <= i)
+				array[i + 1] = _preferredColumnWidths[i];
+		}
+		
+		_preferredColumnWidths = array;
+		
+		oldColumnCount = ++columnCount;
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function insertRowHandler(e : RowEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isRowIndexInvalid(index))
+			return;
+		
+		clearExpressions();
+		
+		addRow(index, _columnCount, _rowCount);
+		
+		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null, null, index, null]);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredRowHeights)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index <= i)
+				array[i + 1] = _preferredRowHeights[i];
+		}
+		
+		_preferredRowHeights = array;
+		
+		oldRowCount = ++rowCount;
+	}
+	
+	override protected function keyDownHandler(event : KeyboardEvent) : void
+	{
+		if (event.ctrlKey && event.shiftKey && String.fromCharCode(event.charCode) == "r")
+		{
+			if (!shiftActive)
+			{
+				shiftActive = true;
+				
+				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.SHOW_HANDLERS));
+			}
+			else
+			{
+				shiftActive = false;
+				
+				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.HIDE_HANDLERS));
+			}
+		}
+	}
 	
 	/**
 	 * @private
@@ -2448,6 +2250,127 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		this.dispatchEvent(event);
 	}
-
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function removeColumnHandler(e : ColumnEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isColumnIndexInvalid(index))
+			return;
+		
+		clearExpressions();
+		
+		removeColumn(index, _columnCount, _rowCount);
+		
+		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0, [index, null, null, null]);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredColumnWidths)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index < i)
+				array[i - 1] = _preferredColumnWidths[i];
+		}
+		
+		_preferredColumnWidths = array;
+		
+		oldColumnCount = --columnCount;
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function removeRowHandler(e : RowEvent) : void
+	{
+		if (!e)
+			return;
+		
+		var index : uint = e.index;
+		
+		if (isRowIndexInvalid(index))
+			return;
+		
+		clearExpressions();
+		
+		removeRow(index, _columnCount, _rowCount);
+		
+		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, -1, [null, null, index, null]);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredRowHeights)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index < i)
+				array[i - 1] = _preferredRowHeights[i];
+		}
+		
+		_preferredRowHeights = array;
+		
+		oldRowCount = --rowCount;
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function resizeCellHandler(e : CellEvent) : void
+	{
+		if (!e || !e.data)
+			return;
+		
+		var amount : Rectangle = e.data.resizeAmount;
+		
+		if (isColumnIndexInvalid(amount.x) || isRowIndexInvalid(amount.y))
+			return;
+		
+		var cell : Cell = getCellAt(amount.x, amount.y);
+		
+		notifyChildren = false;
+		
+		if (cell.bounds.right + 1 > _columnCount)
+			columnCount = cell.bounds.right + 1;
+		
+		if (cell.bounds.bottom + 1 > _rowCount)
+			rowCount = cell.bounds.bottom + 1;
+		
+		doSort = true;
+		
+		refresh();
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function resizeColumnHandler(e : ColumnEvent) : void
+	{
+	
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function resizeRowHandler(e : RowEvent) : void
+	{
+	
+	}
 }
 }

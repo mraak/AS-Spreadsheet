@@ -104,43 +104,89 @@ public class CellStyles extends EventDispatcher
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties: States
+	//  Properties
 	//
 	//--------------------------------------------------------------------------
 	
 	//----------------------------------
-	//  normal
+	//  alpha
 	//----------------------------------
 	
-	/**
-	 *
-	 */
-	protected const _normal : StylesState = new StylesState;
-	
-	[Bindable(event="normalChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get normal() : StylesState
-	{
-		return _normal;
-	}
-	
+	[Transient]
 	/**
 	 *
 	 * @param value
 	 *
 	 */
-	public function set normal(value : StylesState) : void
+	public function set alpha(value : Number) : void
 	{
-		if (!value || _normal === value)
+		normal.alpha = hovered.alpha = selected.alpha = disabled.alpha = value;
+	}
+	
+	//----------------------------------
+	//  backgroundAlpha
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set backgroundAlpha(value : Number) : void
+	{
+		normal.backgroundAlpha = hovered.backgroundAlpha = selected.backgroundAlpha = disabled.backgroundAlpha = value;
+	}
+	
+	//----------------------------------
+	//  backgroundColor
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set backgroundColor(value : uint) : void
+	{
+		normal.backgroundColor = hovered.backgroundColor = selected.backgroundColor = disabled.backgroundColor = value;
+	}
+	
+	//----------------------------------
+	//  bold
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set bold(value : Boolean) : void
+	{
+		normal.bold = hovered.bold = selected.bold = disabled.bold = value;
+	}
+	
+	//----------------------------------
+	//  border
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set border(value : Border) : void
+	{
+		if (!value)
 			return;
 		
-		_normal.assign(value);
-		
-		dispatchEvent(new Event("normalChanged"));
+		normal.border = value;
+		hovered.border = value;
+		selected.border = value;
+		disabled.border = value;
 	}
 	
 	[Transient]
@@ -149,19 +195,148 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set normalObject(value : Object) : void
+	public function set borderObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		_normal.borderObject = value;
+		_hovered.borderObject = value;
+		_selected.borderObject = value;
+		_disabled.borderObject = value;
+	}
+	
+	//----------------------------------
+	//  color
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set color(value : uint) : void
+	{
+		normal.color = hovered.color = selected.color = disabled.color = value;
+	}
+	
+	//----------------------------------
+	//  disabled
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected const _disabled : StylesState = new StylesState;
+	
+	[Bindable(event="disabledChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get disabled() : StylesState
+	{
+		return _disabled;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set disabled(value : StylesState) : void
+	{
+		if (!value || _disabled === value)
+			return;
+		
+		_disabled.assign(value);
+		
+		dispatchEvent(new Event("disabledChanged"));
+	}
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set disabledObject(value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
-			normal = StylesState(value);
+			disabled = StylesState(value);
 		else
 		{
-			_normal.assignObject(value);
+			_disabled.assignObject(value);
 			
-			dispatchEvent(new Event("normalChanged"));
+			dispatchEvent(new Event("disabledChanged"));
 		}
+	}
+	
+	//----------------------------------
+	//  global
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _global : CellStyles;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	spreadsheet function get global() : CellStyles
+	{
+		return _global;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	spreadsheet function set global(value : CellStyles) : void
+	{
+		if (_global === value)
+			return;
+		
+		_global = value;
+		
+		if (value)
+		{
+			_normal.global = value._normal;
+			_hovered.global = value._hovered;
+			_selected.global = value._selected;
+			_disabled.global = value._disabled;
+		}
+		else
+		{
+			_normal.global = null;
+			_hovered.global = null;
+			_selected.global = null;
+			_disabled.global = null;
+		}
+	}
+	
+	//----------------------------------
+	//  horizontalAlign
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set horizontalAlign(value : String) : void
+	{
+		normal.horizontalAlign = hovered.horizontalAlign = selected.horizontalAlign = disabled.horizontalAlign = value;
 	}
 	
 	//----------------------------------
@@ -217,6 +392,77 @@ public class CellStyles extends EventDispatcher
 			_hovered.assignObject(value);
 			
 			dispatchEvent(new Event("hoveredChanged"));
+		}
+	}
+	
+	//----------------------------------
+	//  italic
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set italic(value : Boolean) : void
+	{
+		normal.italic = hovered.italic = selected.italic = disabled.italic = value;
+	}
+	
+	//----------------------------------
+	//  normal
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected const _normal : StylesState = new StylesState;
+	
+	[Bindable(event="normalChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get normal() : StylesState
+	{
+		return _normal;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set normal(value : StylesState) : void
+	{
+		if (!value || _normal === value)
+			return;
+		
+		_normal.assign(value);
+		
+		dispatchEvent(new Event("normalChanged"));
+	}
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set normalObject(value : Object) : void
+	{
+		if (!value)
+			return;
+		
+		if (value is StylesState)
+			normal = StylesState(value);
+		else
+		{
+			_normal.assignObject(value);
+			
+			dispatchEvent(new Event("normalChanged"));
 		}
 	}
 	
@@ -277,69 +523,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	//----------------------------------
-	//  disabled
-	//----------------------------------
-	
-	/**
-	 *
-	 */
-	protected const _disabled : StylesState = new StylesState;
-	
-	[Bindable(event="disabledChanged")]
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	public function get disabled() : StylesState
-	{
-		return _disabled;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set disabled(value : StylesState) : void
-	{
-		if (!value || _disabled === value)
-			return;
-		
-		_disabled.assign(value);
-		
-		dispatchEvent(new Event("disabledChanged"));
-	}
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set disabledObject(value : Object) : void
-	{
-		if (!value)
-			return;
-		
-		if (value is StylesState)
-			disabled = StylesState(value);
-		else
-		{
-			_disabled.assignObject(value);
-			
-			dispatchEvent(new Event("disabledChanged"));
-		}
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Write-only properties: Styles
-	//
-	//--------------------------------------------------------------------------
-	
-	//----------------------------------
-	//  color
+	//  size
 	//----------------------------------
 	
 	[Transient]
@@ -348,84 +532,9 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set color(value : uint) : void
+	public function set size(value : uint) : void
 	{
-		normal.color = hovered.color = selected.color = disabled.color = value;
-	}
-	
-	//----------------------------------
-	//  alpha
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set alpha(value : Number) : void
-	{
-		normal.alpha = hovered.alpha = selected.alpha = disabled.alpha = value;
-	}
-	
-	//----------------------------------
-	//  backgroundColor
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set backgroundColor(value : uint) : void
-	{
-		normal.backgroundColor = hovered.backgroundColor = selected.backgroundColor = disabled.backgroundColor = value;
-	}
-	
-	//----------------------------------
-	//  backgroundAlpha
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set backgroundAlpha(value : Number) : void
-	{
-		normal.backgroundAlpha = hovered.backgroundAlpha = selected.backgroundAlpha = disabled.backgroundAlpha = value;
-	}
-	
-	//----------------------------------
-	//  bold
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set bold(value : Boolean) : void
-	{
-		normal.bold = hovered.bold = selected.bold = disabled.bold = value;
-	}
-	
-	//----------------------------------
-	//  italic
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set italic(value : Boolean) : void
-	{
-		normal.italic = hovered.italic = selected.italic = disabled.italic = value;
+		normal.size = hovered.size = selected.size = disabled.size = value;
 	}
 	
 	//----------------------------------
@@ -444,21 +553,6 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	//----------------------------------
-	//  horizontalAlign
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set horizontalAlign(value : String) : void
-	{
-		normal.horizontalAlign = hovered.horizontalAlign = selected.horizontalAlign = disabled.horizontalAlign = value;
-	}
-	
-	//----------------------------------
 	//  verticalAlign
 	//----------------------------------
 	
@@ -473,126 +567,9 @@ public class CellStyles extends EventDispatcher
 		normal.verticalAlign = hovered.verticalAlign = selected.verticalAlign = disabled.verticalAlign = value;
 	}
 	
-	//----------------------------------
-	//  size
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set size(value : uint) : void
-	{
-		normal.size = hovered.size = selected.size = disabled.size = value;
-	}
-	
-	//----------------------------------
-	//  border
-	//----------------------------------
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set border(value : Border) : void
-	{
-		if (!value)
-			return;
-		
-		normal.border = value;
-		hovered.border = value;
-		selected.border = value;
-		disabled.border = value;
-	}
-	
-	[Transient]
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	public function set borderObject(value : Object) : void
-	{
-		if (!value)
-			return;
-		
-		_normal.borderObject = value;
-		_hovered.borderObject = value;
-		_selected.borderObject = value;
-		_disabled.borderObject = value;
-	}
-	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties: Global styles
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 */
-	protected var _global : CellStyles;
-	
-	/**
-	 *
-	 * @return
-	 *
-	 */
-	spreadsheet function get global() : CellStyles
-	{
-		return _global;
-	}
-	
-	/**
-	 *
-	 * @param value
-	 *
-	 */
-	spreadsheet function set global(value : CellStyles) : void
-	{
-		if (_global === value)
-			return;
-		
-		_global = value;
-		
-		if (value)
-		{
-			_normal.global = value._normal;
-			_hovered.global = value._hovered;
-			_selected.global = value._selected;
-			_disabled.global = value._disabled;
-		}
-		else
-		{
-			_normal.global = null;
-			_hovered.global = null;
-			_selected.global = null;
-			_disabled.global = null;
-		}
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	spreadsheet function release() : void
-	{
-		global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Assignment
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -673,6 +650,15 @@ public class CellStyles extends EventDispatcher
 		
 		if (value.hasOwnProperty("disabled"))
 			disabledObject = value.disabled;
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	spreadsheet function release() : void
+	{
+		global = null;
 	}
 }
 }

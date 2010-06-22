@@ -125,11 +125,9 @@ public class StylesState extends Styles
 		}
 	}
 	
-	//--------------------------------------------------------------------------
-	//
-	//  Properties: Global styles
-	//
-	//--------------------------------------------------------------------------
+	//----------------------------------
+	//  global
+	//----------------------------------
 	
 	/**
 	 *
@@ -151,24 +149,7 @@ public class StylesState extends Styles
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Methods: Cleanup
-	//
-	//--------------------------------------------------------------------------
-	
-	/**
-	 *
-	 *
-	 */
-	override spreadsheet function release() : void
-	{
-		super.release();
-		
-		global = null;
-	}
-	
-	//--------------------------------------------------------------------------
-	//
-	//  Methods: Assignment
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 	
@@ -209,6 +190,17 @@ public class StylesState extends Styles
 		
 		if (value.hasOwnProperty("border"))
 			borderObject = value.border;
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	override spreadsheet function release() : void
+	{
+		super.release();
+		
+		global = null;
 	}
 }
 }
