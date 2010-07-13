@@ -50,7 +50,7 @@ public class ResizableRichEditableText extends RichEditableText
 		/*if (isMeasureFixed())
 		 return;*/
 		
-		ignoreDamageEvent = true;
+
 		
 		var bounds : Rectangle = measureTextSize(NaN);
 		
@@ -79,7 +79,7 @@ public class ResizableRichEditableText extends RichEditableText
 		
 		invalidateDisplayList();
 		
-		ignoreDamageEvent = false;
+
 		
 		super.measure();
 		
