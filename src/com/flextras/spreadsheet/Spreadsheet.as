@@ -1007,6 +1007,41 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return _uniqueCells;
 	}
 	
+	//----------------------------------
+	//  wordWrap
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _wordWrap : Boolean;
+	
+	[Bindable(event="wordWrapChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get wordWrap() : Boolean
+	{
+		return _wordWrap;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set wordWrap(value : Boolean) : void
+	{
+		if (_wordWrap == value)
+			return;
+		
+		_wordWrap = value;
+		
+		dispatchEvent(new Event("wordWrapChanged"));
+	}
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -1091,8 +1126,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		cellId = cellId.toLowerCase();
 		
-		if (expression)
+		if (expression != null)
 			expression = expression.toLowerCase();
+		else
+			expression = "";
 		
 		var o : Object = getCell(cellId);
 		
@@ -1432,7 +1469,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		for each (var co : ControlObject in expressionTree)
 			this.assignExpression(co.id, "");
 		
-		_expressions.removeAll();
+		//_expressions.removeAll();
 	}
 	
 	//----------------------------------

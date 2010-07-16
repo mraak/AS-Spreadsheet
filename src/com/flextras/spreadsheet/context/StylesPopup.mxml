@@ -132,7 +132,7 @@
 			</s:ArrayCollection>
 		</s:ButtonBar>
 	</s:HGroup>
-
+	
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "verticalAlign"
@@ -143,7 +143,7 @@
 			<s:layout>
 				<s:HorizontalLayout gap = "-1" />
 			</s:layout>
-
+			
 			<s:ArrayCollection>
 				<fx:String>top</fx:String>
 				<fx:String>middle</fx:String>
@@ -151,6 +151,30 @@
 				<fx:String>justify</fx:String>
 			</s:ArrayCollection>
 		</s:ButtonBar>
+	</s:HGroup>
+	
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "rollOutDuration"
+				 width = "100" />
+		<s:HSlider id = "rollOutDurationStyle"
+				   change = "rollOutDurationStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "1000"
+				   stepSize = "10"
+				   value = "{cell.styles.rollOutDuration}" />
+	</s:HGroup>
+	
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "cellGradientLevel"
+				 width = "100" />
+		<s:HSlider id = "cellGradientLevelStyle"
+				   change = "cellGradientLevelStyle_changeHandler(event)"
+				   minimum = "-100"
+				   maximum = "100"
+				   stepSize = "10"
+				   value = "{cell.styles.cellGradientLevel}" />
 	</s:HGroup>
 
 	<mx:HRule width = "100%" />
@@ -324,6 +348,25 @@
 					else
 						borderSide = cell.styles.normal.border.left;
 			}
+			
+			protected function rollOutDurationStyle_changeHandler(event:Event):void
+			{
+				for each (var c : Cell in cells)
+					c.styles.rollOutDuration = rollOutDurationStyle.value;
+				
+				if (cell)
+					cell.styles.rollOutDuration = rollOutDurationStyle.value;
+			}
+			
+			protected function cellGradientLevelStyle_changeHandler(event:Event):void
+			{
+				for each (var c : Cell in cells)
+					c.styles.cellGradientLevel = cellGradientLevelStyle.value;
+				
+				if (cell)
+					cell.styles.cellGradientLevel = cellGradientLevelStyle.value;
+			}
+			
 		]]>
 	</fx:Script>
 </context:BasePopup>

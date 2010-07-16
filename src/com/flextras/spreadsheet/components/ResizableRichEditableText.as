@@ -1,4 +1,4 @@
-package com.flextras
+package com.flextras.spreadsheet.components
 {
 import flash.geom.Rectangle;
 

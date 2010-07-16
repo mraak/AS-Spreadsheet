@@ -34,6 +34,16 @@ use namespace spreadsheet;
  */
 [Event(name="disabledChanged", type="flash.events.Event")]
 
+/**
+ *
+ */
+[Event(name="cellGradientLevelChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
+[Event(name="rollOutDurationChanged", type="flash.events.Event")]
+
 [RemoteClass]
 /**
  *
@@ -77,6 +87,8 @@ public class CellStyles extends EventDispatcher
 							   horizontalAlign : String = TextAlign.CENTER,
 							   verticalAlign : String = VerticalAlign.MIDDLE,
 							   size : Number = 14,
+							   rollOutDuration : int = 500,
+							   cellGradientLevel : int = 50,
 							   border : Border = null,
 							   normal : StylesState = null,
 							   hovered : StylesState = null,
@@ -93,6 +105,9 @@ public class CellStyles extends EventDispatcher
 		this.horizontalAlign = horizontalAlign;
 		this.verticalAlign = verticalAlign;
 		this.size = size;
+		
+		this.rollOutDuration = rollOutDuration;
+		this.cellGradientLevel = cellGradientLevel;
 		
 		this.border = border;
 		
@@ -207,6 +222,52 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	//----------------------------------
+	//  cellGradientLevel
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _cellGradientLevel : int = 50;
+	
+	protected var cellGradientLevelChanged : Boolean;
+	
+	[Bindable(event="cellGradientLevelChanged")]
+	/**
+	 * 
+	 * @return 
+	 * 
+	 */	
+	public function get cellGradientLevel() : int
+	{
+		return cellGradientLevelChanged || !_global ? _cellGradientLevel : _global._cellGradientLevel;
+	}
+	
+	/**
+	 *  Performs a scaled brightness adjustment of an RGB color.
+	 *
+	 *  @param value The percentage to brighten or darken the original color.
+	 *  If positive, the original color is brightened toward white
+	 *  by this percentage. If negative, it is darkened toward black
+	 *  by this percentage.
+	 *  The range for this parameter is -100 to 100;
+	 *  -100 produces black while 100 produces white.
+	 *  If this parameter is 0, the RGB color returned
+	 *  is the same as the original color.
+	 */
+	public function set cellGradientLevel(value : int) : void
+	{
+		if (_cellGradientLevel == value)
+			return;
+		
+		_cellGradientLevel = value;
+		
+		cellGradientLevelChanged = true;
+		
+		dispatchCellGradientLevelChangedEvent();
+	}
+	
+	//----------------------------------
 	//  color
 	//----------------------------------
 	
@@ -306,6 +367,12 @@ public class CellStyles extends EventDispatcher
 		if (_global === value)
 			return;
 		
+		if(_global)
+		{
+			_global.removeEventListener("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
+			_global.removeEventListener("rollOutDurationChanged", global_rollOutDurationChangedHandler);
+		}
+		
 		_global = value;
 		
 		if (value)
@@ -314,6 +381,9 @@ public class CellStyles extends EventDispatcher
 			_hovered.global = value._hovered;
 			_selected.global = value._selected;
 			_disabled.global = value._disabled;
+			
+			value.addEventListener("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
+			value.addEventListener("rollOutDurationChanged", global_rollOutDurationChangedHandler);
 		}
 		else
 		{
@@ -467,6 +537,45 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	//----------------------------------
+	//  rollOutDuration
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _rollOutDuration : int = 500;
+	
+	protected var rollOutDurationChanged : Boolean;
+	
+	[Bindable(event="rollOutDurationChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get rollOutDuration() : int
+	{
+		return rollOutDurationChanged || !_global ? _rollOutDuration : _global._rollOutDuration;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set rollOutDuration(value : int) : void
+	{
+		if (_rollOutDuration == value)
+			return;
+		
+		_rollOutDuration = value;
+		
+		rollOutDurationChanged = true;
+		
+		dispatchRollOutDurationChangedEvent();
+	}
+	
+	//----------------------------------
 	//  selected
 	//----------------------------------
 	
@@ -587,6 +696,9 @@ public class CellStyles extends EventDispatcher
 		hovered = value.hovered;
 		selected = value.selected;
 		disabled = value.disabled;
+		
+		rollOutDuration = value.rollOutDuration;
+		cellGradientLevel = value.cellGradientLevel;
 	}
 	
 	/**
@@ -636,6 +748,12 @@ public class CellStyles extends EventDispatcher
 		if (value.hasOwnProperty("size"))
 			size = uint(value.size);
 		
+		if (value.hasOwnProperty("rollOutDuration"))
+			rollOutDuration = int(value.rollOutDuration);
+		
+		if (value.hasOwnProperty("cellGradientLevel"))
+			cellGradientLevel = int(value.cellGradientLevel);
+		
 		if (value.hasOwnProperty("border"))
 			borderObject = value.border;
 		
@@ -656,9 +774,54 @@ public class CellStyles extends EventDispatcher
 	 *
 	 *
 	 */
+	protected function dispatchCellGradientLevelChangedEvent() : void
+	{
+		dispatchEvent(new Event("cellGradientLevelChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchRollOutDurationChangedEvent() : void
+	{
+		dispatchEvent(new Event("rollOutDurationChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
 	spreadsheet function release() : void
 	{
 		global = null;
 	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Event handlers
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function global_cellGradientLevelChangedHandler(e : Event) : void
+	{
+		dispatchCellGradientLevelChangedEvent();
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function global_rollOutDurationChangedHandler(e : Event) : void
+	{
+		dispatchRollOutDurationChangedEvent();
+	}
+	
 }
 }

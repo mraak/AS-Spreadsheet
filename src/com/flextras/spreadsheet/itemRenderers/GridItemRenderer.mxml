@@ -10,15 +10,16 @@
 				cut = "cutHandler(event)"
 				copy = "copyHandler(event)"
 				paste = "pasteHandler(event)"
-				flexContextMenu = "{cell.menu}"
-				doubleClickEnabled = "{text.enabled}"
-				doubleClick = "focused = true; text.setFocus();"
-				autoDrawBackground = "false">
+				doubleClickEnabled = "{cell.enabled}"
+				doubleClick = "focused = true; input.setFocus();"
+				autoDrawBackground = "false"
+				currentState="{cell.enabled ? 'normal' : 'disabled'}" xmlns:components="com.flextras.spreadsheet.components.*">
 
 	<s:transitions>
 		<s:Transition fromState = "hovered"
 					  toState = "normal">
-			<s:AnimateColor target = "{backgroundColorEntry}" />
+			<s:AnimateColor target = "{backgroundColorEntry}"
+							duration="{cell.styles.rollOutDuration}" />
 		</s:Transition>
 	</s:transitions>
 
@@ -76,10 +77,12 @@
 	<s:Rect left = "{l.width}"
 			top = "{t.height}"
 			right = "{r.width+edgeSize}"
-			bottom = "{b.height+edgeSize}">
+			bottom = "{b.height+edgeSize}"
+			visible="{!focused}"
+			includeInLayout="{!focused}">
 		<s:fill>
 			<s:LinearGradient rotation = "90">
-				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(backgroundColorEntry.color, 50)}"
+				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(backgroundColorEntry.color, cell.styles.cellGradientLevel)}"
 								 alpha = "{backgroundAlphaStyle}" />
 				<s:GradientEntry id = "backgroundColorEntry"
 								 color = "{backgroundColorStyle}"
@@ -143,29 +146,44 @@
 		</s:Rect>
 	</s:Group>
 
-	<flextras:ResizableRichEditableText id = "text"
-										enabled = "{cell.enabled}"
-										keyDown = "text_keyDownHandler(event)"
+	<s:RichText id = "output"
+				visible="{!focused}"
+				includeInLayout="{!focused}"
+				left = "{l.width}"
+				right = "{r.width+edgeSize}"
+				top = "{t.height}"
+				bottom = "{b.height+edgeSize}"
+				focusEnabled = "false"
+				mouseEnabled = "false"
+				mouseFocusEnabled = "false"
+				mouseChildren="false"
+				text = "{cell.value}"
+				color = "{colorStyle}"
+				alpha = "{alphaStyle}"
+				fontWeight = "{boldStyle ? 'bold' : 'normal'}"
+				fontStyle = "{italicStyle ? 'italic' : 'normal'}"
+				textDecoration = "{underlineStyle ? 'underline' : 'none'}"
+				textAlign = "{horizontalAlignStyle}"
+				verticalAlign = "{verticalAlignStyle}"
+				fontSize = "{sizeStyle}"/>
+	
+	<components:ResizableRichEditableText id = "input"
+										enabled="{cell.enabled}"
+										visible="{focused}"
+										includeInLayout="{focused}"
+										keyDown = "input_keyDownHandler(event)"
 										left = "{l.width}"
 										right = "{r.width+edgeSize}"
 										top = "{t.height}"
 										bottom = "{b.height+edgeSize}"
-										mouseEnabled = "{focused}"
-										focusEnabled = "{focused}"
-										mouseFocusEnabled = "{focused}"
-										text = "{focused ? cell.expression : cell.value}"
-										color = "{colorStyle}"
-										alpha = "{alphaStyle}"
-										fontWeight = "{boldStyle ? 'bold' : 'normal'}"
-										fontStyle = "{italicStyle ? 'italic' : 'normal'}"
-										textDecoration = "{underlineStyle ? 'underline' : 'none'}"
-										textAlign = "{horizontalAlignStyle}"
-										verticalAlign = "{verticalAlignStyle}"
-										fontSize = "{sizeStyle}"
-										focusOut = "cell.expression = text.text; focused = false;" />
+										text = "{cell.expression}"
+										textAlign = "center"
+										verticalAlign = "middle"
+										focusIn="focused = true;"
+										focusOut="focused = false; cell.expression = input.text;" />
 
 	<fx:Declarations>
-		<fx:Boolean id = "focused" />
+		<fx:Boolean id="focused" />
 		<fx:Boolean id = "conditionActive">{condition.active}</fx:Boolean>
 
 		<fx:uint id = "colorStyle">{conditionActive ? conditionStyles.color : styles.color}</fx:uint>
@@ -226,6 +244,7 @@
 			import com.flextras.spreadsheet.vos.Styles;
 			import com.flextras.spreadsheet.vos.StylesState;
 			
+			import mx.controls.IFlexContextMenu;
 			import mx.utils.ColorUtil;
 			
 			use namespace spreadsheet;
@@ -268,9 +287,27 @@
 			[Bindable]
 			protected var borderBottom : BorderSide;
 			
+			[Bindable]
+			protected var oldState:String;
+			
+			/*override public function get flexContextMenu():IFlexContextMenu
+			{
+				return cell.menu || super.flexContextMenu;
+			}*/
+			
+			override public function setCurrentState(stateName:String, playTransition:Boolean=true):void
+			{
+				if(!cell.enabled)
+					super.setCurrentState("disabled", playTransition);
+				else
+					super.setCurrentState(stateName, playTransition);
+			}
+			
 			override protected function stateChanged(oldState : String, newState : String, recursive : Boolean) : void
 			{
 				super.stateChanged(oldState, newState, recursive);
+				
+				this.oldState = oldState;
 				
 				switch (newState)
 				{
@@ -301,13 +338,16 @@
 			{
 				super.data = value;
 				
-				if (!value)
+				cell = value as Cell;
+				
+				if (!cell)
+				{
+					flexContextMenu = null;
+					
 					return;
+				}
 				
-				cell = Cell(value);
-				
-				if (text)
-					text.text = cell.value;
+				flexContextMenu = cell.menu;
 				
 				var styles : CellStyles = cell.styles;
 				
@@ -366,13 +406,15 @@
 				return point;
 			}
 			
-			protected function text_keyDownHandler(event : KeyboardEvent) : void
+			protected function input_keyDownHandler(event : KeyboardEvent) : void
 			{
 				if (!event.altKey && event.keyCode == Keyboard.ENTER)
 				{
 					event.stopImmediatePropagation();
 					
 					setFocus();
+					
+					//currentState = oldState;
 				}
 			}
 		]]>

@@ -75,64 +75,70 @@ public class Menu implements IFlexContextMenu
 		if (_target === value)
 			return;
 		
+		if(_target)
+		{
+			clipboard.removeEventListener("allowPasteChanged", allowPasteHandler);
+			
+			addRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
+			removeRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+			clearRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
+			addColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
+			removeColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
+			clearColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
+			clearCell.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearCellHandler);
+			cut.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
+			copy.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
+			paste.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
+			pasteSpecial.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
+			disable.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
+			setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
+			setConditionalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
+			setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
+			setSize.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
+		}
+		
 		_target = value;
 		
-		menu = new ContextMenu();
-		menu.hideBuiltInItems();
-		
-		value.contextMenu = menu;
+		if(value)
+		{
+			clipboard.addEventListener("allowPasteChanged", allowPasteHandler);
+			
+			addRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
+			removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
+			clearRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
+			addColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
+			removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
+			clearColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
+			clearCell.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearCellHandler);
+			cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
+			copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
+			paste.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
+			pasteSpecial.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
+			disable.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
+			setCellStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
+			setConditionalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
+			setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
+			setSize.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
+			
+			menu = new ContextMenu();
+			menu.hideBuiltInItems();
+			
+			menu.customItems = [cut, copy, paste, pasteSpecial,
+				clearCell, disable, setCellStyles, setConditionalStyles, setGlobalStyles, setSize,
+				addRow, removeRow, clearRow, addColumn, removeColumn, clearColumn];
+			
+			value.contextMenu = menu;
+		}
 	}
 	
 	public function setContextMenu(component : InteractiveObject) : void
 	{
 		target = component;
-		
-		clipboard.addEventListener("allowPasteChanged", allowPasteHandler);
-		
-		addRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
-		removeRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
-		clearRow.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
-		addColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
-		removeColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
-		clearColumn.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
-		clearCell.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearCellHandler);
-		cut.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
-		copy.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
-		paste.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
-		pasteSpecial.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
-		disable.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
-		setCellStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
-		setConditionalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
-		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
-		setSize.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
-		
-		menu.customItems = [cut, copy, paste, pasteSpecial,
-							clearCell, disable, setCellStyles, setConditionalStyles, setGlobalStyles, setSize,
-							addRow, removeRow, clearRow, addColumn, removeColumn, clearColumn];
 	}
 	
 	public function unsetContextMenu(component : InteractiveObject) : void
 	{
-		clipboard.removeEventListener("allowPasteChanged", allowPasteHandler);
-		
-		addRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addRowHandler);
-		removeRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeRowHandler);
-		clearRow.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearRowHandler);
-		addColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, addColumnHandler);
-		removeColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, removeColumnHandler);
-		clearColumn.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearColumnHandler);
-		clearCell.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, clearCellHandler);
-		cut.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, cutHandler);
-		copy.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, copyHandler);
-		paste.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteHandler);
-		pasteSpecial.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, pasteSpecialHandler);
-		disable.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, disableHandler);
-		setCellStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setCellStylesHandler);
-		setConditionalStyles.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setConditionalStylesHandler);
-		setGlobalStyles.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setGlobalStylesHandler);
-		setSize.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, setSizeHandler);
-		
-		menu.customItems = null;
+		//target = null;
 	}
 	
 	protected function addRowHandler(e : ContextMenuEvent) : void
@@ -140,7 +146,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.insertRowAt(c.rowIndex);
 		
 		host.insertRowAt(cell.rowIndex);
@@ -151,7 +157,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.removeRowAt(c.rowIndex);
 		
 		host.removeRowAt(cell.rowIndex);
@@ -162,7 +168,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.clearRowAt(c.rowIndex);
 		
 		host.clearRowAt(cell.rowIndex);
@@ -173,7 +179,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.insertColumnAt(c.columnIndex);
 		
 		host.insertColumnAt(cell.columnIndex);
@@ -184,7 +190,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.removeColumnAt(c.columnIndex);
 		
 		host.removeColumnAt(cell.columnIndex);
@@ -195,7 +201,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		for each (var c : Cell in cells)
-			if (c !== cell)
+			if (!c.bounds.equals(cell.bounds))
 				host.clearColumnAt(c.columnIndex);
 		
 		host.clearColumnAt(cell.columnIndex);
@@ -269,7 +275,7 @@ public class Menu implements IFlexContextMenu
 		var offset : Point = new Point(cell.bounds.x - startColumn, cell.bounds.y - startRow);
 		
 		endColumn += startColumn + offset.x + 1;
-		endRow += startRow + offset.y;
+		endRow += startRow + offset.y + 1;
 		
 		if(endColumn > host.columnCount)
 			host.columnCount = endColumn;
@@ -345,8 +351,8 @@ public class Menu implements IFlexContextMenu
 		
 		if(populate)
 		{
-		popup.cells = cells;
-		popup.cell = cell || cells[0];
+			popup.cells = cells;
+			popup.cell = cell || cells[0];
 		}
 		
 		PopUpManager.addPopUp(popup, popup.grid);
