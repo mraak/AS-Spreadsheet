@@ -253,6 +253,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			var c : uint;
 			
+			if(_expressions)
 			while (c < _expressions.length)
 			{
 				var o : Object = _expressions.getItemAt(c);
