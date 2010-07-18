@@ -121,7 +121,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		_condition.addEventListener("operatorChanged", conditionChanged);
 		_condition.addEventListener("rightChanged", conditionChanged);
 		
-		controlObject.addEventListener("expressionChanged", controlObject_expressionChanged);
+		//controlObject.addEventListener("expressionChanged", controlObject_expressionChanged);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -359,7 +359,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (owner)
 		{
 			ISpreadsheet(owner).calc.assignControlExpression(controlObject, value || "");
-			ISpreadsheet(owner).assignExpression(controlObject.id, value);
+			//ISpreadsheet(owner).assignExpression(controlObject.id, value);
 		}
 		
 		dispatchEvent(new Event("expressionChanged"));

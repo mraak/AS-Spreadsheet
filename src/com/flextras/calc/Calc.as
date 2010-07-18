@@ -7,10 +7,12 @@ import com.flextras.spreadsheet.SpreadsheetEvent;
 import flash.events.EventDispatcher;
 
 import mx.collections.ArrayCollection;
-import mx.controls.TextInput;
 import mx.core.UIComponent;
 import mx.events.CollectionEvent;
 import mx.events.FlexEvent;
+
+import spark.components.TextInput;
+
 
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
@@ -645,7 +647,8 @@ public class Calc extends EventDispatcher
 			{
 				//trace("\t " + op.id + " " + op.dependants);
 				var ind : int = op.dependants.indexOf(co);
-				op.dependants.splice(ind, 1);
+				if(ind >= 0)
+					op.dependants.splice(ind, 1);
 					//trace("\t " + op.id + " " + op.dependants + " " + ind);
 			}
 			
@@ -680,10 +683,17 @@ public class Calc extends EventDispatcher
 			
 			if (!update)
 			{
-				expressionTree.splice(expressionTree.indexOf(co), 1);
+				var coind : int = expressionTree.indexOf(co);
+				if(coind >= 0)
+					expressionTree.splice(expressionTree.indexOf(co), 1);
 				
 				if (co.grid)
-					co.grid.expressionTree.splice(co.grid.expressionTree.indexOf(co), 1);
+				{
+					coind = co.grid.expressionTree.indexOf(co);
+					if(coind >= 0)
+						co.grid.expressionTree.splice(coind, 1);	
+				}
+					
 			}
 			
 			var sdsd : int = 34;

@@ -420,7 +420,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 *
 	 */
-	protected var expressionTreeCopy : Object;
+	protected var expressionTreeCopy : Array;
 	
 	/**
 	 *
@@ -1457,9 +1457,32 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		/*for each (var co : ControlObject in _ctrlObjects)
 		 co.oldID = null;*/
 		
-		expressionTreeCopy = ObjectUtil.copy(_expressionTree);
+		expressionTreeCopy = new Array();
+		//expressionTreeCopy = ObjectUtil.copy(_expressionTree) as Array;
 		
-		for each (var co : ControlObject in expressionTree)
+		for each(var co : ControlObject in expressionTree)
+		{
+			var nco : ControlObject = new ControlObject();
+			nco.id = co.id;
+			nco.exp = co.exp;
+			nco.colIndex = co.colIndex;
+			nco.rowIndex = co.rowIndex;
+			nco.valueProp = co.valueProp;
+			nco.ctrl = co.ctrl;
+			nco.oldID = co.ctrl[co.valueProp];
+			nco.grid = co.grid;
+			nco.ctrlOperands = new Array();
+			
+			for each(var oco : ControlObject in co.ctrlOperands)
+			{
+				nco.ctrlOperands.push(oco);
+			}
+			
+			expressionTreeCopy.push(nco);
+		}
+		
+		
+		for each (co in expressionTree)
 			this.assignExpression(co.id, "");
 		
 		//callLater(_expressions.removeAll);
@@ -2059,11 +2082,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected function updateExpressionsUponRowOrColumnChange(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		clearExpressions();
-		
+		//updateExpressionsUponRowOrColumnChange2(indexProp, index, dx, dy, excludeRule);
 		callLater(updateExpressionsUponRowOrColumnChange2, [indexProp, index, dx, dy, excludeRule]);
 	}
 	
-	protected function updateExpressionsUponRowOrColumnChange2(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
+	public function updateExpressionsUponRowOrColumnChange2(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		var newCopy : Array = [];
 		var co : ControlObject;
@@ -2078,7 +2101,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			else
 				cell.cell = co.id;
 			
-			cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
+			//cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
+			cell.expression = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.oldID;
 			
 			newCopy.push(cell);
 		}

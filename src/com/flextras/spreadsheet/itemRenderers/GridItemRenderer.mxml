@@ -179,8 +179,8 @@
 										text = "{cell.expression &amp;&amp; cell.expression.length > 0 ? cell.expression : cell.value}"
 										textAlign = "center"
 										verticalAlign = "middle"
-										focusIn="focused = true;"
-										focusOut="focused = false; cell.expression = input.text;" />
+										focusIn="focused = true;"									
+										focusOut="editorFocusOut()" />
 
 	<fx:Declarations>
 		<fx:Boolean id="focused" />
@@ -235,6 +235,7 @@
 
 	<fx:Script>
 		<![CDATA[
+			import com.flextras.spreadsheet.ISpreadsheet;
 			import com.flextras.spreadsheet.Spreadsheet;
 			import com.flextras.spreadsheet.core.spreadsheet;
 			import com.flextras.spreadsheet.vos.BorderSide;
@@ -417,6 +418,16 @@
 					//currentState = oldState;
 				}
 			}
+			
+			protected function editorFocusOut():void
+			{
+				focused = false;
+				
+				if(cell.expression != input.text)
+					host.assignExpression(cell.id, input.text);
+			}
+			
+			
 		]]>
 	</fx:Script>
 
