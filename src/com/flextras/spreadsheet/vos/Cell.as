@@ -357,7 +357,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.exp = value;
 		
 		if (owner)
+		{
+			ISpreadsheet(owner).calc.assignControlExpression(controlObject, value || "");
 			ISpreadsheet(owner).assignExpression(controlObject.id, value);
+		}
 		
 		dispatchEvent(new Event("expressionChanged"));
 	}

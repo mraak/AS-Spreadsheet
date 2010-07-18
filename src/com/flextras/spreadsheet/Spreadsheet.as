@@ -273,22 +273,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				{
 					if (_cell.indexOf("!") == -1)
 					{
-						var co : ControlObject = _ctrlObjects[_cell];
+						var co : Cell = getCellAt(cellIndex, rowIndex);
+						co.expression = o.expression;
 						
-						if (o.expression != null)
-						{
-							calc.assignControlExpression(co, o.expression);
-							
-							if (o.expression == "")
-							{
-								_expressions.removeItemAt(c);
-							}
-							else
-							{
-								c++;
-							}
-						}
-						else c++;
+						if (o.expression == "")
+							_expressions.removeItemAt(c);
+						else
+							c++;
 					}
 					else
 					{
