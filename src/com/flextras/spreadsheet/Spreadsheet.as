@@ -288,6 +288,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 								c++;
 							}
 						}
+						else c++;
 					}
 					else
 					{
@@ -1129,8 +1130,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (expression != null)
 			expression = expression.toLowerCase();
-		else
-			expression = "";
+		/*else
+			expression = "";*/
 		
 		var o : Object = getCell(cellId);
 		
