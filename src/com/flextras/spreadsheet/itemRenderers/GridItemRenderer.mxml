@@ -176,7 +176,7 @@
 										right = "{r.width+edgeSize}"
 										top = "{t.height}"
 										bottom = "{b.height+edgeSize}"
-										text = "{cell.expression}"
+										text = "{cell.expression &amp;&amp; cell.expression.length > 0 ? cell.expression : cell.value}"
 										textAlign = "center"
 										verticalAlign = "middle"
 										focusIn="focused = true;"

@@ -120,6 +120,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 		//_condition.addEventListener("leftChanged", conditionChanged);
 		_condition.addEventListener("operatorChanged", conditionChanged);
 		_condition.addEventListener("rightChanged", conditionChanged);
+		
+		controlObject.addEventListener("expressionChanged", controlObject_expressionChanged);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -337,7 +339,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get expression() : String
 	{
-		return controlObject.exp || value; //_expression;
+		return _expression; // controlObject.exp || value; //_expression;
 	}
 	
 	/**
@@ -692,6 +694,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 		_condition.removeEventListener("operatorChanged", conditionChanged);
 		_condition.removeEventListener("rightChanged", conditionChanged);
 		
+		controlObject.removeEventListener("expressionChanged", controlObject_expressionChanged);
+		
 		globalStyles = null;
 		globalCondition = null;
 	}
@@ -898,6 +902,16 @@ public class Cell extends EventDispatcher implements IExternalizable
 	protected function rowResized(e : RowEvent) : void
 	{
 	
+	}
+	
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function controlObject_expressionChanged(e : Event) : void
+	{
+		expression = controlObject.exp;
 	}
 }
 }

@@ -2,6 +2,7 @@ package com.flextras.calc
 {
 import com.flextras.spreadsheet.ISpreadsheet;
 
+import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 
@@ -61,14 +62,20 @@ public class ControlObject extends EventDispatcher
 		super(target);
 	}
 	
-	public function set exp(val : String) : void
-	{
-		_exp = val;
-	}
-	
+	[Bindable(event="expressionChanged")]
 	public function get exp() : String
 	{
 		return _exp;
+	}
+	
+	public function set exp(val : String) : void
+	{
+		if(_exp == val)
+			return;
+		
+		_exp = val;
+		
+		dispatchEvent(new Event("expressionChanged"));
 	}
 	
 	public function get toolTipLabelTree() : String
