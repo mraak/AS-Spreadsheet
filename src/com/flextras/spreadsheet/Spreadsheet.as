@@ -39,6 +39,11 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
+ * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CLEARED
+ */
+[Event(name="expressionsCleared", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+
+/**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.ERROR
  */
 [Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
@@ -294,6 +299,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					e.message = _cell + " out of column or row bounds on Spreadsheet " + this.id;
 					this.dispatchEvent(e);
 				}
+			}
+			
+			if(clearExpressionsDirty)
+			{
+				dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
+				
+				clearExpressionsDirty = false;
 			}
 			
 			expressionsChanged = false;
@@ -1449,11 +1461,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  clearExpressions
 	//----------------------------------
 	
+	protected var clearExpressionsDirty:Boolean;
+	
 	/**
 	 * @private
 	 */
 	public function clearExpressions() : void
 	{
+		clearExpressionsDirty = true;
+		
 		/*for each (var co : ControlObject in _ctrlObjects)
 		 co.oldID = null;*/
 		

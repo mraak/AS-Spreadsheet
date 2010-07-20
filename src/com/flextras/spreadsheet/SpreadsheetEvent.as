@@ -242,6 +242,9 @@ public class SpreadsheetEvent extends Event
 	 */
 	public static const CELL_REGISTER : String = "cellRegister";
 	
+	public static const EXPRESSIONS_CHANGED:String = "expressionsChanged";
+	public static const EXPRESSIONS_CLEARED:String = "expressionsCleared";
+	
 	/**
 	 * 
 	 */
