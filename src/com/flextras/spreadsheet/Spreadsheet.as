@@ -2248,7 +2248,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		clearExpressions();
 		
+		// call this after clearExpressions is finished
 		addColumn(index, _columnCount, _rowCount);
+		
+		// call this after addColumn is finished
+		//updateExpressionsUponRowOrColumnChange2();
 		
 		var array : Array = [], i : Number;
 		
