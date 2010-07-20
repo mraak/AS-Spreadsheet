@@ -39,6 +39,16 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
+ * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGE
+ */
+[Event(name="expressionsChange", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+
+/**
+ * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGED
+ */
+[Event(name="expressionsChanged", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+
+/**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CLEARED
  */
 [Event(name="expressionsCleared", type="com.flextras.spreadsheet.SpreadsheetEvent")]
@@ -251,7 +261,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			cellsChanged = false;
 		}
 		
-		if (expressionsChanged)
+		if (expressionsChange)
 		{
 			var usedCells : Array = [];
 			var e : SpreadsheetEvent;
@@ -308,7 +318,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				clearExpressionsDirty = false;
 			}
 			
-			expressionsChanged = false;
+			dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CHANGED));
+			
+			expressionsChange = false;
 		}
 	}
 	
@@ -687,9 +699,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @private
 	 */
-	protected var expressionsChanged : Boolean;
+	protected var expressionsChange : Boolean;
 	
-	[Bindable(event="expressionsChanged")]
+	[Bindable(event="expressionsChange")]
 	/**
 	 *
 	 * @return
@@ -2090,7 +2102,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	public function updateExpressions() : void
 	{
-		expressionsChanged = true;
+		expressionsChange = true;
 		
 		invalidateProperties();
 	}
@@ -2218,7 +2230,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		updateExpressions();
 		
-		dispatchEvent(new Event("expressionsChanged"));
+		dispatchEvent(new Event("expressionsChange"));
 	}
 	
 	/**
