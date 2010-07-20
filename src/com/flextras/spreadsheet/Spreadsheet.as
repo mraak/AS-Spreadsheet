@@ -263,6 +263,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (expressionsChange)
 		{
+			expressionsChange = false;
+			
 			var usedCells : Array = [];
 			var e : SpreadsheetEvent;
 			
@@ -315,12 +317,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			{
 				dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
 				
+				if(info)
+					callLater(updateExpressionsUponRowOrColumnChange2, [info.prop, info.index, info.x, info.y, info.exclude]);
+				
 				clearExpressionsDirty = false;
 			}
 			
 			dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CHANGED));
-			
-			expressionsChange = false;
 		}
 	}
 	
@@ -2107,13 +2110,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		invalidateProperties();
 	}
 	
-	protected function updateExpressionsUponRowOrColumnChange(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
-	{
-		clearExpressions();
-		//updateExpressionsUponRowOrColumnChange2(indexProp, index, dx, dy, excludeRule);
-		callLater(updateExpressionsUponRowOrColumnChange2, [indexProp, index, dx, dy, excludeRule]);
-	}
-	
 	public function updateExpressionsUponRowOrColumnChange2(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
 	{
 		var newCopy : Array = [];
@@ -2248,9 +2244,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		addColumn(index, _columnCount, _rowCount);
+		info = {prop : "colIndex", index : index, x : 1, y : 0, exclude : [index, null, null, null]};
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, 1, 0, [index, null, null, null]);
+		clearExpressions();
+		
+		addColumn(index, _columnCount, _rowCount);
 		
 		var array : Array = [], i : Number;
 		
@@ -2282,9 +2280,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
-		addRow(index, _columnCount, _rowCount);
+		info = {prop : "rowIndex", index : index, x : 0, y : 1, exclude : [null, null, index, null]};
 		
-		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, 1, [null, null, index, null]);
+		clearExpressions();
+		
+		addRow(index, _columnCount, _rowCount);
 		
 		var array : Array = [], i : Number;
 		
@@ -2351,9 +2351,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		removeColumn(index, _columnCount, _rowCount);
+		info = {prop : "colIndex", index : index, x : -1, y : 0, exclude : [index, null, null, null]};
 		
-		updateExpressionsUponRowOrColumnChange("colIndex", index, -1, 0, [index, null, null, null]);
+		clearExpressions();
+		
+		removeColumn(index, _columnCount, _rowCount);
 		
 		var array : Array = [], i : Number;
 		
@@ -2370,6 +2372,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		oldColumnCount = --columnCount;
 	}
 	
+	protected var info:Object;
+	
 	/**
 	 *
 	 * @param e
@@ -2385,9 +2389,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
-		removeRow(index, _columnCount, _rowCount);
+		info = {prop : "rowIndex", index : index, x : 0, y : -1, exclude : [null, null, index, null]};
 		
-		updateExpressionsUponRowOrColumnChange("rowIndex", index, 0, -1, [null, null, index, null]);
+		clearExpressions();
+		
+		removeRow(index, _columnCount, _rowCount);
 		
 		var array : Array = [], i : Number;
 		
