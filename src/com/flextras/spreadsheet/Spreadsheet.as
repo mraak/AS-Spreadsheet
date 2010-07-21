@@ -137,6 +137,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		addEventListener(RowEvent.RESIZE, resizeRowHandler);
 		addEventListener(RowEvent.CLEAR, clearRowHandler);
 		
+		addEventListener(ColumnEvent.INSERTED, columnInsertedHandler);
+		addEventListener(ColumnEvent.REMOVED, columnRemovedHandler);
+		
+		addEventListener(RowEvent.INSERTED, rowInsertedHandler);
+		addEventListener(RowEvent.REMOVED, rowRemovedHandler);
+		
 		_cells.addEventListener(CollectionEvent.COLLECTION_CHANGE, cells_collectionChangeHandler);
 		
 		instance = this;
@@ -193,6 +199,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (cellsChanged)
 		{
+			cellsChanged = false;
+			
 			if (doSort)
 			{
 				_cells.refresh();
@@ -256,9 +264,35 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			grid.dataProvider = new ArrayCollection(_uniqueCells);
 			
-			dispatchEvent(new Event("cellsChanged"));
+			if(addColumnDirty)
+			{
+				addColumnDirty = false;
+				
+				dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, addColumnInfo.index));
+			}
 			
-			cellsChanged = false;
+			if(addRowDirty)
+			{
+				addRowDirty = false;
+				
+				dispatchEvent(new RowEvent(RowEvent.INSERTED, addRowInfo.index));
+			}
+			
+			if(removeColumnDirty)
+			{
+				removeColumnDirty = false;
+				
+				dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, removeColumnInfo.index));
+			}
+			
+			if(removeRowDirty)
+			{
+				removeRowDirty = false;
+				
+				dispatchEvent(new RowEvent(RowEvent.REMOVED, removeRowInfo.index));
+			}
+			
+			dispatchEvent(new Event("cellsChanged"));
 		}
 		
 		if (expressionsChange)
@@ -315,12 +349,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			if(clearExpressionsDirty)
 			{
-				dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
-				
-				if(info)
-					callLater(updateExpressionsUponRowOrColumnChange2, [info.prop, info.index, info.x, info.y, info.exclude]);
-				
 				clearExpressionsDirty = false;
+				
+				dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
 			}
 			
 			dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CHANGED));
@@ -1090,6 +1121,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  addColumn
 	//----------------------------------
 	
+	protected var addColumnDirty:Boolean;
+	protected var addColumnInfo:Object;
+	
 	/**
 	 *
 	 * @param index
@@ -1100,15 +1134,25 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected function addColumn(index : uint, columnCount : uint, rowCount : uint) : void
 	{
 		if (notifyChildren && index < columnCount - 1)
-			dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, index));
+			dispatchEvent(new ColumnEvent(ColumnEvent.BEFORE_INSERTED, index));
+		
+		addColumnInfo = {prop : "colIndex", index : index, x : 1, y : 0, exclude : [index, null, null, null]};
 		
 		for (var i : uint; i < rowCount; ++i)
+		{
+			if(notifyChildren)
+				addColumnDirty = true;
+			
 			addCell(index, i);
+		}
 	}
 	
 	//----------------------------------
 	//  addRow
 	//----------------------------------
+	
+	protected var addRowDirty:Boolean;
+	protected var addRowInfo:Object;
 	
 	/**
 	 *
@@ -1120,10 +1164,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected function addRow(index : uint, columnCount : uint, rowCount : uint) : void
 	{
 		if (notifyChildren && index < rowCount - 1)
-			dispatchEvent(new RowEvent(RowEvent.INSERTED, index));
+			dispatchEvent(new RowEvent(RowEvent.BEFORE_INSERTED, index));
+		
+		addRowInfo = {prop : "rowIndex", index : index, x : 0, y : 1, exclude : [null, null, index, null]};
 		
 		for (var i : uint; i < columnCount; ++i)
+		{
+			if(notifyChildren)
+				addRowDirty = true;
+			
 			addCell(i, index);
+		}
 	}
 	
 	//----------------------------------
@@ -1485,38 +1536,32 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		clearExpressionsDirty = true;
 		
-		/*for each (var co : ControlObject in _ctrlObjects)
-		 co.oldID = null;*/
-		
 		expressionTreeCopy = new Array();
 		//expressionTreeCopy = ObjectUtil.copy(_expressionTree) as Array;
 		
 		for each(var co : ControlObject in expressionTree)
-		{
-			var nco : ControlObject = new ControlObject();
-			nco.id = co.id;
-			nco.exp = co.exp;
-			nco.colIndex = co.colIndex;
-			nco.rowIndex = co.rowIndex;
-			nco.valueProp = co.valueProp;
-			nco.ctrl = co.ctrl;
-			nco.oldID = co.ctrl[co.valueProp];
-			nco.grid = co.grid;
-			nco.ctrlOperands = new Array();
-			
-			for each(var oco : ControlObject in co.ctrlOperands)
-			{
-				nco.ctrlOperands.push(oco);
-			}
-			
-			expressionTreeCopy.push(nco);
-		}
-		
+			expressionTreeCopy.push(copyControlObject(new ControlObject, co));
 		
 		for each (co in expressionTree)
 			this.assignExpression(co.id, "");
+	}
+	
+	protected function copyControlObject(target:ControlObject, source:ControlObject):ControlObject
+	{
+		target.id = source.id;
+		target.exp = source.exp;
+		target.colIndex = source.colIndex;
+		target.rowIndex = source.rowIndex;
+		target.valueProp = source.valueProp;
+		target.ctrl = source.ctrl;
+		target.oldID = source.ctrl[source.valueProp];
+		target.grid = source.grid;
+		target.ctrlOperands = new Array();
 		
-		//callLater(_expressions.removeAll);
+		for each(var co : ControlObject in source.ctrlOperands)
+			target.ctrlOperands.push(copyControlObject(new ControlObject, co));
+		
+		return target;
 	}
 	
 	//----------------------------------
@@ -1950,6 +1995,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  removeColumn
 	//----------------------------------
 	
+	protected var removeColumnDirty:Boolean;
+	protected var removeColumnInfo:Object;
+	
 	/**
 	 *
 	 * @param index
@@ -1960,10 +2008,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected function removeColumn(index : uint, columnCount : uint, rowCount : uint) : void
 	{
 		if (notifyChildren)
-			dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, index));
+			dispatchEvent(new ColumnEvent(ColumnEvent.BEFORE_REMOVED, index));
+		
+		removeColumnInfo = {prop : "colIndex", index : index, x : -1, y : 0, exclude : [index, null, null, null]};
 		
 		for (var i : uint; i < rowCount; ++i)
+		{
+			if(notifyChildren)
+				removeColumnDirty = true;
+			
 			removeCell(index, i);
+		}
 	}
 	
 	/**
@@ -1983,6 +2038,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  removeRow
 	//----------------------------------
 	
+	protected var removeRowDirty:Boolean;
+	protected var removeRowInfo:Object;
+	
 	/**
 	 *
 	 * @param index
@@ -1993,10 +2051,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected function removeRow(index : uint, columnCount : uint, rowCount : uint) : void
 	{
 		if (notifyChildren)
-			dispatchEvent(new RowEvent(RowEvent.REMOVED, index));
+			dispatchEvent(new RowEvent(RowEvent.BEFORE_REMOVED, index));
+		
+		removeRowInfo = {prop : "rowIndex", index : index, x : 0, y : -1, exclude : [null, null, index, null]};
 		
 		for (var i : uint; i < columnCount; ++i)
+		{
+			if(notifyChildren)
+				removeRowDirty = true;
+			
 			removeCell(i, index);
+		}
 	}
 	
 	/**
@@ -2244,29 +2309,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		info = {prop : "colIndex", index : index, x : 1, y : 0, exclude : [index, null, null, null]};
-		
 		clearExpressions();
 		
 		// call this after clearExpressions is finished
 		addColumn(index, _columnCount, _rowCount);
-		
-		// call this after addColumn is finished
-		//updateExpressionsUponRowOrColumnChange2();
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredColumnWidths)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredColumnWidths[i];
-		}
-		
-		_preferredColumnWidths = array;
-		
-		oldColumnCount = ++columnCount;
 	}
 	
 	/**
@@ -2284,25 +2330,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
-		info = {prop : "rowIndex", index : index, x : 0, y : 1, exclude : [null, null, index, null]};
-		
 		clearExpressions();
 		
 		addRow(index, _columnCount, _rowCount);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredRowHeights)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredRowHeights[i];
-		}
-		
-		_preferredRowHeights = array;
-		
-		oldRowCount = ++rowCount;
 	}
 	
 	override protected function keyDownHandler(event : KeyboardEvent) : void
@@ -2322,6 +2352,90 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.HIDE_HANDLERS));
 			}
 		}
+	}
+	
+	protected function columnInsertedHandler(e:ColumnEvent):void
+	{
+		var index:int = addColumnInfo.index;
+		
+		updateExpressionsUponRowOrColumnChange2(addColumnInfo.prop, index, addColumnInfo.x, addColumnInfo.y, addColumnInfo.exclude);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredColumnWidths)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index <= i)
+				array[i + 1] = _preferredColumnWidths[i];
+		}
+		
+		_preferredColumnWidths = array;
+		
+		oldColumnCount = ++columnCount;
+	}
+	
+	protected function rowInsertedHandler(e:RowEvent):void
+	{
+		var index:int = addRowInfo.index;
+		
+		updateExpressionsUponRowOrColumnChange2(addRowInfo.prop, index, addRowInfo.x, addRowInfo.y, addRowInfo.exclude);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredRowHeights)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index <= i)
+				array[i + 1] = _preferredRowHeights[i];
+		}
+		
+		_preferredRowHeights = array;
+		
+		oldRowCount = ++rowCount;
+	}
+	
+	protected function columnRemovedHandler(e:ColumnEvent):void
+	{
+		var index:int = removeColumnInfo.index;
+		
+		updateExpressionsUponRowOrColumnChange2(removeColumnInfo.prop, index, removeColumnInfo.x, removeColumnInfo.y, removeColumnInfo.exclude);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredColumnWidths)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index < i)
+				array[i - 1] = _preferredColumnWidths[i];
+		}
+		
+		_preferredColumnWidths = array;
+		
+		oldColumnCount = --columnCount;
+	}
+	
+	protected function rowRemovedHandler(e:RowEvent):void
+	{
+		var index:int = removeRowInfo.index;
+		
+		updateExpressionsUponRowOrColumnChange2(removeRowInfo.prop, index, removeRowInfo.x, removeRowInfo.y, removeRowInfo.exclude);
+		
+		var array : Array = [], i : Number;
+		
+		for (var k : String in _preferredRowHeights)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i) && index < i)
+				array[i - 1] = _preferredRowHeights[i];
+		}
+		
+		_preferredRowHeights = array;
+		
+		oldRowCount = --rowCount;
 	}
 	
 	/**
@@ -2355,25 +2469,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		info = {prop : "colIndex", index : index, x : -1, y : 0, exclude : [index, null, null, null]};
-		
 		clearExpressions();
 		
 		removeColumn(index, _columnCount, _rowCount);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredColumnWidths)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredColumnWidths[i];
-		}
-		
-		_preferredColumnWidths = array;
-		
-		oldColumnCount = --columnCount;
 	}
 	
 	protected var info:Object;
@@ -2393,25 +2491,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
-		info = {prop : "rowIndex", index : index, x : 0, y : -1, exclude : [null, null, index, null]};
-		
 		clearExpressions();
 		
 		removeRow(index, _columnCount, _rowCount);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredRowHeights)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredRowHeights[i];
-		}
-		
-		_preferredRowHeights = array;
-		
-		oldRowCount = --rowCount;
 	}
 	
 	/**

@@ -109,13 +109,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		owner.addEventListener(CellEvent.RESIZE, resizeCellHandler, false, 100);
 		
-		owner.addEventListener(ColumnEvent.INSERTED, columnInserted, false, 100);
-		owner.addEventListener(ColumnEvent.REMOVED, columnRemoved, false, 100);
-		owner.addEventListener(ColumnEvent.RESIZED, columnResized, false, 100);
+		owner.addEventListener(ColumnEvent.BEFORE_INSERTED, columnInserted, false, 100);
+		owner.addEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoved, false, 100);
+		owner.addEventListener(ColumnEvent.BEFORE_RESIZED, columnResized, false, 100);
 		
-		owner.addEventListener(RowEvent.INSERTED, rowInserted, false, 100);
-		owner.addEventListener(RowEvent.REMOVED, rowRemoved, false, 100);
-		owner.addEventListener(RowEvent.RESIZED, rowResized, false, 100);
+		owner.addEventListener(RowEvent.BEFORE_INSERTED, rowInserted, false, 100);
+		owner.addEventListener(RowEvent.BEFORE_REMOVED, rowRemoved, false, 100);
+		owner.addEventListener(RowEvent.BEFORE_RESIZED, rowResized, false, 100);
 		
 		//_condition.addEventListener("leftChanged", conditionChanged);
 		_condition.addEventListener("operatorChanged", conditionChanged);
@@ -685,13 +685,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
 		
-		owner.removeEventListener(ColumnEvent.INSERTED, columnInserted);
-		owner.removeEventListener(ColumnEvent.REMOVED, columnRemoved);
-		owner.removeEventListener(ColumnEvent.RESIZED, columnResized);
+		owner.removeEventListener(ColumnEvent.BEFORE_INSERTED, columnInserted);
+		owner.removeEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoved);
+		owner.removeEventListener(ColumnEvent.BEFORE_RESIZED, columnResized);
 		
-		owner.removeEventListener(RowEvent.INSERTED, rowInserted);
-		owner.removeEventListener(RowEvent.REMOVED, rowRemoved);
-		owner.removeEventListener(RowEvent.RESIZED, rowResized);
+		owner.removeEventListener(RowEvent.BEFORE_INSERTED, rowInserted);
+		owner.removeEventListener(RowEvent.BEFORE_REMOVED, rowRemoved);
+		owner.removeEventListener(RowEvent.BEFORE_RESIZED, rowResized);
 		
 		//_condition.removeEventListener("leftChanged", conditionChanged);
 		_condition.removeEventListener("operatorChanged", conditionChanged);
