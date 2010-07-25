@@ -274,7 +274,7 @@ public class Menu implements IFlexContextMenu
 		
 		var offset : Point = new Point(cell.bounds.x - startColumn, cell.bounds.y - startRow);
 		
-		endColumn += startColumn + offset.x + 1;
+		endColumn += startColumn + offset.x;
 		endRow += startRow + offset.y + 1;
 		
 		if(endColumn > host.columnCount)
@@ -303,7 +303,7 @@ public class Menu implements IFlexContextMenu
 				}
 				
 				if (!method || method == "expression")
-					target.expression = Utils.moveExpression(cells[i].controlObject, offset.x, offset.y);
+					target.expression = cells[i].controlObject.exp ? Utils.moveExpression(cells[i].controlObject, offset.x, offset.y) : cells[i].value;
 			}
 		}
 	}

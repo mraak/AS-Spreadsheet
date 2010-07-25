@@ -23,6 +23,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.collections.ArrayCollection;
+import mx.core.EventPriority;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 import mx.events.FlexEvent;
@@ -262,8 +263,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				}
 			}
 			
-			grid.dataProvider = new ArrayCollection(_uniqueCells);
-			
 			if(addColumnDirty)
 			{
 				addColumnDirty = false;
@@ -293,6 +292,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			}
 			
 			dispatchEvent(new Event("cellsChanged"));
+			
+			grid.dataProvider = new ArrayCollection(_uniqueCells);
 		}
 		
 		if (expressionsChange)
@@ -610,6 +611,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_columnCount = value;
 		columnCountChanged = true;
+		notifyChildren = false;
 		
 		dispatchEvent(new Event("columnCountChanged"));
 		
@@ -761,7 +763,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (_expressions)
 			_expressions.removeEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 		
-		_expressions = value;
+		_expressions = value || new ArrayCollection;
 		
 		if (value)
 		{
@@ -778,10 +780,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				if (!found)
 					value.addItem(ov);
 			}
+		}
+		
+		if(_expressions)
+		{
+			_expressions.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 			
-			value.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
-			
-			value.refresh();
+			_expressions.refresh();
 		}
 	}
 	
@@ -967,6 +972,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_rowCount = value;
 		rowCountChanged = true;
+		notifyChildren = false;
 		
 		dispatchEvent(new Event("rowCountChanged"));
 		
@@ -2191,7 +2197,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				cell.cell = co.id;
 			
 			//cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
-			cell.expression = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.oldID;
+			cell.expression = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
 			
 			newCopy.push(cell);
 		}
@@ -2366,8 +2372,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			i = parseInt(k);
 			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredColumnWidths[i];
+			if (!isNaN(i))
+			{
+				if(i >= index)
+					array[i + 1] = _preferredColumnWidths[i];
+				else
+					array[i] = _preferredColumnWidths[i];
+			}
 		}
 		
 		_preferredColumnWidths = array;
@@ -2387,8 +2398,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			i = parseInt(k);
 			
-			if (!isNaN(i) && index <= i)
-				array[i + 1] = _preferredRowHeights[i];
+			if (!isNaN(i))
+			{
+				if(i >= index)
+					array[i + 1] = _preferredRowHeights[i];
+				else
+					array[i] = _preferredRowHeights[i];
+			}
 		}
 		
 		_preferredRowHeights = array;
@@ -2408,8 +2424,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			i = parseInt(k);
 			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredColumnWidths[i];
+			if (!isNaN(i))
+			{
+				if(i > index)
+					array[i - 1] = _preferredColumnWidths[i];
+				else
+					array[i] = _preferredColumnWidths[i];
+			}
 		}
 		
 		_preferredColumnWidths = array;
@@ -2429,8 +2450,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			i = parseInt(k);
 			
-			if (!isNaN(i) && index < i)
-				array[i - 1] = _preferredRowHeights[i];
+			if (!isNaN(i))
+			{
+				if(i > index)
+					array[i - 1] = _preferredRowHeights[i];
+				else
+					array[i] = _preferredRowHeights[i];
+			}
 		}
 		
 		_preferredRowHeights = array;
