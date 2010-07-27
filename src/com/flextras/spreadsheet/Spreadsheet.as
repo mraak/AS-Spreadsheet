@@ -852,7 +852,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	override public function get id() : String
 	{
 		if(!super.id)
-			id = "sheet" + ++idCounter;
+			id = "Spreadsheet" + ++idCounter;
 		
 		return super.id;
 	}
