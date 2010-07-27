@@ -658,6 +658,7 @@ public class Calc extends EventDispatcher
 		
 		var funcCalc : String;
 		var _val : String;
+		var coind : int;
 		
 		if (exp.substr(0, 1) == "=")
 		{
@@ -666,13 +667,17 @@ public class Calc extends EventDispatcher
 			co.exp = "=" + repairedExpression;
 			repairedExpression = null;
 			
-			if (!update && expressionTree.indexOf(co) == -1)
+			coind = expressionTree.indexOf(co);
+			
+			if (!update && coind == -1)
 			{
 				expressionTree.push(co);
 				
 				if (co.grid)
 				{
-					co.grid.expressionTree.push(co);
+					coind = co.grid.expressionTree.indexOf(co);
+					if(coind == -1)	
+						co.grid.expressionTree.push(co);
 				}
 			}
 		}
@@ -683,7 +688,7 @@ public class Calc extends EventDispatcher
 			
 			if (!update)
 			{
-				var coind : int = expressionTree.indexOf(co);
+				coind = expressionTree.indexOf(co);
 				if(coind >= 0)
 					expressionTree.splice(expressionTree.indexOf(co), 1);
 				
@@ -703,10 +708,16 @@ public class Calc extends EventDispatcher
 			
 			if (!update)
 			{
-				expressionTree.push(co);
+				coind = expressionTree.indexOf(co);
+				if(coind == -1)
+					expressionTree.push(co);
 				
 				if (co.grid)
-					co.grid.expressionTree.push(co);
+				{
+					coind = co.grid.expressionTree.indexOf(co);
+					if(coind == -1)	
+						co.grid.expressionTree.push(co);	
+				}
 			}
 		}
 		
@@ -741,7 +752,7 @@ public class Calc extends EventDispatcher
 		if (co && co.grid && co.grid is ISpreadsheet)
 		{
 			var dg : ISpreadsheet = co.grid;
-			var o : Object = dg.getExpressionObject(co.id);
+			var o : Object = dg.getCell(co.id);
 			
 			if (o)
 			{
