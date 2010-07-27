@@ -1,0 +1,153 @@
+Differences between DataGrid based Spreadsheet and new one:
+
+Basic usage:
+old:
+<Spreadsheet id="sheet" expressions="{new ArrayCollection([{cell:'a0', expression='=5+5'}])}"/>
+
+new:
+<Spreadsheet id="sheet" expressions="{new ArrayCollection([{cell:'a0', expression='=5+5'}])}"/>
+<Spreadsheet id="sheet">
+  <ArrayCollection>
+    <Object cell="a0" expression="=5+5"/>
+  </ArrayCollection>
+</Spreadsheet>
+
+Global styles:
+old:
+public function get globalCellStyles () : CellProperties
+public function set globalCellStyles (value : CellProperties) : void
+
+new:
+public function get globalStyles() : CellStyles -> sheet.globalStyles.color = 0x99CCFF;
+public function set globalStyles(value : CellStyles) : void
+public function set globalStylesObject(value : Object) : void
+
+Cell:
+old:
+public function getCellProperties (at : CellLocation, modified : Boolean = true) : CellProperties
+public function setCellProperties (value : CellProperties) : void
+
+new:
+public function _getCell(location : Point) : Cell
+public function getCellAt(columnIndex : uint, rowIndex : uint) : Cell -> sheet.getCellAt(0, 1).styles.color = 0x99CCFF;
+
+Cell styles:
+old:
+public function getCellStyles (at : CellLocation, modified : Boolean = true) : Object
+public function setCellStyles (location : CellLocation, styles : Object = null, condition : String = null, conditionalStyles : Object = null) : void
+
+new:
+public function getCellStyles(location : Point) : CellStyles
+public function getCellStylesAt(columnIndex : uint, rowIndex : uint) : CellStyles -> sheet.getCellStylesAt(0, 1).color = 0x99CCFF;
+public function setCellStyles(location : Point, styles : CellStyles) : void
+public function setCellStylesAt(columnIndex : uint, rowIndex : uint, styles : CellStyles) : void
+public function setCellStylesObject(location : Point, styles : Object) : void
+public function setCellStylesObjectAt(columnIndex : uint, rowIndex : uint, styles : Object) : void -> sheet.setCellStylesObjectAt(0, 1, {color : 0x99CCFF});
+
+Range styles:
+old:
+public function getCellPropertiesInRange (range : CellRange, modified : Boolean = true) : Array
+public function setCellPropertiesInRange (range : CellRange, properties:CellProperties) : void
+
+new:
+public function getRangeStyles(location : Rectangle) : Vector.<CellStyles>
+public function getRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<CellStyles>
+public function setRangeStyles(location : Rectangle, styles : CellStyles) : void
+public function setRangeStylesAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, styles : CellStyles) : void
+public function setRangeStylesObject(location : Rectangle, styles : Object) : void -> sheet.setCellConditionObjectAt(new Rectangle(0, 0, 2, 2), {bold : true});
+public function setRangeStylesObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void -> sheet.setCellConditionObjectAt(0, 0, 2, 2, {bold : true});
+
+Cell condition:
+old:
+part of cell styles
+
+new:
+public function getCellCondition(location : Point) : Condition -> sheet.getCellCondition(new Point(0, 1)).right = 5;
+public function getCellConditionAt(columnIndex : uint, rowIndex : uint) : Condition
+public function setCellCondition(location : Point, condition : Condition) : void
+public function setCellConditionAt(columnIndex : uint, rowIndex : uint, condition : Condition) : void -> sheet.setCellConditionObjectAt(0, 1, new Condition(NaN, null, 5));
+public function setCellConditionObject(location : Point, condition : Object) : void
+public function setCellConditionObjectAt(columnIndex : uint, rowIndex : uint, condition : Object) : void -> sheet.setCellConditionObjectAt(0, 1, {right : 5});
+
+
+Range condition:
+old:
+part of range styles
+
+new:
+public function getRangeConditions(location : Rectangle) : Vector.<Condition>
+public function getRangeConditionsAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
+public function setRangeCondition(location : Rectangle, condition : Condition) : void
+public function setRangeConditionAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
+public function setRangeConditionObject(location : Rectangle, condition : Object) : void
+public function setRangeConditionObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
+
+Insert column:
+old:
+public function insertColumnAt (index : int = 0) : int
+
+new:
+public function insertColumnAt(index : uint) : void
+
+Insert row:
+old:
+public function insertRowAt(index : int) : void
+
+new:
+public function insertRowAt(index : uint) : void
+
+Remove column:
+old:
+public function removeColumnAt (index : int = 0) : void
+
+new:
+public function removeColumnAt(index : uint) : void
+
+Remove row:
+old:
+public function removeRowAt (index : int) : void
+
+new:
+public function removeRowAt(index : uint) : void
+
+Clear column:
+old:
+public function clearColumnAt(index : int) : void
+
+new:
+public function clearColumnAt(index : uint) : void
+
+Clear row:
+old:
+public function clearRowAt(index : int) : void
+
+new:
+public function clearRowAt(index : uint) : void
+
+Column width:
+old:
+public function getColumnWidthAt (index : int) : Number
+public function setColumnWidthAt (index : int, value : Number) : void
+
+new:
+public function getColumnWidthAt(index : uint) : Number
+public function setColumnWidthAt(index : uint, value : Number) : void
+
+Row height:
+old:
+public function getRowHeightAt (index : int) : Number
+public function setRowHeightAt (index : int, value : Number) : void
+
+new:
+public function getRowHeightAt(index : uint) : Number
+public function setRowHeightAt(index : uint, value : Number) : void
+
+Disabled cells:
+old:
+public function get disabledCells () : Array
+public function set disabledCells (value : Array) : void
+
+new:
+public function get disabledCells() : Vector.<Cell>
+public function set disabledCells(value : Vector.<Cell>) : void
+

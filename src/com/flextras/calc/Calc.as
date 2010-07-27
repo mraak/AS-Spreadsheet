@@ -606,7 +606,7 @@ public class Calc extends EventDispatcher
 				}
 				else
 				{
-					var e : String = "Cyclic refference detected at: " + currentOriginator.id + "<->" + objectChanged.id + ". Reset this field.";
+					var e : String = "Cyclic reference detected at: " + currentOriginator.id + "<->" + objectChanged.id + ". Reset this field.";
 					
 					var errEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
 					errEvt.message = e;
@@ -622,7 +622,7 @@ public class Calc extends EventDispatcher
 	
 	/**
 	 * Main function for assigning the expressions to the objects.
-	 * - ctrl:*, object that you want to assign expression to. You can use the ID:String of the object or a refference to the object typed as ControlObject
+	 * - ctrl:*, object that you want to assign expression to. You can use the ID:String of the object or a reference to the object typed as ControlObject
 	 * - expression:String, expression to be assigned, e.g. "=5+5"
 	 * - update:Boolean, internal use
 	 * */
@@ -695,8 +695,6 @@ public class Calc extends EventDispatcher
 				}
 					
 			}
-			
-			var sdsd : int = 34;
 		}
 		else
 		{

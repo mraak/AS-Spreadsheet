@@ -68,7 +68,7 @@
 			
 			use namespace spreadsheet;
 			
-			protected const host : Spreadsheet = Spreadsheet.instance;
+			public var host : Spreadsheet;
 			
 			protected function border_mouseMoveHandler(event : MouseEvent) : void
 			{

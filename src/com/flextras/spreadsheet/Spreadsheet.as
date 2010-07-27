@@ -23,12 +23,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.collections.ArrayCollection;
-import mx.core.EventPriority;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 import mx.events.FlexEvent;
 import mx.managers.IFocusManagerComponent;
-import mx.utils.ObjectUtil;
 
 import spark.components.List;
 import spark.components.supportClasses.SkinnableComponent;
@@ -106,14 +104,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 {
 	//--------------------------------------------------------------------------
 	//
-	//  Class mixins
-	//
-	//--------------------------------------------------------------------------
-	
-	spreadsheet static var instance : Spreadsheet;
-	
-	//--------------------------------------------------------------------------
-	//
 	//  Constructor
 	//
 	//--------------------------------------------------------------------------
@@ -138,15 +128,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		addEventListener(RowEvent.RESIZE, resizeRowHandler);
 		addEventListener(RowEvent.CLEAR, clearRowHandler);
 		
-		addEventListener(ColumnEvent.INSERTED, columnInsertedHandler);
-		addEventListener(ColumnEvent.REMOVED, columnRemovedHandler);
-		
-		addEventListener(RowEvent.INSERTED, rowInsertedHandler);
-		addEventListener(RowEvent.REMOVED, rowRemovedHandler);
-		
 		_cells.addEventListener(CollectionEvent.COLLECTION_CHANGE, cells_collectionChangeHandler);
-		
-		instance = this;
 		
 		expressions = new ArrayCollection;
 		
@@ -299,7 +281,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			expressionsChange = false;
 			
-			var usedCells : Array = [];
+			//var usedCells : Array = [];
 			var e : SpreadsheetEvent;
 			
 			var c : uint;
@@ -312,10 +294,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				var _cell : String = String(o.cell).toLowerCase();
 				o.cell = _cell;
 				
-				if (usedCells.indexOf(_cell) != -1)
+				/*if (usedCells.indexOf(_cell) != -1)
 					throw new Error("Cell ID already used in this collection: " + _cell + ". Use setItem() or itemUpdated() if you want to change existing cell's expression.");
 				
-				usedCells.push(_cell);
+				usedCells.push(_cell);*/
 				
 				var cellIndex : int = Utils.gridFieldToIndexes(_cell)[0];
 				var rowIndex : int = Utils.gridFieldToIndexes(_cell)[1];
@@ -325,12 +307,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					if (_cell.indexOf("!") == -1)
 					{
 						var co : Cell = getCellAt(cellIndex, rowIndex);
-						co.expression = o.expression;
 						
-						if (o.expression == "")
+						if (!o.expression || o.expression == "")
+						{
+							if(expressionTree.indexOf(co.controlObject) > -1)
+								calc.assignControlExpression(co.controlObject, "");
+							
 							_expressions.removeItemAt(c);
+							
+							co.expressionObject = null;
+						}
 						else
+						{
+							co.expressionObject = o;
+							
+							calc.assignControlExpression(co.controlObject, co.expression || "", expressionTree.indexOf(co.controlObject) > -1);
+							
 							c++;
+						}
 					}
 					else
 					{
@@ -469,11 +463,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * ---JH add some documentation for this property ----
 	 */
 	protected var shiftActive : Boolean;
-	
-	/**
-	 * ---JH add some documentation for this property ----
-	 */
-	protected var expressionTreeCopy : Array;
 	
 	/**
 	 * ---JH add some documentation for this property ----
@@ -792,7 +781,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @private  
 	 */
-	public const globalCell : Cell = new Cell;
+	spreadsheet const globalCell : Cell = new Cell;
 	
 	[Bindable(event="globalStylesChanged")]
 	/**
@@ -847,6 +836,25 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	public function get gridDataProvider() : ArrayCollection
 	{
 		return _cells;
+	}
+	
+	//----------------------------------
+	//  id
+	//----------------------------------
+	
+	protected static var idCounter:uint;
+	
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	override public function get id() : String
+	{
+		if(!super.id)
+			id = "sheet" + ++idCounter;
+		
+		return super.id;
 	}
 	
 	//----------------------------------
@@ -1189,17 +1197,18 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (expression != null)
 			expression = expression.toLowerCase();
-		/*else
-			expression = "";*/
 		
 		var o : Object = getCell(cellId);
 		
-		var cellObj : Object = {cell: cellId, expression: expression, value: ""};
-		
 		if (o)
-			_expressions.setItemAt(cellObj, _expressions.getItemIndex(o));
+		{
+			o.cell = cellId;
+			o.expression = expression;
+			
+			_expressions.itemUpdated(o);
+		}
 		else
-			_expressions.addItem(cellObj);
+			_expressions.addItem({cell: cellId, expression: expression, value: ""});
 	}
 	
 	//----------------------------------
@@ -1598,40 +1607,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		clearExpressionsDirty = true;
 		
-		expressionTreeCopy = new Array();
-		//expressionTreeCopy = ObjectUtil.copy(_expressionTree) as Array;
-		
-		for each(var co : ControlObject in expressionTree)
-			expressionTreeCopy.push(copyControlObject(new ControlObject, co));
-		
-		for each (co in expressionTree)
-			this.assignExpression(co.id, "");
-	}
-	
-	//----------------------------------
-	//  copyControlObject
-	//----------------------------------
-	/**
-	 * This method copies all properties from the source object into the target object.
-	 * 
-	 * @see com.flextras.calc.ControlObject
-	 */
-	protected function copyControlObject(target:ControlObject, source:ControlObject):ControlObject
-	{
-		target.id = source.id;
-		target.exp = source.exp;
-		target.colIndex = source.colIndex;
-		target.rowIndex = source.rowIndex;
-		target.valueProp = source.valueProp;
-		target.ctrl = source.ctrl;
-		target.oldID = source.ctrl[source.valueProp];
-		target.grid = source.grid;
-		target.ctrlOperands = new Array();
-		
-		for each(var co : ControlObject in source.ctrlOperands)
-			target.ctrlOperands.push(copyControlObject(new ControlObject, co));
-		
-		return target;
+		expressions.removeAll();
 	}
 	
 	//----------------------------------
@@ -2297,30 +2273,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		invalidateProperties();
 	}
 	
-	public function updateExpressionsUponRowOrColumnChange2(indexProp : String, index : int, dx : int, dy : int, excludeRule : Array = null) : void
-	{
-		var newCopy : Array = [];
-		var co : ControlObject;
-		
-		for each (co in expressionTreeCopy)
-		{
-			var cell : Object = new Object();
-			cell.value = "";
-			
-			if (co[indexProp] >= index)
-				cell.cell = Utils.moveFieldId(co.id, dx, dy);
-			else
-				cell.cell = co.id;
-			
-			//cell.expression = co.exp ? Utils.moveExpression3(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
-			cell.expression = co.exp ? Utils.moveExpression(co, dx, dy, null, excludeRule) : co.ctrl[co.valueProp];
-			
-			newCopy.push(cell);
-		}
-		
-		assignExpressions(newCopy);
-	}
-	
 	//--------------------------------------------------------------------------
 	//
 	//  Event handlers
@@ -2347,6 +2299,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				break;
 			
 			case CollectionEventKind.REMOVE:
+				/*var index:int;
+				for each(var cell:Cell in e.items)
+					if((index = expressions.getItemIndex(cell.expressionObject)) > -1)
+						expressions.getItemAt(index).expression = "";*/
+				
 				refresh();
 				break;
 			
@@ -2411,6 +2368,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function expressionsChangeHandler(e : CollectionEvent) : void
 	{
+		if(e.kind == CollectionEventKind.REMOVE)
+			for each(var item:Object in e.items)
+				if(item.hasOwnProperty("reference"))
+					Cell(item.reference).expressionObject = null;
+		
 		updateExpressions();
 		
 		dispatchEvent(new Event("expressionsChange"));
@@ -2431,58 +2393,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		clearExpressions();
-		
-		// call this after clearExpressions is finished
 		addColumn(index, _columnCount, _rowCount);
-	}
-	
-	/**
-	 *
-	 * @param e
-	 *
-	 */
-	protected function insertRowHandler(e : RowEvent) : void
-	{
-		if (!e)
-			return;
 		
-		var index : uint = e.index;
-		
-		if (isRowIndexInvalid(index))
-			return;
-		
-		clearExpressions();
-		
-		addRow(index, _columnCount, _rowCount);
-	}
-	
-	override protected function keyDownHandler(event : KeyboardEvent) : void
-	{
-		if (event.ctrlKey && event.shiftKey && String.fromCharCode(event.charCode) == "r")
-		{
-			if (!shiftActive)
-			{
-				shiftActive = true;
-				
-				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.SHOW_HANDLERS));
-			}
-			else
-			{
-				shiftActive = false;
-				
-				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.HIDE_HANDLERS));
-			}
-		}
-	}
-	
-	protected function columnInsertedHandler(e:ColumnEvent):void
-	{
-		var index:int = addColumnInfo.index;
-		
-		updateExpressionsUponRowOrColumnChange2(addColumnInfo.prop, index, addColumnInfo.x, addColumnInfo.y, addColumnInfo.exclude);
-		
-		var array : Array = [], i : Number;
+		var array : Array = [], i:int;
 		
 		for (var k : String in _preferredColumnWidths)
 		{
@@ -2502,13 +2415,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		oldColumnCount = ++columnCount;
 	}
 	
-	protected function rowInsertedHandler(e:RowEvent):void
+	/**
+	 *
+	 * @param e
+	 *
+	 */
+	protected function insertRowHandler(e : RowEvent) : void
 	{
-		var index:int = addRowInfo.index;
+		if (!e)
+			return;
 		
-		updateExpressionsUponRowOrColumnChange2(addRowInfo.prop, index, addRowInfo.x, addRowInfo.y, addRowInfo.exclude);
+		var index : uint = e.index;
 		
-		var array : Array = [], i : Number;
+		if (isRowIndexInvalid(index))
+			return;
+		
+		addRow(index, _columnCount, _rowCount);
+		
+		var array : Array = [], i:int;
 		
 		for (var k : String in _preferredRowHeights)
 		{
@@ -2528,56 +2452,23 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		oldRowCount = ++rowCount;
 	}
 	
-	protected function columnRemovedHandler(e:ColumnEvent):void
+	override protected function keyDownHandler(event : KeyboardEvent) : void
 	{
-		var index:int = removeColumnInfo.index;
-		
-		updateExpressionsUponRowOrColumnChange2(removeColumnInfo.prop, index, removeColumnInfo.x, removeColumnInfo.y, removeColumnInfo.exclude);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredColumnWidths)
+		if (event.ctrlKey && event.shiftKey && String.fromCharCode(event.charCode) == "r")
 		{
-			i = parseInt(k);
-			
-			if (!isNaN(i))
+			if (!shiftActive)
 			{
-				if(i > index)
-					array[i - 1] = _preferredColumnWidths[i];
-				else
-					array[i] = _preferredColumnWidths[i];
+				shiftActive = true;
+				
+				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.SHOW_HANDLERS));
+			}
+			else
+			{
+				shiftActive = false;
+				
+				ResizeManager.dispatcher.dispatchEvent(new Event(ResizeManager.HIDE_HANDLERS));
 			}
 		}
-		
-		_preferredColumnWidths = array;
-		
-		oldColumnCount = --columnCount;
-	}
-	
-	protected function rowRemovedHandler(e:RowEvent):void
-	{
-		var index:int = removeRowInfo.index;
-		
-		updateExpressionsUponRowOrColumnChange2(removeRowInfo.prop, index, removeRowInfo.x, removeRowInfo.y, removeRowInfo.exclude);
-		
-		var array : Array = [], i : Number;
-		
-		for (var k : String in _preferredRowHeights)
-		{
-			i = parseInt(k);
-			
-			if (!isNaN(i))
-			{
-				if(i > index)
-					array[i - 1] = _preferredRowHeights[i];
-				else
-					array[i] = _preferredRowHeights[i];
-			}
-		}
-		
-		_preferredRowHeights = array;
-		
-		oldRowCount = --rowCount;
 	}
 	
 	/**
@@ -2611,9 +2502,26 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
-		clearExpressions();
-		
 		removeColumn(index, _columnCount, _rowCount);
+		
+		var array : Array = [], i:int;
+		
+		for (var k : String in _preferredColumnWidths)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i))
+			{
+				if(i > index)
+					array[i - 1] = _preferredColumnWidths[i];
+				else
+					array[i] = _preferredColumnWidths[i];
+			}
+		}
+		
+		_preferredColumnWidths = array;
+		
+		oldColumnCount = --columnCount;
 	}
 	
 	protected var info:Object;
@@ -2633,9 +2541,26 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
-		clearExpressions();
-		
 		removeRow(index, _columnCount, _rowCount);
+		
+		var array : Array = [], i:int;
+		
+		for (var k : String in _preferredRowHeights)
+		{
+			i = parseInt(k);
+			
+			if (!isNaN(i))
+			{
+				if(i > index)
+					array[i - 1] = _preferredRowHeights[i];
+				else
+					array[i] = _preferredRowHeights[i];
+			}
+		}
+		
+		_preferredRowHeights = array;
+		
+		oldRowCount = --rowCount;
 	}
 	
 	/**

@@ -101,5 +101,6 @@
 						 bottom = "1"
 						 allowMultipleSelection = "true"
 						 useVirtualLayout = "false"
+						 host="{hostComponent}"
 						 change = "grid_changeHandler(event)" />
 </s:Skin>

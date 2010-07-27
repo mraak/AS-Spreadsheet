@@ -4,6 +4,7 @@
 			 xmlns:s = "library://ns.adobe.com/flex/spark"
 			 xmlns:fb = "http://ns.adobe.com/flashbuilder/2009"
 			 xmlns:components = "com.flextras.spreadsheet.components.*"
+			 xmlns:layout="com.flextras.spreadsheet.layout.*"
 			 alpha.disabled = "0.5"
 			 blendMode = "normal">
 
@@ -79,6 +80,8 @@
 				</s:Rect>
 			</s:Group>
 		</fx:Component>
+		
+		<layout:GridLayout id = "gridLayout" host="{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
 	</fx:Declarations>
 
 	<!-- fill -->
@@ -103,7 +106,8 @@
 				minViewportInset = "0"
 				hasFocusableChildren = "false">
 		<!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
-		<components:GridDataGroup id = "dataGroup"
-								  itemRenderer = "com.flextras.spreadsheet.itemRenderers.GridItemRenderer" />
+		<s:DataGroup id = "dataGroup"
+					 layout="{gridLayout}"
+					 itemRenderer="com.flextras.spreadsheet.itemRenderers.GridItemRenderer" />
 	</s:Scroller>
 </s:SparkSkin>

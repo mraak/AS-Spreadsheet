@@ -15,7 +15,7 @@ import spark.layouts.supportClasses.LayoutBase;
 
 use namespace spreadsheet;
 
-public class SpreadsheetLayout extends LayoutBase
+public class GridLayout extends LayoutBase
 {
 	protected var xs : Array;
 	protected var ys : Array;
@@ -28,9 +28,9 @@ public class SpreadsheetLayout extends LayoutBase
 	
 	protected var columnCount : int, rowCount : int;
 	
-	protected const host : Spreadsheet = Spreadsheet.instance;
+	public var host : Spreadsheet;
 	
-	public function SpreadsheetLayout()
+	public function GridLayout()
 	{
 		super();
 	}

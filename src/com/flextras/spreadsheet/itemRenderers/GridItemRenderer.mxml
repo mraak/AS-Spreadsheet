@@ -176,11 +176,11 @@
 										right = "{r.width+edgeSize}"
 										top = "{t.height}"
 										bottom = "{b.height+edgeSize}"
-										text = "{cell.expression &amp;&amp; cell.expression.length > 0 ? cell.expression : cell.value}"
+										text = "{cell.expression}"
 										textAlign = "center"
 										verticalAlign = "middle"
-										focusIn="focused = true;"									
-										focusOut="editorFocusOut()" />
+										focusIn="focused = true;"
+										focusOut="focused = false; cell.expression = input.text;" />
 
 	<fx:Declarations>
 		<fx:Boolean id="focused" />
@@ -235,7 +235,6 @@
 
 	<fx:Script>
 		<![CDATA[
-			import com.flextras.spreadsheet.ISpreadsheet;
 			import com.flextras.spreadsheet.Spreadsheet;
 			import com.flextras.spreadsheet.core.spreadsheet;
 			import com.flextras.spreadsheet.vos.BorderSide;
@@ -250,7 +249,7 @@
 			
 			use namespace spreadsheet;
 			
-			protected const host : Spreadsheet = Spreadsheet.instance;
+			public var host : Spreadsheet;
 			
 			[Bindable]
 			protected var cell : Cell;
@@ -298,7 +297,7 @@
 			
 			override public function setCurrentState(stateName:String, playTransition:Boolean=true):void
 			{
-				if(!cell.enabled)
+				if(!cell || !cell.enabled)
 					super.setCurrentState("disabled", playTransition);
 				else
 					super.setCurrentState(stateName, playTransition);
@@ -348,6 +347,7 @@
 					return;
 				}
 				
+				host = cell.owner;
 				flexContextMenu = cell.menu;
 				
 				var styles : CellStyles = cell.styles;
@@ -418,16 +418,6 @@
 					//currentState = oldState;
 				}
 			}
-			
-			protected function editorFocusOut():void
-			{
-				focused = false;
-				
-				if(cell.expression != input.text)
-					host.assignExpression(cell.id, input.text);
-			}
-			
-			
 		]]>
 	</fx:Script>
 

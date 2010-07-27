@@ -3,7 +3,6 @@ package com.flextras.spreadsheet.vos
 import com.flextras.calc.ControlObject;
 import com.flextras.calc.FormulaLogic;
 import com.flextras.calc.Utils;
-import com.flextras.spreadsheet.ISpreadsheet;
 import com.flextras.spreadsheet.Spreadsheet;
 import com.flextras.spreadsheet.context.Menu;
 import com.flextras.spreadsheet.core.spreadsheet;
@@ -13,7 +12,6 @@ import com.flextras.spreadsheet.events.RowEvent;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.events.IEventDispatcher;
 import flash.geom.Rectangle;
 import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
@@ -94,28 +92,32 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param bounds
 	 *
 	 */
-	public function Cell(owner : IEventDispatcher = null, bounds : Rectangle = null)
+	public function Cell(owner : Spreadsheet = null, bounds : Rectangle = null)
 	{
-		this.owner = owner || Spreadsheet.instance;
+		this.owner = owner;
 		
-		controlObject.grid = ISpreadsheet(this.owner);
+		controlObject.grid = owner;
 		controlObject.ctrl = this;
 		controlObject.valueProp = "value";
 		
 		setBounds(bounds);
 		
-		if (!owner)
-			return;
-		
-		owner.addEventListener(CellEvent.RESIZE, resizeCellHandler, false, 100);
-		
-		owner.addEventListener(ColumnEvent.BEFORE_INSERTED, columnInserted, false, 100);
-		owner.addEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoved, false, 100);
-		owner.addEventListener(ColumnEvent.BEFORE_RESIZED, columnResized, false, 100);
-		
-		owner.addEventListener(RowEvent.BEFORE_INSERTED, rowInserted, false, 100);
-		owner.addEventListener(RowEvent.BEFORE_REMOVED, rowRemoved, false, 100);
-		owner.addEventListener(RowEvent.BEFORE_RESIZED, rowResized, false, 100);
+		if (owner)
+		{
+			owner.addEventListener(CellEvent.RESIZE, resizeCellHandler, false, 100);
+			
+			owner.addEventListener(ColumnEvent.BEFORE_INSERTED, columnInsertHandler, false, 100);
+			owner.addEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoveHandler, false, 100);
+			
+			owner.addEventListener(RowEvent.BEFORE_INSERTED, rowInsertHandler, false, 100);
+			owner.addEventListener(RowEvent.BEFORE_REMOVED, rowRemoveHandler, false, 100);
+			
+			owner.addEventListener(ColumnEvent.INSERTED, removeTemporaryOldID, false, 100);
+			owner.addEventListener(ColumnEvent.REMOVED, removeTemporaryOldID, false, 100);
+			
+			owner.addEventListener(RowEvent.INSERTED, removeTemporaryOldID, false, 100);
+			owner.addEventListener(RowEvent.REMOVED, removeTemporaryOldID, false, 100);
+		}
 		
 		//_condition.addEventListener("leftChanged", conditionChanged);
 		_condition.addEventListener("operatorChanged", conditionChanged);
@@ -133,7 +135,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	spreadsheet var owner : IEventDispatcher;
+	spreadsheet var owner : Spreadsheet;
 	
 	/**
 	 *
@@ -332,6 +334,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	protected var _expression : String;
 	
 	[Bindable(event="expressionChanged")]
+	[Bindable(event="valueChanged")]
 	/**
 	 *
 	 * @return
@@ -339,7 +342,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get expression() : String
 	{
-		return _expression; // controlObject.exp || value; //_expression;
+		return _expression || value; //_expression;
 	}
 	
 	/**
@@ -358,11 +361,54 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		if (owner)
 		{
-			ISpreadsheet(owner).calc.assignControlExpression(controlObject, value || "");
-			//ISpreadsheet(owner).assignExpression(controlObject.id, value);
+			//owner.calc.assignControlExpression(controlObject, value || "");
+			owner.assignExpression(controlObject.id, value);
 		}
 		
+		/*if(!expressionObject)
+			owner.assignExpression(id, expression);*/
+		
+		if (expressionObject)
+			expressionObject.expression = value;
+		
 		dispatchEvent(new Event("expressionChanged"));
+	}
+	
+	protected var _expressionObject:Object;
+	
+	spreadsheet function get expressionObject():Object
+	{
+		if(!_expressionObject && owner)
+			expressionObject = owner.getCell(id);
+		
+		return _expressionObject;
+	}
+	
+	spreadsheet function get expressionObjectByOldID():Object
+	{
+		if(!_expressionObject && owner)
+			expressionObject = owner.getCell(controlObject.temporaryOldID);
+		
+		return _expressionObject;
+	}
+	
+	spreadsheet function set expressionObject(value:Object):void
+	{trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
+		if(_expressionObject === value)
+			return;
+		
+		_expressionObject = value;
+		
+		if(value)
+		{
+			if(!value.hasOwnProperty("reference"))
+				value.reference = this;
+			
+			if(value.reference === this)
+				expression = value.expression;
+		}
+		else
+			_expression = controlObject.exp = this.value = null;
 	}
 	
 	//----------------------------------
@@ -622,6 +668,28 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
+	 * 
+	 * @param amount
+	 * @param excludeRule
+	 * 
+	 */	
+	protected function moveExpressionHorizontally(amount : int, index : int) : void
+	{
+		expression = controlObject.exp ? Utils.moveExpression2(controlObject, amount, 0, null, [index, null, null, null]) : value;
+	}
+	
+	/**
+	 * 
+	 * @param amount
+	 * @param excludeRule
+	 * 
+	 */	
+	protected function moveExpressionVertically(amount : int, index : int) : void
+	{
+		expression = controlObject.exp ? Utils.moveExpression2(controlObject, 0, amount, null, [null, null, index, null]) : value;
+	}
+	
+	/**
 	 *
 	 * @param amount
 	 *
@@ -633,7 +701,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.colIndex = amount;
 		controlObject.col = String(Utils.alphabet[amount]).toLowerCase();
 		
-		controlObject.id = controlObject.col + controlObject.row;
+		var id:String = controlObject.col + controlObject.row;
+		
+		if(expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
+			expressionObjectByOldID.cell = id;
+		
+		controlObject.id = id;
 	}
 	
 	/**
@@ -648,7 +721,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.rowIndex = amount;
 		controlObject.row = String(amount);
 		
-		controlObject.id = controlObject.col + controlObject.row;
+		var id:String = controlObject.col + controlObject.row;
+		
+		if(expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
+			expressionObjectByOldID.cell = id;
+		
+		controlObject.id = id;
 	}
 	
 	/**
@@ -680,18 +758,22 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	spreadsheet function release() : void
 	{
-		if (!owner)
-			return;
-		
-		owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
-		
-		owner.removeEventListener(ColumnEvent.BEFORE_INSERTED, columnInserted);
-		owner.removeEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoved);
-		owner.removeEventListener(ColumnEvent.BEFORE_RESIZED, columnResized);
-		
-		owner.removeEventListener(RowEvent.BEFORE_INSERTED, rowInserted);
-		owner.removeEventListener(RowEvent.BEFORE_REMOVED, rowRemoved);
-		owner.removeEventListener(RowEvent.BEFORE_RESIZED, rowResized);
+		if (owner)
+		{
+			owner.removeEventListener(CellEvent.RESIZE, resizeCellHandler);
+			
+			owner.removeEventListener(ColumnEvent.BEFORE_INSERTED, columnInsertHandler);
+			owner.removeEventListener(ColumnEvent.BEFORE_REMOVED, columnRemoveHandler);
+			
+			owner.removeEventListener(RowEvent.BEFORE_INSERTED, rowInsertHandler);
+			owner.removeEventListener(RowEvent.BEFORE_REMOVED, rowRemoveHandler);
+			
+			owner.removeEventListener(ColumnEvent.INSERTED, removeTemporaryOldID);
+			owner.removeEventListener(ColumnEvent.REMOVED, removeTemporaryOldID);
+			
+			owner.removeEventListener(RowEvent.INSERTED, removeTemporaryOldID);
+			owner.removeEventListener(RowEvent.REMOVED, removeTemporaryOldID);
+		}
 		
 		//_condition.removeEventListener("leftChanged", conditionChanged);
 		_condition.removeEventListener("operatorChanged", conditionChanged);
@@ -799,12 +881,16 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param e
 	 *
 	 */
-	protected function columnInserted(e : ColumnEvent) : void
+	protected function columnInsertHandler(e : ColumnEvent) : void
 	{
 		var index : uint = e.index;
 		
+		var amount:int = 1;
+		
 		if (_bounds.x >= index)
-			moveHorizontally(_bounds.x + 1);
+			moveHorizontally(_bounds.x + amount);
+		
+		moveExpressionHorizontally(amount, index);
 		
 		if (_bounds.width > 0 && _bounds.right >= index)
 			resizeHorizontally(_bounds.width + 1);
@@ -815,25 +901,19 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param e
 	 *
 	 */
-	protected function columnRemoved(e : ColumnEvent) : void
+	protected function columnRemoveHandler(e : ColumnEvent) : void
 	{
 		var index : uint = e.index;
 		
+		var amount:int = -1;
+		
 		if (_bounds.x > index)
-			moveHorizontally(_bounds.x - 1);
+			moveHorizontally(_bounds.x + amount);
+		
+		moveExpressionHorizontally(amount, index);
 		
 		if (_bounds.width > 0 && _bounds.right >= index)
 			resizeHorizontally(_bounds.width - 1);
-	}
-	
-	/**
-	 *
-	 * @param e
-	 *
-	 */
-	protected function columnResized(e : ColumnEvent) : void
-	{
-	
 	}
 	
 	/**
@@ -870,12 +950,16 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param e
 	 *
 	 */
-	protected function rowInserted(e : RowEvent) : void
+	protected function rowInsertHandler(e : RowEvent) : void
 	{
 		var index : uint = e.index;
 		
+		var amount:int = 1;
+		
 		if (_bounds.y >= index)
-			moveVertically(_bounds.y + 1);
+			moveVertically(_bounds.y + amount);
+		
+		moveExpressionVertically(amount, index);
 		
 		if (_bounds.height > 0 && _bounds.bottom >= index)
 			resizeVertically(_bounds.height + 1);
@@ -886,12 +970,16 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param e
 	 *
 	 */
-	protected function rowRemoved(e : RowEvent) : void
+	protected function rowRemoveHandler(e : RowEvent) : void
 	{
 		var index : uint = e.index;
 		
+		var amount:int = -1;
+		
 		if (_bounds.y > index)
-			moveVertically(_bounds.y - 1);
+			moveVertically(_bounds.y + amount);
+		
+		moveExpressionVertically(amount, index);
 		
 		if (_bounds.height > 0 && _bounds.bottom >= index)
 			resizeVertically(_bounds.height - 1);
@@ -902,9 +990,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 * @param e
 	 *
 	 */
-	protected function rowResized(e : RowEvent) : void
+	protected function removeTemporaryOldID(e : Event) : void
 	{
-	
+		controlObject.temporaryOldID = null;
 	}
 	
 	/**

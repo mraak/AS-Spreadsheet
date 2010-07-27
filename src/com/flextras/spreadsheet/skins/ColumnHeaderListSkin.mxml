@@ -101,7 +101,7 @@
 			</s:Group>
 		</fx:Component>
 
-		<layout:ColumnLayout id = "columnLayout" />
+		<layout:ColumnLayout id = "columnLayout" host="{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
 	</fx:Declarations>
 
 	<!-- fill -->
@@ -129,6 +129,6 @@
 		<!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
 		<s:DataGroup id = "dataGroup"
 					 layout = "{columnLayout}"
-					 itemRenderer = "com.flextras.spreadsheet.itemRenderers.ColumnHeaderItemRenderer" />
+					 itemRenderer="com.flextras.spreadsheet.itemRenderers.ColumnHeaderItemRenderer" />
 	</s:Scroller>
 </s:SparkSkin>

@@ -2,6 +2,7 @@ package com.flextras.spreadsheet.layout
 {
 import com.flextras.spreadsheet.Spreadsheet;
 import com.flextras.spreadsheet.core.spreadsheet;
+import com.flextras.spreadsheet.itemRenderers.RowHeaderItemRenderer;
 
 import mx.core.ILayoutElement;
 
@@ -34,7 +35,7 @@ public class RowLayout extends LayoutBase
 	/**
 	 *
 	 */
-	public const host : Spreadsheet = Spreadsheet.instance;
+	public var host : Spreadsheet;
 	
 	override public function updateDisplayList(width : Number, height : Number) : void
 	{
@@ -57,6 +58,9 @@ public class RowLayout extends LayoutBase
 			element = target.getVirtualElementAt(i);
 			element.setLayoutBoundsPosition(0, y);
 			element.setLayoutBoundsSize(target.width, h);
+			
+			if(element is RowHeaderItemRenderer)
+				RowHeaderItemRenderer(element).host = host;
 			
 			y += h;
 		}

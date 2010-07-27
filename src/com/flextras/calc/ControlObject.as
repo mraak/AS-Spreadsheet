@@ -24,6 +24,7 @@ public class ControlObject extends EventDispatcher
 	
 	protected var _id : String;
 	public var oldID : String;
+	public var temporaryOldID : String;
 	
 	public function get id() : String
 	{
@@ -32,7 +33,7 @@ public class ControlObject extends EventDispatcher
 	
 	public function set id(value : String) : void
 	{
-		oldID = _id;
+		temporaryOldID = oldID = _id;
 		
 		_id = value;
 	}

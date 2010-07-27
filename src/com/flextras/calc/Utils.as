@@ -160,7 +160,7 @@ public class Utils
 		return exp;
 	}
 	
-	public static function moveExpression3(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
+	public static function moveExpression2(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
 	{
 		var exp : String = co.exp;
 		var srx : String = "";
@@ -179,53 +179,29 @@ public class Utils
 		}
 		
 		orepl = new Object();
-		
-		for each (var op : ControlObject in co.ctrlOperands)
-		{
-			if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
-				(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
-			{
-				var origOp : String = op.id;
-				var moveOp : String = moveFieldId(origOp, dx, dy);
-				orepl[origOp] = moveOp ? moveOp : origOp;
-				srx += "(" + origOp + ")";
-			}
-		}
-		
-		if (srx != "")
-		{
-			srx = srx.replace(/\)\(/g, ")|(");
-			
-			var rx : RegExp = new RegExp(srx, "g");
-			exp = exp.replace(rx, frepl);
-		}
-		return exp;
-	}
-	
-	public static function moveExpression2(co : ControlObject, dx : int, dy : int) : String
-	{
-		var exp : String = co.exp;
-		var srx : String = "";
-		
-		orepl = new Object();
+		var origOp : String, moveOp : String;
 		
 		for each (var op : ControlObject in co.ctrlOperands)
 		{
 			if (co.grid)
 			{
-				if (op.oldID)
+				if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
+					(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
 				{
-					origOp = op.oldID;
-					moveOp = op.id;
+					if (op.temporaryOldID)
+					{
+						origOp = op.temporaryOldID;
+						moveOp = op.id;
+					}
+					else
+					{
+						origOp = op.id;
+						moveOp = moveFieldId(origOp, dx, dy);
+					}
+					
+					orepl[origOp] = moveOp;
+					srx += "(" + origOp + ")";
 				}
-				else
-				{
-					var origOp : String = op.id;
-					var moveOp : String = moveFieldId(origOp, dx, dy);
-				}
-				
-				srx += "(" + origOp + ")";
-				orepl[origOp] = moveOp ? moveOp : origOp;
 			}
 		}
 		
@@ -236,6 +212,7 @@ public class Utils
 			var rx : RegExp = new RegExp(srx, "g");
 			exp = exp.replace(rx, frepl);
 		}
+		
 		return exp;
 	}
 	

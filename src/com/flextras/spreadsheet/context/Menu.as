@@ -48,8 +48,6 @@ public class Menu implements IFlexContextMenu
 	
 	protected var popup : BasePopup;
 	
-	protected var host : Spreadsheet = Spreadsheet.instance;
-	
 	public var cell : Cell;
 	
 	protected var clipboard : ClipboardData;
@@ -147,9 +145,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.insertRowAt(c.rowIndex);
+				cell.owner.insertRowAt(c.rowIndex);
 		
-		host.insertRowAt(cell.rowIndex);
+		cell.owner.insertRowAt(cell.rowIndex);
 	}
 	
 	protected function removeRowHandler(e : ContextMenuEvent) : void
@@ -158,9 +156,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.removeRowAt(c.rowIndex);
+				cell.owner.removeRowAt(c.rowIndex);
 		
-		host.removeRowAt(cell.rowIndex);
+		cell.owner.removeRowAt(cell.rowIndex);
 	}
 	
 	protected function clearRowHandler(e : ContextMenuEvent) : void
@@ -169,9 +167,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.clearRowAt(c.rowIndex);
+				cell.owner.clearRowAt(c.rowIndex);
 		
-		host.clearRowAt(cell.rowIndex);
+		cell.owner.clearRowAt(cell.rowIndex);
 	}
 	
 	protected function addColumnHandler(e : ContextMenuEvent) : void
@@ -180,9 +178,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.insertColumnAt(c.columnIndex);
+				cell.owner.insertColumnAt(c.columnIndex);
 		
-		host.insertColumnAt(cell.columnIndex);
+		cell.owner.insertColumnAt(cell.columnIndex);
 	}
 	
 	protected function removeColumnHandler(e : ContextMenuEvent) : void
@@ -191,9 +189,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.removeColumnAt(c.columnIndex);
+				cell.owner.removeColumnAt(c.columnIndex);
 		
-		host.removeColumnAt(cell.columnIndex);
+		cell.owner.removeColumnAt(cell.columnIndex);
 	}
 	
 	protected function clearColumnHandler(e : ContextMenuEvent) : void
@@ -202,9 +200,9 @@ public class Menu implements IFlexContextMenu
 		
 		for each (var c : Cell in cells)
 			if (!c.bounds.equals(cell.bounds))
-				host.clearColumnAt(c.columnIndex);
+				cell.owner.clearColumnAt(c.columnIndex);
 		
-		host.clearColumnAt(cell.columnIndex);
+		cell.owner.clearColumnAt(cell.columnIndex);
 	}
 	
 	protected function clearCellHandler(e : ContextMenuEvent) : void
@@ -277,17 +275,17 @@ public class Menu implements IFlexContextMenu
 		endColumn += startColumn + offset.x;
 		endRow += startRow + offset.y + 1;
 		
-		if(endColumn > host.columnCount)
-			host.columnCount = endColumn;
+		if(endColumn > cell.owner.columnCount)
+			cell.owner.columnCount = endColumn;
 		
-		if(endRow > host.rowCount)
-			host.rowCount = endRow;
+		if(endRow > cell.owner.rowCount)
+			cell.owner.rowCount = endRow;
 		
-		host.validateProperties();
+		cell.owner.validateProperties();
 		
 		for (i = 0; i < n; ++i)
 		{
-			target = host.getCellAt(cells[i].bounds.x + offset.x, cells[i].bounds.y + offset.y);
+			target = cell.owner.getCellAt(cells[i].bounds.x + offset.x, cells[i].bounds.y + offset.y);
 			
 			if (target)
 			{
@@ -310,7 +308,7 @@ public class Menu implements IFlexContextMenu
 	
 	protected function disableHandler(e : ContextMenuEvent) : void
 	{
-		host.disabledCells = cell.enabled ? cells : null;
+		cell.owner.disabledCells = cell.enabled ? cells : null;
 	}
 	
 	protected function setCellStylesHandler(e : ContextMenuEvent) : void
@@ -327,7 +325,7 @@ public class Menu implements IFlexContextMenu
 	protected function setGlobalStylesHandler(e : ContextMenuEvent) : void
 	{
 		var popup:StylesPopup = StylesPopup(createPopup(StylesPopup, false));
-		popup.cell = host.globalCell;
+		popup.cell = cell.owner.globalCell;
 		popup.title = "Set global styles";
 	}
 	
@@ -347,7 +345,7 @@ public class Menu implements IFlexContextMenu
 			PopUpManager.removePopUp(popup);
 		
 		popup = new type();
-		popup.grid = host;
+		popup.grid = cell.owner;
 		
 		if(populate)
 		{
@@ -363,7 +361,7 @@ public class Menu implements IFlexContextMenu
 	
 	protected function get cells() : Vector.<Cell>
 	{
-		var items : Vector.<Object> = host.grid.selectedItems;
+		var items : Vector.<Object> = cell.owner.grid.selectedItems;
 		
 		return items && items.length > 0
 			? Vector.<Cell>(items)

@@ -16,7 +16,7 @@ use namespace mx_internal;
 
 public class GridList extends List
 {
-	protected const host : Spreadsheet = Spreadsheet.instance;
+	public var host : Spreadsheet;
 	
 	public function GridList()
 	{
