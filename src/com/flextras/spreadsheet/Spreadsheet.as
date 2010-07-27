@@ -321,8 +321,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 						{
 							co.expressionObject = o;
 							
-							calc.assignControlExpression(co.controlObject, co.expression || "", expressionTree.indexOf(co.controlObject) > -1);
-							
+							//calc.assignControlExpression(co.controlObject, co.expression || "", expressionTree.indexOf(co.controlObject) > -1);
+							calc.assignControlExpression(co.controlObject, co.expression || "");
 							c++;
 						}
 					}
@@ -359,7 +359,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		super.createChildren();
 		
-		calc = new Calc;
+		if(!_calc)
+			calc = new Calc;
 	}
 	
 	/**
