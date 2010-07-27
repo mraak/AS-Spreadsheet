@@ -741,7 +741,7 @@ public class Calc extends EventDispatcher
 		if (co && co.grid && co.grid is ISpreadsheet)
 		{
 			var dg : ISpreadsheet = co.grid;
-			var o : Object = dg.getCell(co.id);
+			var o : Object = dg.getExpressionObject(co.id);
 			
 			if (o)
 			{

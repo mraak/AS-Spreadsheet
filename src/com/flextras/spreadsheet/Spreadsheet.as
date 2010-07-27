@@ -1198,7 +1198,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (expression != null)
 			expression = expression.toLowerCase();
 		
-		var o : Object = getCell(cellId);
+		var o : Object = getExpressionObject(cellId);
 		
 		if (o)
 		{
@@ -1232,13 +1232,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  getCell
+	//  getExpressionObject
 	//----------------------------------
 	
 	/**
 	 * @inheritDoc
 	 */
-	public function getCell(cellId : String) : Object
+	public function getExpressionObject(cellId : String) : Object
 	{
 		if (!cellId)
 			return null;
@@ -1253,7 +1253,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  _getCell
+	//  getCell
 	//----------------------------------
 	
 	/**
@@ -1267,8 +1267,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * ---JH Suggested Name:  getCellByPoint ----
 	 * ---JH Should we consider using Point objects internally instead of the "a1" syntax? ----
 	 */
-	// TODO: rename!
-	public function _getCell(location : Point) : Cell
+	public function getCell(location : Point) : Cell
 	{
 		if (!location)
 			return null;

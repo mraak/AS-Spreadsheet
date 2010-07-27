@@ -86,7 +86,7 @@ public interface ISpreadsheet
 	 * @return This method returns the object from your dataProvider that represents the requested cell location.
 	 * 
 	 */
-	function getCell (cellId : String) : Object;
+	function getExpressionObject (cellId : String) : Object;
 	
 	/**
 	 * This method will add a single expression to the specified location.  If an expression already exists at the specified cell location, then it will be replaced.  

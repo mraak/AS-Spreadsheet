@@ -379,7 +379,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	spreadsheet function get expressionObject():Object
 	{
 		if(!_expressionObject && owner)
-			expressionObject = owner.getCell(id);
+			expressionObject = owner.getExpressionObject(id);
 		
 		return _expressionObject;
 	}
@@ -387,7 +387,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	spreadsheet function get expressionObjectByOldID():Object
 	{
 		if(!_expressionObject && owner)
-			expressionObject = owner.getCell(controlObject.temporaryOldID);
+			expressionObject = owner.getExpressionObject(controlObject.temporaryOldID);
 		
 		return _expressionObject;
 	}
