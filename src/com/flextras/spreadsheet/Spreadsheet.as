@@ -163,8 +163,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 *
+	 * @private 
 	 */
 	override protected function commitProperties() : void
 	{
@@ -359,6 +358,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		}
 	}
 	
+	/**
+	 * @private 
+	 */
 	override protected function createChildren() : void
 	{
 		super.createChildren();
@@ -367,10 +369,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param partName
-	 * @param instance
-	 *
+	 * @private 
 	 */
 	override protected function partAdded(partName : String, instance : Object) : void
 	{
@@ -403,10 +402,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param partName
-	 * @param instance
-	 *
+	 * @private 
 	 */
 	override protected function partRemoved(partName : String, instance : Object) : void
 	{
@@ -436,22 +432,20 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	[SkinPart(required="false")]
 	/**
-	 *
+	 *This property contains the column headers of the spreadsheet component.  
 	 */
 	public var columnHeader : List;
 	
 	[SkinPart(required="false")]
 	/**
-	 *
+	 * This property contains the row headers of the spreadsheet component.  
 	 */
 	public var rowHeader : List;
 	
 	[SkinPart(required="true")]
 	[Bindable]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property contains the grid that makes up the bulk of the spreadsheet display.
 	 */
 	public var grid : GridList;
 	
@@ -462,32 +456,32 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var doSort : Boolean;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var notifyChildren : Boolean;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var shiftActive : Boolean;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var expressionTreeCopy : Array;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var columns : Array;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var rows : Array;
 	
@@ -508,7 +502,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	[Bindable(event="calcChanged")]
 	/**
-	 * @return
+	 * @inheritDoc
 	 *
 	 * @see com.flextras.calc.Calc
 	 */
@@ -518,8 +512,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
+	 * @private 
 	 */
 	public function set calc(value : Calc) : void
 	{
@@ -549,20 +542,18 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * ---JH Why is this a const? Constants are usually non-changing, but you do change this array in other spots of this component ----
 	 */
 	protected const _cells : ArrayCollection = new ArrayCollection;
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var cellsChanged : Boolean;
 	
 	[Bindable(event="cellsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property contains all the cells of the spreadsheet.   
 	 */
 	public function get cells() : ArrayCollection
 	{
@@ -574,25 +565,25 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	protected var oldColumnCount : uint;
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _columnCount : uint = 10;
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var columnCountChanged : Boolean = true;
 	
 	[Bindable(event="columnCountChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property represents the number of columns in the spreadsheet.
+	 * 
+	 * @default 10
 	 */
 	public function get columnCount() : uint
 	{
@@ -600,9 +591,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set columnCount(value : uint) : void
 	{
@@ -623,20 +612,19 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _columnWidths : Array;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property; why is it a constant if you're going to be changing it? ----
 	 */
 	protected const columnWidthsCollection : ArrayCollection = new ArrayCollection;
 	
 	[Bindable(event="columnWidthsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH Do we want to document the spreadsheet namespace? ----
+	 * This property contains an array of all the column widths.
 	 */
 	spreadsheet function get columnWidths() : Array
 	{
@@ -644,9 +632,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private 
 	 */
 	spreadsheet function set columnWidths(value : Array) : void
 	{
@@ -675,7 +661,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected var _ctrlObjects : Object = {};
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */
 	public function get ctrlObjects() : Object
 	{
@@ -687,15 +673,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _disabledCells : Vector.<Cell>;
 	
 	[Bindable(event="disabledCellsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property contains all the disabled cells.  Disabled cells are cells that cannot be edited.  
 	 */
 	public function get disabledCells() : Vector.<Cell>
 	{
@@ -703,9 +687,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set disabledCells(value : Vector.<Cell>) : void
 	{
@@ -739,9 +721,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	[Bindable(event="expressionsChange")]
 	/**
-	 *
-	 * @return
-	 *
+	 * @inheritDoc
 	 */
 	public function get expressions() : ArrayCollection
 	{
@@ -749,9 +729,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set expressions(value : ArrayCollection) : void
 	{
@@ -800,7 +778,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected const _expressionTree : Array = [];
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */
 	public function get expressionTree() : Array
 	{
@@ -811,13 +789,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  globalStyles
 	//----------------------------------
 	
+	/**
+	 * @private  
+	 */
 	public const globalCell : Cell = new Cell;
 	
 	[Bindable(event="globalStylesChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property stores the styles that apply to all cells in the spreadsheet.  
+	 * These styles can be overwritten on an individual cell basis.
 	 */
 	public function get globalStyles() : CellStyles
 	{
@@ -825,9 +805,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set globalStyles(value : CellStyles) : void
 	{
@@ -840,9 +818,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * ---JH should this really be public?  ----
+	 * @private
 	 */
 	public function set globalStylesObject(value : Object) : void
 	{
@@ -864,6 +841,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
+	 * ---JH add some documentation for this property ----
 	 * @private
 	 */
 	public function get gridDataProvider() : ArrayCollection
@@ -876,14 +854,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _indexedCells : Object;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	spreadsheet function get indexedCells() : Object
 	{
@@ -895,15 +871,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _preferredColumnWidths : Array = [];
 	
 	[Bindable(event="preferredColumnWidthsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	public function get preferredColumnWidths() : Array
 	{
@@ -915,15 +889,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _preferredRowHeights : Array = [];
 	
 	[Bindable(event="preferredRowHeightsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH add some documentation for this property ----
 	 */
 	public function get preferredRowHeights() : Array
 	{
@@ -935,25 +907,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * ---JH What is this used for? ----
+	 * @private
 	 */
 	protected var oldRowCount : uint;
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _rowCount : uint = 10;
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var rowCountChanged : Boolean = true;
 	
 	[Bindable(event="rowCountChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property represents the number of rows in the spreadsheet.
 	 */
 	public function get rowCount() : uint
 	{
@@ -961,9 +932,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set rowCount(value : uint) : void
 	{
@@ -984,20 +953,18 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected var _rowHeights : Array;
 	
 	/**
-	 *
+	 * ---JH add some documentation for this property; why is it a constant if you're going to be changing it? ----
 	 */
 	protected const rowHeightsCollection : ArrayCollection = new ArrayCollection;
 	
 	[Bindable(event="rowHeightsChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 *This property contains an array of all the row heights.
 	 */
 	spreadsheet function get rowHeights() : Array
 	{
@@ -1005,9 +972,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set rowHeights(value : Array) : void
 	{
@@ -1031,14 +996,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected var _spans : Array;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH add some documentation for this property; be sure to specify what object is expected in the array ----
+	 * This property contains information for all cells that span multiple rows or columns.
 	 */
 	spreadsheet function get spans() : Array
 	{
@@ -1050,14 +1014,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected var _uniqueCells : Array;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * ---JH add some documentation for this property; be sure to specify what object is expected in the array ----
 	 */
 	spreadsheet function get uniqueCells() : Array
 	{
@@ -1069,15 +1031,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private 
 	 */
 	protected var _wordWrap : Boolean;
 	
 	[Bindable(event="wordWrapChanged")]
 	/**
-	 *
-	 * @return
-	 *
+	 * This property is a flag that indicates whether text in the cells should be word wrapped.  
+     *  If <code>true</code>, enables word wrapping for text in the spreadsheet cells.
 	 */
 	public function get wordWrap() : Boolean
 	{
@@ -1085,9 +1046,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set wordWrap(value : Boolean) : void
 	{
@@ -1110,9 +1069,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
+	 * This method will add an empty cell to the spreadsheet.
+	 * 
+	 * @param columnIndex This specifies the column location to add the cell.
+	 * @param rowIndex This specifies the row location to add the cell
+	 * 
+	 * ---JH How does adding a cell with this method affect rows and columns?  Is it like an insert or a replace? ---- 
 	 *
 	 */
 	protected function addCell(columnIndex : uint, rowIndex : uint) : void
@@ -1131,10 +1093,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	protected var addColumnInfo:Object;
 	
 	/**
-	 *
+	 * This method will add a column into the spreadsheet at the specified location.
+	 * 
+	 * ---JH Define the arguments, as it is not obvious to me what they mean. ---- 
+	 * ---JH I assume dding a column will shift other columns, correct? ---- 
+	 * 
 	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
+	 * @param columnCount
+	 * @param rowCount
 	 *
 	 */
 	protected function addColumn(index : uint, columnCount : uint, rowCount : uint) : void
@@ -1157,14 +1123,27 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  addRow
 	//----------------------------------
 	
+	/**
+	 * ---JH add some documentation for this property ----
+	 * @private 
+	 */
 	protected var addRowDirty:Boolean;
+
+	/**
+	 * ---JH add some documentation for this property ----
+	 * @private 
+	 */
 	protected var addRowInfo:Object;
 	
 	/**
-	 *
+	 * This method will add a row into the spreadsheet at the specified location.
+	 * 
+	 * ---JH Define the arguments, as it is not obvious to me what they mean. ---- 
+	 * ---JH I assume adding a row will shift other rows, correct? ---- 
+	 * 
 	 * @param index
-	 * @param columnIndex
-	 * @param rowIndex
+	 * @param columnCount
+	 * @param rowCount
 	 *
 	 */
 	protected function addRow(index : uint, columnCount : uint, rowCount : uint) : void
@@ -1188,12 +1167,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
+	 * This method will add a single expression to the cell at the specified location.  
+	 * If an expression already exists at the specified cell location, then it will be replaced.
+	 * 
+	 * 
+	 * @param cellId This argument specifies the cell you want to assign the expression to.  
+	 * The format for address a cell is "[column index in alphabetical form][row index in numerical form]".  
+	 * For example, "a1", points to column 0 and row 1.
 	 *
-	 * @param cellId Valid format is "[column index in alphabetical form][row index in numerical form]".
-	 * "a1" for example points to column 0 and row 1.
-	 *
-	 * @param expression Actual expression of which result will be seen in the target cell.
-	 * To remove existing expression type null | ""
+	 * @param expression This argument specifies the expression to put at the cell location.  
+	 * The result of this expression will be seen in the target cell. 
+	 * To remove an existing expression, specify null or an empty string.
 	 *
 	 */
 	public function assignExpression(cellId : String, expression : String) : void
@@ -1223,8 +1207,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * This method will add multiple expressions to the specified locations.
-	 * Each object in the expressions array should include a cell property to specify the location and an expression property.
+	 * Each object in the expressions array should include a cell property to specify the location and an expression property to specify the new expression.
 	 *
 	 * For more information on the cell and expression, see the expressions property.
 	 *
@@ -1240,11 +1223,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  expression cell
+	//  getCell
 	//----------------------------------
 	
 	/**
-	 * @private
+	 * @inheritDoc
 	 */
 	public function getCell(cellId : String) : Object
 	{
@@ -1261,14 +1244,19 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  cell
+	//  _getCell
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param location
-	 * @return
-	 *
+	 * This method retrieves the cell based on the given Point object.
+	 * 
+	 * @param location A point that specifies the location of the cell to retrieve.
+	 * @return An object representing the cell.
+	 * 
+	 * @see com.flextras.vos.Cell
+	 * 
+	 * ---JH Suggested Name:  getCellByPoint ----
+	 * ---JH Should we consider using Point objects internally instead of the "a1" syntax? ----
 	 */
 	// TODO: rename!
 	public function _getCell(location : Point) : Cell
@@ -1279,12 +1267,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getCellAt(location.x, location.y);
 	}
 	
+	//----------------------------------
+	//  getCellAt
+	//----------------------------------
 	/**
+	 * This method retrieves the cell based on the specified coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell we want to retrieve.  
+	 * @param rowIndex This specifies the rowIndex of the cell we want to retrieve.
+	 * @return An object representing the cell.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
+	 * @see com.flextras.vos.Cell
 	 */
 	public function getCellAt(columnIndex : uint, rowIndex : uint) : Cell
 	{
@@ -1295,13 +1288,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  cellCondition
+	//  getCellCondition
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param location
-	 * @return
+	 *  This method retrieves the condition object of the cell located at the given point.
+	 *  
+	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
+	 * @return  An object representing the cell.
+	 * 
+	 * @see com.flextras.vos.Condition
 	 *
 	 */
 	public function getCellCondition(location : Point) : Condition
@@ -1312,12 +1308,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getCellConditionAt(location.x, location.y);
 	}
 	
+	//----------------------------------
+	//  getCellConditionAt
+	//----------------------------------
 	/**
+	 * This method retrieves the condition object of the cell located at the given coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell whose condition the method will retrieve.  
+	 * @param rowIndex This specifies the rowIndex of the cell whose condition the method will retrieve.
+	 * @return  An object representing the cell.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
+	 * @see com.flextras.vos.Condition
 	 */
 	public function getCellConditionAt(columnIndex : uint, rowIndex : uint) : Condition
 	{
@@ -1327,11 +1328,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getCellAt(columnIndex, rowIndex).condition;
 	}
 	
+	//----------------------------------
+	//  setCellCondition
+	//----------------------------------
 	/**
+	 * This method sets the condition object of the cell located at the given Point.
+	 * 
+	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
+	 * @param condition This property specifies the new Condition.
 	 *
-	 * @param location
-	 * @param condition
-	 *
+	 * @see com.flextras.vos.Condition
 	 */
 	public function setCellCondition(location : Point, condition : Condition) : void
 	{
@@ -1341,12 +1347,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setCellConditionAt(location.x, location.y, condition);
 	}
 	
+	//----------------------------------
+	//  setCellConditionAt
+	//----------------------------------
 	/**
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param condition
+	 * @param columnIndex This specifies the columnIndex of the cell whose condition the method will set.  
+	 * @param rowIndex This specifies the columnIndex of the cell whose condition the method will set.  
+	 * @param condition This property specifies the new Condition.
 	 *
+	 * @see com.flextras.vos.Condition
 	 */
 	public function setCellConditionAt(columnIndex : uint, rowIndex : uint, condition : Condition) : void
 	{
@@ -1356,11 +1366,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		getCellAt(columnIndex, rowIndex).condition = condition;
 	}
 	
+	//----------------------------------
+	//  setCellConditionObject
+	//----------------------------------
 	/**
+	 * This method sets the condition object of the cell located at the given Point.
+	 * 
+	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
+	 * @param condition This property specifies the new Condition.
 	 *
-	 * @param location
-	 * @param condition
-	 *
+	 * @see com.flextras.vos.Condition
 	 */
 	public function setCellConditionObject(location : Point, condition : Object) : void
 	{
@@ -1370,12 +1385,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setCellConditionObjectAt(location.x, location.y, condition);
 	}
 	
+	//----------------------------------
+	//  setCellConditionObjectAt
+	//----------------------------------
 	/**
+	 * This method sets the condition object of the cell located at the given coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell whose condition the method will set.
+	 * @param rowIndex specifies the rowIndex of the cell whose condition the method will set.
+	 * @param condition This property specifies the new Condition.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param condition
-	 *
+	 * @see com.flextras.vos.Condition
 	 */
 	public function setCellConditionObjectAt(columnIndex : uint, rowIndex : uint, condition : Object) : void
 	{
@@ -1386,14 +1406,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  cellStyles
+	//  getCellStyles
 	//----------------------------------
-	
 	/**
+	 * This method returns the cellStyles at the specified point.
+	 * 
+	 * @param location A point that specifies the location of the cell, whose styles the method will process.
+	 * @return An object representing the cell’s styles.
 	 *
-	 * @param location
-	 * @return
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function getCellStyles(location : Point) : CellStyles
 	{
@@ -1403,12 +1424,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getCellStylesAt(location.x, location.y);
 	}
 	
+	//----------------------------------
+	//  getCellStylesAt
+	//----------------------------------
 	/**
+	 * This method returns the cellStyles at the specified coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell whose styles the method will process.  
+	 * @param rowIndex This specifies the rowIndex of the cell whose styles the method will process.
+	 * @return An object representing the cell’s styles.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function getCellStylesAt(columnIndex : uint, rowIndex : uint) : CellStyles
 	{
@@ -1418,11 +1444,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getCellAt(columnIndex, rowIndex).styles;
 	}
 	
+	//----------------------------------
+	//  setCellStyles
+	//----------------------------------
 	/**
+	 * This method set the cellStyles at the specified point.
+	 * 
+	 * @param location A point that specifies the location of the cell, whose styles the method will process.
+	 * @param styles An object representing the cell’s styles.
 	 *
-	 * @param location
-	 * @param styles
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function setCellStyles(location : Point, styles : CellStyles) : void
 	{
@@ -1432,12 +1463,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setCellStylesAt(location.x, location.y, styles);
 	}
 	
+	//----------------------------------
+	//  setCellStylesAt
+	//----------------------------------
 	/**
+	 * This method sets the cellStyles at the specified coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell whose styles the method will process.  
+	 * @param rowIndex This specifies the rowIndex of the cell whose styles the method will process.
+	 * @param styles An object representing the cell’s styles.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param styles
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function setCellStylesAt(columnIndex : uint, rowIndex : uint, styles : CellStyles) : void
 	{
@@ -1447,11 +1483,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		getCellAt(columnIndex, rowIndex).styles = styles;
 	}
 	
+	//----------------------------------
+	//  setCellStylesObject
+	//----------------------------------
 	/**
+	 * This method sets the cellStyles at the specified Point.
+	 * 
+	 * @param location A point that specifies the location of the cell, whose styles the method will process.
+	 * @param styles An object representing the cell’s styles.
 	 *
-	 * @param location
-	 * @param styles
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function setCellStylesObject(location : Point, styles : Object) : void
 	{
@@ -1461,12 +1502,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setCellStylesObjectAt(location.x, location.y, styles);
 	}
 	
+	//----------------------------------
+	//  setCellStylesObjectAt
+	//----------------------------------
 	/**
+	 * This method sets the cellStyles at the specified coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell whose styles the method will process.  
+	 * @param rowIndex This specifies the rowIndex of the cell whose styles the method will process.
+	 * @param styles An object representing the cell’s styles.
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @param styles
-	 *
+	 * @see com.flextras.vos.CellStyles
 	 */
 	public function setCellStylesObjectAt(columnIndex : uint, rowIndex : uint, styles : Object) : void
 	{
@@ -1481,8 +1527,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param location
+	 * This method will clear all the cells properties at the specified location.
+	 * 
+	 * @param location A point that specifies the location of the cell to clear.
 	 *
 	 */
 	public function clearCell(location : Point) : void
@@ -1493,10 +1540,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		clearCellAt(location.x, location.y);
 	}
 	
+	//----------------------------------
+	//  clearCellAt
+	//----------------------------------
 	/**
-	 *
-	 * @param columnIndex
-	 * @param rowIndex
+	 * This method will clear all the cells properties at the specified coordinates.
+	 * 
+	 * @param columnIndex This specifies the columnIndex of the cell to be processed.  
+	 * @param rowIndex This specifies the rowIndex the cell to be processed.
 	 *
 	 */
 	public function clearCellAt(columnIndex : uint, rowIndex : uint) : void
@@ -1513,12 +1564,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  clearColumn
+	//  clearColumnAt
 	//----------------------------------
-	
 	/**
-	 *
-	 * @param index
+	 * This method clears data and formulas from all cells in the specified column.
+	 * 
+	 * @param index This specifies the index of the column to clear.
 	 *
 	 */
 	public function clearColumnAt(index : uint) : void
@@ -1533,9 +1584,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  clearExpressions
 	//----------------------------------
 	
+	/**
+	 * @private 
+	 * ---JH It is unusual to put a variable in the 'methods' section ----
+	 */
 	protected var clearExpressionsDirty:Boolean;
 	
 	/**
+	 * ---JH add some documentation for this method; should it really be public if it will not be documented? ----
 	 * @private
 	 */
 	public function clearExpressions() : void
@@ -1552,6 +1608,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			this.assignExpression(co.id, "");
 	}
 	
+	//----------------------------------
+	//  copyControlObject
+	//----------------------------------
+	/**
+	 * This method copies all properties from the source object into the target object.
+	 * 
+	 * @see com.flextras.calc.ControlObject
+	 */
 	protected function copyControlObject(target:ControlObject, source:ControlObject):ControlObject
 	{
 		target.id = source.id;
@@ -1571,12 +1635,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  clearRow
+	//  clearRowAt
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param index
+	 * This method clears data and formulas from all cells in the specified row.
+	 * 
+	 * @param index This specifies the index of the row  to clear.
 	 *
 	 */
 	public function clearRowAt(index : uint) : void
@@ -1588,15 +1653,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  columnWidth
+	//  getColumnWidthAt
 	//----------------------------------
 	
 	[Bindable(event="columnWidthsChanged")]
 	[Bindable(event="preferredColumnWidthsChanged")]
 	/**
-	 *
-	 * @param index
-	 * @return
+	 * This method returns the width of the column at the specified index.
+	 * 
+	 * @param index This specifies the index of the column.  
+	 * @return This returns the column width.
 	 *
 	 */
 	public function getColumnWidthAt(index : uint) : Number
@@ -1624,10 +1690,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return value;
 	}
 	
+	//----------------------------------
+	//  setColumnWidthAt
+	//----------------------------------
 	/**
-	 *
-	 * @param index
-	 * @param value
+	 * This method sets the column width at the specified index.
+	 * 
+	 * @param index This specifies the index of the column.  
+	 * @param value This specifies the new width of the column.
 	 *
 	 */
 	public function setColumnWidthAt(index : uint, value : Number) : void
@@ -1642,16 +1712,22 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		dispatchEvent(new Event("preferredColumnWidthsChanged"));
 	}
 	
+	//----------------------------------
+	//  getElementIndex
+	//----------------------------------	
+	
 	/**
-	 *
+	 * @private 
+	 * ---JH This would normally be put in the 'variables' section; not the methods section ----
 	 */
 	protected var _elementIndex : Object;
 	
 	/**
+	 * This method returns the index of the element at the specified coordinates.  
 	 *
-	 * @param columnIndex
-	 * @param rowIndex
-	 * @return
+	 * @param columnIndex This specifies the columnIndex of the cell to be processed.  
+	 * @param rowIndex This specifies the rowIndex the cell to be processed.
+	 * @return The element at the specified index.  If no element exists, -1 is returned.
 	 *
 	 */
 	spreadsheet function getElementIndex(columnIndex : uint, rowIndex : int) : int
@@ -1659,26 +1735,33 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return _elementIndex[columnIndex + "|" + rowIndex] || -1;
 	}
 	
+	//----------------------------------
+	//  getIdByIndex
+	//----------------------------------	
 	/**
-	 *
+	 * @private 
+	 * ---JH This would normally be put in the 'variables' section; not the methods section ----
 	 */
 	protected var ids : Array;
 	
 	/**
-	 *
-	 * @param index
-	 * @return
-	 *
+	 * This method retrieves the id of a cell based on the cell’s index.
+	 * 
+	 * @param index This specifies the index of the id to retrieve.  
 	 */
 	spreadsheet function getIdByIndex(index : uint) : String
 	{
 		return ids[index];
 	}
 	
+	//----------------------------------
+	//  isColumnIndexInvalid
+	//----------------------------------	
 	/**
-	 *
-	 * @param value
-	 * @return
+	 * This method verifies that the specified value represents a valid column index.
+	 * 
+	 * @param value This specifies the index to validate.
+	 * @return This method returns true if the specified index is valid, or false if not.
 	 *
 	 */
 	protected function isColumnIndexInvalid(value : uint) : Boolean
@@ -1686,10 +1769,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return value < 0 || value >= _columnCount;
 	}
 	
+	//----------------------------------
+	//  isRowIndexInvalid
+	//----------------------------------	
 	/**
-	 *
-	 * @param value
-	 * @return
+	 * This method verifies that the specified value represents a valid row index.
+	 * 
+	 * @param value This specifies the index to validate.
+	 * @return This method returns true if the specified index is valid, or false if not.
 	 *
 	 */
 	protected function isRowIndexInvalid(value : uint) : Boolean
@@ -1698,12 +1785,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  insertColumn
+	//  insertColumnAt
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param index
+	 * This method creates a new column at the specified index.
+	 * 
+	 * @param index This specifies the location to create a new column
 	 *
 	 */
 	public function insertColumnAt(index : uint) : void
@@ -1715,12 +1803,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  insertRow
+	//  insertRowAt
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param index
+	 * This method creates a new row at the location specified.  
+	 * 
+	 * @param index This specifies the location to create a new row. 
 	 *
 	 */
 	public function insertRowAt(index : uint) : void
@@ -1731,15 +1820,22 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		dispatchEvent(new RowEvent(RowEvent.INSERT, index));
 	}
 	
+	///*************************************************************************************************
+	///*******JEFFRY LEFT OFF Documenting HERE ****
+	///*************************************************************************************************
+	
 	//----------------------------------
-	//  rangeCondition
+	//  getRangeConditions
 	//----------------------------------
 	
 	/**
-	 *
+	 * ---JH I'm unclear what Range Conditions are  ----
+	 * 
 	 * @param location
 	 * @return
-	 *
+	 * 
+	 * 
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function getRangeConditions(location : Rectangle) : Vector.<Condition>
 	{
@@ -1749,6 +1845,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return getRangeConditionsAt(location.x, location.y, location.width, location.height);
 	}
 	
+	//----------------------------------
+	//  getRangeConditionsAt
+	//----------------------------------
 	/**
 	 *
 	 * @param columnIndex
@@ -1757,6 +1856,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param rowSpan
 	 * @return
 	 *
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function getRangeConditionsAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
 	{
@@ -1777,11 +1877,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return result;
 	}
 	
+	//----------------------------------
+	//  setRangeCondition
+	//----------------------------------
 	/**
 	 *
 	 * @param location
 	 * @param styles
 	 *
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function setRangeCondition(location : Rectangle, condition : Condition) : void
 	{
@@ -1791,6 +1895,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setRangeConditionAt(location.x, location.y, location.width, location.height, condition);
 	}
 	
+	//----------------------------------
+	//  setRangeConditionAt
+	//----------------------------------
 	/**
 	 *
 	 * @param columnIndex
@@ -1799,6 +1906,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param rowSpan
 	 * @param condition
 	 *
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function setRangeConditionAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
 	{
@@ -1814,11 +1922,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			result[i].assign(condition);
 	}
 	
+	//----------------------------------
+	//  setRangeConditionObject
+	//----------------------------------
 	/**
 	 *
 	 * @param location
 	 * @param condition
 	 *
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function setRangeConditionObject(location : Rectangle, condition : Object) : void
 	{
@@ -1828,6 +1940,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		setRangeConditionObjectAt(location.x, location.y, location.width, location.height, condition);
 	}
 	
+	//----------------------------------
+	//  setRangeConditionObjectAt
+	//----------------------------------
 	/**
 	 *
 	 * @param columnIndex
@@ -1836,6 +1951,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param rowSpan
 	 * @param condition
 	 *
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
 	public function setRangeConditionObjectAt(columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
 	{

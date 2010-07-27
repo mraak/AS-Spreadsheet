@@ -26,12 +26,16 @@ public interface ISpreadsheet
 	
 	//function set ctrlObjects(value:Object):void;
 	/**
-	 * Insert documentation here 
+	 * IThis property contains the control objects for each cell.  
+	 * A control object is a value object that contains information about the cell, formulas, and other information.  
+	 * Each Control Object is created as a property on the ctrlObjects object, and the id is used an identifier.  
+	 * 
+	 * @see com.flextras.calc.ControlObject
 	 */
 	function get ctrlObjects () : Object;
 	
 	/**
-	 * This property contains a reference to the calc class which performs all calculation logic for cell expressions.
+	 * This property contains a reference to the calc object instance which performs all calculation logic for cell expressions.
 	 * 
 	 * @see com.flextras.calc.Calc
 	 */	
@@ -42,7 +46,7 @@ public interface ISpreadsheet
 	function set calc (value : Calc) : void;
 	
 	/**
-	 * 
+	 * This property exposes all cell of the Spreadsheet.
 	 */
 	function get gridDataProvider () : ArrayCollection;
 	
