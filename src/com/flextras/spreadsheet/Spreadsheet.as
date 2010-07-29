@@ -130,8 +130,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_cells.addEventListener(CollectionEvent.COLLECTION_CHANGE, cells_collectionChangeHandler);
 		
-		expressions = new ArrayCollection;
-		
 		globalCell.styles.normal.backgroundColor = 0xF6F6F6;
 		globalCell.styles.hovered.backgroundColor = 0xCCCCCC;
 		globalCell.styles.selected.backgroundColor = 0xCCFF33;
@@ -358,6 +356,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	override protected function createChildren() : void
 	{
 		super.createChildren();
+		
+		if(!expressions)
+			expressions = new ArrayCollection;
 		
 		if(!_calc)
 			calc = new Calc;
@@ -733,28 +734,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_expressions = value || new ArrayCollection;
 		
-		if (value)
-		{
-			var ov : Object, o : Object, found : Boolean;
-			
-			for each (ov in oldValue)
-			{
-				found = false;
-				
-				for each (o in value)
-					if (ov.cell == o.cell)
-						found = true;
-				
-				if (!found)
-					value.addItem(ov);
-			}
-		}
-		
 		if(_expressions)
 		{
 			_expressions.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 			
-			_expressions.refresh();
+			//_expressions.refresh();
+			updateExpressions();
 		}
 	}
 	
