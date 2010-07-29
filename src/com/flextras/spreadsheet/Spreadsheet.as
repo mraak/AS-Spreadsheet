@@ -284,6 +284,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			var c : uint;
 			
+			if(expCE.kind == "refresh")
+			{
+				// iterate through _expressions
+			}
+			
+			
 			if(_expressions)
 			while (c < _expressions.length)
 			{
@@ -738,8 +744,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		{
 			_expressions.addEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 			
-			//_expressions.refresh();
-			updateExpressions();
+			_expressions.refresh();
+			//updateExpressions();
 		}
 	}
 	
@@ -2346,6 +2352,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			cell.clear();
 	}
 	
+	
+	private var expCE : CollectionEvent;
+	
 	/**
 	 *
 	 * @param e
@@ -2357,7 +2366,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			for each(var item:Object in e.items)
 				if(item.hasOwnProperty("reference"))
 					Cell(item.reference).expressionObject = null;
-		
+		expCE = e;
 		updateExpressions();
 		
 		dispatchEvent(new Event("expressionsChange"));

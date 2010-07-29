@@ -579,10 +579,12 @@ public class Calc extends EventDispatcher
 	
 	private function updateDependent (objectChanged : ControlObject) : void
 	{
+		/*
 		if (objectChanged.grid)
 		{
 			objectChanged.grid.gridDataProvider.itemUpdated(objectChanged.ctrl);
 		}
+		*/
 		
 		if (objectChanged.dependants.length > 0)
 		{
@@ -593,8 +595,9 @@ public class Calc extends EventDispatcher
 					if (c.exp)
 						assignControlExpression(c, c.exp, true);
 					
-					if (c.grid)
-						c.grid.updateExpressions();
+					//if (c.grid)
+						//c.grid.updateExpressions();
+					
 					/*	if(c.grid)
 					   {
 					   c.grid.assignExpression(c.id, c.exp);
@@ -749,6 +752,7 @@ public class Calc extends EventDispatcher
 		
 		updateDependent(co);
 		
+		/*
 		if (co && co.grid && co.grid is ISpreadsheet)
 		{
 			var dg : ISpreadsheet = co.grid;
@@ -763,6 +767,7 @@ public class Calc extends EventDispatcher
 			
 			dg.gridDataProvider.itemUpdated(co.ctrl, co.valueProp, oldValue, _val);
 		}
+		*/
 		
 		currentTarget = null;
 	}
