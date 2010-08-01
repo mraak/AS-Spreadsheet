@@ -53,6 +53,9 @@ public class RowLayout extends LayoutBase
 		
 		for (var i : int, n : int = heights.length; i < n; ++i)
 		{
+			if(!heights[i])
+				continue;
+			
 			h = heights[i].value;
 			
 			element = target.getVirtualElementAt(i);

@@ -151,6 +151,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (columnCountChanged)
 		{
+			columnCountChanged = false;
+			
 			for (var i : uint = oldColumnCount; i < _columnCount; ++i)
 				addColumn(i, _columnCount, oldRowCount);
 			
@@ -158,12 +160,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				removeColumn(i - 1, _columnCount, oldRowCount);
 			
 			oldColumnCount = _columnCount;
-			
-			columnCountChanged = false;
 		}
 		
 		if (rowCountChanged)
 		{
+			rowCountChanged = false;
+			
 			for (i = oldRowCount; i < _rowCount; ++i)
 				addRow(i, oldColumnCount, _rowCount);
 			
@@ -171,8 +173,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				removeRow(i - 1, oldColumnCount, _rowCount);
 			
 			oldRowCount = _rowCount;
-			
-			rowCountChanged = false;
 		}
 		
 		notifyChildren = true;
@@ -183,9 +183,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			if (doSort)
 			{
-				_cells.refresh();
-				
 				doSort = false;
+				
+				_cells.refresh();
 			}
 			
 			var column : Array;

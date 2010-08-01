@@ -53,6 +53,9 @@ public class ColumnLayout extends LayoutBase
 		
 		for (var i : int, n : int = widths.length; i < n; ++i)
 		{
+			if(!widths[i])
+				continue;
+			
 			w = widths[i].value;
 			
 			element = target.getVirtualElementAt(i);

@@ -190,12 +190,14 @@ public class GridLayout extends LayoutBase
 		mw = 0;
 		
 		for (i = 0; i < columnCount; ++i)
-			mw += widths[i].value; // + 1;
+			if (widths[i])
+				mw += widths[i].value; // + 1;
 		
 		mh = 0;
 		
 		for (i = 0; i < rowCount; ++i)
-			mh += heights[i].value; // + 1;
+			if (heights[i])
+				mh += heights[i].value; // + 1;
 		
 		target.setContentSize(mw, mh);
 		target.measuredWidth = mw;
@@ -214,7 +216,8 @@ public class GridLayout extends LayoutBase
 				x = 0;
 				
 				for (j = 0; j < cell.columnIndex; ++j)
-					x += widths[j].value; // + 1;
+					if(widths[j])
+						x += widths[j].value; // + 1;
 				
 				xs[cell.columnIndex] = x;
 			}
@@ -224,7 +227,8 @@ public class GridLayout extends LayoutBase
 				y = 0;
 				
 				for (j = 0; j < cell.rowIndex; ++j)
-					y += heights[j].value; // + 1;
+					if(heights[j])
+						y += heights[j].value; // + 1;
 				
 				ys[cell.rowIndex] = y;
 			}
