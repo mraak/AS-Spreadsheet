@@ -1807,6 +1807,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  moveCells
 	//----------------------------------
 	
+	//TODO: move and extend, make public
+	protected function get selectedCells() : Vector.<Cell>
+	{
+		var items : Vector.<Object> = grid.selectedItems;
+		
+		return Vector.<Cell>(items);
+	}
+	
+	//TODO: improve
 	public function moveCells(cells : Vector.<Cell>, to : Point, copy : Boolean = false, moveStyle : String = MoveOptions.ALL) : void
 	{
 		if (!cells)
@@ -1849,6 +1858,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			if (!target)
 				continue;
+			
+			if (!copy)
+				getCellAt(cells[i].columnIndex, cells[i].rowIndex).clear();
 			
 			switch (moveStyle)
 			{
