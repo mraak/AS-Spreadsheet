@@ -183,25 +183,22 @@ public class Utils
 		
 		for each (var op : ControlObject in co.ctrlOperands)
 		{
-			if (co.grid)
+			if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
+				(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
 			{
-				if ((fc == -1 || op.colIndex >= fc) && (tc == -1 || op.colIndex <= tc) &&
-					(fr == -1 || op.rowIndex >= fr) && (tr == -1 || op.colIndex <= tr))
+				if (op.temporaryOldID)
 				{
-					if (op.temporaryOldID)
-					{
-						origOp = op.temporaryOldID;
-						moveOp = op.id;
-					}
-					else
-					{
-						origOp = op.id;
-						moveOp = moveFieldId(origOp, dx, dy);
-					}
-					
-					orepl[origOp] = moveOp;
-					srx += "(" + origOp + ")";
+					origOp = op.temporaryOldID;
+					moveOp = op.id;
 				}
+				else
+				{
+					origOp = op.id;
+					moveOp = moveFieldId(origOp, dx, dy);
+				}
+				
+				orepl[origOp] = moveOp;
+				srx += "(" + origOp + ")";
 			}
 		}
 		

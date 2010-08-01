@@ -19,6 +19,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.flextras.spreadsheet.core.spreadsheet;
+			import com.flextras.spreadsheet.vos.MoveOptions;
 			
 			import spark.events.IndexChangeEvent;
 			
@@ -29,15 +30,15 @@
 				switch (event.newIndex)
 				{
 					case 0:
-						cell.menu.applyChanges("styles", cell);
+						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.STYLES);
 						break;
 					
 					case 1:
-						cell.menu.applyChanges("condition", cell);
+						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.CONDITIONS);
 						break;
 					
 					case 2:
-						cell.menu.applyChanges("expression", cell);
+						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.EXPRESSIONS);
 						break;
 				}
 				

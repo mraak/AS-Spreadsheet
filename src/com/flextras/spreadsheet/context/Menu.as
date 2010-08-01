@@ -220,6 +220,7 @@ public class Menu implements IFlexContextMenu
 		var cells : Vector.<Cell> = this.cells;
 		
 		clipboard.range = Vector.<Cell>(ObjectUtil.copy(cells));
+		clipboard.copy = false;
 		
 		for (var i : int, n : int = cells.length; i < n; ++i)
 			cells[i].clear();
@@ -230,80 +231,17 @@ public class Menu implements IFlexContextMenu
 	public function copyHandler(e : ContextMenuEvent = null) : void
 	{
 		clipboard.range = Vector.<Cell>(ObjectUtil.copy(cells));
+		clipboard.copy = true;
 	}
 	
 	public function pasteHandler(e : ContextMenuEvent = null) : void
 	{
-		applyChanges(null, cell);
+		cell.owner.moveCells(clipboard.range, new Point(cell.columnIndex, cell.rowIndex), clipboard.copy);
 	}
 	
 	public function pasteSpecialHandler(e : ContextMenuEvent = null) : void
 	{
 		createPopup(PastePopup);
-	}
-	
-	public function applyChanges(method : String, cell : Cell) : void
-	{
-		if (!cell)
-			return;
-		
-		var cells : Vector.<Cell> = clipboard.range;
-		
-		if(!cells)
-			return;
-		
-		var o : Object;
-		
-		var i : uint = 1, n : uint = cells.length;
-		var target : Cell = cells[0];
-		var startColumn : uint = target.columnIndex, startRow : uint = target.rowIndex;
-		var endColumn : uint, endRow : uint;
-		
-		for (; i < n; ++i)
-		{
-			target = cells[i];
-			
-			startColumn = Math.min(startColumn, target.columnIndex);
-			startRow = Math.min(startRow, target.rowIndex);
-			
-			endColumn = Math.max(endColumn, target.bounds.right);
-			endRow = Math.max(endRow, target.bounds.bottom);
-		}
-		
-		var offset : Point = new Point(cell.bounds.x - startColumn, cell.bounds.y - startRow);
-		
-		endColumn += startColumn + offset.x;
-		endRow += startRow + offset.y + 1;
-		
-		if(endColumn > cell.owner.columnCount)
-			cell.owner.columnCount = endColumn;
-		
-		if(endRow > cell.owner.rowCount)
-			cell.owner.rowCount = endRow;
-		
-		cell.owner.validateProperties();
-		
-		for (i = 0; i < n; ++i)
-		{
-			target = cell.owner.getCellAt(cells[i].bounds.x + offset.x, cells[i].bounds.y + offset.y);
-			
-			if (target)
-			{
-				if (!method)
-					target.assign(cells[i]);
-				else
-				{
-					o = {};
-					
-					o[method] = cells[i][method];
-					
-					target.assignObject(o);
-				}
-				
-				if (!method || method == "expression")
-					target.expression = cells[i].controlObject.exp ? Utils.moveExpression(cells[i].controlObject, offset.x, offset.y) : cells[i].value;
-			}
-		}
 	}
 	
 	protected function disableHandler(e : ContextMenuEvent) : void

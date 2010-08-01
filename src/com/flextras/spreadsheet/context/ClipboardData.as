@@ -11,6 +11,7 @@ final public class ClipboardData extends EventDispatcher
 	public static const instance : ClipboardData = new ClipboardData;
 	
 	protected var _range : Vector.<Cell>;
+	public var copy : Boolean;
 	
 	public function get range() : Vector.<Cell>
 	{
