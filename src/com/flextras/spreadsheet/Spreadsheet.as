@@ -1288,6 +1288,21 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return _indexedCells[columnIndex + "|" + rowIndex];
 	}
 	
+	public function getCellByID(value : String) : Cell
+	{
+		if (!value || value.length != 2)
+			return null;
+		
+		var id : Array = Utils.gridFieldToIndexes(value);
+		var columnIndex : int = id[0];
+		var rowIndex : int = id[1];
+		
+		if (isColumnIndexInvalid(columnIndex) || isRowIndexInvalid(rowIndex))
+			return null;
+		
+		return _indexedCells[columnIndex + "|" + rowIndex];
+	}
+	
 	//----------------------------------
 	//  getCellCondition
 	//----------------------------------
@@ -1874,6 +1889,52 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	///*************************************************************************************************
 	///*******JEFFRY LEFT OFF Documenting HERE ****
 	///*************************************************************************************************
+	
+	//----------------------------------
+	//  rangeCells
+	//----------------------------------
+	
+	/**
+	 *
+	 * @param location
+	 * @return
+	 *
+	 */
+	public function getRangeCells(location : Rectangle) : Vector.<Cell>
+	{
+		if (!location)
+			return null;
+		
+		return getRangeCellsAt(location.x, location.y, location.width, location.height);
+	}
+	
+	/**
+	 *
+	 * @param columnIndex
+	 * @param rowIndex
+	 * @param columnSpan
+	 * @param rowSpan
+	 * @return
+	 *
+	 */
+	public function getRangeCellsAt(columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Cell>
+	{
+		if (isColumnIndexInvalid(columnIndex)
+			|| isRowIndexInvalid(rowIndex)
+			|| columnSpan < 0
+			|| rowSpan < 0)
+			return null;
+		
+		var result : Vector.<Cell> = new Vector.<Cell>;
+		var c : uint = columnIndex, cs : uint = c + columnSpan;
+		var r : uint = rowIndex, rs : uint = r + rowSpan;
+		
+		for (; c <= cs; ++c)
+			for (r = rowIndex; r <= rs; ++r)
+				result.push(getCellAt(c, r));
+		
+		return result;
+	}
 	
 	//----------------------------------
 	//  getRangeConditions
