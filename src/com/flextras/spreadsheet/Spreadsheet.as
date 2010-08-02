@@ -38,6 +38,8 @@ use namespace spreadsheet;
 //  Events
 //----------------------------------
 
+[Event(name="cellsChanged", type="flash.events.Event")]
+
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGE
  */
@@ -243,34 +245,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				}
 			}
 			
-			if (addColumnDirty)
-			{
-				addColumnDirty = false;
-				
-				dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, addColumnInfo.index));
-			}
-			
-			if (addRowDirty)
-			{
-				addRowDirty = false;
-				
-				dispatchEvent(new RowEvent(RowEvent.INSERTED, addRowInfo.index));
-			}
-			
-			if (removeColumnDirty)
-			{
-				removeColumnDirty = false;
-				
-				dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, removeColumnInfo.index));
-			}
-			
-			if (removeRowDirty)
-			{
-				removeRowDirty = false;
-				
-				dispatchEvent(new RowEvent(RowEvent.REMOVED, removeRowInfo.index));
-			}
-			
 			dispatchEvent(new Event("cellsChanged"));
 			
 			grid.dataProvider = new ArrayCollection(_uniqueCells);
@@ -346,15 +320,58 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					}
 				}
 			
-			if (clearExpressionsDirty)
-			{
-				clearExpressionsDirty = false;
-				
-				dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
-			}
-			
 			dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CHANGED));
 		}
+		
+		if (clearExpressionsDirty)
+		{
+			clearExpressionsDirty = false;
+			
+			dispatchEvent(new SpreadsheetEvent(SpreadsheetEvent.EXPRESSIONS_CLEARED));
+		}
+		
+		if (addColumnDirty)
+		{
+			addColumnDirty = false;
+			
+			dispatchEvent(new ColumnEvent(ColumnEvent.INSERTED, addColumnInfo.index));
+		}
+		
+		if (addRowDirty)
+		{
+			addRowDirty = false;
+			
+			dispatchEvent(new RowEvent(RowEvent.INSERTED, addRowInfo.index));
+		}
+		
+		if (removeColumnDirty)
+		{
+			removeColumnDirty = false;
+			
+			dispatchEvent(new ColumnEvent(ColumnEvent.REMOVED, removeColumnInfo.index));
+		}
+		
+		if (removeRowDirty)
+		{
+			removeRowDirty = false;
+			
+			dispatchEvent(new RowEvent(RowEvent.REMOVED, removeRowInfo.index));
+		}
+		
+		if (clearColumnDirty)
+		{
+			clearColumnDirty = false;
+			
+			dispatchEvent(new ColumnEvent(ColumnEvent.CLEARED, clearColumnInfo.index));
+		}
+		
+		if (clearRowDirty)
+		{
+			clearRowDirty = false;
+			
+			dispatchEvent(new RowEvent(RowEvent.CLEARED, clearRowInfo.index));
+		}
+	
 	}
 	
 	/**
@@ -737,7 +754,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		var oldValue : ArrayCollection = _expressions;
 		
 		if (_expressions)
+		{
+			_expressions.removeAll(); //replace with reset
+			
 			_expressions.removeEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
+		}
 		
 		_expressions = value || new ArrayCollection;
 		
@@ -1190,6 +1211,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (expression != null)
 			expression = expression.toLowerCase();
+		else
+			expression = "";
 		
 		var o : Object = getExpressionObject(cellId);
 		
@@ -1816,9 +1839,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//TODO: improve
-	public function moveCells(cells : Vector.<Cell>, to : Point, copy : Boolean = false, moveStyle : String = MoveOptions.ALL) : void
+	public function moveCells(cells : Vector.<Cell>, to : Point, copy : Boolean = false, options : String = MoveOptions.ALL) : void
 	{
-		if (!cells)
+		if (!cells || !to || !options)
 			return;
 		
 		var o : Object;
@@ -1859,10 +1882,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			if (!target)
 				continue;
 			
-			if (!copy)
-				getCellAt(cells[i].columnIndex, cells[i].rowIndex).clear();
-			
-			switch (moveStyle)
+			switch (options)
 			{
 				case MoveOptions.ALL:
 					target.assign(cells[i]);
@@ -1895,6 +1915,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					target.expression = cells[i].value;
 					break;
 			}
+			
+			if (!copy)
+				getCellAt(cells[i].columnIndex, cells[i].rowIndex).clear();
 		}
 	}
 	
@@ -2467,6 +2490,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		}
 	}
 	
+	protected var clearColumnDirty : Boolean;
+	protected var clearColumnInfo : Object;
+	
 	/**
 	 *
 	 * @param e
@@ -2482,11 +2508,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid(index))
 			return;
 		
+		if (notifyChildren)
+			dispatchEvent(new RowEvent(ColumnEvent.BEFORE_CLEARED, index));
+		
+		clearColumnInfo = {index: index};
+		
 		var row : Array = columns[index];
 		
 		for each (var cell : Cell in row)
+		{
+			if (notifyChildren)
+				clearColumnDirty = true;
+			
 			cell.clear();
+		}
 	}
+	
+	protected var clearRowDirty : Boolean;
+	protected var clearRowInfo : Object;
 	
 	/**
 	 *
@@ -2503,10 +2542,20 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid(index))
 			return;
 		
+		if (notifyChildren)
+			dispatchEvent(new RowEvent(RowEvent.BEFORE_CLEARED, index));
+		
+		clearRowInfo = {index: index};
+		
 		var column : Array = rows[index];
 		
 		for each (var cell : Cell in column)
+		{
+			if (notifyChildren)
+				clearRowDirty = true;
+			
 			cell.clear();
+		}
 	}
 	
 	
@@ -2519,10 +2568,18 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function expressionsChangeHandler(e : CollectionEvent) : void
 	{
+		var items : Array;
+		
 		if (e.kind == CollectionEventKind.REMOVE)
-			for each (var item : Object in e.items)
-				if (item.hasOwnProperty("reference"))
-					Cell(item.reference).expressionObject = null;
+			items = e.items;
+		
+		if (e.kind == CollectionEventKind.RESET)
+			items = _expressions.source;
+		
+		for each (var item : Object in items)
+			if (item.hasOwnProperty("reference"))
+				Cell(item.reference).expressionObject = null;
+		
 		expCE = e;
 		updateExpressions();
 		
