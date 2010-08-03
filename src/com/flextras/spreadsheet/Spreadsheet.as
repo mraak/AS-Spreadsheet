@@ -755,7 +755,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (_expressions)
 		{
-			_expressions.removeAll(); //replace with reset
+			//_expressions.removeAll(); //replace with reset
+			_expressions.dispatchEvent(new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, false, CollectionEventKind.RESET));
 			
 			_expressions.removeEventListener(CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 		}
