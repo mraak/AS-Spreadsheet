@@ -418,6 +418,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				{
 					columnHeader.scroller.horizontalScrollBar.value = e.currentTarget.value;
 				});
+			
+			grid.setFocus();
 		}
 	}
 	
@@ -1739,7 +1741,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	spreadsheet function getElementIndex(columnIndex : uint, rowIndex : int) : int
 	{
-		return _elementIndex[columnIndex + "|" + rowIndex] || -1;
+		var index : Object = _elementIndex[columnIndex + "|" + rowIndex];
+		
+		return index == null ? -1 : int(index);
 	}
 	
 	//----------------------------------

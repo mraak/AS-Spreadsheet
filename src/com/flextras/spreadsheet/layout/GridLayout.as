@@ -216,7 +216,7 @@ public class GridLayout extends LayoutBase
 				x = 0;
 				
 				for (j = 0; j < cell.columnIndex; ++j)
-					if(widths[j])
+					if (widths[j])
 						x += widths[j].value; // + 1;
 				
 				xs[cell.columnIndex] = x;
@@ -227,7 +227,7 @@ public class GridLayout extends LayoutBase
 				y = 0;
 				
 				for (j = 0; j < cell.rowIndex; ++j)
-					if(heights[j])
+					if (heights[j])
 						y += heights[j].value; // + 1;
 				
 				ys[cell.rowIndex] = y;
@@ -275,6 +275,9 @@ public class GridLayout extends LayoutBase
 	
 	override public function getNavigationDestinationIndex(currentIndex : int, navigationUnit : uint, arrowKeysWrapFocus : Boolean) : int
 	{
+		if (currentIndex < 0)
+			return 0;
+		
 		var result : int = super.getNavigationDestinationIndex(currentIndex, navigationUnit, arrowKeysWrapFocus);
 		
 		if (result > -1)

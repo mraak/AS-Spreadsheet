@@ -34,8 +34,10 @@ public class GridList extends List
 		
 		if (!NavigationUnit.isNavigationUnit(navigationUnit))
 		{
-			var currentRenderer : GridItemRenderer = GridItemRenderer(dataGroup.getElementAt(caretIndex));
-			currentRenderer.openEditor(String.fromCharCode(event.charCode));
+			var currentRenderer : GridItemRenderer = GridItemRenderer(dataGroup.getElementAt(caretIndex < 0 ? 0 : caretIndex));
+			
+			if (!currentRenderer.focused)
+				currentRenderer.openEditor(String.fromCharCode(event.charCode));
 		}
 		else
 			adjustSelectionAndCaretUponNavigation(event);

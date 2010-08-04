@@ -425,11 +425,6 @@
 				}
 			}
 			
-			override protected function keyDownHandler(event : KeyboardEvent) : void
-			{
-				openEditor();
-			}
-			
 			public function openEditor(value : String = null) : void
 			{
 				focused = true;
