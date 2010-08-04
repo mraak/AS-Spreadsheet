@@ -5,21 +5,22 @@
 				xmlns:flextras = "com.flextras.*"
 				xmlns:context = "com.flextras.spreadsheet.context.*"
 				xmlns:utils = "com.flextras.spreadsheet.utils.*"
+				xmlns:components = "com.flextras.spreadsheet.components.*"
 				minWidth = "100"
 				minHeight = "20"
 				cut = "cutHandler(event)"
 				copy = "copyHandler(event)"
 				paste = "pasteHandler(event)"
 				doubleClickEnabled = "{cell.enabled}"
-				doubleClick = "focused = true; input.setFocus();"
+				doubleClick = "openEditor()"
 				autoDrawBackground = "false"
-				currentState="{cell.enabled ? 'normal' : 'disabled'}" xmlns:components="com.flextras.spreadsheet.components.*">
+				currentState = "{cell.enabled ? 'normal' : 'disabled'}">
 
 	<s:transitions>
 		<s:Transition fromState = "hovered"
 					  toState = "normal">
 			<s:AnimateColor target = "{backgroundColorEntry}"
-							duration="{cell.styles.rollOutDuration}" />
+							duration = "{cell.styles.rollOutDuration}" />
 		</s:Transition>
 	</s:transitions>
 
@@ -78,8 +79,8 @@
 			top = "{t.height}"
 			right = "{r.width+edgeSize}"
 			bottom = "{b.height+edgeSize}"
-			visible="{!focused}"
-			includeInLayout="{!focused}">
+			visible = "{!focused}"
+			includeInLayout = "{!focused}">
 		<s:fill>
 			<s:LinearGradient rotation = "90">
 				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(backgroundColorEntry.color, cell.styles.cellGradientLevel)}"
@@ -147,8 +148,8 @@
 	</s:Group>
 
 	<s:RichText id = "output"
-				visible="{!focused}"
-				includeInLayout="{!focused}"
+				visible = "{!focused}"
+				includeInLayout = "{!focused}"
 				left = "{l.width}"
 				right = "{r.width+edgeSize}"
 				top = "{t.height}"
@@ -156,7 +157,7 @@
 				focusEnabled = "false"
 				mouseEnabled = "false"
 				mouseFocusEnabled = "false"
-				mouseChildren="false"
+				mouseChildren = "false"
 				text = "{cell.value}"
 				color = "{colorStyle}"
 				alpha = "{alphaStyle}"
@@ -165,25 +166,25 @@
 				textDecoration = "{underlineStyle ? 'underline' : 'none'}"
 				textAlign = "{horizontalAlignStyle}"
 				verticalAlign = "{verticalAlignStyle}"
-				fontSize = "{sizeStyle}"/>
-	
+				fontSize = "{sizeStyle}" />
+
 	<components:ResizableRichEditableText id = "input"
-										enabled="{cell.enabled}"
-										visible="{focused}"
-										includeInLayout="{focused}"
-										keyDown = "input_keyDownHandler(event)"
-										left = "{l.width}"
-										right = "{r.width+edgeSize}"
-										top = "{t.height}"
-										bottom = "{b.height+edgeSize}"
-										text = "{cell.expression}"
-										textAlign = "center"
-										verticalAlign = "middle"
-										focusIn="focused = true;"
-										focusOut="focused = false; cell.expression = input.text;" />
+										  enabled = "{cell.enabled}"
+										  visible = "{focused}"
+										  includeInLayout = "{focused}"
+										  keyDown = "input_keyDownHandler(event)"
+										  left = "{l.width}"
+										  right = "{r.width+edgeSize}"
+										  top = "{t.height}"
+										  bottom = "{b.height+edgeSize}"
+										  text = "{cell.expression}"
+										  textAlign = "center"
+										  verticalAlign = "middle"
+										  focusIn = "focused = true;"
+										  focusOut = "focused = false; cell.expression = input.text;" />
 
 	<fx:Declarations>
-		<fx:Boolean id="focused" />
+		<fx:Boolean id = "focused" />
 		<fx:Boolean id = "conditionActive">{condition.active}</fx:Boolean>
 
 		<fx:uint id = "colorStyle">{conditionActive ? conditionStyles.color : styles.color}</fx:uint>
@@ -244,8 +245,12 @@
 			import com.flextras.spreadsheet.vos.Styles;
 			import com.flextras.spreadsheet.vos.StylesState;
 			
+			import flashx.textLayout.utils.NavigationUtil;
+			
 			import mx.controls.IFlexContextMenu;
 			import mx.utils.ColorUtil;
+			
+			import spark.core.NavigationUnit;
 			
 			use namespace spreadsheet;
 			
@@ -288,16 +293,16 @@
 			protected var borderBottom : BorderSide;
 			
 			[Bindable]
-			protected var oldState:String;
+			protected var oldState : String;
 			
 			/*override public function get flexContextMenu():IFlexContextMenu
-			{
-				return cell.menu || super.flexContextMenu;
-			}*/
+			   {
+			   return cell.menu || super.flexContextMenu;
+			 }*/
 			
-			override public function setCurrentState(stateName:String, playTransition:Boolean=true):void
+			override public function setCurrentState(stateName : String, playTransition : Boolean = true) : void
 			{
-				if(!cell || !cell.enabled)
+				if (!cell || !cell.enabled)
 					super.setCurrentState("disabled", playTransition);
 				else
 					super.setCurrentState(stateName, playTransition);
@@ -413,10 +418,29 @@
 				{
 					event.stopImmediatePropagation();
 					
-					setFocus();
-					
-					//currentState = oldState;
+					host.grid.setFocus();
+					host.grid.setFocus();
+					host.grid.selectedIndex = host.grid.layout.getNavigationDestinationIndex(itemIndex, NavigationUnit.DOWN, false);
+						//currentState = oldState;
 				}
+			}
+			
+			override protected function keyDownHandler(event : KeyboardEvent) : void
+			{
+				openEditor();
+			}
+			
+			public function openEditor(value : String = null) : void
+			{
+				focused = true;
+				
+				/*if (value)
+				 input.text += value;*/
+				
+				input.setFocus();
+				
+				var i : int = input.text.length;
+				input.selectRange(i, i);
 			}
 		]]>
 	</fx:Script>

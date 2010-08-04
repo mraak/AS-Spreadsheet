@@ -2,9 +2,11 @@ package com.flextras.spreadsheet.components
 {
 import com.flextras.spreadsheet.Spreadsheet;
 import com.flextras.spreadsheet.core.spreadsheet;
+import com.flextras.spreadsheet.itemRenderers.GridItemRenderer;
 import com.flextras.spreadsheet.vos.Cell;
 
 import flash.events.KeyboardEvent;
+import flash.events.MouseEvent;
 
 import mx.core.mx_internal;
 
@@ -21,6 +23,27 @@ public class GridList extends List
 	public function GridList()
 	{
 		super();
+	}
+	
+	override protected function keyDownHandler(event : KeyboardEvent) : void
+	{
+		if (!dataProvider || !layout || event.isDefaultPrevented())
+			return;
+		
+		var navigationUnit : uint = event.keyCode;
+		
+		if (!NavigationUnit.isNavigationUnit(navigationUnit))
+		{
+			var currentRenderer : GridItemRenderer = GridItemRenderer(dataGroup.getElementAt(caretIndex));
+			currentRenderer.openEditor(String.fromCharCode(event.charCode));
+		}
+		else
+			adjustSelectionAndCaretUponNavigation(event);
+	}
+	
+	override protected function item_mouseDownHandler(event : MouseEvent) : void
+	{
+		super.item_mouseDownHandler(event);
 	}
 	
 	override protected function adjustSelectionAndCaretUponNavigation(event : KeyboardEvent) : void
