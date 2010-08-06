@@ -148,6 +148,7 @@
 	</s:Group>
 
 	<s:RichText id = "output"
+				maxWidth = "{host.wordWrap ? width - l.width - r.width : NaN}"
 				visible = "{!focused}"
 				includeInLayout = "{!focused}"
 				left = "{l.width}"
@@ -169,6 +170,8 @@
 				fontSize = "{sizeStyle}" />
 
 	<components:ResizableRichEditableText id = "input"
+										  wordWrap = "{host.wordWrap}"
+										  maxWidth = "{width - l.width - r.width}"
 										  enabled = "{cell.enabled}"
 										  visible = "{focused}"
 										  includeInLayout = "{focused}"
@@ -254,6 +257,7 @@
 			
 			use namespace spreadsheet;
 			
+			[Bindable]
 			public var host : Spreadsheet;
 			
 			[Bindable]

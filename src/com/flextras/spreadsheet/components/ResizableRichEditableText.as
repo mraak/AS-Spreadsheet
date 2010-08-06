@@ -10,6 +10,8 @@ use namespace mx_internal;
 
 public class ResizableRichEditableText extends RichEditableText
 {
+	public var wordWrap : Boolean;
+	
 	public function ResizableRichEditableText()
 	{
 		super();
@@ -47,27 +49,10 @@ public class ResizableRichEditableText extends RichEditableText
 	
 	override protected function measure() : void
 	{
-		/*if (isMeasureFixed())
-		 return;*/
-		
-
-		
 		var bounds : Rectangle = measureTextSize(NaN);
 		
 		measuredWidth = Math.ceil(bounds.right);
 		measuredHeight = Math.ceil(bounds.bottom);
-		
-		if (!isNaN(explicitMinWidth) && measuredWidth < explicitMinWidth)
-			measuredWidth = explicitMinWidth;
-		
-		if (!isNaN(explicitMaxWidth) && measuredWidth > explicitMaxWidth)
-			measuredWidth = explicitMaxWidth;
-		
-		if (!isNaN(explicitMinHeight) && measuredHeight < explicitMinHeight)
-			measuredHeight = explicitMinHeight;
-		
-		if (!isNaN(explicitMaxHeight) && measuredHeight > explicitMaxHeight)
-			measuredHeight = explicitMaxHeight;
 		
 		autoSize = true;
 		
@@ -79,16 +64,22 @@ public class ResizableRichEditableText extends RichEditableText
 		
 		invalidateDisplayList();
 		
-
+		
 		
 		super.measure();
-		
+	
 		//trace("+measure", measuredWidth, measuredHeight, width, height);
 	}
 	
 	override protected function canSkipMeasurement() : Boolean
 	{
 		return false;
+	}
+	
+	override public function set maxWidth(value : Number) : void
+	{
+		if (wordWrap)
+			super.maxWidth = value;
 	}
 	
 	/**
@@ -105,8 +96,22 @@ public class ResizableRichEditableText extends RichEditableText
 		textContainerManager.compositionWidth = composeWidth;
 		textContainerManager.compositionHeight = composeHeight;
 		
-		// Compose only.  The display should not be updated.
-		textContainerManager.compose();
+		if(wordWrap)
+		{
+			if (!isNaN(explicitMinWidth) && measuredWidth < explicitMinWidth)
+				textContainerManager.compositionWidth = measuredWidth = explicitMinWidth;
+			
+			if (!isNaN(explicitMaxWidth) && measuredWidth > explicitMaxWidth)
+				textContainerManager.compositionWidth = measuredWidth = explicitMaxWidth;
+		}
+		else
+			textContainerManager.compose();
+		
+		/*if (!isNaN(explicitMinHeight) && measuredHeight < explicitMinHeight)
+		   measuredHeight = explicitMinHeight;
+		
+		   if (!isNaN(explicitMaxHeight) && measuredHeight > explicitMaxHeight)
+		 measuredHeight = explicitMaxHeight;*/
 		
 		// Adjust width and height for text alignment.
 		var bounds : Rectangle = textContainerManager.getContentBounds();
