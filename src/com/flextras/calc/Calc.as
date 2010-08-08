@@ -224,7 +224,7 @@ public class Calc extends EventDispatcher
 	
 	private function solveFormula (exp : String) : String
 	{
-		var regex : RegExp = /[A-Z]*\(([^()]*)\)/g;
+		var regex : RegExp = /[A-Za-z]*\(([^()]*)\)/g;
 		var formula : String = exp.substr(0, exp.indexOf("("));
 		
 		exp = exp.replace(regex, "$1");
