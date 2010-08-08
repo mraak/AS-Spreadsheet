@@ -1966,8 +1966,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			return null;
 		
 		var result : Vector.<Cell> = new Vector.<Cell>;
-		var c : uint = columnIndex, cs : uint = c + columnSpan;
-		var r : uint = rowIndex, rs : uint = r + rowSpan;
+		var c : uint = columnIndex, cs : uint = c + columnSpan - 1;
+		var r : uint = rowIndex, rs : uint = r + rowSpan - 1;
 		
 		for (; c <= cs; ++c)
 			for (r = rowIndex; r <= rs; ++r)
