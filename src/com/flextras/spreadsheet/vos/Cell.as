@@ -51,6 +51,11 @@ use namespace spreadsheet;
 /**
  *
  */
+[Event(name="wordWrapChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
 [Event(name="expressionChanged", type="flash.events.Event")]
 
 [RemoteClass]
@@ -122,7 +127,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		//_condition.addEventListener("leftChanged", conditionChanged);
 		_condition.addEventListener("operatorChanged", conditionChanged);
 		_condition.addEventListener("rightChanged", conditionChanged);
-		
+	
 		//controlObject.addEventListener("expressionChanged", controlObject_expressionChanged);
 	}
 	
@@ -366,7 +371,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		}
 		
 		/*if(!expressionObject)
-			owner.assignExpression(id, expression);*/
+		 owner.assignExpression(id, expression);*/
 		
 		if (expressionObject)
 			expressionObject.expression = value;
@@ -374,37 +379,39 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent(new Event("expressionChanged"));
 	}
 	
-	protected var _expressionObject:Object;
+	protected var _expressionObject : Object;
 	
-	spreadsheet function get expressionObject():Object
+	spreadsheet function get expressionObject() : Object
 	{
-		if(!_expressionObject && owner)
+		if (!_expressionObject && owner)
 			expressionObject = owner.getExpressionObject(id);
 		
 		return _expressionObject;
 	}
 	
-	spreadsheet function get expressionObjectByOldID():Object
+	spreadsheet function get expressionObjectByOldID() : Object
 	{
-		if(!_expressionObject && owner)
+		if (!_expressionObject && owner)
 			expressionObject = owner.getExpressionObject(controlObject.temporaryOldID);
 		
 		return _expressionObject;
 	}
 	
-	spreadsheet function set expressionObject(value:Object):void
-	{trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
-		if(_expressionObject === value)
+	spreadsheet function set expressionObject(value : Object) : void
+	{
+		trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
+		
+		if (_expressionObject === value)
 			return;
 		
 		_expressionObject = value;
 		
-		if(value)
+		if (value)
 		{
-			if(!value.hasOwnProperty("reference"))
+			if (!value.hasOwnProperty("reference"))
 				value.reference = this;
 			
-			if(value.reference === this)
+			if (value.reference === this)
 				expression = value.expression;
 		}
 		else
@@ -577,6 +584,38 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent(new Event("valueChanged"));
 	}
 	
+	//----------------------------------
+	//  wordWrap
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _wordWrap : Boolean;
+	
+	[Bindable(event="wordWrapChanged")]
+	/**
+	 * This property is a flag that indicates whether text in the cells should be word wrapped.
+	 *  If <code>true</code>, enables word wrapping for text in the spreadsheet cells.
+	 */
+	public function get wordWrap() : Boolean
+	{
+		return _wordWrap;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set wordWrap(value : Boolean) : void
+	{
+		if (_wordWrap == value)
+			return;
+		
+		_wordWrap = value;
+		
+		dispatchEvent(new Event("wordWrapChanged"));
+	}
+	
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -668,22 +707,22 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param amount
 	 * @param excludeRule
-	 * 
-	 */	
+	 *
+	 */
 	protected function moveExpressionHorizontally(amount : int, index : int) : void
 	{
 		expression = controlObject.exp ? Utils.moveExpression2(controlObject, amount, 0, null, [index, null, null, null]) : value;
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param amount
 	 * @param excludeRule
-	 * 
-	 */	
+	 *
+	 */
 	protected function moveExpressionVertically(amount : int, index : int) : void
 	{
 		expression = controlObject.exp ? Utils.moveExpression2(controlObject, 0, amount, null, [null, null, index, null]) : value;
@@ -701,9 +740,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.colIndex = amount;
 		controlObject.col = String(Utils.alphabet[amount]).toLowerCase();
 		
-		var id:String = controlObject.col + controlObject.row;
+		var id : String = controlObject.col + controlObject.row;
 		
-		if(expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
+		if (expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
 			expressionObjectByOldID.cell = id;
 		
 		controlObject.id = id;
@@ -721,9 +760,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.rowIndex = amount;
 		controlObject.row = String(amount);
 		
-		var id:String = controlObject.col + controlObject.row;
+		var id : String = controlObject.col + controlObject.row;
 		
-		if(expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
+		if (expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
 			expressionObjectByOldID.cell = id;
 		
 		controlObject.id = id;
@@ -885,7 +924,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		var index : uint = e.index;
 		
-		var amount:int = 1;
+		var amount : int = 1;
 		
 		if (_bounds.x >= index)
 			moveHorizontally(_bounds.x + amount);
@@ -905,7 +944,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		var index : uint = e.index;
 		
-		var amount:int = -1;
+		var amount : int = -1;
 		
 		if (_bounds.x > index)
 			moveHorizontally(_bounds.x + amount);
@@ -954,7 +993,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		var index : uint = e.index;
 		
-		var amount:int = 1;
+		var amount : int = 1;
 		
 		if (_bounds.y >= index)
 			moveVertically(_bounds.y + amount);
@@ -974,7 +1013,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		var index : uint = e.index;
 		
-		var amount:int = -1;
+		var amount : int = -1;
 		
 		if (_bounds.y > index)
 			moveVertically(_bounds.y + amount);

@@ -148,7 +148,7 @@
 	</s:Group>
 
 	<s:RichText id = "output"
-				maxWidth = "{host.wordWrap ? width - l.width - r.width : NaN}"
+				maxWidth = "{cell.wordWrap ? width - l.width - r.width : NaN}"
 				visible = "{!focused}"
 				includeInLayout = "{!focused}"
 				left = "{l.width}"
@@ -170,7 +170,7 @@
 				fontSize = "{sizeStyle}" />
 
 	<components:ResizableRichEditableText id = "input"
-										  wordWrap = "{host.wordWrap}"
+										  wordWrap = "{cell.wordWrap}"
 										  maxWidth = "{width - l.width - r.width}"
 										  enabled = "{cell.enabled}"
 										  visible = "{focused}"

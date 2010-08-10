@@ -1051,38 +1051,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return _uniqueCells;
 	}
 	
-	//----------------------------------
-	//  wordWrap
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	protected var _wordWrap : Boolean;
-	
-	[Bindable(event="wordWrapChanged")]
-	/**
-	 * This property is a flag that indicates whether text in the cells should be word wrapped.
-	 *  If <code>true</code>, enables word wrapping for text in the spreadsheet cells.
-	 */
-	public function get wordWrap() : Boolean
-	{
-		return _wordWrap;
-	}
-	
-	/**
-	 * @private
-	 */
-	public function set wordWrap(value : Boolean) : void
-	{
-		if (_wordWrap == value)
-			return;
-		
-		_wordWrap = value;
-		
-		dispatchEvent(new Event("wordWrapChanged"));
-	}
-	
 	//--------------------------------------------------------------------------
 	//
 	//  Methods
@@ -1222,11 +1190,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (o)
 		{
 			o.cell = cellId;
-			o.expression = expression;
 			
-			_expressions.itemUpdated(o);
+			if (o.expression != expression)
+			{
+				o.expression = expression;
+				
+				_expressions.itemUpdated(o);
+			}
 		}
-		else
+		else if (expression && expression.length > 0)
 			_expressions.addItem({cell: cellId, expression: expression, value: ""});
 	}
 	
@@ -2475,10 +2447,19 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				break;
 			
 			case CollectionEventKind.REMOVE:
-				/*var index:int;
-				   for each(var cell:Cell in e.items)
-				   if((index = expressions.getItemIndex(cell.expressionObject)) > -1)
-				 expressions.getItemAt(index).expression = "";*/
+				var index : int, cell : Cell;
+				
+				for (var i : int, n : int = e.items.length; i < n; ++i)
+				{
+					cell = e.items[i];
+					cell.expression = "";
+					
+					if ((index = expressionTree.indexOf(cell.controlObject)) > -1)
+						expressionTree.splice(index, 1);
+					
+						//if ((index = expressions.getItemIndex(cell.expressionObject)) > -1)
+						//	expressions.removeItemAt(index); //expressions.getItemAt(index).expression = "";
+				}
 				
 				refresh();
 				break;
