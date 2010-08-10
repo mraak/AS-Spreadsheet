@@ -18,7 +18,7 @@ import spark.components.TextInput;
 [Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
 
 /**
- * Calc is the main class for performing all the calculation logic. It can evaluate 
+ * Calc is the main class for performing all the calculation logic. It can evaluate
  * mathematical expressions from strings and calculate the result. It can register various
  * objects, Flex controls, or Flash components and use them as operands in the expression.
  * <br/><br/>
@@ -31,7 +31,7 @@ import spark.components.TextInput;
  * @see com.flextras.calc.FormulaBasic
  * @see com.flextras.calc.FormulaLogic
  * @see com.flextras.calc.FormulaConst
- * 
+ *
  * */
 public class Calc extends EventDispatcher
 {
@@ -58,12 +58,12 @@ public class Calc extends EventDispatcher
 	
 	private var repairedExpression : String;
 	
-	public function Calc ()
+	public function Calc()
 	{
 		init();
 	}
 	
-	private function init () : void
+	private function init() : void
 	{
 		_ctrlCollection = new Object();
 		_gridCollection = new Object();
@@ -74,14 +74,14 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Call this method to solve the math expression. 
+	 * Call this method to solve the math expression.
 	 * Also supports negative numbers. Supports formulas like SUM(2,3), MAX(a1:d3), etc.
 	 *
 	 * returns: Number, which is the numerical solution to expression
 	 * params: exp (String), math expression in a string, e.g.
 	 *
 	 * */
-	public function solveExpression (exp : String, forget : Boolean = true) : String
+	public function solveExpression(exp : String, forget : Boolean = true) : String
 	{
 		var isValid : String = Utils.checkValidExpression(exp);
 		operandError = null;
@@ -156,7 +156,7 @@ public class Calc extends EventDispatcher
 	 * Returns a string that is numeric solution to the expression in brackets
 	 *
 	 * */
-	private function solveParen () : String
+	private function solveParen() : String
 	{
 		var args : Array = arguments;
 		
@@ -222,7 +222,7 @@ public class Calc extends EventDispatcher
 		return exp;
 	}
 	
-	private function solveFormula (exp : String) : String
+	private function solveFormula(exp : String) : String
 	{
 		var regex : RegExp = /[A-Za-z]*\(([^()]*)\)/g;
 		var formula : String = exp.substr(0, exp.indexOf("("));
@@ -351,7 +351,7 @@ public class Calc extends EventDispatcher
 	 * Returns a numerical string that is a solution to passed expression.
 	 * Parameter: <i>arguments</i> (Array) is automatically passed from String.replace() function in solveParen method.
 	 * */
-	private function solveSimple () : String
+	private function solveSimple() : String
 	{
 		var op : String = arguments[2];
 		
@@ -407,7 +407,7 @@ public class Calc extends EventDispatcher
 	 *  - a1+4, -field2*-4, 5+6, -b2-8
 	 *
 	 * */
-	public function getValueFromOperand (operand : String, emptyStringPolicy : String = "zero") : Number
+	public function getValueFromOperand(operand : String, emptyStringPolicy : String = "zero") : Number
 	{
 		var rn : Number;
 		var m : Number = 1;
@@ -462,7 +462,7 @@ public class Calc extends EventDispatcher
 		return rn;
 	}
 	
-	public function getCtrlById (ctrlId : String) : ControlObject
+	public function getCtrlById(ctrlId : String) : ControlObject
 	{
 		var ro : ControlObject;
 		
@@ -545,7 +545,7 @@ public class Calc extends EventDispatcher
 	/**
 	 * From either string or ControlObject
 	 * */
-	public function getCtrl (ctrl : *) : ControlObject
+	public function getCtrl(ctrl : *) : ControlObject
 	{
 		var co : ControlObject;
 		
@@ -577,14 +577,14 @@ public class Calc extends EventDispatcher
 		return co;
 	}
 	
-	private function updateDependent (objectChanged : ControlObject) : void
+	private function updateDependent(objectChanged : ControlObject) : void
 	{
 		/*
-		if (objectChanged.grid)
-		{
-			objectChanged.grid.gridDataProvider.itemUpdated(objectChanged.ctrl);
-		}
-		*/
+		   if (objectChanged.grid)
+		   {
+		   objectChanged.grid.gridDataProvider.itemUpdated(objectChanged.ctrl);
+		   }
+		 */
 		
 		if (objectChanged.dependants.length > 0)
 		{
@@ -595,7 +595,7 @@ public class Calc extends EventDispatcher
 					if (c.exp)
 						assignControlExpression(c, c.exp, true);
 					
-					//if (c.grid)
+						//if (c.grid)
 						//c.grid.updateExpressions();
 					
 					/*	if(c.grid)
@@ -629,7 +629,7 @@ public class Calc extends EventDispatcher
 	 * - expression:String, expression to be assigned, e.g. "=5+5"
 	 * - update:Boolean, internal use
 	 * */
-	public function assignControlExpression (ctrl : *, expression : String, update : Boolean = false) : void
+	public function assignControlExpression(ctrl : *, expression : String, update : Boolean = false) : void
 	{
 		var exp : String = expression;
 		var co : ControlObject;
@@ -639,7 +639,7 @@ public class Calc extends EventDispatcher
 		co = getCtrl(ctrl);
 		currentTarget = co;
 		
-		trace("exp begin " + co.id + ".ops:" + co.ctrlOperands);
+		//trace("exp begin " + co.id + ".ops:" + co.ctrlOperands);
 		
 		// remove this object as dependant from all of the operands
 		if (!update)
@@ -650,7 +650,8 @@ public class Calc extends EventDispatcher
 			{
 				//trace("\t " + op.id + " " + op.dependants);
 				var ind : int = op.dependants.indexOf(co);
-				if(ind >= 0)
+				
+				if (ind >= 0)
 					op.dependants.splice(ind, 1);
 					//trace("\t " + op.id + " " + op.dependants + " " + ind);
 			}
@@ -679,7 +680,8 @@ public class Calc extends EventDispatcher
 				if (co.grid)
 				{
 					coind = co.grid.expressionTree.indexOf(co);
-					if(coind == -1)	
+					
+					if (coind == -1)
 						co.grid.expressionTree.push(co);
 				}
 			}
@@ -692,16 +694,18 @@ public class Calc extends EventDispatcher
 			if (!update)
 			{
 				coind = expressionTree.indexOf(co);
-				if(coind >= 0)
+				
+				if (coind >= 0)
 					expressionTree.splice(expressionTree.indexOf(co), 1);
 				
 				if (co.grid)
 				{
 					coind = co.grid.expressionTree.indexOf(co);
-					if(coind >= 0)
-						co.grid.expressionTree.splice(coind, 1);	
-				}
 					
+					if (coind >= 0)
+						co.grid.expressionTree.splice(coind, 1);
+				}
+				
 			}
 		}
 		else
@@ -712,14 +716,16 @@ public class Calc extends EventDispatcher
 			if (!update)
 			{
 				coind = expressionTree.indexOf(co);
-				if(coind == -1)
+				
+				if (coind == -1)
 					expressionTree.push(co);
 				
 				if (co.grid)
 				{
 					coind = co.grid.expressionTree.indexOf(co);
-					if(coind == -1)	
-						co.grid.expressionTree.push(co);	
+					
+					if (coind == -1)
+						co.grid.expressionTree.push(co);
 				}
 			}
 		}
@@ -727,7 +733,7 @@ public class Calc extends EventDispatcher
 		// add this object as dependant to each operand
 		if (!update)
 		{
-			trace("exp end " + co.id + ".ops:" + co.ctrlOperands);
+			//trace("exp end " + co.id + ".ops:" + co.ctrlOperands);
 			
 			for each (op in co.ctrlOperands)
 			{
@@ -753,26 +759,26 @@ public class Calc extends EventDispatcher
 		updateDependent(co);
 		
 		/*
-		if (co && co.grid && co.grid is ISpreadsheet)
-		{
-			var dg : ISpreadsheet = co.grid;
-			var o : Object = dg.getExpressionObject(co.id);
-			
-			if (o)
-			{
-				var oldValue : Object = o.value;
-				o.value = _val;
-				dg.expressions.itemUpdated(o, "value", oldValue, _val);
-			}
-			
-			dg.gridDataProvider.itemUpdated(co.ctrl, co.valueProp, oldValue, _val);
-		}
-		*/
+		   if (co && co.grid && co.grid is ISpreadsheet)
+		   {
+		   var dg : ISpreadsheet = co.grid;
+		   var o : Object = dg.getExpressionObject(co.id);
+		
+		   if (o)
+		   {
+		   var oldValue : Object = o.value;
+		   o.value = _val;
+		   dg.expressions.itemUpdated(o, "value", oldValue, _val);
+		   }
+		
+		   dg.gridDataProvider.itemUpdated(co.ctrl, co.valueProp, oldValue, _val);
+		   }
+		 */
 		
 		currentTarget = null;
 	}
 	
-	public function assignExpression (target : *, expression : String) : void
+	public function assignExpression(target : *, expression : String) : void
 	{
 	
 	}
@@ -784,7 +790,7 @@ public class Calc extends EventDispatcher
 	 * fromField:String - You have to specify sheet id and field id, e.g.Sheet1!a0
 	 * toField:String - You have to specify sheet id and field id, e.g.Sheet1!a0
 	 * */
-	public function moveField (fromField : String, toField : String, copy : Boolean = false) : void
+	public function moveField(fromField : String, toField : String, copy : Boolean = false) : void
 	{
 		var coFrom : ControlObject = getCtrlById(fromField);
 		
@@ -828,7 +834,7 @@ public class Calc extends EventDispatcher
 	 * Range can contain only ControlObjects from the same grid. If toGrid is not specified,
 	 * move occurs on the same grid as objects in the range Array.
 	 * */
-	public function moveRange (range : Array, dx : int, dy : int, copy : Boolean = false, toGrid : String = null) : void
+	public function moveRange(range : Array, dx : int, dy : int, copy : Boolean = false, toGrid : String = null) : void
 	{
 		if (!toGrid)
 		{
@@ -900,7 +906,7 @@ public class Calc extends EventDispatcher
 	 * Range can contain only ControlObjects from the same grid. If toGrid is not specified,
 	 * move occurs on the same grid as objects in the range Array.
 	 * */
-	public function moveRangeValues (range : Array, dx : int, dy : int, copy : Boolean = false, toGrid : String = null) : void
+	public function moveRangeValues(range : Array, dx : int, dy : int, copy : Boolean = false, toGrid : String = null) : void
 	{
 		var ss : ISpreadsheet = ControlObject(range[0]).grid;
 		
@@ -950,7 +956,7 @@ public class Calc extends EventDispatcher
 	
 	}
 	
-	public function getDependantsOfCollection (collection : *) : Array
+	public function getDependantsOfCollection(collection : *) : Array
 	{
 		var arr : Array;
 		
@@ -965,7 +971,7 @@ public class Calc extends EventDispatcher
 		return arr;
 	}
 	
-	private function onCtrlChanged (evt : Event) : void
+	private function onCtrlChanged(evt : Event) : void
 	{
 		var co : ControlObject = getCtrlById(evt.currentTarget.id);
 		
@@ -987,7 +993,7 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	private function onCtrlFocus (evt : Event) : void
+	private function onCtrlFocus(evt : Event) : void
 	{
 		var co : ControlObject = getCtrlById(evt.currentTarget.id);
 		
@@ -998,7 +1004,7 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	protected function onCollectionChange (e : CollectionEvent) : void
+	protected function onCollectionChange(e : CollectionEvent) : void
 	{
 		var dependants : Array = getDependantsOfCollection(e.target);
 		
@@ -1020,7 +1026,7 @@ public class Calc extends EventDispatcher
 	 * Adds TextInput control and registers it with the Calc.
 	 * This is a shortcut method to addControl if you only want to add TextInput.
 	 * */
-	public function addTextInput (textInput : TextInput) : void
+	public function addTextInput(textInput : TextInput) : void
 	{
 		addControl(textInput, "text", ["focusIn"], [FlexEvent.ENTER, "focusOut"]);
 		//addControl(textInput, "text", ["focusIn"], ["enter", "focusOut"]);
@@ -1034,7 +1040,7 @@ public class Calc extends EventDispatcher
 	 * <strong>editStartEvents: Array</strong>, specifies which events is Calc listening to, to display the expression instead of value in the editor. Used primarily with TextInput compnent where you would specify [FocusEvent.FOCUS_IN]<br/>
 	 * <strong>editEndEvents: Array</strong>, specifies which events are assigning are triggered when the ctrl's value has been modified. Example: [Event.CHANGE, FlexEvent.ENTER, FocusEvent.FOCUS_OUT]<br/>
 	 * */
-	public function addControl (ctrl : UIComponent, valueProp : String, editStartEvents : Array = null, editEndEvents : Array = null) : void
+	public function addControl(ctrl : UIComponent, valueProp : String, editStartEvents : Array = null, editEndEvents : Array = null) : void
 	{
 		var ctrlObject : ControlObject = new ControlObject();
 		ctrlObject.valueProp = valueProp;
@@ -1064,7 +1070,7 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	public function addObject (id : String, object : *, valueProp : String) : void
+	public function addObject(id : String, object : *, valueProp : String) : void
 	{
 		var ctrlObject : ControlObject = new ControlObject();
 		ctrlObject.valueProp = valueProp;
@@ -1074,7 +1080,7 @@ public class Calc extends EventDispatcher
 		_ctrlCollection[ctrlObject.id] = ctrlObject;
 	}
 	
-	public function addSpreadsheet (sheet : ISpreadsheet) : void
+	public function addSpreadsheet(sheet : ISpreadsheet) : void
 	{
 		if (sheet.id == "" || sheet.id == null)
 		{
@@ -1095,7 +1101,7 @@ public class Calc extends EventDispatcher
 	 * Calc currently supports ArrayCollection only
 	 *
 	 * */
-	public function addCollection (id : String, collection : *) : void
+	public function addCollection(id : String, collection : *) : void
 	{
 		if (collection is ArrayCollection)
 		{
@@ -1112,17 +1118,17 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	public function get gridCollection () : Object
+	public function get gridCollection() : Object
 	{
 		return _gridCollection;
 	}
 	
-	public function get ctrlCollection () : Object
+	public function get ctrlCollection() : Object
 	{
 		return _ctrlCollection;
 	}
 	
-	public function get collections () : Object
+	public function get collections() : Object
 	{
 		return _collections;
 	}

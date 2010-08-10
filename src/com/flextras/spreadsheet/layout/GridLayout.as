@@ -52,7 +52,7 @@ public class GridLayout extends LayoutBase
 	
 	protected function updateDisplayListVirtual() : void
 	{
-		trace("virtual");
+		//trace("virtual");
 	}
 	
 	protected function updateDisplayListReal() : void

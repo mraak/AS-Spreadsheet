@@ -399,7 +399,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	spreadsheet function set expressionObject(value : Object) : void
 	{
-		trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
+		//trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
 		
 		if (_expressionObject === value)
 			return;
