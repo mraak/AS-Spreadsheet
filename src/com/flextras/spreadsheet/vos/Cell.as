@@ -412,7 +412,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 				value.reference = this;
 			
 			if (value.reference === this)
-				expression = value.expression;
+				expression = value[owner.expressionField];
 		}
 		else
 			_expression = controlObject.exp = this.value = null;
@@ -743,7 +743,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		var id : String = controlObject.col + controlObject.row;
 		
 		if (expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
-			expressionObjectByOldID.cell = id;
+			expressionObjectByOldID[owner.cellField] = id;
 		
 		controlObject.id = id;
 	}
@@ -763,7 +763,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		var id : String = controlObject.col + controlObject.row;
 		
 		if (expressionObjectByOldID && expressionObjectByOldID.hasOwnProperty("reference") && expressionObjectByOldID.reference === this)
-			expressionObjectByOldID.cell = id;
+			expressionObjectByOldID[owner.cellField] = id;
 		
 		controlObject.id = id;
 	}

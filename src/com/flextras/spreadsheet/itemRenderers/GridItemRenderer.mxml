@@ -184,7 +184,7 @@
 										  textAlign = "center"
 										  verticalAlign = "middle"
 										  focusIn = "focused = true;"
-										  focusOut = "focused = false; cell.expression = input.text;" />
+										  focusOut = "input_focusOutHandler(event)" />
 
 	<fx:Declarations>
 		<fx:Boolean id = "focused" />
@@ -441,6 +441,16 @@
 				var i : int = input.text.length;
 				input.selectRange(i, i);
 			}
+
+			protected function input_focusOutHandler(event:FocusEvent):void
+			{
+				focused = false;
+				
+				cell.expression = host.expressionFunction != null
+					? host.expressionFunction(input.text)
+					: input.text;
+			}
+
 		]]>
 	</fx:Script>
 

@@ -270,8 +270,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				{
 					var o : Object = _expressions.getItemAt(c);
 					
-					var _cell : String = String(o.cell).toLowerCase();
-					o.cell = _cell;
+					var _cell : String = String(o[cellField]).toLowerCase();
+					o[cellField] = _cell;
 					
 					/*if (usedCells.indexOf(_cell) != -1)
 					   throw new Error("Cell ID already used in this collection: " + _cell + ". Use setItem() or itemUpdated() if you want to change existing cell's expression.");
@@ -287,7 +287,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 						{
 							var co : Cell = getCellAt(cellIndex, rowIndex);
 							
-							if (!o.expression || o.expression == "")
+							if (!o[expressionField] || o[expressionField] == "")
 							{
 								if (expressionTree.indexOf(co.controlObject) > -1)
 									calc.assignControlExpression(co.controlObject, "");
@@ -301,7 +301,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 								co.expressionObject = o;
 								
 								//calc.assignControlExpression(co.controlObject, co.expression || "", expressionTree.indexOf(co.controlObject) > -1);
-								calc.assignControlExpression(co.controlObject, co.expression || "");
+								calc.assignControlExpression(co.controlObject, co[expressionField] || "");
 								c++;
 							}
 						}
@@ -555,6 +555,62 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
+	//  cellField
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _cellField : String = "cell";
+	
+	[Bindable(event="cellFieldChanged")]
+	public function get cellField() : String
+	{
+		return _cellField;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set cellField(value : String) : void
+	{
+		if (_cellField == value)
+			return;
+		
+		_cellField = value;
+		
+		dispatchEvent(new Event("cellFieldChanged"));
+	}
+	
+	//----------------------------------
+	//  cellFunction
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _cellFunction : Function;
+	
+	[Bindable(event="cellFunctionChanged")]
+	public function get cellFunction() : Function
+	{
+		return _cellFunction;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set cellFunction(value : Function) : void
+	{
+		if (_cellFunction === value)
+			return;
+		
+		_cellFunction = value;
+		
+		dispatchEvent(new Event("cellFunctionChanged"));
+	}
+	
+	//----------------------------------
 	//  cells
 	//----------------------------------
 	
@@ -720,6 +776,62 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			cell.enabled = false;
 		
 		dispatchEvent(new Event("disabledCellsChanged"));
+	}
+	
+	//----------------------------------
+	//  expressionField
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _expressionField : String = "expression";
+	
+	[Bindable(event="expressionFieldChanged")]
+	public function get expressionField() : String
+	{
+		return _expressionField;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set expressionField(value : String) : void
+	{
+		if (_expressionField == value)
+			return;
+		
+		_expressionField = value;
+		
+		dispatchEvent(new Event("expressionFieldChanged"));
+	}
+	
+	//----------------------------------
+	//  expressionFunction
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _expressionFunction : Function;
+	
+	[Bindable(event="expressionFunctionChanged")]
+	public function get expressionFunction() : Function
+	{
+		return _expressionFunction;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set expressionFunction(value : Function) : void
+	{
+		if (_expressionFunction === value)
+			return;
+		
+		_expressionFunction = value;
+		
+		dispatchEvent(new Event("expressionFunctionChanged"));
 	}
 	
 	//----------------------------------
@@ -1035,6 +1147,34 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
+	//  startRowIndex
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected var _startRowIndex : uint;
+	
+	[Bindable(event="startRowIndexChanged")]
+	public function get startRowIndex() : uint
+	{
+		return _startRowIndex;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set startRowIndex(value : uint) : void
+	{
+		if (_startRowIndex == value)
+			return;
+		
+		_startRowIndex = value;
+		
+		dispatchEvent(new Event("startRowIndexChanged"));
+	}
+	
+	//----------------------------------
 	//  uniqueCells
 	//----------------------------------
 	
@@ -1072,7 +1212,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function addCell(columnIndex : uint, rowIndex : uint) : void
 	{
-		var cell : Cell = new Cell(this, new Rectangle(columnIndex, rowIndex));
+		var cell : Cell = new Cell(this, new Rectangle(columnIndex, rowIndex + startRowIndex));
 		cell.globalStyles = globalCell.styles;
 		
 		_cells.addItem(cell);
@@ -1189,17 +1329,23 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (o)
 		{
-			o.cell = cellId;
+			o[cellField] = cellId;
 			
-			if (o.expression != expression)
+			if (o[expressionField] != expression)
 			{
-				o.expression = expression;
+				o[expressionField] = expression;
 				
 				_expressions.itemUpdated(o);
 			}
 		}
 		else if (expression && expression.length > 0)
-			_expressions.addItem({cell: cellId, expression: expression, value: ""});
+		{
+			o = {value: ""};
+			o[cellField] = cellId;
+			o[expressionField] = expression;
+			
+			_expressions.addItem(o);
+		}
 	}
 	
 	//----------------------------------
@@ -1219,7 +1365,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	public function assignExpressions(expressions : Array) : void
 	{
 		for each (var o : Object in expressions)
-			this.assignExpression(o.cell, o.expression);
+			this.assignExpression(o[cellField], o[expressionField]);
 	}
 	
 	//----------------------------------
@@ -1237,7 +1383,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		cellId = cellId.toLowerCase();
 		
 		for each (var o : Object in _expressions)
-			if (o.cell == cellId)
+			if (o[cellField] == cellId)
 				return o;
 		
 		return null;
