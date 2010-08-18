@@ -40,6 +40,7 @@ public class StylesState extends Styles
 	 * @param bold
 	 * @param italic
 	 * @param underline
+	 * @param font
 	 * @param horizontalAlign
 	 * @param verticalAlign
 	 * @param size
@@ -53,12 +54,13 @@ public class StylesState extends Styles
 								bold : Boolean = false,
 								italic : Boolean = false,
 								underline : Boolean = false,
+								font : String = "arial",
 								horizontalAlign : String = TextAlign.CENTER,
 								verticalAlign : String = VerticalAlign.MIDDLE,
 								size : Number = 14,
 								border : Border = null)
 	{
-		super(color, alpha, backgroundColor, backgroundAlpha, bold, italic, underline, horizontalAlign, verticalAlign, size);
+		super(color, alpha, backgroundColor, backgroundAlpha, bold, italic, underline, font, horizontalAlign, verticalAlign, size);
 		
 		this.border = border;
 	}

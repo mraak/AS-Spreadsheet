@@ -52,6 +52,11 @@ use namespace spreadsheet;
 /**
  *
  */
+[Event(name="fontChanged", type="flash.events.Event")]
+
+/**
+ *
+ */
 [Event(name="horizontalAlignChanged", type="flash.events.Event")]
 
 /**
@@ -86,6 +91,7 @@ public class Styles extends EventDispatcher
 	 * @param bold
 	 * @param italic
 	 * @param underline
+	 * @param font
 	 * @param horizontalAlign
 	 * @param verticalAlign
 	 * @param size
@@ -98,6 +104,7 @@ public class Styles extends EventDispatcher
 						   bold : Boolean = false,
 						   italic : Boolean = false,
 						   underline : Boolean = false,
+						   font:String = "arial",
 						   horizontalAlign : String = TextAlign.CENTER,
 						   verticalAlign : String = VerticalAlign.MIDDLE,
 						   size : Number = 14)
@@ -109,6 +116,7 @@ public class Styles extends EventDispatcher
 		this.bold = bold;
 		this.italic = italic;
 		this.underline = underline;
+		this.font = font;
 		this.horizontalAlign = horizontalAlign;
 		this.verticalAlign = verticalAlign;
 		this.size = size;
@@ -313,6 +321,45 @@ public class Styles extends EventDispatcher
 		colorChanged = true;
 		
 		dispatchColorChangedEvent();
+	}
+	
+	//----------------------------------
+	//  font
+	//----------------------------------
+	
+	/**
+	 *
+	 */
+	protected var _font : String = "arial";
+	
+	protected var fontChanged : Boolean;
+	
+	[Bindable(event="fontChanged")]
+	/**
+	 *
+	 * @return
+	 *
+	 */
+	public function get font() : String
+	{
+		return fontChanged || !_global ? _font : _global._font;
+	}
+	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set font(value : String) : void
+	{
+		if (font == value)
+			return;
+		
+		_font = value;
+		
+		fontChanged = true;
+		
+		dispatchFontChangedEvent();
 	}
 	
 	//----------------------------------
@@ -593,6 +640,7 @@ public class Styles extends EventDispatcher
 		bold = value.bold;
 		italic = value.italic;
 		underline = value.underline;
+		font = value.font;
 		horizontalAlign = value.horizontalAlign;
 		verticalAlign = value.verticalAlign;
 		size = value.size;
@@ -635,6 +683,9 @@ public class Styles extends EventDispatcher
 		
 		if (value.hasOwnProperty("underline"))
 			underline = Boolean(value.underline);
+		
+		if (value.hasOwnProperty("font"))
+			font = String(value.font);
 		
 		if (value.hasOwnProperty("horizontalAlign"))
 			horizontalAlign = String(value.horizontalAlign);
@@ -689,6 +740,15 @@ public class Styles extends EventDispatcher
 	protected function dispatchColorChangedEvent() : void
 	{
 		dispatchEvent(new Event("colorChanged"));
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function dispatchFontChangedEvent() : void
+	{
+		dispatchEvent(new Event("fontChanged"));
 	}
 	
 	/**

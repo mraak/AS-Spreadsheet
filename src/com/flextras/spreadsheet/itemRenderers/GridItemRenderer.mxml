@@ -171,7 +171,8 @@
 				textDecoration = "{underlineStyle ? 'underline' : 'none'}"
 				textAlign = "{horizontalAlignStyle}"
 				verticalAlign = "{verticalAlignStyle}"
-				fontSize = "{sizeStyle}" />
+				fontSize = "{sizeStyle}"
+				fontFamily="{fontStyle}" />
 
 	<components:ResizableRichEditableText id = "input"
 										  wordWrap = "{cell.wordWrap}"
@@ -208,6 +209,8 @@
 		<fx:Boolean id = "italicStyle">{styles.italic}</fx:Boolean>
 
 		<fx:Boolean id = "underlineStyle">{styles.underline}</fx:Boolean>
+		
+		<fx:String id = "fontStyle">{styles.font}</fx:String>
 
 		<fx:String id = "horizontalAlignStyle">{styles.horizontalAlign}</fx:String>
 

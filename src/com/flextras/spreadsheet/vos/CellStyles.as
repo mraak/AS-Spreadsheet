@@ -67,6 +67,7 @@ public class CellStyles extends EventDispatcher
 	 * @param bold
 	 * @param italic
 	 * @param underline
+	 * @param font
 	 * @param horizontalAlign
 	 * @param verticalAlign
 	 * @param size
@@ -84,6 +85,7 @@ public class CellStyles extends EventDispatcher
 							   bold : Boolean = false,
 							   italic : Boolean = false,
 							   underline : Boolean = false,
+							   font : String = "arial",
 							   horizontalAlign : String = TextAlign.CENTER,
 							   verticalAlign : String = VerticalAlign.MIDDLE,
 							   size : Number = 14,
@@ -102,6 +104,7 @@ public class CellStyles extends EventDispatcher
 		this.bold = bold;
 		this.italic = italic;
 		this.underline = underline;
+		this.font = font;
 		this.horizontalAlign = horizontalAlign;
 		this.verticalAlign = verticalAlign;
 		this.size = size;
@@ -336,6 +339,21 @@ public class CellStyles extends EventDispatcher
 			
 			dispatchEvent(new Event("disabledChanged"));
 		}
+	}
+	
+	//----------------------------------
+	//  font
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 *
+	 * @param value
+	 *
+	 */
+	public function set font(value : String) : void
+	{
+		normal.font = hovered.font = selected.font = disabled.font = value;
 	}
 	
 	//----------------------------------
@@ -738,6 +756,9 @@ public class CellStyles extends EventDispatcher
 		
 		if (value.hasOwnProperty("underline"))
 			underline = Boolean(value.underline);
+		
+		if (value.hasOwnProperty("font"))
+			font = String(value.font);
 		
 		if (value.hasOwnProperty("horizontalAlign"))
 			horizontalAlign = String(value.horizontalAlign);

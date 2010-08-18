@@ -12,13 +12,17 @@
 
 	<fx:Binding source = "grid.grid.selectedItem"
 				destination = "cell" />
+
 	<fx:Binding source = "Vector.&lt;Cell>(grid.grid.selectedItems)"
 				destination = "cells" />
 
 	<context:states>
 		<s:State name = "normal" />
+
 		<s:State name = "hovered" />
+
 		<s:State name = "selected" />
+
 		<s:State name = "disabled" />
 	</context:states>
 
@@ -28,8 +32,11 @@
 				 selectedIndex = "0">
 		<s:ArrayCollection>
 			<fx:String>normal</fx:String>
+
 			<fx:String>hovered</fx:String>
+
 			<fx:String>selected</fx:String>
+
 			<fx:String>disabled</fx:String>
 		</s:ArrayCollection>
 	</s:ButtonBar>
@@ -38,6 +45,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "color"
 				 width = "100" />
+
 		<mx:ColorPicker id = "colorStyle"
 						change = "colorStyle_changeHandler(event)"
 						selectedColor.normal = "{cell.styles.normal.color}"
@@ -48,6 +56,7 @@
 		<s:Label text = "alpha"
 				 paddingLeft = "10"
 				 width = "110" />
+
 		<s:HSlider id = "alphaStyle"
 				   change = "alphaStyle_changeHandler(event)"
 				   minimum = "0"
@@ -63,6 +72,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "backgroundColor"
 				 width = "100" />
+
 		<mx:ColorPicker id = "backgroundColorStyle"
 						change = "backgroundColorStyle_changeHandler(event)"
 						selectedColor.normal = "{cell.styles.normal.backgroundColor}"
@@ -73,6 +83,7 @@
 		<s:Label text = "backgroundAlpha"
 				 paddingLeft = "10"
 				 width = "110" />
+
 		<s:HSlider id = "backgroundAlphaStyle"
 				   change = "backgroundAlphaStyle_changeHandler(event)"
 				   minimum = "0"
@@ -103,8 +114,31 @@
 					change = "underlineStyle_changeHandler(event)"
 					selected = "{cell.styles.normal.underline}" />
 
+		<s:Label text = "font"
+				 paddingLeft = "10" />
+
+		<s:ComboBox id = "fontStyle"
+					 change = "fontStyle_changeHandler(event)"
+					 selectedItem = "{cell.styles.normal.font}">
+			<s:ArrayCollection>
+				<fx:String>_sans</fx:String>
+				<fx:String>_serif</fx:String>
+				<fx:String>_typewriter</fx:String>
+				<fx:String>Arial</fx:String>
+				<fx:String>Courier</fx:String>
+				<fx:String>Courier New</fx:String>
+				<fx:String>Geneva</fx:String>
+				<fx:String>Georgia</fx:String>
+				<fx:String>Helvetica</fx:String>
+				<fx:String>Times New Roman</fx:String>
+				<fx:String>Times</fx:String>
+				<fx:String>Verdana</fx:String>
+			</s:ArrayCollection>
+		</s:ComboBox>
+
 		<s:Label text = "size"
 				 paddingLeft = "10" />
+
 		<s:HSlider id = "sizeStyle"
 				   change = "sizeStyle_changeHandler(event)"
 				   minimum = "1"
@@ -117,6 +151,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "horizontalAlign"
 				 width = "100" />
+
 		<s:ButtonBar id = "horizontalAlignStyle"
 					 change = "horizontalAlignStyle_changeHandler(event)"
 					 selectedItem = "{cell.styles.normal.horizontalAlign}">
@@ -126,37 +161,45 @@
 
 			<s:ArrayCollection>
 				<fx:String>left</fx:String>
+
 				<fx:String>center</fx:String>
+
 				<fx:String>right</fx:String>
+
 				<fx:String>justify</fx:String>
 			</s:ArrayCollection>
 		</s:ButtonBar>
 	</s:HGroup>
-	
+
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "verticalAlign"
 				 width = "100" />
+
 		<s:ButtonBar id = "verticalAlignStyle"
 					 change = "verticalAlignStyle_changeHandler(event)"
 					 selectedItem = "{cell.styles.normal.verticalAlign}">
 			<s:layout>
 				<s:HorizontalLayout gap = "-1" />
 			</s:layout>
-			
+
 			<s:ArrayCollection>
 				<fx:String>top</fx:String>
+
 				<fx:String>middle</fx:String>
+
 				<fx:String>bottom</fx:String>
+
 				<fx:String>justify</fx:String>
 			</s:ArrayCollection>
 		</s:ButtonBar>
 	</s:HGroup>
-	
+
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "rollOutDuration"
 				 width = "100" />
+
 		<s:HSlider id = "rollOutDurationStyle"
 				   change = "rollOutDurationStyle_changeHandler(event)"
 				   minimum = "0"
@@ -164,11 +207,12 @@
 				   stepSize = "10"
 				   value = "{cell.styles.rollOutDuration}" />
 	</s:HGroup>
-	
+
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "cellGradientLevel"
 				 width = "100" />
+
 		<s:HSlider id = "cellGradientLevelStyle"
 				   change = "cellGradientLevelStyle_changeHandler(event)"
 				   minimum = "-100"
@@ -183,6 +227,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "border"
 				 width = "100" />
+
 		<s:ButtonBar id = "borderSideBar"
 					 change = "borderSideBar_changeHandler(event)">
 			<s:layout>
@@ -191,8 +236,11 @@
 
 			<s:ArrayCollection>
 				<fx:String>left</fx:String>
+
 				<fx:String>top</fx:String>
+
 				<fx:String>right</fx:String>
+
 				<fx:String>bottom</fx:String>
 			</s:ArrayCollection>
 		</s:ButtonBar>
@@ -223,69 +271,74 @@
 			[Bindable]
 			protected var borderSide : BorderSide;
 			
-			override public function set cell(value : Cell) : void
+			override public function set cell (value : Cell) : void
 			{
 				super.cell = value;
 				
 				borderSide = value.styles.normal.border.left;
 			}
 			
-			protected function stateBar_changeHandler(e : IndexChangeEvent) : void
+			protected function stateBar_changeHandler (e : IndexChangeEvent) : void
 			{
 				currentState = stateBar.selectedItem;
 			}
 			
-			protected function colorStyle_changeHandler(e : ColorPickerEvent) : void
+			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
-				applyStyle("color", e.color);
+				applyStyle ("color", e.color);
 			}
 			
-			protected function alphaStyle_changeHandler(e : Event) : void
+			protected function alphaStyle_changeHandler (e : Event) : void
 			{
-				applyStyle("alpha", alphaStyle.value);
+				applyStyle ("alpha", alphaStyle.value);
 			}
 			
-			protected function backgroundColorStyle_changeHandler(e : ColorPickerEvent) : void
+			protected function backgroundColorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
-				applyStyle("backgroundColor", e.color);
+				applyStyle ("backgroundColor", e.color);
 			}
 			
-			protected function backgroundAlphaStyle_changeHandler(e : Event) : void
+			protected function backgroundAlphaStyle_changeHandler (e : Event) : void
 			{
-				applyStyle("backgroundAlpha", backgroundAlphaStyle.value);
+				applyStyle ("backgroundAlpha", backgroundAlphaStyle.value);
 			}
 			
-			protected function horizontalAlignStyle_changeHandler(e : IndexChangeEvent) : void
+			protected function horizontalAlignStyle_changeHandler (e : IndexChangeEvent) : void
 			{
-				applyStyleOnAllStates("horizontalAlign", horizontalAlignStyle.selectedItem);
+				applyStyleOnAllStates ("horizontalAlign", horizontalAlignStyle.selectedItem);
 			}
 			
-			protected function verticalAlignStyle_changeHandler(e : IndexChangeEvent) : void
+			protected function verticalAlignStyle_changeHandler (e : IndexChangeEvent) : void
 			{
-				applyStyleOnAllStates("verticalAlign", verticalAlignStyle.selectedItem);
+				applyStyleOnAllStates ("verticalAlign", verticalAlignStyle.selectedItem);
 			}
 			
-			protected function boldStyle_changeHandler(e : Event) : void
+			protected function boldStyle_changeHandler (e : Event) : void
 			{
-				applyStyleOnAllStates("bold", boldStyle.selected);
+				applyStyleOnAllStates ("bold", boldStyle.selected);
 			}
 			
-			protected function italicStyle_changeHandler(e : Event) : void
+			protected function italicStyle_changeHandler (e : Event) : void
 			{
-				applyStyleOnAllStates("italic", italicStyle.selected);
+				applyStyleOnAllStates ("italic", italicStyle.selected);
 			}
 			
-			protected function underlineStyle_changeHandler(e : Event) : void
+			protected function underlineStyle_changeHandler (e : Event) : void
 			{
-				applyStyleOnAllStates("underline", underlineStyle.selected);
+				applyStyleOnAllStates ("underline", underlineStyle.selected);
 			}
 			
-			protected function sizeStyle_changeHandler(e : Event) : void
+			protected function fontStyle_changeHandler (e : Event) : void
 			{
-				applyStyleOnAllStates("size", sizeStyle.value);
+				applyStyleOnAllStates ("font", fontStyle.selectedItem);
 			}
 			
-			protected function applyStyle(name : String, value : Object) : void
+			protected function sizeStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("size", sizeStyle.value);
+			}
+			
+			protected function applyStyle (name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
 					return;
@@ -297,7 +350,7 @@
 					cell.styles[stateBar.selectedItem][name] = value;
 			}
 			
-			protected function applyStyleOnAllStates(name : String, value : Object) : void
+			protected function applyStyleOnAllStates (name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
 					return;
@@ -307,18 +360,18 @@
 				
 				for each (var c : Cell in cells)
 				{
-					c.styles.assignObject(o);
+					c.styles.assignObject (o);
 					c.condition.stylesObject = o;
 				}
 				
 				if (cell)
 				{
-					cell.styles.assignObject(o);
+					cell.styles.assignObject (o);
 					cell.condition.stylesObject = o;
 				}
 			}
 			
-			protected function applyBorderStyle(side : String, name : String, value : Object) : void
+			protected function applyBorderStyle (side : String, name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
 					return;
@@ -340,7 +393,7 @@
 					cell.styles.borderObject = o;
 			}
 			
-			protected function borderSideBar_changeHandler(event : IndexChangeEvent) : void
+			protected function borderSideBar_changeHandler (event : IndexChangeEvent) : void
 			{
 				if (cell)
 					if (borderSideBar.selectedIndex > -1)
@@ -349,7 +402,7 @@
 						borderSide = cell.styles.normal.border.left;
 			}
 			
-			protected function rollOutDurationStyle_changeHandler(event:Event):void
+			protected function rollOutDurationStyle_changeHandler (event : Event) : void
 			{
 				for each (var c : Cell in cells)
 					c.styles.rollOutDuration = rollOutDurationStyle.value;
@@ -358,7 +411,7 @@
 					cell.styles.rollOutDuration = rollOutDurationStyle.value;
 			}
 			
-			protected function cellGradientLevelStyle_changeHandler(event:Event):void
+			protected function cellGradientLevelStyle_changeHandler (event : Event) : void
 			{
 				for each (var c : Cell in cells)
 					c.styles.cellGradientLevel = cellGradientLevelStyle.value;
@@ -366,7 +419,6 @@
 				if (cell)
 					cell.styles.cellGradientLevel = cellGradientLevelStyle.value;
 			}
-			
 		]]>
 	</fx:Script>
 </context:BasePopup>
