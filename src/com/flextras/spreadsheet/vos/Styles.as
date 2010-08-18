@@ -400,6 +400,7 @@ public class Styles extends EventDispatcher
 			_global.removeEventListener("boldChanged", global_boldChangedHandler);
 			_global.removeEventListener("italicChanged", global_italicChangedHandler);
 			_global.removeEventListener("underlineChanged", global_underlineChangedHandler);
+			_global.removeEventListener("fontChanged", global_fontChangedHandler);
 			_global.removeEventListener("horizontalAlignChanged", global_horizontalAlignChangedHandler);
 			_global.removeEventListener("verticalAlignChanged", global_verticalAlignChangedHandler);
 			_global.removeEventListener("sizeChanged", global_sizeChangedHandler);
@@ -416,6 +417,7 @@ public class Styles extends EventDispatcher
 			value.addEventListener("boldChanged", global_boldChangedHandler);
 			value.addEventListener("italicChanged", global_italicChangedHandler);
 			value.addEventListener("underlineChanged", global_underlineChangedHandler);
+			value.addEventListener("fontChanged", global_fontChangedHandler);
 			value.addEventListener("horizontalAlignChanged", global_horizontalAlignChangedHandler);
 			value.addEventListener("verticalAlignChanged", global_verticalAlignChangedHandler);
 			value.addEventListener("sizeChanged", global_sizeChangedHandler);
@@ -874,6 +876,15 @@ public class Styles extends EventDispatcher
 	protected function global_underlineChangedHandler(e : Event) : void
 	{
 		dispatchUnderlineChangedEvent();
+	}
+	
+	/**
+	 *
+	 *
+	 */
+	protected function global_fontChangedHandler(e : Event) : void
+	{
+		dispatchFontChangedEvent();
 	}
 	
 	/**
