@@ -497,12 +497,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * ---JH add some documentation for this property ----
 	 */
-	protected var columns : Array;
+	spreadsheet var columns : Array;
 	
 	/**
 	 * ---JH add some documentation for this property ----
 	 */
-	protected var rows : Array;
+	spreadsheet var rows : Array;
 	
 	//--------------------------------------------------------------------------
 	//

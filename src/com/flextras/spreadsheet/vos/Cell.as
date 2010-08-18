@@ -359,7 +359,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set expression (value : String) : void
 	{
-		if ( /*owner.expressionFunction == null && _*/expression == value)
+		if (owner.expressionFunction == null && _expression == value)
 			return;
 		
 		_expression = value;
