@@ -1,7 +1,6 @@
 package com.flextras.spreadsheet
 {
 import com.flextras.calc.Calc;
-import com.flextras.calc.ControlObject;
 import com.flextras.calc.Utils;
 import com.flextras.spreadsheet.components.GridList;
 import com.flextras.spreadsheet.core.spreadsheet;
@@ -137,12 +136,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		addEventListener (ColumnEvent.INSERT, insertColumnHandler);
 		addEventListener (ColumnEvent.REMOVE, removeColumnHandler);
-		addEventListener (ColumnEvent.RESIZE, resizeColumnHandler);
 		addEventListener (ColumnEvent.CLEAR, clearColumnHandler);
 		
 		addEventListener (RowEvent.INSERT, insertRowHandler);
 		addEventListener (RowEvent.REMOVE, removeRowHandler);
-		addEventListener (RowEvent.RESIZE, resizeRowHandler);
 		addEventListener (RowEvent.CLEAR, clearRowHandler);
 		
 		cells.addEventListener (CollectionEvent.COLLECTION_CHANGE, cells_collectionChangeHandler);
@@ -171,10 +168,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			columnCountChanged = false;
 			
 			for (var i : uint = oldColumnCount; i < columnCount; ++i)
-				addColumn (i, columnCount, oldRowCount);
+				addColumn (i, oldRowCount);
 			
 			for (i = oldColumnCount; i > columnCount; --i)
-				removeColumn (i - 1, columnCount, oldRowCount);
+				removeColumn (i - 1, oldRowCount);
 			
 			oldColumnCount = columnCount;
 		}
@@ -184,15 +181,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			rowCountChanged = false;
 			
 			for (i = oldRowCount; i < rowCount; ++i)
-				addRow (i, oldColumnCount, rowCount);
+				addRow (i, oldColumnCount);
 			
 			for (i = oldRowCount; i > rowCount; --i)
-				removeRow (i - 1, oldColumnCount, rowCount);
+				removeRow (i - 1, oldColumnCount);
 			
 			oldRowCount = rowCount;
 		}
-		
-		notifyChildren = true;
 		
 		if (cellsChanged)
 		{
@@ -221,8 +216,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			var x : Number, y : Number;
 			i = 0;
 			
-			for each (var cell : Cell in cells)
+			for (var c : uint, n : uint = cells.length, cell : Cell; c < n; ++c)
 			{
+				cell = Cell (cells.getItemAt (c));
+				
 				column = columns[cell.bounds.x] || [];
 				row = rows[cell.bounds.y] || [];
 				
@@ -270,12 +267,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			var e : SpreadsheetEvent;
 			
-			var c : uint;
+			c = 0;
 			
-			if (expCE.kind == "invalidateCells")
-			{
-				// iterate through _expressions
-			}
+			/*if (expCE.kind == "invalidateCells")
+			   {
+			   // iterate through _expressions
+			 }*/
 			
 			var o : Object, id : String, indexes : Array, columnIndex : int, rowIndex : int;
 			
@@ -511,11 +508,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 */
 	// ---JH add some documentation for this property ----
-	protected var notifyChildren : Boolean;
-	
-	/**
-	 */
-	// ---JH add some documentation for this property ----
 	protected var shiftActive : Boolean;
 	
 	/**
@@ -611,7 +603,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	// --JH What is this for?  
 	// --AB will be used in future for optimization in commitProperties
-	private var expCE : CollectionEvent;
+	//private var expCE : CollectionEvent;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -815,7 +807,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_columnCount = value;
 		columnCountChanged = true;
-		notifyChildren = false;
 		
 		dispatchEvent (new Event ("columnCountChanged"));
 		
@@ -911,13 +902,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (disabledCells === value)
 			return;
 		
-		for each (var cell : Cell in disabledCells)
-			cell.enabled = true;
+		if (disabledCells)
+			for (var i : uint, n : uint = disabledCells.length; i < n; ++i)
+				disabledCells[i].enabled = true;
 		
 		_disabledCells = value;
 		
-		for each (cell in value)
-			cell.enabled = false;
+		if (disabledCells)
+			for (i = 0, n = disabledCells.length; i < n; ++i)
+				disabledCells[i].enabled = false;
 		
 		dispatchEvent (new Event ("disabledCellsChanged"));
 	}
@@ -1049,7 +1042,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			expressions.addEventListener (CollectionEvent.COLLECTION_CHANGE, expressionsChangeHandler);
 			
 			expressions.refresh ();
-				//invalidateExpressions();
+				//invalidateExpressions ();
 		}
 	}
 	
@@ -1249,7 +1242,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		_rowCount = value;
 		rowCountChanged = true;
-		notifyChildren = false;
 		
 		dispatchEvent (new Event ("rowCountChanged"));
 		
@@ -1412,22 +1404,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	// ---JH Define the arguments, as it is not obvious to me what they mean. ----
 	// ---JH I assume dding a column will shift other columns, correct? ----
 	// --AB internal, public is insertColumnAt
-	protected function addColumn (index : uint, columnCount : uint, rowCount : uint) : void
+	protected function addColumn (index : uint, rowCount : uint) : void
 	{
-		// --JH Make this event cancelable
-		if (notifyChildren && index < columnCount - 1)
-			dispatchEvent (new ColumnEvent (ColumnEvent.BEFORE_INSERTED, index));
-		
 		// --JH document this object; possibly turning it into a VO
 		addColumnIndex = index;
 		
 		for (var i : uint; i < rowCount; ++i)
-		{
-			if (notifyChildren)
-				addColumnDirty = true;
-			
 			addCell (index, i);
-		}
 	}
 	
 	//----------------------------------
@@ -1446,23 +1429,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	// ---JH Define the arguments, as it is not obvious to me what they mean. ----
 	// ---JH I assume adding a row will shift other rows, correct? ----
 	// --AB internal, public is insertRowAt
-	protected function addRow (index : uint, columnCount : uint, rowCount : uint) : void
+	protected function addRow (index : uint, columnCount : uint) : void
 	{
-		
-		// --JH make this event cancelable 
-		if (notifyChildren && index < rowCount - 1)
-			dispatchEvent (new RowEvent (RowEvent.BEFORE_INSERTED, index));
-		
 		// --JH Document this object; possibly turning it into a VO
 		addRowIndex = index;
 		
 		for (var i : uint; i < columnCount; ++i)
-		{
-			if (notifyChildren)
-				addRowDirty = true;
-			
 			addCell (i, index);
-		}
 	}
 	
 	//----------------------------------
@@ -1534,8 +1507,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	public function assignExpressions (expressions : Array) : void
 	{
-		for each (var o : Object in expressions)
-			this.assignExpression (itemToCell (o), itemToExpression (o));
+		for (var i : uint, n : uint = expressions.length, expression : Object; i < n; ++i)
+		{
+			expression = expressions.getItemAt (i);
+			
+			this.assignExpression (itemToCell (expression), itemToExpression (expression));
+		}
 	}
 	
 	//----------------------------------
@@ -1552,34 +1529,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		cellId = cellId.toLowerCase ();
 		
-		for each (var o : Object in expressions)
-			if (itemToCell (o) == cellId)
-				return o;
+		for (var i : uint, n : uint = expressions.length, expression : Object; i < n; ++i)
+		{
+			expression = expressions.getItemAt (i);
+			
+			if (itemToCell (expression) == cellId)
+				return expression;
+		}
 		
 		return null;
-	}
-	
-	//----------------------------------
-	//  getCell
-	//----------------------------------
-	
-	/**
-	 * This method retrieves the cell based on the given Point object.
-	 *
-	 * @param location A point that specifies the location of the cell to retrieve.
-	 * @return An object representing the cell.
-	 *
-	 * @see com.flextras.vos.Cell
-	 *
-	 */
-	// ---JH Suggested Name:  getCellByPoint; it is less ambigious ----
-	// ---JH Should we consider using Point objects internally instead of the "a1" syntax? ----
-	public function getCell (location : Point) : Cell
-	{
-		if (!location)
-			return null;
-		
-		return getCellAt (location.x, location.y);
 	}
 	
 	//----------------------------------
@@ -1601,6 +1559,29 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			return null;
 		
 		return indexedCells[columnIndex + "|" + rowIndex];
+	}
+	
+	//----------------------------------
+	//  getCellByPoint
+	//----------------------------------
+	
+	/**
+	 * This method retrieves the cell based on the given Point object.
+	 *
+	 * @param location A point that specifies the location of the cell to retrieve.
+	 * @return An object representing the cell.
+	 *
+	 * @see com.flextras.vos.Cell
+	 *
+	 */
+	// ---JH Suggested Name:  getCellByPoint; it is less ambigious ----
+	// ---JH Should we consider using Point objects internally instead of the "a1" syntax? ----
+	public function getCellByPoint (location : Point) : Cell
+	{
+		if (!location)
+			return null;
+		
+		return getCellAt (location.x, location.y);
 	}
 	
 	//----------------------------------
@@ -1631,30 +1612,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  getCellCondition
-	//----------------------------------
-	
-	/**
-	 *  This method retrieves the condition object of the cell located at the given point.
-	 *
-	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
-	 * @return  An object representing the cell.
-	 *
-	 * @see com.flextras.vos.Condition
-	 *
-	 */
-	//  --JH Suggested name: getCellConditionByPoint as it is less ambigious 
-	// --AB one has to be default, i.e. getCellCondition. For now we use Point. 
-	//   We can change to have getCellCondition(index, index) and getCellConditionByPoint. What  do you suggest?
-	public function getCellCondition (location : Point) : Condition
-	{
-		if (!location)
-			return null;
-		
-		return getCellConditionAt (location.x, location.y);
-	}
-	
-	//----------------------------------
 	//  getCellConditionAt
 	//----------------------------------
 	/**
@@ -1675,24 +1632,27 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellCondition
+	//  getCellConditionByPoint
 	//----------------------------------
+	
 	/**
-	 * This method sets the condition object of the cell located at the given Point.
+	 *  This method retrieves the condition object of the cell located at the given point.
 	 *
 	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
-	 * @param condition This property specifies the new Condition.
-	 *
+	 * @return  An object representing the cell.
 	 *
 	 * @see com.flextras.vos.Condition
+	 *
 	 */
-	//  --JH Suggested name: setCellConditionByPoint as it is less ambigious 
-	public function setCellCondition (location : Point, condition : Condition) : void
+	//  --JH Suggested name: getCellConditionByPoint as it is less ambigious 
+	// --AB one has to be default, i.e. getCellCondition. For now we use Point. 
+	//   We can change to have getCellCondition(index, index) and getCellConditionByPoint. What  do you suggest?
+	public function getCellConditionByPoint (location : Point) : Condition
 	{
-		if (!location || !condition)
-			return;
+		if (!location)
+			return null;
 		
-		setCellConditionAt (location.x, location.y, condition);
+		return getCellConditionAt (location.x, location.y);
 	}
 	
 	//----------------------------------
@@ -1715,7 +1675,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellConditionObject
+	//  setCellConditionByPoint
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given Point.
@@ -1723,18 +1683,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
 	 * @param condition This property specifies the new Condition.
 	 *
-	 * @see com.flextras.vos.Condition
 	 *
+	 * @see com.flextras.vos.Condition
 	 */
-	// --JH I'm not sure why these 'object' methods are needed or used. When will you use a genericObject instead of a Condition Object?
-	// --JH Suggested name: setCellConditionObjectByPoint as it is less ambigious 
-	// --AB these "object" param functions were added as convenience methods. They could be deleted accross the board, what do you suggest?
-	public function setCellConditionObject (location : Point, condition : Object) : void
+	//  --JH Suggested name: setCellConditionByPoint as it is less ambigious 
+	public function setCellConditionByPoint (location : Point, condition : Condition) : void
 	{
 		if (!location || !condition)
 			return;
 		
-		setCellConditionObjectAt (location.x, location.y, condition);
+		setCellConditionAt (location.x, location.y, condition);
 	}
 	
 	//----------------------------------
@@ -1758,24 +1716,29 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  getCellStyles
+	//  setCellConditionObjectByPoint
 	//----------------------------------
 	/**
-	 * This method returns the cellStyles at the specified point.
+	 * This method sets the condition object of the cell located at the given Point.
 	 *
-	 * @param location A point that specifies the location of the cell, whose styles the method will process.
-	 * @return An object representing the cell’s styles.
+	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
+	 * @param condition This property specifies the new Condition.
 	 *
-	 * @see com.flextras.vos.CellStyles
+	 * @see com.flextras.vos.Condition
 	 *
 	 */
-	//  --JH Suggested name: getCellStylesByPoint as it is less ambigious 
-	public function getCellStyles (location : Point) : CellStyles
+	// --JH I'm not sure why these 'object' methods are needed or used. When will you use a genericObject instead of a Condition Object?
+	// --JH Suggested name: setCellConditionObjectByPoint as it is less ambigious 
+	// --AB these "object" param functions were added as convenience methods. They could be deleted accross the board, what do you suggest?
+	// --ML These methods should stay. If user wants to change only choosen styles he can do that through these methods.
+	//      Every "Object" method also accepts instance of appropriate Class (in this case Condition) - if this is the case it will override all existing styles
+	//      (the same goes for all other methods which aren't containing "Object" word).
+	public function setCellConditionObjectByPoint (location : Point, condition : Object) : void
 	{
-		if (!location)
-			return null;
+		if (!location || !condition)
+			return;
 		
-		return getCellStylesAt (location.x, location.y);
+		setCellConditionObjectAt (location.x, location.y, condition);
 	}
 	
 	//----------------------------------
@@ -1799,24 +1762,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellStyles
+	//  getCellStylesByPoint
 	//----------------------------------
 	/**
-	 * This method set the cellStyles at the specified point.
+	 * This method returns the cellStyles at the specified point.
 	 *
 	 * @param location A point that specifies the location of the cell, whose styles the method will process.
-	 * @param styles An object representing the cell’s styles.
+	 * @return An object representing the cell’s styles.
 	 *
 	 * @see com.flextras.vos.CellStyles
 	 *
 	 */
-	//  --JH Suggested name: setCellStylesByPoint as it is less ambigious 
-	public function setCellStyles (location : Point, styles : CellStyles) : void
+	//  --JH Suggested name: getCellStylesByPoint as it is less ambigious 
+	public function getCellStylesByPoint (location : Point) : CellStyles
 	{
-		if (!location || !styles)
-			return;
+		if (!location)
+			return null;
 		
-		setCellStylesAt (location.x, location.y, styles);
+		return getCellStylesAt (location.x, location.y);
 	}
 	
 	//----------------------------------
@@ -1840,26 +1803,24 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellStylesObject
+	//  setCellStylesByPoint
 	//----------------------------------
 	/**
-	 * This method sets the cellStyles at the specified Point.
+	 * This method set the cellStyles at the specified point.
 	 *
 	 * @param location A point that specifies the location of the cell, whose styles the method will process.
 	 * @param styles An object representing the cell’s styles.
 	 *
 	 * @see com.flextras.vos.CellStyles
-	 * @see #setCellStyles
 	 *
 	 */
-	//  --JH Suggested name: setCellStylesObjectByPoint as it is less ambigious 
-	// --JH Why would we need to support a generic object as opposed to a specific CellStyles instance? 
-	public function setCellStylesObject (location : Point, styles : Object) : void
+	//  --JH Suggested name: setCellStylesByPoint as it is less ambigious 
+	public function setCellStylesByPoint (location : Point, styles : CellStyles) : void
 	{
 		if (!location || !styles)
 			return;
 		
-		setCellStylesObjectAt (location.x, location.y, styles);
+		setCellStylesAt (location.x, location.y, styles);
 	}
 	
 	//----------------------------------
@@ -1885,22 +1846,26 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  clearCell
+	//  setCellStylesObjectByPoint
 	//----------------------------------
-	
 	/**
-	 * This method will clear all the cells properties at the specified location.
+	 * This method sets the cellStyles at the specified Point.
 	 *
-	 * @param location A point that specifies the location of the cell to clear.
+	 * @param location A point that specifies the location of the cell, whose styles the method will process.
+	 * @param styles An object representing the cell’s styles.
+	 *
+	 * @see com.flextras.vos.CellStyles
+	 * @see #setCellStyles
 	 *
 	 */
-	//  --JH Suggested name: clearCellByPoint as it is less ambigious 
-	public function clearCell (location : Point) : void
+	//  --JH Suggested name: setCellStylesObjectByPoint as it is less ambigious 
+	// --JH Why would we need to support a generic object as opposed to a specific CellStyles instance? 
+	public function setCellStylesObjectByPoint (location : Point, styles : Object) : void
 	{
-		if (!location)
+		if (!location || !styles)
 			return;
 		
-		clearCellAt (location.x, location.y);
+		setCellStylesObjectAt (location.x, location.y, styles);
 	}
 	
 	//----------------------------------
@@ -1924,6 +1889,25 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			return;
 		
 		cell.clear ();
+	}
+	
+	//----------------------------------
+	//  clearCellByPoint
+	//----------------------------------
+	
+	/**
+	 * This method will clear all the cells properties at the specified location.
+	 *
+	 * @param location A point that specifies the location of the cell to clear.
+	 *
+	 */
+	//  --JH Suggested name: clearCellByPoint as it is less ambigious 
+	public function clearCellByPoint (location : Point) : void
+	{
+		if (!location)
+			return;
+		
+		clearCellAt (location.x, location.y);
 	}
 	
 	//----------------------------------
@@ -2338,26 +2322,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		}
 	}
 	
-	//----------------------------------
-	//  getRangeCells
-	//----------------------------------
-	
-	/**
-	 * This method will return a group of cells based on the data in the specified Rectangle.
-	 *
-	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 * @return This method returns a Vector of the cells at the location specified.
-	 *
-	 */
-	// -- JH Suggested Name: getRangeCellsByRectange as it is less ambigious 
-	public function getRangeCells (location : Rectangle) : Vector.<Cell>
-	{
-		if (!location)
-			return null;
-		
-		return getRangeCellsAt (location.x, location.y, location.width, location.height);
-	}
-	
 	/**
 	 * This method will return a group of cells that represent the specified coordinates.
 	 *
@@ -2369,7 +2333,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @return This method returns a Vector of the cells at the location specified.
 	 *
 	 */
-	public function getRangeCellsAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Cell>
+	public function getCellsInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Cell>
 	{
 		if (isColumnIndexInvalid (columnIndex)
 			|| isRowIndexInvalid (rowIndex)
@@ -2389,32 +2353,27 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  getRangeConditions
+	//  getCellsInRangeByRectangle
 	//----------------------------------
 	
 	/**
-	 * This method will return a group of range conditions that exist at the specified coordinates.
+	 * This method will return a group of cells based on the data in the specified Rectangle.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 *
-	 * @return This method returns a Vector of the condition that exist at the location specified.
-	 *
-	 * @see com.flextras.spreadsheet.vos.Condition
+	 * @return This method returns a Vector of the cells at the location specified.
 	 *
 	 */
-	// ---JH I'm unclear what Range Conditions are  ----
-	// -- JH Suggested Name: getRangeConditionsByRectange as it is less ambigious 
-	// --AB Conditions are as styles, e.g. if a1>4 it should be red. This methods returns all of these objects for the cells within the range
-	public function getRangeConditions (location : Rectangle) : Vector.<Condition>
+	// -- JH Suggested Name: getCellsInRangeByRectange as it is less ambigious 
+	public function getCellsInRangeByRectange (location : Rectangle) : Vector.<Cell>
 	{
 		if (!location)
 			return null;
 		
-		return getRangeConditionsAt (location.x, location.y, location.width, location.height);
+		return getCellsInRangeAt (location.x, location.y, location.width, location.height);
 	}
 	
 	//----------------------------------
-	//  getRangeConditionsAt
+	//  getCellsConditionsInRangeAt
 	//----------------------------------
 	/**
 	 * This method will return a group of range conditions that exist at the specified coordinates.
@@ -2430,7 +2389,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	// ---JH I'm unclear what Range Conditions are  ----
 	// --AB Conditions are as styles, e.g. if a1>4 it should be red. This methods returns all of these objects for the cells within the range
-	public function getRangeConditionsAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
+	public function getCellsConditionsInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<Condition>
 	{
 		if (isColumnIndexInvalid (columnIndex)
 			|| isRowIndexInvalid (rowIndex)
@@ -2450,27 +2409,32 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setRangeCondition
+	//  getCellsConditionsInRangeByRectange
 	//----------------------------------
+	
 	/**
-	 * This method will set the range condition at the specified location.
+	 * This method will return a group of range conditions that exist at the specified coordinates.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 * @param condition
+	 *
+	 * @return This method returns a Vector of the condition that exist at the location specified.
 	 *
 	 * @see com.flextras.spreadsheet.vos.Condition
+	 *
 	 */
-	// -- JH Suggested Name: setRangeConditionsByRectange as it is less ambigious 
-	public function setRangeCondition (location : Rectangle, condition : Condition) : void
+	// ---JH I'm unclear what Range Conditions are  ----
+	// -- JH Suggested Name: getCellsConditionsInRangeByRectange as it is less ambigious 
+	// --AB Conditions are as styles, e.g. if a1>4 it should be red. This methods returns all of these objects for the cells within the range
+	public function getCellsConditionsInRangeByRectange (location : Rectangle) : Vector.<Condition>
 	{
-		if (!location || !condition)
-			return;
+		if (!location)
+			return null;
 		
-		setRangeConditionAt (location.x, location.y, location.width, location.height, condition);
+		return getCellsConditionsInRangeAt (location.x, location.y, location.width, location.height);
 	}
 	
 	//----------------------------------
-	//  setRangeConditionAt
+	//  setCellsConditionsInRangeAt
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location.
@@ -2483,12 +2447,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 *
 	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
-	public function setRangeConditionAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
+	public function setCellsConditionsInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, condition : Condition) : void
 	{
 		if (!condition)
 			return;
 		
-		var result : Vector.<Condition> = getRangeConditionsAt (columnIndex, rowIndex, columnSpan, rowSpan);
+		var result : Vector.<Condition> = getCellsConditionsInRangeAt (columnIndex, rowIndex, columnSpan, rowSpan);
 		
 		if (!result)
 			return;
@@ -2498,27 +2462,27 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setRangeConditionObject
+	//  setCellsConditionsInRangeByRectangle
 	//----------------------------------
 	/**
-	 * This method will set the range condition at the specified location to the specified object.
+	 * This method will set the range condition at the specified location.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 * @param condition This specifies the condition to set at the specified location.
+	 * @param condition
 	 *
 	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
-	// -- JH Suggested Name: setRangeConditionObjectByRectange as it is less ambigious 
-	public function setRangeConditionObject (location : Rectangle, condition : Object) : void
+	// -- JH Suggested Name: setCellsConditionsInRangeByRectange as it is less ambigious 
+	public function setCellsConditionsInRangeByRectangle (location : Rectangle, condition : Condition) : void
 	{
 		if (!location || !condition)
 			return;
 		
-		setRangeConditionObjectAt (location.x, location.y, location.width, location.height, condition);
+		setCellsConditionsInRangeAt (location.x, location.y, location.width, location.height, condition);
 	}
 	
 	//----------------------------------
-	//  setRangeConditionObjectAt
+	//  setCellsConditionsInRangeObjectAt
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location to the specified object.  If rowSpan or columnSpan are greater than 1, then all cells in the area will be given the new condition.
@@ -2530,12 +2494,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param condition This specifies the condition to set at the specified location.
 	 *
 	 */
-	public function setRangeConditionObjectAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
+	public function setCellsConditionsInRangeObjectAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, condition : Object) : void
 	{
 		if (!condition)
 			return;
 		
-		var result : Vector.<Condition> = getRangeConditionsAt (columnIndex, rowIndex, columnSpan, rowSpan);
+		var result : Vector.<Condition> = getCellsConditionsInRangeAt (columnIndex, rowIndex, columnSpan, rowSpan);
 		
 		if (!result)
 			return;
@@ -2545,25 +2509,28 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  getRangeStyles
+	//  setCellsConditionsInRangeObjectByRectangle
 	//----------------------------------
-	
 	/**
-	 * This method retrieves all the styles in the specified range.
+	 * This method will set the range condition at the specified location to the specified object.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 * @return The method returns a vector of CellStyles objects.
+	 * @param condition This specifies the condition to set at the specified location.
 	 *
-	 *  @see com.flextras.spreadsheet.vos.CellStyles
+	 * @see com.flextras.spreadsheet.vos.Condition
 	 */
-	// -- JH Suggested Name: getRangeStylesByRectange as it is less ambigious 
-	public function getRangeStyles (location : Rectangle) : Vector.<CellStyles>
+	// -- JH Suggested Name: setCellsConditionsInRangeObjectByRectange as it is less ambigious 
+	public function setCellsConditionsInRangeObjectByRectangle (location : Rectangle, condition : Object) : void
 	{
-		if (!location)
-			return null;
+		if (!location || !condition)
+			return;
 		
-		return getRangeStylesAt (location.x, location.y, location.width, location.height);
+		setCellsConditionsInRangeObjectAt (location.x, location.y, location.width, location.height, condition);
 	}
+	
+	//----------------------------------
+	//  getCellsStylesInRangeAt
+	//----------------------------------
 	
 	/**
 	 * This method retrieves all the styles in the specified range.
@@ -2576,7 +2543,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 *
 	 *  @see com.flextras.spreadsheet.vos.CellStyles
 	 */
-	public function getRangeStylesAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<CellStyles>
+	public function getCellsStylesInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint) : Vector.<CellStyles>
 	{
 		if (isColumnIndexInvalid (columnIndex)
 			|| isRowIndexInvalid (rowIndex)
@@ -2595,22 +2562,30 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		return result;
 	}
 	
+	//----------------------------------
+	//  getCellsStylesInRangeByRectange
+	//----------------------------------
+	
 	/**
-	 * This method sill set the cell styles in the specified range.
+	 * This method retrieves all the styles in the specified range.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
-	 * @param styles This specifies the style object to set.
+	 * @return The method returns a vector of CellStyles objects.
 	 *
 	 *  @see com.flextras.spreadsheet.vos.CellStyles
 	 */
-	// -- JH Suggested Name: setRangeStylesByRectange as it is less ambigious 
-	public function setRangeStyles (location : Rectangle, styles : CellStyles) : void
+	// -- JH Suggested Name: getCellsStylesInRangeByRectange as it is less ambigious 
+	public function getCellsStylesInRangeByRectange (location : Rectangle) : Vector.<CellStyles>
 	{
-		if (!location || !styles)
-			return;
+		if (!location)
+			return null;
 		
-		setRangeStylesAt (location.x, location.y, location.width, location.height, styles);
+		return getCellsStylesInRangeAt (location.x, location.y, location.width, location.height);
 	}
+	
+	//----------------------------------
+	//  setCellsStylesInRangeAt
+	//----------------------------------
 	
 	/**
 	 * This method sill set the cell styles in the specified range.
@@ -2622,12 +2597,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param styles This specifies the style object to set.
 	 *
 	 */
-	public function setRangeStylesAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, styles : CellStyles) : void
+	public function setCellsStylesInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : uint, rowSpan : uint, styles : CellStyles) : void
 	{
 		if (!styles)
 			return;
 		
-		var result : Vector.<CellStyles> = getRangeStylesAt (columnIndex, rowIndex, columnSpan, rowSpan);
+		var result : Vector.<CellStyles> = getCellsStylesInRangeAt (columnIndex, rowIndex, columnSpan, rowSpan);
 		
 		if (!result)
 			return;
@@ -2636,21 +2611,30 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			result[i].assign (styles);
 	}
 	
+	//----------------------------------
+	//  setCellsStylesInRangeByRectange
+	//----------------------------------
+	
 	/**
 	 * This method sill set the cell styles in the specified range.
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
 	 * @param styles This specifies the style object to set.
 	 *
+	 *  @see com.flextras.spreadsheet.vos.CellStyles
 	 */
-	// -- JH Suggested Name: setRangeStylesObjectByRectange as it is less ambigious 
-	public function setRangeStylesObject (location : Rectangle, styles : Object) : void
+	// -- JH Suggested Name: setCellsStylesInRangeByRectange as it is less ambigious 
+	public function setCellsStylesInRangeByRectangle (location : Rectangle, styles : CellStyles) : void
 	{
 		if (!location || !styles)
 			return;
 		
-		setRangeStylesObjectAt (location.x, location.y, location.width, location.height, styles);
+		setCellsStylesInRangeAt (location.x, location.y, location.width, location.height, styles);
 	}
+	
+	//----------------------------------
+	//  setCellsStylesInRangeObjectAt
+	//----------------------------------
 	
 	/**
 	 * This method sill set the cell styles in the specified range.
@@ -2662,18 +2646,38 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param styles This specifies the style object to set.
 	 *
 	 */
-	public function setRangeStylesObjectAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
+	public function setCellsStylesInRangeObjectAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
 	{
 		if (!styles)
 			return;
 		
-		var result : Vector.<CellStyles> = getRangeStylesAt (columnIndex, rowIndex, columnSpan, rowSpan);
+		var result : Vector.<CellStyles> = getCellsStylesInRangeAt (columnIndex, rowIndex, columnSpan, rowSpan);
 		
 		if (!result)
 			return;
 		
 		for (var i : uint, n : uint = result.length; i < n; ++i)
 			result[i].assignObject (styles);
+	}
+	
+	//----------------------------------
+	//  setCellsStylesInRangeObjectByRectange
+	//----------------------------------
+	
+	/**
+	 * This method sill set the cell styles in the specified range.
+	 *
+	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
+	 * @param styles This specifies the style object to set.
+	 *
+	 */
+	// -- JH Suggested Name: setCellsStylesInRangeObjectByRectange as it is less ambigious 
+	public function setCellsStylesInRangeObjectByRectange (location : Rectangle, styles : Object) : void
+	{
+		if (!location || !styles)
+			return;
+		
+		setCellsStylesInRangeObjectAt (location.x, location.y, location.width, location.height, styles);
 	}
 	
 	//----------------------------------
@@ -2705,24 +2709,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 *
 	 */
 	// --JH Why does this method need both columnCount and rowCount?  
-	protected function removeColumn (index : uint, columnCount : uint, rowCount : uint) : void
+	protected function removeColumn (index : uint, rowCount : uint) : void
 	{
-		//--JH Let's make this a cancelable event! 
-		//--AB all BEFORE_X events will be removed
-		if (notifyChildren)
-			dispatchEvent (new ColumnEvent (ColumnEvent.BEFORE_REMOVED, index));
-		
 		// --?? I suggest defining the object type as a non-generic object. 
 		// this is purely internal to instruct calc and utils properly
 		removeColumnIndex = index;
 		
 		for (var i : uint; i < rowCount; ++i)
-		{
-			if (notifyChildren)
-				removeColumnDirty = true;
-			
 			removeCell (index, i);
-		}
 	}
 	
 	//----------------------------------
@@ -2757,22 +2751,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 *
 	 */
 	//--JH Why does this need a columnCount rowCount?  
-	protected function removeRow (index : uint, columnCount : uint, rowCount : uint) : void
+	protected function removeRow (index : uint, columnCount : uint) : void
 	{
-		//--JH Let's make this a cancelable event! 
-		if (notifyChildren)
-			dispatchEvent (new RowEvent (RowEvent.BEFORE_REMOVED, index));
-		
 		// --?? I suggest defining the object type as a non-generic object. 
 		removeRowIndex = index;
 		
 		for (var i : uint; i < columnCount; ++i)
-		{
-			if (notifyChildren)
-				removeRowDirty = true;
-			
 			removeCell (i, index);
-		}
 	}
 	
 	//----------------------------------
@@ -2795,25 +2780,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  resizeCell
-	//----------------------------------
-	
-	/**
-	 * This method will resize the cell at the specified location.
-	 *
-	 * @param bounds This is a Rectangle object.  The x and y values of the rectangle specify the cell to reize.  The height and width properties of the Rectangle specify new size of the cell.
-	 *
-	 */
-	public function resizeCell (bounds : Rectangle) : void
-	{
-		if (!bounds)
-			return;
-		
-		resizeCellAt (bounds.x, bounds.y, bounds.width, bounds.height);
-	}
-	
-	//----------------------------------
-	//  resizeCellAt
+	//  setCellSpanAt
 	//----------------------------------
 	/**
 	 * This method will resize the cells at the specified location.
@@ -2824,12 +2791,30 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param rowSpan This specifies the number of rows to process.
 	 *
 	 */
-	public function resizeCellAt (columnIndex : uint, rowIndex : uint, columnSpan : uint = 0, rowSpan : uint = 0) : void
+	public function setCellSpanAt (columnIndex : uint, rowIndex : uint, columnSpan : uint = 0, rowSpan : uint = 0) : void
 	{
 		if (isColumnIndexInvalid (columnIndex) || isRowIndexInvalid (rowIndex))
 			return;
 		
 		dispatchEvent (new CellEvent (CellEvent.RESIZE, new CellEventData (new Rectangle (columnIndex, rowIndex, columnSpan, rowSpan))));
+	}
+	
+	//----------------------------------
+	//  setCellSpanByRectangle
+	//----------------------------------
+	
+	/**
+	 * This method will resize the cell at the specified location.
+	 *
+	 * @param bounds This is a Rectangle object.  The x and y values of the rectangle specify the cell to reize.  The height and width properties of the Rectangle specify new size of the cell.
+	 *
+	 */
+	public function setCellSpanByRectangle (bounds : Rectangle) : void
+	{
+		if (!bounds)
+			return;
+		
+		setCellSpanAt (bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 	
 	//----------------------------------
@@ -3020,20 +3005,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid (index))
 			return;
 		
-		if (notifyChildren)
-			dispatchEvent (new RowEvent (ColumnEvent.BEFORE_CLEARED, index));
-		
 		clearColumnIndex = index;
 		
 		var row : Array = columns[index];
 		
-		for each (var cell : Cell in row)
-		{
-			if (notifyChildren)
-				clearColumnDirty = true;
-			
-			cell.clear ();
-		}
+		for (var i : uint, n : uint = row.length; i < n; ++i)
+			Cell (row[i]).clear ();
+		
+		clearColumnDirty = true;
 	}
 	
 	//----------------------------------
@@ -3058,20 +3037,14 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid (index))
 			return;
 		
-		if (notifyChildren)
-			dispatchEvent (new RowEvent (RowEvent.BEFORE_CLEARED, index));
-		
 		clearRowIndex = index;
 		
 		var column : Array = rows[index];
 		
-		for each (var cell : Cell in column)
-		{
-			if (notifyChildren)
-				clearRowDirty = true;
-			
-			cell.clear ();
-		}
+		for (var i : uint, n : uint = column.length; i < n; ++i)
+			Cell (column[i]).clear ();
+		
+		clearRowDirty = true;
 	}
 	
 	//----------------------------------
@@ -3092,11 +3065,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (e.kind == CollectionEventKind.RESET)
 			items = expressions.source;
 		
-		for each (var item : Object in items)
-			if (item.hasOwnProperty ("reference"))
-				Cell (item.reference).expressionObject = null;
+		if (items)
+			for (var i : uint, n : uint = items.length, item : Object; i < n; ++i)
+			{
+				item = items[i];
+				
+				if (item.hasOwnProperty ("reference"))
+					Cell (item.reference).expressionObject = null;
+			}
 		
-		expCE = e;
+		//expCE = e;
 		invalidateExpressions ();
 		
 		dispatchEvent (new Event ("expressionsChange"));
@@ -3123,7 +3101,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid (index))
 			return;
 		
-		addColumn (index, columnCount, rowCount);
+		addColumn (index, rowCount);
+		
+		addColumnDirty = true;
 		
 		updatePreferredColumnWidths (index, 1);
 	}
@@ -3149,7 +3129,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid (index))
 			return;
 		
-		addRow (index, columnCount, rowCount);
+		addRow (index, columnCount);
+		
+		addRowDirty = true;
 		
 		updatePreferredRowHeights (index, 1);
 	}
@@ -3228,7 +3210,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid (index))
 			return;
 		
-		removeColumn (index, columnCount, rowCount);
+		removeColumn (index, rowCount);
+		
+		removeColumnDirty = true;
 		
 		updatePreferredColumnWidths (index, -1);
 	}
@@ -3255,7 +3239,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isRowIndexInvalid (index))
 			return;
 		
-		removeRow (index, columnCount, rowCount);
+		removeRow (index, columnCount);
+		
+		removeRowDirty = true;
 		
 		updatePreferredRowHeights (index, -1);
 	}
@@ -3282,8 +3268,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		var cell : Cell = getCellAt (amount.x, amount.y);
 		
-		notifyChildren = false;
-		
 		if (cell.bounds.right + 1 > columnCount)
 			columnCount = cell.bounds.right + 1;
 		
@@ -3293,38 +3277,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		doSort = true;
 		
 		invalidateCells ();
-	}
-	
-	//----------------------------------
-	//  resizeColumnHandler
-	//----------------------------------	
-	/**
-	 * @private
-	 *
-	 * This is the default handler for the ColumnEvent.RESIZE method.
-	 *
-	 * @see com.flextras.spreadsheet.events.ColumnEvent
-	 * @see com.flextras.spreadsheet.events.ColumnEvent#RESIZE
-	 */
-	protected function resizeColumnHandler (e : ColumnEvent) : void
-	{
-	
-	}
-	
-	//----------------------------------
-	//  resizeRowHandler
-	//----------------------------------	
-	/**
-	 * @private
-	 *
-	 * This is the default handler for the RowEvent.RESIZE method.
-	 *
-	 * @see com.flextras.spreadsheet.events.ColumnEvent
-	 * @see com.flextras.spreadsheet.events.ColumnEvent#RESIZE
-	 */
-	protected function resizeRowHandler (e : RowEvent) : void
-	{
-	
 	}
 }
 }

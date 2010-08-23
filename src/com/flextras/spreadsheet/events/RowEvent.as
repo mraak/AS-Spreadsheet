@@ -31,11 +31,6 @@ public class RowEvent extends Event
 	/**
 	 *
 	 */
-	public static const RESIZE : String = "com.flextras.spreadsheet.events.RowEvent::RESIZE";
-	
-	/**
-	 *
-	 */
 	public static const CLEAR : String = "com.flextras.spreadsheet.events.RowEvent::CLEAR";
 	
 	//----------------------------------
@@ -45,25 +40,16 @@ public class RowEvent extends Event
 	/**
 	 *
 	 */
-	public static const BEFORE_INSERTED : String = "com.flextras.spreadsheet.events.RowEvent::BEFORE_INSERTED";
 	public static const INSERTED : String = "com.flextras.spreadsheet.events.RowEvent::INSERTED";
 	
 	/**
 	 *
 	 */
-	public static const BEFORE_REMOVED : String = "com.flextras.spreadsheet.events.RowEvent::BEFORE_REMOVED";
 	public static const REMOVED : String = "com.flextras.spreadsheet.events.RowEvent::REMOVED";
 	
 	/**
 	 *
 	 */
-	public static const BEFORE_RESIZED : String = "com.flextras.spreadsheet.events.RowEvent::BEFORE_RESIZED";
-	public static const RESIZED : String = "com.flextras.spreadsheet.events.RowEvent::RESIZED";
-	
-	/**
-	 *
-	 */
-	public static const BEFORE_CLEARED : String = "com.flextras.spreadsheet.events.RowEvent::BEFORE_CLEARED";
 	public static const CLEARED : String = "com.flextras.spreadsheet.events.RowEvent::CLEARED";
 	
 	//--------------------------------------------------------------------------
@@ -90,9 +76,9 @@ public class RowEvent extends Event
 	 * @param index
 	 *
 	 */
-	public function RowEvent(type : String, index : uint)
+	public function RowEvent (type : String, index : uint)
 	{
-		super(type);
+		super (type);
 		
 		this.index = index;
 	}
@@ -108,9 +94,9 @@ public class RowEvent extends Event
 	 * @return
 	 *
 	 */
-	override public function clone() : Event
+	override public function clone () : Event
 	{
-		return new RowEvent(type, index);
+		return new RowEvent (type, index);
 	}
 }
 }

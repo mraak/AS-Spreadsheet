@@ -13,11 +13,13 @@
 
 	<fx:Binding source = "grid.grid.selectedItem"
 				destination = "cell" />
+
 	<fx:Binding source = "Vector.&lt;Cell>(grid.grid.selectedItems)"
 				destination = "cells" />
 
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
+
 		<!--<s:TextInput id = "leftInput"
 			 text = "{cell.condition.left}"
 			 change = "leftInput_changeHandler(event)" />-->
@@ -27,10 +29,15 @@
 						change = "operatorList_changeHandler(event)">
 			<s:ArrayCollection>
 				<fx:String>=</fx:String>
+
 				<fx:String>&lt;></fx:String>
+
 				<fx:String>&lt;</fx:String>
+
 				<fx:String>&lt;=</fx:String>
+
 				<fx:String>></fx:String>
+
 				<fx:String>>=</fx:String>
 			</s:ArrayCollection>
 		</s:DropDownList>
@@ -44,6 +51,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "color"
 				 width = "100" />
+
 		<mx:ColorPicker id = "colorStyle"
 						change = "colorStyle_changeHandler(event)"
 						selectedColor = "{cell.condition.styles.color}" />
@@ -51,6 +59,7 @@
 		<s:Label text = "alpha"
 				 paddingLeft = "10"
 				 width = "110" />
+
 		<s:HSlider id = "alphaStyle"
 				   change = "alphaStyle_changeHandler(event)"
 				   minimum = "0"
@@ -63,6 +72,7 @@
 			  enabled = "{!!cell}">
 		<s:Label text = "backgroundColor"
 				 width = "100" />
+
 		<mx:ColorPicker id = "backgroundColorStyle"
 						change = "backgroundColorStyle_changeHandler(event)"
 						selectedColor = "{cell.condition.styles.backgroundColor}" />
@@ -70,6 +80,7 @@
 		<s:Label text = "backgroundAlpha"
 				 paddingLeft = "10"
 				 width = "110" />
+
 		<s:HSlider id = "backgroundAlphaStyle"
 				   change = "backgroundAlphaStyle_changeHandler(event)"
 				   minimum = "0"
@@ -93,44 +104,44 @@
 			   applyChanges("left", leftInput.text);
 			 } */
 			
-			protected function operatorList_changeHandler(event : IndexChangeEvent) : void
+			protected function operatorList_changeHandler (event : IndexChangeEvent) : void
 			{
 				if (operatorList.selectedIndex > -1)
-					applyChanges("operator", operatorList.selectedItem);
+					applyChanges ("operator", operatorList.selectedItem);
 			}
 			
-			protected function rightInput_changeHandler(event : TextOperationEvent) : void
+			protected function rightInput_changeHandler (event : TextOperationEvent) : void
 			{
-				applyChanges("right", rightInput.text);
+				applyChanges ("right", rightInput.text);
 			}
 			
-			protected function colorStyle_changeHandler(e : ColorPickerEvent) : void
+			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
-				applyChanges("styles", {color: e.color});
+				applyChanges ("styles", {color: e.color});
 			}
 			
-			protected function alphaStyle_changeHandler(e : Event) : void
+			protected function alphaStyle_changeHandler (e : Event) : void
 			{
-				applyChanges("styles", {alpha: alphaStyle.value});
+				applyChanges ("styles", {alpha: alphaStyle.value});
 			}
 			
-			protected function backgroundColorStyle_changeHandler(e : ColorPickerEvent) : void
+			protected function backgroundColorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
-				applyChanges("styles", {backgroundColor: e.color});
+				applyChanges ("styles", {backgroundColor: e.color});
 			}
 			
-			protected function backgroundAlphaStyle_changeHandler(e : Event) : void
+			protected function backgroundAlphaStyle_changeHandler (e : Event) : void
 			{
-				applyChanges("styles", {backgroundAlpha: backgroundAlphaStyle.value});
+				applyChanges ("styles", {backgroundAlpha: backgroundAlphaStyle.value});
 			}
 			
-			protected function applyChanges(name : String, value : Object) : void
+			protected function applyChanges (name : String, value : Object) : void
 			{
 				var o : Object = {};
 				o[name] = value;
 				
-				for each (var c : Cell in cells)
-					c.conditionObject = o;
+				for (var i : uint, n : uint = cells.length; i < n; ++i)
+					cells[i].conditionObject = o;
 				
 				cell.conditionObject = o;
 			}

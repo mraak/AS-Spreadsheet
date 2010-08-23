@@ -143,9 +143,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.insertRowAt(c.rowIndex);
+		}
 		
 		cell.owner.insertRowAt(cell.rowIndex);
 	}
@@ -154,9 +158,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.removeRowAt(c.rowIndex);
+		}
 		
 		cell.owner.removeRowAt(cell.rowIndex);
 	}
@@ -165,9 +173,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.clearRowAt(c.rowIndex);
+		}
 		
 		cell.owner.clearRowAt(cell.rowIndex);
 	}
@@ -176,9 +188,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.insertColumnAt(c.columnIndex);
+		}
 		
 		cell.owner.insertColumnAt(cell.columnIndex);
 	}
@@ -187,9 +203,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.removeColumnAt(c.columnIndex);
+		}
 		
 		cell.owner.removeColumnAt(cell.columnIndex);
 	}
@@ -198,9 +218,13 @@ public class Menu implements IFlexContextMenu
 	{
 		var cells : Vector.<Cell> = this.cells;
 		
-		for each (var c : Cell in cells)
+		for (var i:uint, n:uint = cells.length, c:Cell; i < n; ++i)
+		{
+			c = cells[i];
+			
 			if (!c.bounds.equals(cell.bounds))
 				cell.owner.clearColumnAt(c.columnIndex);
+		}
 		
 		cell.owner.clearColumnAt(cell.columnIndex);
 	}
