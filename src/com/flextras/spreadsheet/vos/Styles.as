@@ -97,17 +97,17 @@ public class Styles extends EventDispatcher
 	 * @param size
 	 *
 	 */
-	public function Styles(color : uint = 0,
-						   alpha : Number = 1,
-						   backgroundColor : uint = 0xFFFFFF,
-						   backgroundAlpha : Number = 1,
-						   bold : Boolean = false,
-						   italic : Boolean = false,
-						   underline : Boolean = false,
-						   font:String = "arial",
-						   horizontalAlign : String = TextAlign.CENTER,
-						   verticalAlign : String = VerticalAlign.MIDDLE,
-						   size : Number = 14)
+	public function Styles (color : uint = 0,
+		alpha : Number = 1,
+		backgroundColor : uint = 0xFFFFFF,
+		backgroundAlpha : Number = 1,
+		bold : Boolean = false,
+		italic : Boolean = false,
+		underline : Boolean = false,
+		font : String = "arial",
+		horizontalAlign : String = TextAlign.CENTER,
+		verticalAlign : String = VerticalAlign.MIDDLE,
+		size : Number = 14)
 	{
 		this.color = color;
 		this.alpha = alpha;
@@ -135,7 +135,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _alpha : Number = 1;
+	private var _alpha : Number = 1;
 	
 	protected var alphaChanged : Boolean;
 	
@@ -145,9 +145,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get alpha() : Number
+	public function get alpha () : Number
 	{
-		return alphaChanged || !_global ? _alpha : _global._alpha;
+		return alphaChanged || !global ? _alpha : global.alpha;
 	}
 	
 	/**
@@ -155,7 +155,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set alpha(value : Number) : void
+	public function set alpha (value : Number) : void
 	{
 		if (alpha == value)
 			return;
@@ -164,7 +164,7 @@ public class Styles extends EventDispatcher
 		
 		alphaChanged = true;
 		
-		dispatchAlphaChangedEvent();
+		dispatchAlphaChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -174,7 +174,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _backgroundAlpha : Number = 1;
+	private var _backgroundAlpha : Number = 1;
 	
 	protected var backgroundAlphaChanged : Boolean;
 	
@@ -184,9 +184,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get backgroundAlpha() : Number
+	public function get backgroundAlpha () : Number
 	{
-		return backgroundAlphaChanged || !_global ? _backgroundAlpha : _global._backgroundAlpha;
+		return backgroundAlphaChanged || !global ? _backgroundAlpha : global.backgroundAlpha;
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set backgroundAlpha(value : Number) : void
+	public function set backgroundAlpha (value : Number) : void
 	{
 		if (backgroundAlpha == value)
 			return;
@@ -203,7 +203,7 @@ public class Styles extends EventDispatcher
 		
 		backgroundAlphaChanged = true;
 		
-		dispatchBackgroundAlphaChangedEvent();
+		dispatchBackgroundAlphaChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -213,7 +213,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _backgroundColor : uint = 0xFFFFFF;
+	private var _backgroundColor : uint = 0xFFFFFF;
 	
 	protected var backgroundColorChanged : Boolean;
 	
@@ -223,9 +223,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get backgroundColor() : uint
+	public function get backgroundColor () : uint
 	{
-		return backgroundColorChanged || !_global ? _backgroundColor : _global._backgroundColor;
+		return backgroundColorChanged || !global ? _backgroundColor : global.backgroundColor;
 	}
 	
 	/**
@@ -233,7 +233,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set backgroundColor(value : uint) : void
+	public function set backgroundColor (value : uint) : void
 	{
 		if (backgroundColor == value)
 			return;
@@ -242,7 +242,7 @@ public class Styles extends EventDispatcher
 		
 		backgroundColorChanged = true;
 		
-		dispatchBackgroundColorChangedEvent();
+		dispatchBackgroundColorChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -252,7 +252,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _bold : Boolean;
+	private var _bold : Boolean;
 	
 	protected var boldChanged : Boolean;
 	
@@ -262,9 +262,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get bold() : Boolean
+	public function get bold () : Boolean
 	{
-		return boldChanged || !_global ? _bold : _global._bold;
+		return boldChanged || !global ? _bold : global.bold;
 	}
 	
 	/**
@@ -272,7 +272,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bold(value : Boolean) : void
+	public function set bold (value : Boolean) : void
 	{
 		if (bold == value)
 			return;
@@ -281,7 +281,7 @@ public class Styles extends EventDispatcher
 		
 		boldChanged = true;
 		
-		dispatchBoldChangedEvent();
+		dispatchBoldChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -291,7 +291,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _color : uint;
+	private var _color : uint;
 	
 	protected var colorChanged : Boolean;
 	
@@ -301,9 +301,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get color() : uint
+	public function get color () : uint
 	{
-		return colorChanged || !_global ? _color : _global._color;
+		return colorChanged || !global ? _color : global.color;
 	}
 	
 	/**
@@ -311,7 +311,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set color(value : uint) : void
+	public function set color (value : uint) : void
 	{
 		if (color == value)
 			return;
@@ -320,7 +320,7 @@ public class Styles extends EventDispatcher
 		
 		colorChanged = true;
 		
-		dispatchColorChangedEvent();
+		dispatchColorChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -330,7 +330,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _font : String = "arial";
+	private var _font : String = "arial";
 	
 	protected var fontChanged : Boolean;
 	
@@ -340,9 +340,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get font() : String
+	public function get font () : String
 	{
-		return fontChanged || !_global ? _font : _global._font;
+		return fontChanged || !global ? _font : global.font;
 	}
 	
 	/**
@@ -350,7 +350,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set font(value : String) : void
+	public function set font (value : String) : void
 	{
 		if (font == value)
 			return;
@@ -359,7 +359,7 @@ public class Styles extends EventDispatcher
 		
 		fontChanged = true;
 		
-		dispatchFontChangedEvent();
+		dispatchFontChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -369,14 +369,14 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _global : Styles;
+	private var _global : Styles;
 	
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	spreadsheet function get global() : Styles
+	spreadsheet function get global () : Styles
 	{
 		return _global;
 	}
@@ -386,41 +386,41 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : Styles) : void
+	spreadsheet function set global (value : Styles) : void
 	{
-		if (_global === value)
+		if (global === value)
 			return;
 		
-		if (_global)
+		if (global)
 		{
-			_global.removeEventListener("colorChanged", global_colorChangedHandler);
-			_global.removeEventListener("alphaChanged", global_alphaChangedHandler);
-			_global.removeEventListener("backgroundColorChanged", global_backgroundColorChangedHandler);
-			_global.removeEventListener("backgroundAlphaChanged", global_backgroundAlphaChangedHandler);
-			_global.removeEventListener("boldChanged", global_boldChangedHandler);
-			_global.removeEventListener("italicChanged", global_italicChangedHandler);
-			_global.removeEventListener("underlineChanged", global_underlineChangedHandler);
-			_global.removeEventListener("fontChanged", global_fontChangedHandler);
-			_global.removeEventListener("horizontalAlignChanged", global_horizontalAlignChangedHandler);
-			_global.removeEventListener("verticalAlignChanged", global_verticalAlignChangedHandler);
-			_global.removeEventListener("sizeChanged", global_sizeChangedHandler);
+			global.removeEventListener ("colorChanged", global_colorChangedHandler);
+			global.removeEventListener ("alphaChanged", global_alphaChangedHandler);
+			global.removeEventListener ("backgroundColorChanged", global_backgroundColorChangedHandler);
+			global.removeEventListener ("backgroundAlphaChanged", global_backgroundAlphaChangedHandler);
+			global.removeEventListener ("boldChanged", global_boldChangedHandler);
+			global.removeEventListener ("italicChanged", global_italicChangedHandler);
+			global.removeEventListener ("underlineChanged", global_underlineChangedHandler);
+			global.removeEventListener ("fontChanged", global_fontChangedHandler);
+			global.removeEventListener ("horizontalAlignChanged", global_horizontalAlignChangedHandler);
+			global.removeEventListener ("verticalAlignChanged", global_verticalAlignChangedHandler);
+			global.removeEventListener ("sizeChanged", global_sizeChangedHandler);
 		}
 		
 		_global = value;
 		
 		if (value)
 		{
-			value.addEventListener("colorChanged", global_colorChangedHandler);
-			value.addEventListener("alphaChanged", global_alphaChangedHandler);
-			value.addEventListener("backgroundColorChanged", global_backgroundColorChangedHandler);
-			value.addEventListener("backgroundAlphaChanged", global_backgroundAlphaChangedHandler);
-			value.addEventListener("boldChanged", global_boldChangedHandler);
-			value.addEventListener("italicChanged", global_italicChangedHandler);
-			value.addEventListener("underlineChanged", global_underlineChangedHandler);
-			value.addEventListener("fontChanged", global_fontChangedHandler);
-			value.addEventListener("horizontalAlignChanged", global_horizontalAlignChangedHandler);
-			value.addEventListener("verticalAlignChanged", global_verticalAlignChangedHandler);
-			value.addEventListener("sizeChanged", global_sizeChangedHandler);
+			value.addEventListener ("colorChanged", global_colorChangedHandler);
+			value.addEventListener ("alphaChanged", global_alphaChangedHandler);
+			value.addEventListener ("backgroundColorChanged", global_backgroundColorChangedHandler);
+			value.addEventListener ("backgroundAlphaChanged", global_backgroundAlphaChangedHandler);
+			value.addEventListener ("boldChanged", global_boldChangedHandler);
+			value.addEventListener ("italicChanged", global_italicChangedHandler);
+			value.addEventListener ("underlineChanged", global_underlineChangedHandler);
+			value.addEventListener ("fontChanged", global_fontChangedHandler);
+			value.addEventListener ("horizontalAlignChanged", global_horizontalAlignChangedHandler);
+			value.addEventListener ("verticalAlignChanged", global_verticalAlignChangedHandler);
+			value.addEventListener ("sizeChanged", global_sizeChangedHandler);
 		}
 	}
 	
@@ -431,7 +431,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _horizontalAlign : String = TextAlign.CENTER;
+	private var _horizontalAlign : String = TextAlign.CENTER;
 	
 	protected var horizontalAlignChanged : Boolean;
 	
@@ -441,9 +441,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get horizontalAlign() : String
+	public function get horizontalAlign () : String
 	{
-		return horizontalAlignChanged || !_global ? _horizontalAlign : _global._horizontalAlign;
+		return horizontalAlignChanged || !global ? _horizontalAlign : global.horizontalAlign;
 	}
 	
 	/**
@@ -451,7 +451,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set horizontalAlign(value : String) : void
+	public function set horizontalAlign (value : String) : void
 	{
 		if (horizontalAlign == value)
 			return;
@@ -460,7 +460,7 @@ public class Styles extends EventDispatcher
 		
 		horizontalAlignChanged = true;
 		
-		dispatchHorizontalAlignChangedEvent();
+		dispatchHorizontalAlignChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -470,7 +470,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _italic : Boolean;
+	private var _italic : Boolean;
 	
 	protected var italicChanged : Boolean;
 	
@@ -480,9 +480,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get italic() : Boolean
+	public function get italic () : Boolean
 	{
-		return italicChanged || !_global ? _italic : _global._italic;
+		return italicChanged || !global ? _italic : global.italic;
 	}
 	
 	/**
@@ -490,7 +490,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set italic(value : Boolean) : void
+	public function set italic (value : Boolean) : void
 	{
 		if (italic == value)
 			return;
@@ -499,7 +499,7 @@ public class Styles extends EventDispatcher
 		
 		italicChanged = true;
 		
-		dispatchItalicChangedEvent();
+		dispatchItalicChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -509,7 +509,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _size : uint = 14;
+	private var _size : uint = 14;
 	
 	protected var sizeChanged : Boolean;
 	
@@ -519,9 +519,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get size() : uint
+	public function get size () : uint
 	{
-		return sizeChanged || !_global ? _size : _global._size;
+		return sizeChanged || !global ? _size : global.size;
 	}
 	
 	/**
@@ -529,7 +529,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set size(value : uint) : void
+	public function set size (value : uint) : void
 	{
 		if (size == value)
 			return;
@@ -538,7 +538,7 @@ public class Styles extends EventDispatcher
 		
 		sizeChanged = true;
 		
-		dispatchSizeChangedEvent();
+		dispatchSizeChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -548,7 +548,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _underline : Boolean;
+	private var _underline : Boolean;
 	
 	protected var underlineChanged : Boolean;
 	
@@ -558,9 +558,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get underline() : Boolean
+	public function get underline () : Boolean
 	{
-		return underlineChanged || !_global ? _underline : _global._underline;
+		return underlineChanged || !global ? _underline : global.underline;
 	}
 	
 	/**
@@ -568,7 +568,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set underline(value : Boolean) : void
+	public function set underline (value : Boolean) : void
 	{
 		if (underline == value)
 			return;
@@ -577,7 +577,7 @@ public class Styles extends EventDispatcher
 		
 		underlineChanged = true;
 		
-		dispatchUnderlineChangedEvent();
+		dispatchUnderlineChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -587,7 +587,7 @@ public class Styles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _verticalAlign : String = VerticalAlign.MIDDLE;
+	private var _verticalAlign : String = VerticalAlign.MIDDLE;
 	
 	protected var verticalAlignChanged : Boolean;
 	
@@ -597,9 +597,9 @@ public class Styles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get verticalAlign() : String
+	public function get verticalAlign () : String
 	{
-		return verticalAlignChanged || !_global ? _verticalAlign : _global._verticalAlign;
+		return verticalAlignChanged || !global ? _verticalAlign : global.verticalAlign;
 	}
 	
 	/**
@@ -607,7 +607,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set verticalAlign(value : String) : void
+	public function set verticalAlign (value : String) : void
 	{
 		if (verticalAlign == value)
 			return;
@@ -616,7 +616,7 @@ public class Styles extends EventDispatcher
 		
 		verticalAlignChanged = true;
 		
-		dispatchVerticalAlignChangedEvent();
+		dispatchVerticalAlignChangedEvent ();
 	}
 	
 	//--------------------------------------------------------------------------
@@ -630,7 +630,7 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assign(value : Styles) : void
+	public function assign (value : Styles) : void
 	{
 		if (!value)
 			return;
@@ -653,156 +653,156 @@ public class Styles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assignObject(value : Object) : void
+	public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is Styles)
 		{
-			assign(Styles(value));
+			assign (Styles (value));
 			
 			return;
 		}
 		
-		if (value.hasOwnProperty("color"))
-			color = uint(value.color);
+		if (value.hasOwnProperty ("color"))
+			color = uint (value.color);
 		
-		if (value.hasOwnProperty("alpha"))
-			alpha = Number(value.alpha);
+		if (value.hasOwnProperty ("alpha"))
+			alpha = Number (value.alpha);
 		
-		if (value.hasOwnProperty("backgroundColor"))
-			backgroundColor = uint(value.backgroundColor);
+		if (value.hasOwnProperty ("backgroundColor"))
+			backgroundColor = uint (value.backgroundColor);
 		
-		if (value.hasOwnProperty("backgroundAlpha"))
-			backgroundAlpha = Number(value.backgroundAlpha);
+		if (value.hasOwnProperty ("backgroundAlpha"))
+			backgroundAlpha = Number (value.backgroundAlpha);
 		
-		if (value.hasOwnProperty("bold"))
-			bold = Boolean(value.bold);
+		if (value.hasOwnProperty ("bold"))
+			bold = Boolean (value.bold);
 		
-		if (value.hasOwnProperty("italic"))
-			italic = Boolean(value.italic);
+		if (value.hasOwnProperty ("italic"))
+			italic = Boolean (value.italic);
 		
-		if (value.hasOwnProperty("underline"))
-			underline = Boolean(value.underline);
+		if (value.hasOwnProperty ("underline"))
+			underline = Boolean (value.underline);
 		
-		if (value.hasOwnProperty("font"))
-			font = String(value.font);
+		if (value.hasOwnProperty ("font"))
+			font = String (value.font);
 		
-		if (value.hasOwnProperty("horizontalAlign"))
-			horizontalAlign = String(value.horizontalAlign);
+		if (value.hasOwnProperty ("horizontalAlign"))
+			horizontalAlign = String (value.horizontalAlign);
 		
-		if (value.hasOwnProperty("verticalAlign"))
-			verticalAlign = String(value.verticalAlign);
+		if (value.hasOwnProperty ("verticalAlign"))
+			verticalAlign = String (value.verticalAlign);
 		
-		if (value.hasOwnProperty("size"))
-			size = uint(value.size);
+		if (value.hasOwnProperty ("size"))
+			size = uint (value.size);
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchAlphaChangedEvent() : void
+	protected function dispatchAlphaChangedEvent () : void
 	{
-		dispatchEvent(new Event("alphaChanged"));
+		dispatchEvent (new Event ("alphaChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchBackgroundAlphaChangedEvent() : void
+	protected function dispatchBackgroundAlphaChangedEvent () : void
 	{
-		dispatchEvent(new Event("backgroundAlphaChanged"));
+		dispatchEvent (new Event ("backgroundAlphaChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchBackgroundColorChangedEvent() : void
+	protected function dispatchBackgroundColorChangedEvent () : void
 	{
-		dispatchEvent(new Event("backgroundColorChanged"));
+		dispatchEvent (new Event ("backgroundColorChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchBoldChangedEvent() : void
+	protected function dispatchBoldChangedEvent () : void
 	{
-		dispatchEvent(new Event("boldChanged"));
+		dispatchEvent (new Event ("boldChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchColorChangedEvent() : void
+	protected function dispatchColorChangedEvent () : void
 	{
-		dispatchEvent(new Event("colorChanged"));
+		dispatchEvent (new Event ("colorChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchFontChangedEvent() : void
+	protected function dispatchFontChangedEvent () : void
 	{
-		dispatchEvent(new Event("fontChanged"));
+		dispatchEvent (new Event ("fontChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchHorizontalAlignChangedEvent() : void
+	protected function dispatchHorizontalAlignChangedEvent () : void
 	{
-		dispatchEvent(new Event("horizontalAlignChanged"));
+		dispatchEvent (new Event ("horizontalAlignChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchItalicChangedEvent() : void
+	protected function dispatchItalicChangedEvent () : void
 	{
-		dispatchEvent(new Event("italicChanged"));
+		dispatchEvent (new Event ("italicChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchSizeChangedEvent() : void
+	protected function dispatchSizeChangedEvent () : void
 	{
-		dispatchEvent(new Event("sizeChanged"));
+		dispatchEvent (new Event ("sizeChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchUnderlineChangedEvent() : void
+	protected function dispatchUnderlineChangedEvent () : void
 	{
-		dispatchEvent(new Event("underlineChanged"));
+		dispatchEvent (new Event ("underlineChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchVerticalAlignChangedEvent() : void
+	protected function dispatchVerticalAlignChangedEvent () : void
 	{
-		dispatchEvent(new Event("verticalAlignChanged"));
+		dispatchEvent (new Event ("verticalAlignChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	spreadsheet function release() : void
+	spreadsheet function release () : void
 	{
 		global = null;
 	}
@@ -818,9 +818,9 @@ public class Styles extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_colorChangedHandler(e : Event) : void
+	protected function global_colorChangedHandler (e : Event) : void
 	{
-		dispatchColorChangedEvent();
+		dispatchColorChangedEvent ();
 	}
 	
 	/**
@@ -828,90 +828,90 @@ public class Styles extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_alphaChangedHandler(e : Event) : void
+	protected function global_alphaChangedHandler (e : Event) : void
 	{
-		dispatchAlphaChangedEvent();
+		dispatchAlphaChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_backgroundColorChangedHandler(e : Event) : void
+	protected function global_backgroundColorChangedHandler (e : Event) : void
 	{
-		dispatchBackgroundColorChangedEvent();
+		dispatchBackgroundColorChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_backgroundAlphaChangedHandler(e : Event) : void
+	protected function global_backgroundAlphaChangedHandler (e : Event) : void
 	{
-		dispatchBackgroundAlphaChangedEvent();
+		dispatchBackgroundAlphaChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_boldChangedHandler(e : Event) : void
+	protected function global_boldChangedHandler (e : Event) : void
 	{
-		dispatchBoldChangedEvent();
+		dispatchBoldChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_italicChangedHandler(e : Event) : void
+	protected function global_italicChangedHandler (e : Event) : void
 	{
-		dispatchItalicChangedEvent();
+		dispatchItalicChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_underlineChangedHandler(e : Event) : void
+	protected function global_underlineChangedHandler (e : Event) : void
 	{
-		dispatchUnderlineChangedEvent();
+		dispatchUnderlineChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_fontChangedHandler(e : Event) : void
+	protected function global_fontChangedHandler (e : Event) : void
 	{
-		dispatchFontChangedEvent();
+		dispatchFontChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_horizontalAlignChangedHandler(e : Event) : void
+	protected function global_horizontalAlignChangedHandler (e : Event) : void
 	{
-		dispatchHorizontalAlignChangedEvent();
+		dispatchHorizontalAlignChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_verticalAlignChangedHandler(e : Event) : void
+	protected function global_verticalAlignChangedHandler (e : Event) : void
 	{
-		dispatchVerticalAlignChangedEvent();
+		dispatchVerticalAlignChangedEvent ();
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function global_sizeChangedHandler(e : Event) : void
+	protected function global_sizeChangedHandler (e : Event) : void
 	{
-		dispatchSizeChangedEvent();
+		dispatchSizeChangedEvent ();
 	}
 }
 }

@@ -49,7 +49,7 @@ public class BorderSide extends EventDispatcher
 	 * @param visible
 	 *
 	 */
-	public function BorderSide(color : uint = 0, alpha : Number = 1, weight : Number = 1, visible : Boolean = true)
+	public function BorderSide (color : uint = 0, alpha : Number = 1, weight : Number = 1, visible : Boolean = true)
 	{
 		this.color = color;
 		this.alpha = alpha;
@@ -81,7 +81,7 @@ public class BorderSide extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _alpha : Number = 1;
+	private var _alpha : Number = 1;
 	
 	protected var alphaChanged : Boolean;
 	
@@ -91,9 +91,9 @@ public class BorderSide extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get alpha() : Number
+	public function get alpha () : Number
 	{
-		return alphaChanged || !_global ? _alpha : _global._alpha;
+		return alphaChanged || !global ? _alpha : global.alpha;
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set alpha(value : Number) : void
+	public function set alpha (value : Number) : void
 	{
 		if (alpha == value)
 			return;
@@ -110,7 +110,7 @@ public class BorderSide extends EventDispatcher
 		
 		alphaChanged = true;
 		
-		dispatchAlphaChangedEvent();
+		dispatchAlphaChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -120,7 +120,7 @@ public class BorderSide extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _color : uint;
+	private var _color : uint;
 	
 	protected var colorChanged : Boolean;
 	
@@ -130,9 +130,9 @@ public class BorderSide extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get color() : uint
+	public function get color () : uint
 	{
-		return colorChanged || !_global ? _color : _global._color;
+		return colorChanged || !global ? _color : global.color;
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set color(value : uint) : void
+	public function set color (value : uint) : void
 	{
 		if (color == value)
 			return;
@@ -149,7 +149,7 @@ public class BorderSide extends EventDispatcher
 		
 		colorChanged = true;
 		
-		dispatchColorChangedEvent();
+		dispatchColorChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -159,14 +159,14 @@ public class BorderSide extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _global : BorderSide;
+	private var _global : BorderSide;
 	
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	spreadsheet function get global() : BorderSide
+	spreadsheet function get global () : BorderSide
 	{
 		return _global;
 	}
@@ -176,27 +176,27 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : BorderSide) : void
+	spreadsheet function set global (value : BorderSide) : void
 	{
-		if (_global === value)
+		if (global === value)
 			return;
 		
-		if (_global)
+		if (global)
 		{
-			_global.removeEventListener("colorChanged", global_colorChangedHandler);
-			_global.removeEventListener("alphaChanged", global_alphaChangedHandler);
-			_global.removeEventListener("weightChanged", global_weightChangedHandler);
-			_global.removeEventListener("visibleChanged", global_visibleChangedHandler);
+			global.removeEventListener ("colorChanged", global_colorChangedHandler);
+			global.removeEventListener ("alphaChanged", global_alphaChangedHandler);
+			global.removeEventListener ("weightChanged", global_weightChangedHandler);
+			global.removeEventListener ("visibleChanged", global_visibleChangedHandler);
 		}
 		
 		_global = value;
 		
 		if (value)
 		{
-			value.addEventListener("colorChanged", global_colorChangedHandler);
-			value.addEventListener("alphaChanged", global_alphaChangedHandler);
-			value.addEventListener("weightChanged", global_weightChangedHandler);
-			value.addEventListener("visibleChanged", global_visibleChangedHandler);
+			value.addEventListener ("colorChanged", global_colorChangedHandler);
+			value.addEventListener ("alphaChanged", global_alphaChangedHandler);
+			value.addEventListener ("weightChanged", global_weightChangedHandler);
+			value.addEventListener ("visibleChanged", global_visibleChangedHandler);
 		}
 	}
 	
@@ -207,7 +207,7 @@ public class BorderSide extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _visible : Boolean = true;
+	private var _visible : Boolean = true;
 	
 	protected var visibleChanged : Boolean;
 	
@@ -217,9 +217,9 @@ public class BorderSide extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get visible() : Boolean
+	public function get visible () : Boolean
 	{
-		return visibleChanged || !_global ? _visible : _global._weight;
+		return visibleChanged || !global ? _visible : global.visible;
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set visible(value : Boolean) : void
+	public function set visible (value : Boolean) : void
 	{
 		if (visible == value)
 			return;
@@ -244,7 +244,7 @@ public class BorderSide extends EventDispatcher
 		else
 			weight = visibleWeight;
 		
-		dispatchVisibleChangedEvent();
+		dispatchVisibleChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -254,7 +254,7 @@ public class BorderSide extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _weight : Number = 1;
+	private var _weight : Number = 1;
 	
 	protected var weightChanged : Boolean;
 	
@@ -264,9 +264,9 @@ public class BorderSide extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get weight() : Number
+	public function get weight () : Number
 	{
-		return weightChanged || !_global ? _weight : _global._weight;
+		return weightChanged || !global ? _weight : global.weight;
 	}
 	
 	/**
@@ -274,7 +274,7 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set weight(value : Number) : void
+	public function set weight (value : Number) : void
 	{
 		if (weight == value)
 			return;
@@ -283,7 +283,7 @@ public class BorderSide extends EventDispatcher
 		
 		weightChanged = true;
 		
-		dispatchWeightChangedEvent();
+		dispatchWeightChangedEvent ();
 		
 		if (value > 0)
 		{
@@ -305,7 +305,7 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assign(value : BorderSide) : void
+	public function assign (value : BorderSide) : void
 	{
 		if (!value)
 			return;
@@ -321,72 +321,72 @@ public class BorderSide extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assignObject(value : Object) : void
+	public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
 		{
-			assign(BorderSide(value));
+			assign (BorderSide (value));
 			
 			return;
 		}
 		
-		if (value.hasOwnProperty("color"))
-			color = uint(value.color);
+		if (value.hasOwnProperty ("color"))
+			color = uint (value.color);
 		
-		if (value.hasOwnProperty("alpha"))
-			alpha = Number(value.alpha);
+		if (value.hasOwnProperty ("alpha"))
+			alpha = Number (value.alpha);
 		
-		if (value.hasOwnProperty("weight"))
-			weight = Number(value.weight);
+		if (value.hasOwnProperty ("weight"))
+			weight = Number (value.weight);
 		
-		if (value.hasOwnProperty("visible"))
-			visible = Boolean(value.visible);
+		if (value.hasOwnProperty ("visible"))
+			visible = Boolean (value.visible);
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchAlphaChangedEvent() : void
+	protected function dispatchAlphaChangedEvent () : void
 	{
-		dispatchEvent(new Event("alphaChanged"));
+		dispatchEvent (new Event ("alphaChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchColorChangedEvent() : void
+	protected function dispatchColorChangedEvent () : void
 	{
-		dispatchEvent(new Event("colorChanged"));
+		dispatchEvent (new Event ("colorChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchVisibleChangedEvent() : void
+	protected function dispatchVisibleChangedEvent () : void
 	{
-		dispatchEvent(new Event("visibleChanged"));
+		dispatchEvent (new Event ("visibleChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchWeightChangedEvent() : void
+	protected function dispatchWeightChangedEvent () : void
 	{
-		dispatchEvent(new Event("weightChanged"));
+		dispatchEvent (new Event ("weightChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	spreadsheet function release() : void
+	spreadsheet function release () : void
 	{
 		global = null;
 	}
@@ -402,9 +402,9 @@ public class BorderSide extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_colorChangedHandler(e : Event) : void
+	protected function global_colorChangedHandler (e : Event) : void
 	{
-		dispatchColorChangedEvent();
+		dispatchColorChangedEvent ();
 	}
 	
 	/**
@@ -412,9 +412,9 @@ public class BorderSide extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_alphaChangedHandler(e : Event) : void
+	protected function global_alphaChangedHandler (e : Event) : void
 	{
-		dispatchAlphaChangedEvent();
+		dispatchAlphaChangedEvent ();
 	}
 	
 	/**
@@ -422,9 +422,9 @@ public class BorderSide extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_weightChangedHandler(e : Event) : void
+	protected function global_weightChangedHandler (e : Event) : void
 	{
-		dispatchWeightChangedEvent();
+		dispatchWeightChangedEvent ();
 	}
 	
 	/**
@@ -432,9 +432,9 @@ public class BorderSide extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_visibleChangedHandler(e : Event) : void
+	protected function global_visibleChangedHandler (e : Event) : void
 	{
-		dispatchVisibleChangedEvent();
+		dispatchVisibleChangedEvent ();
 	}
 }
 }

@@ -596,7 +596,7 @@ public class Calc extends EventDispatcher
 						assignControlExpression(c, c.exp, true);
 					
 						//if (c.grid)
-						//c.grid.updateExpressions();
+						//c.grid.invalidateExpressions();
 					
 					/*	if(c.grid)
 					   {

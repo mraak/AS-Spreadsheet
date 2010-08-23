@@ -57,14 +57,14 @@ public class Border extends EventDispatcher
 	 * @param bottom
 	 *
 	 */
-	public function Border(color : uint = 0,
-						   alpha : Number = 1,
-						   weight : Number = 1,
-						   visible : Boolean = true,
-						   left : BorderSide = null,
-						   top : BorderSide = null,
-						   right : BorderSide = null,
-						   bottom : BorderSide = null)
+	public function Border (color : uint = 0,
+		alpha : Number = 1,
+		weight : Number = 1,
+		visible : Boolean = true,
+		left : BorderSide = null,
+		top : BorderSide = null,
+		right : BorderSide = null,
+		bottom : BorderSide = null)
 	{
 		this.color = color;
 		this.alpha = alpha;
@@ -93,7 +93,7 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set alpha(value : Number) : void
+	public function set alpha (value : Number) : void
 	{
 		left.alpha = top.alpha = right.alpha = bottom.alpha = value;
 	}
@@ -105,7 +105,7 @@ public class Border extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _bottom : BorderSide = new BorderSide;
+	private var _bottom : BorderSide = new BorderSide;
 	
 	[Bindable(event="bottomChanged")]
 	/**
@@ -113,7 +113,7 @@ public class Border extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get bottom() : BorderSide
+	public function get bottom () : BorderSide
 	{
 		return _bottom;
 	}
@@ -123,14 +123,14 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bottom(value : BorderSide) : void
+	public function set bottom (value : BorderSide) : void
 	{
-		if (_bottom === value)
+		if (bottom === value)
 			return;
 		
-		_bottom.assign(value);
+		bottom.assign (value);
 		
-		dispatchEvent(new Event("bottomChanged"));
+		dispatchEvent (new Event ("bottomChanged"));
 	}
 	
 	[Transient]
@@ -139,18 +139,18 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bottomObject(value : Object) : void
+	public function set bottomObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
-			bottom = BorderSide(value);
+			bottom = BorderSide (value);
 		else
 		{
-			_bottom.assignObject(value);
+			bottom.assignObject (value);
 			
-			dispatchEvent(new Event("bottomChanged"));
+			dispatchEvent (new Event ("bottomChanged"));
 		}
 	}
 	
@@ -164,7 +164,7 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set color(value : uint) : void
+	public function set color (value : uint) : void
 	{
 		left.color = top.color = right.color = bottom.color = value;
 	}
@@ -178,21 +178,21 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : Border) : void
+	spreadsheet function set global (value : Border) : void
 	{
 		if (value)
 		{
-			_left.global = value._left;
-			_top.global = value._top;
-			_right.global = value._right;
-			_bottom.global = value._bottom;
+			left.global = value.left;
+			top.global = value.top;
+			right.global = value.right;
+			bottom.global = value.bottom;
 		}
 		else
 		{
-			_left.global = null;
-			_top.global = null;
-			_right.global = null;
-			_bottom.global = null;
+			left.global = null;
+			top.global = null;
+			right.global = null;
+			bottom.global = null;
 		}
 	}
 	
@@ -203,7 +203,7 @@ public class Border extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _left : BorderSide = new BorderSide;
+	private var _left : BorderSide = new BorderSide;
 	
 	[Bindable(event="leftChanged")]
 	/**
@@ -211,7 +211,7 @@ public class Border extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get left() : BorderSide
+	public function get left () : BorderSide
 	{
 		return _left;
 	}
@@ -221,14 +221,14 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set left(value : BorderSide) : void
+	public function set left (value : BorderSide) : void
 	{
-		if (!value || _left === value)
+		if (left === value)
 			return;
 		
-		_left.assign(value);
+		left.assign (value);
 		
-		dispatchEvent(new Event("leftChanged"));
+		dispatchEvent (new Event ("leftChanged"));
 	}
 	
 	[Transient]
@@ -237,18 +237,18 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set leftObject(value : Object) : void
+	public function set leftObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
-			left = BorderSide(value);
+			left = BorderSide (value);
 		else
 		{
-			_left.assignObject(value);
+			left.assignObject (value);
 			
-			dispatchEvent(new Event("leftChanged"));
+			dispatchEvent (new Event ("leftChanged"));
 		}
 	}
 	
@@ -259,7 +259,7 @@ public class Border extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _right : BorderSide = new BorderSide;
+	private var _right : BorderSide = new BorderSide;
 	
 	[Bindable(event="rightChanged")]
 	/**
@@ -267,7 +267,7 @@ public class Border extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get right() : BorderSide
+	public function get right () : BorderSide
 	{
 		return _right;
 	}
@@ -277,14 +277,14 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set right(value : BorderSide) : void
+	public function set right (value : BorderSide) : void
 	{
-		if (_right === value)
+		if (right === value)
 			return;
 		
-		_right.assign(value);
+		right.assign (value);
 		
-		dispatchEvent(new Event("rightChanged"));
+		dispatchEvent (new Event ("rightChanged"));
 	}
 	
 	[Transient]
@@ -293,18 +293,18 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set rightObject(value : Object) : void
+	public function set rightObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
-			right = BorderSide(value);
+			right = BorderSide (value);
 		else
 		{
-			_right.assignObject(value);
+			right.assignObject (value);
 			
-			dispatchEvent(new Event("rightChanged"));
+			dispatchEvent (new Event ("rightChanged"));
 		}
 	}
 	
@@ -315,7 +315,7 @@ public class Border extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _top : BorderSide = new BorderSide;
+	private var _top : BorderSide = new BorderSide;
 	
 	[Bindable(event="topChanged")]
 	/**
@@ -323,7 +323,7 @@ public class Border extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get top() : BorderSide
+	public function get top () : BorderSide
 	{
 		return _top;
 	}
@@ -333,14 +333,14 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set top(value : BorderSide) : void
+	public function set top (value : BorderSide) : void
 	{
-		if (_top === value)
+		if (top === value)
 			return;
 		
-		_top.assign(value);
+		top.assign (value);
 		
-		dispatchEvent(new Event("topChanged"));
+		dispatchEvent (new Event ("topChanged"));
 	}
 	
 	[Transient]
@@ -349,18 +349,18 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set topObject(value : Object) : void
+	public function set topObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is BorderSide)
-			top = BorderSide(value);
+			top = BorderSide (value);
 		else
 		{
-			_top.assignObject(value);
+			top.assignObject (value);
 			
-			dispatchEvent(new Event("topChanged"));
+			dispatchEvent (new Event ("topChanged"));
 		}
 	}
 	
@@ -374,7 +374,7 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set visible(value : Boolean) : void
+	public function set visible (value : Boolean) : void
 	{
 		left.visible = top.visible = right.visible = bottom.visible = value;
 	}
@@ -389,7 +389,7 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set weight(value : Number) : void
+	public function set weight (value : Number) : void
 	{
 		left.weight = top.weight = right.weight = bottom.weight = value;
 	}
@@ -405,7 +405,7 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assign(value : Border) : void
+	public function assign (value : Border) : void
 	{
 		if (!value)
 			return;
@@ -421,40 +421,40 @@ public class Border extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assignObject(value : Object) : void
+	public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is Border)
 		{
-			assign(Border(value));
+			assign (Border (value));
 			
 			return;
 		}
 		
-		if (value.hasOwnProperty("color"))
-			color = uint(value.color);
+		if (value.hasOwnProperty ("color"))
+			color = uint (value.color);
 		
-		if (value.hasOwnProperty("alpha"))
-			alpha = Number(value.alpha);
+		if (value.hasOwnProperty ("alpha"))
+			alpha = Number (value.alpha);
 		
-		if (value.hasOwnProperty("weight"))
-			weight = Number(value.weight);
+		if (value.hasOwnProperty ("weight"))
+			weight = Number (value.weight);
 		
-		if (value.hasOwnProperty("visible"))
-			visible = Boolean(value.visible);
+		if (value.hasOwnProperty ("visible"))
+			visible = Boolean (value.visible);
 		
-		if (value.hasOwnProperty("left"))
+		if (value.hasOwnProperty ("left"))
 			leftObject = value.left;
 		
-		if (value.hasOwnProperty("top"))
+		if (value.hasOwnProperty ("top"))
 			topObject = value.top;
 		
-		if (value.hasOwnProperty("right"))
+		if (value.hasOwnProperty ("right"))
 			rightObject = value.right;
 		
-		if (value.hasOwnProperty("bottom"))
+		if (value.hasOwnProperty ("bottom"))
 			bottomObject = value.bottom;
 	}
 	
@@ -462,7 +462,7 @@ public class Border extends EventDispatcher
 	 *
 	 *
 	 */
-	spreadsheet function release() : void
+	spreadsheet function release () : void
 	{
 		global = null;
 	}

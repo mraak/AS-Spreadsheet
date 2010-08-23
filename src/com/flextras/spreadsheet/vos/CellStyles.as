@@ -78,24 +78,24 @@ public class CellStyles extends EventDispatcher
 	 * @param disabled
 	 *
 	 */
-	public function CellStyles(color : uint = 0,
-							   alpha : Number = 1,
-							   backgroundColor : uint = 0xFFFFFF,
-							   backgroundAlpha : Number = 1,
-							   bold : Boolean = false,
-							   italic : Boolean = false,
-							   underline : Boolean = false,
-							   font : String = "arial",
-							   horizontalAlign : String = TextAlign.CENTER,
-							   verticalAlign : String = VerticalAlign.MIDDLE,
-							   size : Number = 14,
-							   rollOutDuration : int = 500,
-							   cellGradientLevel : int = 50,
-							   border : Border = null,
-							   normal : StylesState = null,
-							   hovered : StylesState = null,
-							   selected : StylesState = null,
-							   disabled : StylesState = null)
+	public function CellStyles (color : uint = 0,
+		alpha : Number = 1,
+		backgroundColor : uint = 0xFFFFFF,
+		backgroundAlpha : Number = 1,
+		bold : Boolean = false,
+		italic : Boolean = false,
+		underline : Boolean = false,
+		font : String = "arial",
+		horizontalAlign : String = TextAlign.CENTER,
+		verticalAlign : String = VerticalAlign.MIDDLE,
+		size : Number = 14,
+		rollOutDuration : int = 500,
+		cellGradientLevel : int = 50,
+		border : Border = null,
+		normal : StylesState = null,
+		hovered : StylesState = null,
+		selected : StylesState = null,
+		disabled : StylesState = null)
 	{
 		this.color = color;
 		this.alpha = alpha;
@@ -136,7 +136,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set alpha(value : Number) : void
+	public function set alpha (value : Number) : void
 	{
 		normal.alpha = hovered.alpha = selected.alpha = disabled.alpha = value;
 	}
@@ -151,7 +151,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set backgroundAlpha(value : Number) : void
+	public function set backgroundAlpha (value : Number) : void
 	{
 		normal.backgroundAlpha = hovered.backgroundAlpha = selected.backgroundAlpha = disabled.backgroundAlpha = value;
 	}
@@ -166,7 +166,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set backgroundColor(value : uint) : void
+	public function set backgroundColor (value : uint) : void
 	{
 		normal.backgroundColor = hovered.backgroundColor = selected.backgroundColor = disabled.backgroundColor = value;
 	}
@@ -181,7 +181,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set bold(value : Boolean) : void
+	public function set bold (value : Boolean) : void
 	{
 		normal.bold = hovered.bold = selected.bold = disabled.bold = value;
 	}
@@ -196,7 +196,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set border(value : Border) : void
+	public function set border (value : Border) : void
 	{
 		if (!value)
 			return;
@@ -213,15 +213,15 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set borderObject(value : Object) : void
+	public function set borderObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
-		_normal.borderObject = value;
-		_hovered.borderObject = value;
-		_selected.borderObject = value;
-		_disabled.borderObject = value;
+		normal.borderObject = value;
+		hovered.borderObject = value;
+		selected.borderObject = value;
+		disabled.borderObject = value;
 	}
 	
 	//----------------------------------
@@ -231,19 +231,19 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _cellGradientLevel : int = 50;
+	private var _cellGradientLevel : int = 50;
 	
 	protected var cellGradientLevelChanged : Boolean;
 	
 	[Bindable(event="cellGradientLevelChanged")]
 	/**
-	 * 
-	 * @return 
-	 * 
-	 */	
-	public function get cellGradientLevel() : int
+	 *
+	 * @return
+	 *
+	 */
+	public function get cellGradientLevel () : int
 	{
-		return cellGradientLevelChanged || !_global ? _cellGradientLevel : _global._cellGradientLevel;
+		return cellGradientLevelChanged || !global ? _cellGradientLevel : global.cellGradientLevel;
 	}
 	
 	/**
@@ -258,16 +258,16 @@ public class CellStyles extends EventDispatcher
 	 *  If this parameter is 0, the RGB color returned
 	 *  is the same as the original color.
 	 */
-	public function set cellGradientLevel(value : int) : void
+	public function set cellGradientLevel (value : int) : void
 	{
-		if (_cellGradientLevel == value)
+		if (cellGradientLevel == value)
 			return;
 		
 		_cellGradientLevel = value;
 		
 		cellGradientLevelChanged = true;
 		
-		dispatchCellGradientLevelChangedEvent();
+		dispatchCellGradientLevelChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -280,7 +280,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set color(value : uint) : void
+	public function set color (value : uint) : void
 	{
 		normal.color = hovered.color = selected.color = disabled.color = value;
 	}
@@ -292,7 +292,7 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _disabled : StylesState = new StylesState;
+	private var _disabled : StylesState = new StylesState;
 	
 	[Bindable(event="disabledChanged")]
 	/**
@@ -300,7 +300,7 @@ public class CellStyles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get disabled() : StylesState
+	public function get disabled () : StylesState
 	{
 		return _disabled;
 	}
@@ -310,14 +310,14 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set disabled(value : StylesState) : void
+	public function set disabled (value : StylesState) : void
 	{
-		if (!value || _disabled === value)
+		if (disabled === value)
 			return;
 		
-		_disabled.assign(value);
+		disabled.assign (value);
 		
-		dispatchEvent(new Event("disabledChanged"));
+		dispatchEvent (new Event ("disabledChanged"));
 	}
 	
 	[Transient]
@@ -326,18 +326,18 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set disabledObject(value : Object) : void
+	public function set disabledObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
-			disabled = StylesState(value);
+			disabled = StylesState (value);
 		else
 		{
-			_disabled.assignObject(value);
+			disabled.assignObject (value);
 			
-			dispatchEvent(new Event("disabledChanged"));
+			dispatchEvent (new Event ("disabledChanged"));
 		}
 	}
 	
@@ -351,7 +351,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set font(value : String) : void
+	public function set font (value : String) : void
 	{
 		normal.font = hovered.font = selected.font = disabled.font = value;
 	}
@@ -363,14 +363,14 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _global : CellStyles;
+	private var _global : CellStyles;
 	
 	/**
 	 *
 	 * @return
 	 *
 	 */
-	spreadsheet function get global() : CellStyles
+	spreadsheet function get global () : CellStyles
 	{
 		return _global;
 	}
@@ -380,35 +380,35 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : CellStyles) : void
+	spreadsheet function set global (value : CellStyles) : void
 	{
-		if (_global === value)
+		if (global === value)
 			return;
 		
-		if(_global)
+		if (global)
 		{
-			_global.removeEventListener("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
-			_global.removeEventListener("rollOutDurationChanged", global_rollOutDurationChangedHandler);
+			global.removeEventListener ("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
+			global.removeEventListener ("rollOutDurationChanged", global_rollOutDurationChangedHandler);
 		}
 		
 		_global = value;
 		
 		if (value)
 		{
-			_normal.global = value._normal;
-			_hovered.global = value._hovered;
-			_selected.global = value._selected;
-			_disabled.global = value._disabled;
+			normal.global = value.normal;
+			hovered.global = value.hovered;
+			selected.global = value.selected;
+			disabled.global = value.disabled;
 			
-			value.addEventListener("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
-			value.addEventListener("rollOutDurationChanged", global_rollOutDurationChangedHandler);
+			value.addEventListener ("cellGradientLevelChanged", global_cellGradientLevelChangedHandler);
+			value.addEventListener ("rollOutDurationChanged", global_rollOutDurationChangedHandler);
 		}
 		else
 		{
-			_normal.global = null;
-			_hovered.global = null;
-			_selected.global = null;
-			_disabled.global = null;
+			normal.global = null;
+			hovered.global = null;
+			selected.global = null;
+			disabled.global = null;
 		}
 	}
 	
@@ -422,7 +422,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set horizontalAlign(value : String) : void
+	public function set horizontalAlign (value : String) : void
 	{
 		normal.horizontalAlign = hovered.horizontalAlign = selected.horizontalAlign = disabled.horizontalAlign = value;
 	}
@@ -434,7 +434,7 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _hovered : StylesState = new StylesState;
+	private var _hovered : StylesState = new StylesState;
 	
 	[Bindable(event="hoveredChanged")]
 	/**
@@ -442,7 +442,7 @@ public class CellStyles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get hovered() : StylesState
+	public function get hovered () : StylesState
 	{
 		return _hovered;
 	}
@@ -452,14 +452,14 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set hovered(value : StylesState) : void
+	public function set hovered (value : StylesState) : void
 	{
-		if (!value || _hovered === value)
+		if (hovered === value)
 			return;
 		
-		_hovered.assign(value);
+		hovered.assign (value);
 		
-		dispatchEvent(new Event("hoveredChanged"));
+		dispatchEvent (new Event ("hoveredChanged"));
 	}
 	
 	[Transient]
@@ -468,18 +468,18 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set hoveredObject(value : Object) : void
+	public function set hoveredObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
-			hovered = StylesState(value);
+			hovered = StylesState (value);
 		else
 		{
-			_hovered.assignObject(value);
+			hovered.assignObject (value);
 			
-			dispatchEvent(new Event("hoveredChanged"));
+			dispatchEvent (new Event ("hoveredChanged"));
 		}
 	}
 	
@@ -493,7 +493,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set italic(value : Boolean) : void
+	public function set italic (value : Boolean) : void
 	{
 		normal.italic = hovered.italic = selected.italic = disabled.italic = value;
 	}
@@ -505,7 +505,7 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _normal : StylesState = new StylesState;
+	private var _normal : StylesState = new StylesState;
 	
 	[Bindable(event="normalChanged")]
 	/**
@@ -513,7 +513,7 @@ public class CellStyles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get normal() : StylesState
+	public function get normal () : StylesState
 	{
 		return _normal;
 	}
@@ -523,14 +523,14 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set normal(value : StylesState) : void
+	public function set normal (value : StylesState) : void
 	{
-		if (!value || _normal === value)
+		if (normal === value)
 			return;
 		
-		_normal.assign(value);
+		normal.assign (value);
 		
-		dispatchEvent(new Event("normalChanged"));
+		dispatchEvent (new Event ("normalChanged"));
 	}
 	
 	[Transient]
@@ -539,18 +539,18 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set normalObject(value : Object) : void
+	public function set normalObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
-			normal = StylesState(value);
+			normal = StylesState (value);
 		else
 		{
-			_normal.assignObject(value);
+			normal.assignObject (value);
 			
-			dispatchEvent(new Event("normalChanged"));
+			dispatchEvent (new Event ("normalChanged"));
 		}
 	}
 	
@@ -561,7 +561,7 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _rollOutDuration : int = 500;
+	private var _rollOutDuration : int = 500;
 	
 	protected var rollOutDurationChanged : Boolean;
 	
@@ -571,9 +571,9 @@ public class CellStyles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get rollOutDuration() : int
+	public function get rollOutDuration () : int
 	{
-		return rollOutDurationChanged || !_global ? _rollOutDuration : _global._rollOutDuration;
+		return rollOutDurationChanged || !global ? _rollOutDuration : global.rollOutDuration;
 	}
 	
 	/**
@@ -581,16 +581,16 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set rollOutDuration(value : int) : void
+	public function set rollOutDuration (value : int) : void
 	{
-		if (_rollOutDuration == value)
+		if (rollOutDuration == value)
 			return;
 		
 		_rollOutDuration = value;
 		
 		rollOutDurationChanged = true;
 		
-		dispatchRollOutDurationChangedEvent();
+		dispatchRollOutDurationChangedEvent ();
 	}
 	
 	//----------------------------------
@@ -600,7 +600,7 @@ public class CellStyles extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _selected : StylesState = new StylesState;
+	private var _selected : StylesState = new StylesState;
 	
 	[Bindable(event="selectedChanged")]
 	/**
@@ -608,7 +608,7 @@ public class CellStyles extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get selected() : StylesState
+	public function get selected () : StylesState
 	{
 		return _selected;
 	}
@@ -618,14 +618,14 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set selected(value : StylesState) : void
+	public function set selected (value : StylesState) : void
 	{
-		if (!value || _selected === value)
+		if (selected === value)
 			return;
 		
-		_selected.assign(value);
+		selected.assign (value);
 		
-		dispatchEvent(new Event("selectedChanged"));
+		dispatchEvent (new Event ("selectedChanged"));
 	}
 	
 	[Transient]
@@ -634,18 +634,18 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set selectedObject(value : Object) : void
+	public function set selectedObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
-			selected = StylesState(value);
+			selected = StylesState (value);
 		else
 		{
-			_selected.assignObject(value);
+			selected.assignObject (value);
 			
-			dispatchEvent(new Event("selectedChanged"));
+			dispatchEvent (new Event ("selectedChanged"));
 		}
 	}
 	
@@ -659,7 +659,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set size(value : uint) : void
+	public function set size (value : uint) : void
 	{
 		normal.size = hovered.size = selected.size = disabled.size = value;
 	}
@@ -674,7 +674,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set underline(value : Boolean) : void
+	public function set underline (value : Boolean) : void
 	{
 		normal.underline = hovered.underline = selected.underline = disabled.underline = value;
 	}
@@ -689,7 +689,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set verticalAlign(value : String) : void
+	public function set verticalAlign (value : String) : void
 	{
 		normal.verticalAlign = hovered.verticalAlign = selected.verticalAlign = disabled.verticalAlign = value;
 	}
@@ -705,7 +705,7 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assign(value : CellStyles) : void
+	public function assign (value : CellStyles) : void
 	{
 		if (!value)
 			return;
@@ -724,70 +724,70 @@ public class CellStyles extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assignObject(value : Object) : void
+	public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is CellStyles)
 		{
-			assign(CellStyles(value));
+			assign (CellStyles (value));
 			
 			return;
 		}
 		
-		if (value.hasOwnProperty("color"))
-			color = uint(value.color);
+		if (value.hasOwnProperty ("color"))
+			color = uint (value.color);
 		
-		if (value.hasOwnProperty("alpha"))
-			alpha = Number(value.alpha);
+		if (value.hasOwnProperty ("alpha"))
+			alpha = Number (value.alpha);
 		
-		if (value.hasOwnProperty("backgroundColor"))
-			backgroundColor = uint(value.backgroundColor);
+		if (value.hasOwnProperty ("backgroundColor"))
+			backgroundColor = uint (value.backgroundColor);
 		
-		if (value.hasOwnProperty("backgroundAlpha"))
-			backgroundAlpha = Number(value.backgroundAlpha);
+		if (value.hasOwnProperty ("backgroundAlpha"))
+			backgroundAlpha = Number (value.backgroundAlpha);
 		
-		if (value.hasOwnProperty("bold"))
-			bold = Boolean(value.bold);
+		if (value.hasOwnProperty ("bold"))
+			bold = Boolean (value.bold);
 		
-		if (value.hasOwnProperty("italic"))
-			italic = Boolean(value.italic);
+		if (value.hasOwnProperty ("italic"))
+			italic = Boolean (value.italic);
 		
-		if (value.hasOwnProperty("underline"))
-			underline = Boolean(value.underline);
+		if (value.hasOwnProperty ("underline"))
+			underline = Boolean (value.underline);
 		
-		if (value.hasOwnProperty("font"))
-			font = String(value.font);
+		if (value.hasOwnProperty ("font"))
+			font = String (value.font);
 		
-		if (value.hasOwnProperty("horizontalAlign"))
-			horizontalAlign = String(value.horizontalAlign);
+		if (value.hasOwnProperty ("horizontalAlign"))
+			horizontalAlign = String (value.horizontalAlign);
 		
-		if (value.hasOwnProperty("verticalAlign"))
-			verticalAlign = String(value.verticalAlign);
+		if (value.hasOwnProperty ("verticalAlign"))
+			verticalAlign = String (value.verticalAlign);
 		
-		if (value.hasOwnProperty("size"))
-			size = uint(value.size);
+		if (value.hasOwnProperty ("size"))
+			size = uint (value.size);
 		
-		if (value.hasOwnProperty("rollOutDuration"))
-			rollOutDuration = int(value.rollOutDuration);
+		if (value.hasOwnProperty ("rollOutDuration"))
+			rollOutDuration = int (value.rollOutDuration);
 		
-		if (value.hasOwnProperty("cellGradientLevel"))
-			cellGradientLevel = int(value.cellGradientLevel);
+		if (value.hasOwnProperty ("cellGradientLevel"))
+			cellGradientLevel = int (value.cellGradientLevel);
 		
-		if (value.hasOwnProperty("border"))
+		if (value.hasOwnProperty ("border"))
 			borderObject = value.border;
 		
-		if (value.hasOwnProperty("normal"))
+		if (value.hasOwnProperty ("normal"))
 			normalObject = value.normal;
 		
-		if (value.hasOwnProperty("hovered"))
+		if (value.hasOwnProperty ("hovered"))
 			hoveredObject = value.hovered;
 		
-		if (value.hasOwnProperty("selected"))
+		if (value.hasOwnProperty ("selected"))
 			selectedObject = value.selected;
 		
-		if (value.hasOwnProperty("disabled"))
+		if (value.hasOwnProperty ("disabled"))
 			disabledObject = value.disabled;
 	}
 	
@@ -795,25 +795,25 @@ public class CellStyles extends EventDispatcher
 	 *
 	 *
 	 */
-	protected function dispatchCellGradientLevelChangedEvent() : void
+	protected function dispatchCellGradientLevelChangedEvent () : void
 	{
-		dispatchEvent(new Event("cellGradientLevelChanged"));
+		dispatchEvent (new Event ("cellGradientLevelChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	protected function dispatchRollOutDurationChangedEvent() : void
+	protected function dispatchRollOutDurationChangedEvent () : void
 	{
-		dispatchEvent(new Event("rollOutDurationChanged"));
+		dispatchEvent (new Event ("rollOutDurationChanged"));
 	}
 	
 	/**
 	 *
 	 *
 	 */
-	spreadsheet function release() : void
+	spreadsheet function release () : void
 	{
 		global = null;
 	}
@@ -829,9 +829,9 @@ public class CellStyles extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_cellGradientLevelChangedHandler(e : Event) : void
+	protected function global_cellGradientLevelChangedHandler (e : Event) : void
 	{
-		dispatchCellGradientLevelChangedEvent();
+		dispatchCellGradientLevelChangedEvent ();
 	}
 	
 	/**
@@ -839,10 +839,10 @@ public class CellStyles extends EventDispatcher
 	 * @param e
 	 *
 	 */
-	protected function global_rollOutDurationChangedHandler(e : Event) : void
+	protected function global_rollOutDurationChangedHandler (e : Event) : void
 	{
-		dispatchRollOutDurationChangedEvent();
+		dispatchRollOutDurationChangedEvent ();
 	}
-	
+
 }
 }

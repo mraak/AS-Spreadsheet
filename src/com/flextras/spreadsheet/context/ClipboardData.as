@@ -10,17 +10,18 @@ final public class ClipboardData extends EventDispatcher
 {
 	public static const instance : ClipboardData = new ClipboardData;
 	
-	protected var _range : Vector.<Cell>;
+	private var _range : Vector.<Cell>;
+	
 	public var copy : Boolean;
 	
-	public function get range() : Vector.<Cell>
+	public function get range () : Vector.<Cell>
 	{
 		return _range;
 	}
 	
-	public function set range(value : Vector.<Cell>) : void
+	public function set range (value : Vector.<Cell>) : void
 	{
-		if (_range === value)
+		if (range === value)
 			return;
 		
 		_range = value;
@@ -28,21 +29,21 @@ final public class ClipboardData extends EventDispatcher
 		allowPaste = value && value.length > 0;
 	}
 	
-	protected var _allowPaste : Boolean;
+	private var _allowPaste : Boolean;
 	
-	public function get allowPaste() : Boolean
+	public function get allowPaste () : Boolean
 	{
 		return _allowPaste;
 	}
 	
-	public function set allowPaste(value : Boolean) : void
+	public function set allowPaste (value : Boolean) : void
 	{
-		if (_allowPaste == value)
+		if (allowPaste == value)
 			return;
 		
 		_allowPaste = value;
 		
-		dispatchEvent(new Event("allowPasteChanged"));
+		dispatchEvent (new Event ("allowPasteChanged"));
 	}
 
 }

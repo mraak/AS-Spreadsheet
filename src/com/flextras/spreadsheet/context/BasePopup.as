@@ -11,53 +11,53 @@ import mx.managers.PopUpManager;
 
 public class BasePopup extends TitleWindow
 {
-	protected var _grid : Spreadsheet;
-	
 	public var cells : Vector.<Cell>;
 	
-	protected var _cell : Cell;
+	private var _cell : Cell;
 	
 	[Bindable(event="cellChanged")]
-	public function get cell() : Cell
+	public function get cell () : Cell
 	{
 		return _cell;
 	}
 	
-	public function set cell(value : Cell) : void
+	public function set cell (value : Cell) : void
 	{
-		if (_cell === value)
+		if (cell === value)
 			return;
 		
 		_cell = value;
 		
-		dispatchEvent(new Event("cellChanged"));
+		dispatchEvent (new Event ("cellChanged"));
 	}
 	
+	private var _grid : Spreadsheet;
+	
 	[Bindable]
-	public function get grid() : Spreadsheet
+	public function get grid () : Spreadsheet
 	{
 		return _grid;
 	}
 	
-	public function set grid(value : Spreadsheet) : void
+	public function set grid (value : Spreadsheet) : void
 	{
-		if (_grid === value)
+		if (grid === value)
 			return;
 		
 		_grid = value;
 	}
 	
-	public function BasePopup()
+	public function BasePopup ()
 	{
-		super();
+		super ();
 		
 		showCloseButton = true;
-		addEventListener(CloseEvent.CLOSE, closeHandler);
+		addEventListener (CloseEvent.CLOSE, closeHandler);
 	}
 	
-	protected function closeHandler(e : CloseEvent) : void
+	protected function closeHandler (e : CloseEvent) : void
 	{
-		PopUpManager.removePopUp(this);
+		PopUpManager.removePopUp (this);
 	}
 }
 }

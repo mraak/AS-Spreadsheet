@@ -124,9 +124,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 			owner.addEventListener (RowEvent.REMOVED, removeTemporaryOldID, false, 100);
 		}
 		
-		//_condition.addEventListener("leftChanged", conditionChanged);
-		_condition.addEventListener ("operatorChanged", conditionChanged);
-		_condition.addEventListener ("rightChanged", conditionChanged);
+		//condition.addEventListener("leftChanged", conditionChanged);
+		condition.addEventListener ("operatorChanged", conditionChanged);
+		condition.addEventListener ("rightChanged", conditionChanged);
 	
 		//controlObject.addEventListener("expressionChanged", controlObject_expressionChanged);
 	}
@@ -160,7 +160,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected var _bounds : Rectangle;
+	private var _bounds : Rectangle;
 	
 	/**
 	 *
@@ -184,7 +184,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get columnIndex () : uint
 	{
-		return _bounds.x;
+		return bounds.x;
 	}
 	
 	//----------------------------------
@@ -199,7 +199,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get columnSpan () : uint
 	{
-		return _bounds.width;
+		return bounds.width;
 	}
 	
 	//----------------------------------
@@ -209,7 +209,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected const _condition : Condition = new Condition;
+	private var _condition : Condition = new Condition;
 	
 	[Bindable(event="conditionChanged")]
 	/**
@@ -228,10 +228,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	public function set condition (value : Condition) : void
 	{
-		if (!value || _condition === value)
+		if (condition === value)
 			return;
 		
-		_condition.assign (value);
+		condition.assign (value);
 		
 		dispatchEvent (new Event ("conditionChanged"));
 	}
@@ -251,7 +251,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 			condition = Condition (value);
 		else
 		{
-			_condition.assignObject (value);
+			condition.assignObject (value);
 			
 			dispatchEvent (new Event ("conditionChanged"));
 		}
@@ -264,7 +264,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected var _contextMenuEnabled : Boolean;
+	private var _contextMenuEnabled : Boolean;
 	
 	[Bindable(event="contextMenuEnabledChanged")]
 	/**
@@ -284,7 +284,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set contextMenuEnabled (value : Boolean) : void
 	{
-		if (_contextMenuEnabled == value)
+		if (contextMenuEnabled == value)
 			return;
 		
 		_contextMenuEnabled = value;
@@ -299,7 +299,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected var _enabled : Boolean = true;
+	private var _enabled : Boolean = true;
 	
 	[Bindable(event="enabledChanged")]
 	/**
@@ -319,7 +319,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set enabled (value : Boolean) : void
 	{
-		if (_enabled == value)
+		if (enabled == value)
 			return;
 		
 		_enabled = value;
@@ -336,7 +336,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected var _expression : String;
+	private var _expression : String;
 	
 	[Bindable(event="expressionChanged")]
 	[Bindable(event="valueChanged")]
@@ -359,7 +359,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set expression (value : String) : void
 	{
-		if (owner.expressionFunction == null && _expression == value)
+		if (owner.expressionFunction == null && expression == value)
 			return;
 		
 		_expression = value;
@@ -381,7 +381,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent (new Event ("expressionChanged"));
 	}
 	
-	protected var _expressionObject : Object;
+	private var _expressionObject : Object;
 	
 	spreadsheet function get expressionObject () : Object
 	{
@@ -417,7 +417,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 				expression = value[owner.expressionField];
 		}
 		else
-			_expression = controlObject.exp = this.value = null;
+			expression = controlObject.exp = this.value = null;
 	}
 	
 	//----------------------------------
@@ -431,7 +431,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	spreadsheet function set globalStyles (value : CellStyles) : void
 	{
-		_styles.global = value;
+		styles.global = value;
 	}
 	
 	//----------------------------------
@@ -445,7 +445,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	spreadsheet function set globalCondition (value : Condition) : void
 	{
-		_condition.global = value;
+		condition.global = value;
 	}
 	
 	//----------------------------------
@@ -475,7 +475,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get rowIndex () : uint
 	{
-		return _bounds.y;
+		return bounds.y;
 	}
 	
 	//----------------------------------
@@ -490,7 +490,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get rowSpan () : uint
 	{
-		return _bounds.height;
+		return bounds.height;
 	}
 	
 	//----------------------------------
@@ -500,7 +500,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected const _styles : CellStyles = new CellStyles;
+	private var _styles : CellStyles = new CellStyles;
 	
 	[Bindable(event="stylesChanged")]
 	/**
@@ -520,10 +520,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set styles (value : CellStyles) : void
 	{
-		if (!value || _styles === value)
+		if (!value || styles === value)
 			return;
 		
-		_styles.assign (value);
+		styles.assign (value);
 		
 		dispatchEvent (new Event ("stylesChanged"));
 	}
@@ -543,7 +543,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 			styles = CellStyles (value);
 		else
 		{
-			_styles.assignObject (value);
+			styles.assignObject (value);
 			
 			dispatchEvent (new Event ("stylesChanged"));
 		}
@@ -556,7 +556,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 *
 	 */
-	protected var _value : String;
+	private var _value : String;
 	
 	[Bindable(event="valueChanged")]
 	/**
@@ -576,7 +576,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set value (value : String) : void
 	{
-		if (_value == value)
+		if (value == value)
 			return;
 		
 		_value = value;
@@ -593,7 +593,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 * @private
 	 */
-	protected var _wordWrap : Boolean;
+	private var _wordWrap : Boolean;
 	
 	[Bindable(event="wordWrapChanged")]
 	/**
@@ -610,7 +610,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function set wordWrap (value : Boolean) : void
 	{
-		if (_wordWrap == value)
+		if (wordWrap == value)
 			return;
 		
 		_wordWrap = value;
@@ -737,7 +737,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function moveHorizontally (amount : uint) : void
 	{
-		_bounds.x = amount; //.offset(amount, 0);
+		bounds.x = amount; //.offset(amount, 0);
 		
 		controlObject.colIndex = amount;
 		controlObject.col = String (Utils.alphabet[amount]).toLowerCase ();
@@ -757,7 +757,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function moveVertically (amount : uint) : void
 	{
-		_bounds.y = amount; //.offset(0, amount);
+		bounds.y = amount; //.offset(0, amount);
 		
 		controlObject.rowIndex = amount;
 		controlObject.row = String (amount);
@@ -816,9 +816,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 			owner.removeEventListener (RowEvent.REMOVED, removeTemporaryOldID);
 		}
 		
-		//_condition.removeEventListener("leftChanged", conditionChanged);
-		_condition.removeEventListener ("operatorChanged", conditionChanged);
-		_condition.removeEventListener ("rightChanged", conditionChanged);
+		//condition.removeEventListener("leftChanged", conditionChanged);
+		condition.removeEventListener ("operatorChanged", conditionChanged);
+		condition.removeEventListener ("rightChanged", conditionChanged);
 		
 		controlObject.removeEventListener ("expressionChanged", controlObject_expressionChanged);
 		
@@ -836,7 +836,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (amount < 0)
 			return;
 		
-		_bounds.width = amount; //+=
+		bounds.width = amount; //+=
 	}
 	
 	/**
@@ -849,7 +849,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (amount < 0)
 			return;
 		
-		_bounds.height = amount; //+=
+		bounds.height = amount; //+=
 	}
 	
 	/**
@@ -860,7 +860,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function setBounds (value : Rectangle) : void
 	{
-		if (!value || _bounds === value)
+		if (!value || bounds === value)
 			return;
 		
 		_bounds = value;
@@ -928,13 +928,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		var amount : int = 1;
 		
-		if (_bounds.x >= index)
-			moveHorizontally (_bounds.x + amount);
+		if (bounds.x >= index)
+			moveHorizontally (bounds.x + amount);
 		
 		moveExpressionHorizontally (amount, index);
 		
-		if (_bounds.width > 0 && _bounds.right >= index)
-			resizeHorizontally (_bounds.width + 1);
+		if (bounds.width > 0 && bounds.right >= index)
+			resizeHorizontally (bounds.width + 1);
 	}
 	
 	/**
@@ -948,13 +948,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		var amount : int = -1;
 		
-		if (_bounds.x > index)
-			moveHorizontally (_bounds.x + amount);
+		if (bounds.x > index)
+			moveHorizontally (bounds.x + amount);
 		
 		moveExpressionHorizontally (amount, index);
 		
-		if (_bounds.width > 0 && _bounds.right >= index)
-			resizeHorizontally (_bounds.width - 1);
+		if (bounds.width > 0 && bounds.right >= index)
+			resizeHorizontally (bounds.width - 1);
 	}
 	
 	/**
@@ -979,7 +979,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	{
 		var amount : Rectangle = e.data.resizeAmount;
 		
-		if (_bounds.x == amount.x && _bounds.y == amount.y)
+		if (bounds.x == amount.x && bounds.y == amount.y)
 		{
 			resizeHorizontally (amount.width);
 			resizeVertically (amount.height);
@@ -997,13 +997,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		var amount : int = 1;
 		
-		if (_bounds.y >= index)
-			moveVertically (_bounds.y + amount);
+		if (bounds.y >= index)
+			moveVertically (bounds.y + amount);
 		
 		moveExpressionVertically (amount, index);
 		
-		if (_bounds.height > 0 && _bounds.bottom >= index)
-			resizeVertically (_bounds.height + 1);
+		if (bounds.height > 0 && bounds.bottom >= index)
+			resizeVertically (bounds.height + 1);
 	}
 	
 	/**
@@ -1017,13 +1017,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		var amount : int = -1;
 		
-		if (_bounds.y > index)
-			moveVertically (_bounds.y + amount);
+		if (bounds.y > index)
+			moveVertically (bounds.y + amount);
 		
 		moveExpressionVertically (amount, index);
 		
-		if (_bounds.height > 0 && _bounds.bottom >= index)
-			resizeVertically (_bounds.height - 1);
+		if (bounds.height > 0 && bounds.bottom >= index)
+			resizeVertically (bounds.height - 1);
 	}
 	
 	/**

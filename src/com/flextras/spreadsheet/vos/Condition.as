@@ -44,7 +44,7 @@ public class Condition extends EventDispatcher
 	 * @param styles
 	 *
 	 */
-	public function Condition(left : Number = NaN, operator : String = null, right : Number = NaN, styles : Styles = null)
+	public function Condition (left : Number = NaN, operator : String = null, right : Number = NaN, styles : Styles = null)
 	{
 		this.left = left;
 		this.operator = operator;
@@ -80,12 +80,12 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	spreadsheet function set global(value : Condition) : void
+	spreadsheet function set global (value : Condition) : void
 	{
 		if (value)
-			_styles.global = value._styles;
+			styles.global = value.styles;
 		else
-			_styles.global = null;
+			styles.global = null;
 	}
 	
 	//----------------------------------
@@ -95,7 +95,7 @@ public class Condition extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _left : Number;
+	private var _left : Number;
 	
 	[Bindable(event="leftChanged")]
 	/**
@@ -103,7 +103,7 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get left() : Number
+	public function get left () : Number
 	{
 		return _left;
 	}
@@ -113,14 +113,14 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set left(value : Number) : void
+	public function set left (value : Number) : void
 	{
-		if (_left == value)
+		if (left == value)
 			return;
 		
 		_left = value;
 		
-		dispatchEvent(new Event("leftChanged"));
+		dispatchEvent (new Event ("leftChanged"));
 	}
 	
 	//----------------------------------
@@ -134,9 +134,9 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get leftValid() : Boolean
+	public function get leftValid () : Boolean
 	{
-		return !isNaN(_left);
+		return !isNaN (left);
 	}
 	
 	//----------------------------------
@@ -146,7 +146,7 @@ public class Condition extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _operator : String;
+	private var _operator : String;
 	
 	[Bindable(event="operatorChanged")]
 	/**
@@ -154,7 +154,7 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get operator() : String
+	public function get operator () : String
 	{
 		return _operator;
 	}
@@ -164,14 +164,14 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set operator(value : String) : void
+	public function set operator (value : String) : void
 	{
-		if (_operator == value)
+		if (operator == value)
 			return;
 		
 		_operator = value;
 		
-		dispatchEvent(new Event("operatorChanged"));
+		dispatchEvent (new Event ("operatorChanged"));
 	}
 	
 	//----------------------------------
@@ -185,9 +185,9 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get operatorValid() : Boolean
+	public function get operatorValid () : Boolean
 	{
-		return _operator && _operator.length > 0;
+		return operator && operator.length > 0;
 	}
 	
 	//----------------------------------
@@ -197,7 +197,7 @@ public class Condition extends EventDispatcher
 	/**
 	 *
 	 */
-	protected var _right : Number;
+	private var _right : Number;
 	
 	[Bindable(event="rightChanged")]
 	/**
@@ -205,7 +205,7 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get right() : Number
+	public function get right () : Number
 	{
 		return _right;
 	}
@@ -215,14 +215,14 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set right(value : Number) : void
+	public function set right (value : Number) : void
 	{
-		if (_right == value)
+		if (right == value)
 			return;
 		
 		_right = value;
 		
-		dispatchEvent(new Event("rightChanged"));
+		dispatchEvent (new Event ("rightChanged"));
 	}
 	
 	//----------------------------------
@@ -236,9 +236,9 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get rightValid() : Boolean
+	public function get rightValid () : Boolean
 	{
-		return !isNaN(_right);
+		return !isNaN (right);
 	}
 	
 	//----------------------------------
@@ -254,7 +254,7 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get valid() : Boolean
+	public function get valid () : Boolean
 	{
 		return leftValid && operatorValid && rightValid;
 	}
@@ -266,7 +266,7 @@ public class Condition extends EventDispatcher
 	/**
 	 *
 	 */
-	protected const _styles : Styles = new Styles;
+	private var _styles : Styles = new Styles;
 	
 	[Bindable(event="stylesChanged")]
 	/**
@@ -274,7 +274,7 @@ public class Condition extends EventDispatcher
 	 * @return
 	 *
 	 */
-	public function get styles() : Styles
+	public function get styles () : Styles
 	{
 		return _styles;
 	}
@@ -284,14 +284,14 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set styles(value : Styles) : void
+	public function set styles (value : Styles) : void
 	{
-		if (!value || _styles === value)
+		if (styles === value)
 			return;
 		
-		_styles.assign(value);
+		styles.assign (value);
 		
-		dispatchEvent(new Event("stylesChanged"));
+		dispatchEvent (new Event ("stylesChanged"));
 	}
 	
 	[Transient]
@@ -300,18 +300,18 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function set stylesObject(value : Object) : void
+	public function set stylesObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is Styles)
-			styles = Styles(value);
+			styles = Styles (value);
 		else
 		{
-			_styles.assignObject(value);
+			styles.assignObject (value);
 			
-			dispatchEvent(new Event("stylesChanged"));
+			dispatchEvent (new Event ("stylesChanged"));
 		}
 	}
 	
@@ -326,7 +326,7 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assign(value : Condition) : void
+	public function assign (value : Condition) : void
 	{
 		if (!value)
 			return;
@@ -343,28 +343,28 @@ public class Condition extends EventDispatcher
 	 * @param value
 	 *
 	 */
-	public function assignObject(value : Object) : void
+	public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is Condition)
 		{
-			assign(Condition(value));
+			assign (Condition (value));
 			
 			return;
 		}
 		
-		if (value.hasOwnProperty("left"))
-			left = Number(value.left);
+		if (value.hasOwnProperty ("left"))
+			left = Number (value.left);
 		
-		if (value.hasOwnProperty("operator"))
-			operator = String(value.operator);
+		if (value.hasOwnProperty ("operator"))
+			operator = String (value.operator);
 		
-		if (value.hasOwnProperty("right"))
-			right = Number(value.right);
+		if (value.hasOwnProperty ("right"))
+			right = Number (value.right);
 		
-		if (value.hasOwnProperty("styles"))
+		if (value.hasOwnProperty ("styles"))
 			stylesObject = value.styles;
 	}
 	
@@ -372,7 +372,7 @@ public class Condition extends EventDispatcher
 	 *
 	 *
 	 */
-	spreadsheet function release() : void
+	spreadsheet function release () : void
 	{
 		global = null;
 	}

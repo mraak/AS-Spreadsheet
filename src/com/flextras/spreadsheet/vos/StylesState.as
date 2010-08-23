@@ -47,20 +47,20 @@ public class StylesState extends Styles
 	 * @param border
 	 *
 	 */
-	public function StylesState(color : uint = 0,
-								alpha : Number = 1,
-								backgroundColor : uint = 0xFFFFFF,
-								backgroundAlpha : Number = 1,
-								bold : Boolean = false,
-								italic : Boolean = false,
-								underline : Boolean = false,
-								font : String = "arial",
-								horizontalAlign : String = TextAlign.CENTER,
-								verticalAlign : String = VerticalAlign.MIDDLE,
-								size : Number = 14,
-								border : Border = null)
+	public function StylesState (color : uint = 0,
+		alpha : Number = 1,
+		backgroundColor : uint = 0xFFFFFF,
+		backgroundAlpha : Number = 1,
+		bold : Boolean = false,
+		italic : Boolean = false,
+		underline : Boolean = false,
+		font : String = "arial",
+		horizontalAlign : String = TextAlign.CENTER,
+		verticalAlign : String = VerticalAlign.MIDDLE,
+		size : Number = 14,
+		border : Border = null)
 	{
-		super(color, alpha, backgroundColor, backgroundAlpha, bold, italic, underline, font, horizontalAlign, verticalAlign, size);
+		super (color, alpha, backgroundColor, backgroundAlpha, bold, italic, underline, font, horizontalAlign, verticalAlign, size);
 		
 		this.border = border;
 	}
@@ -78,7 +78,7 @@ public class StylesState extends Styles
 	/**
 	 *
 	 */
-	protected const _border : Border = new Border;
+	private var _border : Border = new Border;
 	
 	[Bindable(event="borderChanged")]
 	/**
@@ -86,7 +86,7 @@ public class StylesState extends Styles
 	 * @return
 	 *
 	 */
-	public function get border() : Border
+	public function get border () : Border
 	{
 		return _border;
 	}
@@ -96,14 +96,14 @@ public class StylesState extends Styles
 	 * @param value
 	 *
 	 */
-	public function set border(value : Border) : void
+	public function set border (value : Border) : void
 	{
-		if (!value || _border === value)
+		if (border === value)
 			return;
 		
-		_border.assign(value);
+		border.assign (value);
 		
-		dispatchEvent(new Event("borderChanged"));
+		dispatchEvent (new Event ("borderChanged"));
 	}
 	
 	[Transient]
@@ -112,18 +112,18 @@ public class StylesState extends Styles
 	 * @param value
 	 *
 	 */
-	public function set borderObject(value : Object) : void
+	public function set borderObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is Border)
-			border = Border(value);
+			border = Border (value);
 		else
 		{
-			_border.assignObject(value);
+			border.assignObject (value);
 			
-			dispatchEvent(new Event("borderChanged"));
+			dispatchEvent (new Event ("borderChanged"));
 		}
 	}
 	
@@ -136,17 +136,17 @@ public class StylesState extends Styles
 	 * @param value
 	 *
 	 */
-	override spreadsheet function set global(value : Styles) : void
+	override spreadsheet function set global (value : Styles) : void
 	{
 		super.global = value;
 		
 		if (value)
 		{
 			if (value is StylesState)
-				_border.global = StylesState(value)._border;
+				border.global = StylesState (value).border;
 		}
 		else
-			_border.global = null;
+			border.global = null;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -160,15 +160,15 @@ public class StylesState extends Styles
 	 * @param value
 	 *
 	 */
-	override public function assign(value : Styles) : void
+	override public function assign (value : Styles) : void
 	{
 		if (!value)
 			return;
 		
-		super.assign(value);
+		super.assign (value);
 		
 		if (value is StylesState)
-			border = StylesState(value).border;
+			border = StylesState (value).border;
 	}
 	
 	/**
@@ -176,21 +176,21 @@ public class StylesState extends Styles
 	 * @param value
 	 *
 	 */
-	override public function assignObject(value : Object) : void
+	override public function assignObject (value : Object) : void
 	{
 		if (!value)
 			return;
 		
 		if (value is StylesState)
 		{
-			assign(StylesState(value));
+			assign (StylesState (value));
 			
 			return;
 		}
 		
-		super.assignObject(value);
+		super.assignObject (value);
 		
-		if (value.hasOwnProperty("border"))
+		if (value.hasOwnProperty ("border"))
 			borderObject = value.border;
 	}
 	
@@ -198,9 +198,9 @@ public class StylesState extends Styles
 	 *
 	 *
 	 */
-	override spreadsheet function release() : void
+	override spreadsheet function release () : void
 	{
-		super.release();
+		super.release ();
 		
 		global = null;
 	}

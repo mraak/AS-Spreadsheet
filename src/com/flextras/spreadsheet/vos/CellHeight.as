@@ -3,11 +3,11 @@ package com.flextras.spreadsheet.vos
 
 public class CellHeight extends CellSize
 {
-	public function CellHeight()
+	public function CellHeight ()
 	{
-		super();
+		super ();
 		
-		setMin(40);
+		setMin (40);
 	}
 }
 }

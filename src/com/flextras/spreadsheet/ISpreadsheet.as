@@ -106,7 +106,7 @@ public interface ISpreadsheet
 	/**
 	 * This method will force all expressions to invalidate during the next render event.
 	 */
-	function updateExpressions () : void;
+	function invalidateExpressions () : void;
 }
 
 }

@@ -70,10 +70,10 @@ public class Menu implements IFlexContextMenu
 	
 	public function set target(value : InteractiveObject) : void
 	{
-		if (_target === value)
+		if (target === value)
 			return;
 		
-		if(_target)
+		if(target)
 		{
 			clipboard.removeEventListener("allowPasteChanged", allowPasteHandler);
 			
