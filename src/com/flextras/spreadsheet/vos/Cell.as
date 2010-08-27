@@ -109,19 +109,19 @@ public class Cell extends EventDispatcher implements IExternalizable
 		
 		if (owner)
 		{
-			owner.addEventListener (CellEvent.RESIZE, resizeCellHandler, false, 100);
+			owner.addEventListener (CellEvent.RESIZE, resizeCellHandler, false);
 			
-			owner.addEventListener (ColumnEvent.INSERT, columnInsertHandler, false, 100);
-			owner.addEventListener (ColumnEvent.REMOVE, columnRemoveHandler, false, 100);
+			owner.addEventListener (ColumnEvent.INSERT, columnInsertHandler, false);
+			owner.addEventListener (ColumnEvent.REMOVE, columnRemoveHandler, false);
 			
-			owner.addEventListener (RowEvent.INSERT, rowInsertHandler, false, 100);
-			owner.addEventListener (RowEvent.REMOVE, rowRemoveHandler, false, 100);
+			owner.addEventListener (RowEvent.INSERT, rowInsertHandler, false);
+			owner.addEventListener (RowEvent.REMOVE, rowRemoveHandler, false);
 			
-			owner.addEventListener (ColumnEvent.INSERTED, removeTemporaryOldID, false, 100);
-			owner.addEventListener (ColumnEvent.REMOVED, removeTemporaryOldID, false, 100);
+			owner.addEventListener (ColumnEvent.INSERTED, removeTemporaryOldID, false);
+			owner.addEventListener (ColumnEvent.REMOVED, removeTemporaryOldID, false);
 			
-			owner.addEventListener (RowEvent.INSERTED, removeTemporaryOldID, false, 100);
-			owner.addEventListener (RowEvent.REMOVED, removeTemporaryOldID, false, 100);
+			owner.addEventListener (RowEvent.INSERTED, removeTemporaryOldID, false);
+			owner.addEventListener (RowEvent.REMOVED, removeTemporaryOldID, false);
 		}
 		
 		//_condition.addEventListener("leftChanged", conditionChanged);
@@ -924,6 +924,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function columnInsertHandler (e : ColumnEvent) : void
 	{
+		if (e.isDefaultPrevented ())
+			return;
+		
 		var index : uint = e.index;
 		
 		var amount : int = 1;
@@ -944,6 +947,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function columnRemoveHandler (e : ColumnEvent) : void
 	{
+		if (e.isDefaultPrevented ())
+			return;
+		
 		var index : uint = e.index;
 		
 		var amount : int = -1;
@@ -977,9 +983,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function resizeCellHandler (e : CellEvent) : void
 	{
-		var amount : Rectangle = e.data.resizeAmount;
+		if (e.isDefaultPrevented ())
+			return;
 		
-		if (_bounds.x == amount.x && _bounds.y == amount.y)
+		var amount : Rectangle = e.amount;
+		
+		if (amount && _bounds.x == amount.x && _bounds.y == amount.y)
 		{
 			resizeHorizontally (amount.width);
 			resizeVertically (amount.height);
@@ -993,6 +1002,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function rowInsertHandler (e : RowEvent) : void
 	{
+		if (e.isDefaultPrevented ())
+			return;
+		
 		var index : uint = e.index;
 		
 		var amount : int = 1;
@@ -1013,6 +1025,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	protected function rowRemoveHandler (e : RowEvent) : void
 	{
+		if (e.isDefaultPrevented ())
+			return;
+		
 		var index : uint = e.index;
 		
 		var amount : int = -1;

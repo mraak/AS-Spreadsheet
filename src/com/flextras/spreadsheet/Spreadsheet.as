@@ -5,7 +5,6 @@ import com.flextras.calc.Utils;
 import com.flextras.spreadsheet.components.GridList;
 import com.flextras.spreadsheet.core.spreadsheet;
 import com.flextras.spreadsheet.events.CellEvent;
-import com.flextras.spreadsheet.events.CellEventData;
 import com.flextras.spreadsheet.events.ColumnEvent;
 import com.flextras.spreadsheet.events.RowEvent;
 import com.flextras.spreadsheet.skins.SpreadsheetSkin;
@@ -23,6 +22,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import mx.collections.ArrayCollection;
+import mx.core.EventPriority;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 import mx.events.FlexEvent;
@@ -132,15 +132,15 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		setStyle ("skinClass", Class (SpreadsheetSkin));
 		
-		addEventListener (CellEvent.RESIZE, resizeCellHandler);
+		addEventListener (CellEvent.RESIZE, resizeCellHandler, false, EventPriority.DEFAULT_HANDLER);
 		
-		addEventListener (ColumnEvent.INSERT, insertColumnHandler);
-		addEventListener (ColumnEvent.REMOVE, removeColumnHandler);
-		addEventListener (ColumnEvent.CLEAR, clearColumnHandler);
+		addEventListener (ColumnEvent.INSERT, insertColumnHandler, false, EventPriority.DEFAULT_HANDLER);
+		addEventListener (ColumnEvent.REMOVE, removeColumnHandler, false, EventPriority.DEFAULT_HANDLER);
+		addEventListener (ColumnEvent.CLEAR, clearColumnHandler, false, EventPriority.DEFAULT_HANDLER);
 		
-		addEventListener (RowEvent.INSERT, insertRowHandler);
-		addEventListener (RowEvent.REMOVE, removeRowHandler);
-		addEventListener (RowEvent.CLEAR, clearRowHandler);
+		addEventListener (RowEvent.INSERT, insertRowHandler, false, EventPriority.DEFAULT_HANDLER);
+		addEventListener (RowEvent.REMOVE, removeRowHandler, false, EventPriority.DEFAULT_HANDLER);
+		addEventListener (RowEvent.CLEAR, clearRowHandler, false, EventPriority.DEFAULT_HANDLER);
 		
 		cells.addEventListener (CollectionEvent.COLLECTION_CHANGE, cells_collectionChangeHandler);
 		
@@ -2796,7 +2796,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (isColumnIndexInvalid (columnIndex) || isRowIndexInvalid (rowIndex))
 			return;
 		
-		dispatchEvent (new CellEvent (CellEvent.RESIZE, new CellEventData (new Rectangle (columnIndex, rowIndex, columnSpan, rowSpan))));
+		dispatchEvent (new CellEvent (CellEvent.RESIZE, new Rectangle (columnIndex, rowIndex, columnSpan, rowSpan)));
 	}
 	
 	//----------------------------------
@@ -2997,7 +2997,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function clearColumnHandler (e : ColumnEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3029,7 +3029,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function clearRowHandler (e : RowEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3093,7 +3093,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function insertColumnHandler (e : ColumnEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3121,7 +3121,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function insertRowHandler (e : RowEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3202,7 +3202,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function removeColumnHandler (e : ColumnEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3231,7 +3231,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function removeRowHandler (e : RowEvent) : void
 	{
-		if (!e)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
 		var index : uint = e.index;
@@ -3258,12 +3258,12 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	protected function resizeCellHandler (e : CellEvent) : void
 	{
-		if (!e || !e.data)
+		if (!e || e.isDefaultPrevented ())
 			return;
 		
-		var amount : Rectangle = e.data.resizeAmount;
+		var amount : Rectangle = e.amount;
 		
-		if (isColumnIndexInvalid (amount.x) || isRowIndexInvalid (amount.y))
+		if (!amount || isColumnIndexInvalid (amount.x) || isRowIndexInvalid (amount.y))
 			return;
 		
 		var cell : Cell = getCellAt (amount.x, amount.y);

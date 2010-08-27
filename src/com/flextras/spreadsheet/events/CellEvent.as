@@ -1,6 +1,7 @@
 package com.flextras.spreadsheet.events
 {
 import flash.events.Event;
+import flash.geom.Rectangle;
 
 /**
  *
@@ -38,7 +39,7 @@ public class CellEvent extends Event
 	/**
 	 *
 	 */
-	public var data : CellEventData;
+	public var amount : Rectangle;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -53,11 +54,11 @@ public class CellEvent extends Event
 	 * @param data
 	 *
 	 */
-	public function CellEvent(type : String, data : CellEventData)
+	public function CellEvent (type : String, amount : Rectangle)
 	{
-		super(type);
+		super (type);
 		
-		this.data = data;
+		this.amount = amount;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -71,9 +72,9 @@ public class CellEvent extends Event
 	 * @return
 	 *
 	 */
-	override public function clone() : Event
+	override public function clone () : Event
 	{
-		return new CellEvent(type, data);
+		return new CellEvent (type, amount);
 	}
 }
 }
