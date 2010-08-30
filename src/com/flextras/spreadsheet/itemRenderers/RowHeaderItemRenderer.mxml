@@ -7,21 +7,33 @@
 
 	<s:states>
 		<s:State name = "normal" />
+
 		<s:State name = "hovered" />
+
 		<s:State name = "selected" />
+
 		<s:State name = "disabled" />
 	</s:states>
 
 	<s:Rect left = "0"
 			top = "0"
 			right = "0"
-			bottom = "{edgeSize}"
+			bottom = "{halfEdgeSize}"
 			includeIn = "selected">
 		<s:fill>
 			<s:LinearGradient rotation = "90">
 				<s:GradientEntry color = "{ColorUtil.adjustBrightness2(0xCCCCCC, 50)}" />
+
 				<s:GradientEntry color = "0xCCCCCC" />
 			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<s:Rect left = "0"
+			right = "0"
+			height = "{halfEdgeSize}">
+		<s:fill>
+			<s:SolidColor color = "0x999999" />
 		</s:fill>
 	</s:Rect>
 
@@ -35,7 +47,7 @@
 			 mouseUp = "resizeManager.mouseUpHandler(event)">
 		<s:Rect left = "0"
 				right = "0"
-				height = "{edgeSize}">
+				height = "{halfEdgeSize}">
 			<s:fill>
 				<s:SolidColor color = "0x999999" />
 			</s:fill>
@@ -51,6 +63,8 @@
 
 	<fx:Declarations>
 		<fx:uint id = "edgeSize">{resizeManager.handlersVisible ? 4 : 2}</fx:uint>
+
+		<fx:uint id = "halfEdgeSize">{edgeSize}</fx:uint>
 
 		<utils:ResizeManager id = "resizeManager"
 							 target = "{this}"
@@ -70,9 +84,9 @@
 			
 			public var host : Spreadsheet;
 			
-			protected function border_mouseMoveHandler(event : MouseEvent) : void
+			protected function border_mouseMoveHandler (event : MouseEvent) : void
 			{
-				host.setRowHeightAt(itemIndex, globalToLocal(new Point(event.stageX, event.stageY)).y);
+				host.setRowHeightAt (itemIndex, globalToLocal (new Point (event.stageX, event.stageY)).y);
 			}
 		]]>
 	</fx:Script>
