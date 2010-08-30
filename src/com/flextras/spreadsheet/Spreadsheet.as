@@ -2633,7 +2633,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellsStylesInRangeObjectAt
+	//  setCellsStylesObjectInRangeAt
 	//----------------------------------
 	
 	/**
@@ -2646,7 +2646,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param styles This specifies the style object to set.
 	 *
 	 */
-	public function setCellsStylesInRangeObjectAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
+	public function setCellsStylesObjectInRangeAt (columnIndex : uint, rowIndex : uint, columnSpan : int, rowSpan : int, styles : Object) : void
 	{
 		if (!styles)
 			return;
@@ -2661,7 +2661,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  setCellsStylesInRangeObjectByRectange
+	//  setCellsStylesObjectInRangeByRectangle
 	//----------------------------------
 	
 	/**
@@ -2671,13 +2671,13 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @param styles This specifies the style object to set.
 	 *
 	 */
-	// -- JH Suggested Name: setCellsStylesInRangeObjectByRectange as it is less ambigious 
-	public function setCellsStylesInRangeObjectByRectange (location : Rectangle, styles : Object) : void
+	// -- JH Suggested Name: setCellsStylesObjectInRangeByRectangle as it is less ambigious 
+	public function setCellsStylesObjectInRangeByRectangle (location : Rectangle, styles : Object) : void
 	{
 		if (!location || !styles)
 			return;
 		
-		setCellsStylesInRangeObjectAt (location.x, location.y, location.width, location.height, styles);
+		setCellsStylesObjectInRangeAt (location.x, location.y, location.width, location.height, styles);
 	}
 	
 	//----------------------------------
