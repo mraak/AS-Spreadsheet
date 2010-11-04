@@ -1,6 +1,10 @@
 package com.flextras.spreadsheet.vos
 {
 
+/**
+ * Provides common api for both CellWidth and CellHeight classes.
+ * @private For now..
+ */
 public class CellSize
 {
 	private var _value : Number;

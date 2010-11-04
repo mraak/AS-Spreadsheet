@@ -24,8 +24,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
- *
+ * Condition class represents actual condition on cell.
  */
 public class Condition extends EventDispatcher
 {
@@ -63,22 +62,49 @@ public class Condition extends EventDispatcher
 	//  active
 	//----------------------------------
 	
-	[Bindable]
 	/**
+	 * @private
+	 */
+	private var _active : Boolean;
+	
+	[Bindable(event="activeChanged")]
+	/**
+	 *
 	 *
 	 * @return
 	 *
 	 */
-	public var active : Boolean;
+	public function get active () : Boolean
+	{
+		return _active;
+	}
+	
+	/**
+	 * If true then styles from this condition will be used instead of the ones defined for matching cell.
+	 * It also dispathes an event.
+	 *
+	 * @param value
+	 *
+	 */
+	public function set active (value : Boolean) : void
+	{
+		if (active == value)
+			return;
+		
+		_active = value;
+		
+		dispatchEvent (new Event ("activeChanged"));
+	}
 	
 	//----------------------------------
 	//  global
 	//----------------------------------
 	
 	/**
+	 * Sets global styles.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set global (value : Condition) : void
 	{
@@ -93,12 +119,13 @@ public class Condition extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _left : Number;
 	
 	[Bindable(event="leftChanged")]
 	/**
+	 * Represents left side operand.
 	 *
 	 * @return
 	 *
@@ -130,6 +157,7 @@ public class Condition extends EventDispatcher
 	[Transient]
 	[Bindable(event="leftChanged")]
 	/**
+	 * Checks correctness of an left operand.
 	 *
 	 * @return
 	 *
@@ -144,12 +172,13 @@ public class Condition extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _operator : String;
 	
 	[Bindable(event="operatorChanged")]
 	/**
+	 * Represents actual operator from equation.
 	 *
 	 * @return
 	 *
@@ -181,6 +210,7 @@ public class Condition extends EventDispatcher
 	[Transient]
 	[Bindable(event="operatorChanged")]
 	/**
+	 * Checks correctness of an operator.
 	 *
 	 * @return
 	 *
@@ -195,12 +225,13 @@ public class Condition extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _right : Number;
 	
 	[Bindable(event="rightChanged")]
 	/**
+	 * Represents right side operand.
 	 *
 	 * @return
 	 *
@@ -232,6 +263,7 @@ public class Condition extends EventDispatcher
 	[Transient]
 	[Bindable(event="rightChanged")]
 	/**
+	 * Checks correctness of an right operand.
 	 *
 	 * @return
 	 *
@@ -250,6 +282,7 @@ public class Condition extends EventDispatcher
 	[Bindable(event="operatorChanged")]
 	[Bindable(event="rightChanged")]
 	/**
+	 * Valid only if all properties are valid.
 	 *
 	 * @return
 	 *
@@ -264,12 +297,13 @@ public class Condition extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _styles : Styles = new Styles;
 	
 	[Bindable(event="stylesChanged")]
 	/**
+	 * Provides access to styles which will be used if condition is active.
 	 *
 	 * @return
 	 *
@@ -280,6 +314,8 @@ public class Condition extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -296,6 +332,9 @@ public class Condition extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or Styles.
+	 * If value is typed as Styles then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -322,6 +361,7 @@ public class Condition extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all properties with new ones.
 	 *
 	 * @param value
 	 *
@@ -339,6 +379,8 @@ public class Condition extends EventDispatcher
 	}
 	
 	/**
+	 * Accepts either Object or Condition.
+	 * If value is typed as Condition then this setter behaves the same as regular assign otherwise it changes only the provided properties.
 	 *
 	 * @param value
 	 *
@@ -369,8 +411,7 @@ public class Condition extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{

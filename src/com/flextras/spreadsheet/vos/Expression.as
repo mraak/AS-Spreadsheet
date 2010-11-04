@@ -2,6 +2,9 @@ package com.flextras.spreadsheet.vos
 {
 
 [Bindable]
+/**
+ * @private For now.
+ */
 public class Expression
 {
 	public var cell : String,

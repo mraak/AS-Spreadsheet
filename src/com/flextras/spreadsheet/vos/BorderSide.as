@@ -29,8 +29,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
- *
+ * BorderSide class provides common api for setting the styles on individual side.
  */
 public class BorderSide extends EventDispatcher
 {
@@ -64,7 +63,7 @@ public class BorderSide extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected var visibleWeight : Number;
 	
@@ -79,7 +78,7 @@ public class BorderSide extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _alpha : Number = 1;
 	
@@ -87,6 +86,7 @@ public class BorderSide extends EventDispatcher
 	
 	[Bindable(event="alphaChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -97,6 +97,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Sets alpha style on current side.
 	 *
 	 * @param value
 	 *
@@ -118,7 +119,7 @@ public class BorderSide extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _color : uint;
 	
@@ -126,6 +127,7 @@ public class BorderSide extends EventDispatcher
 	
 	[Bindable(event="colorChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -136,6 +138,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Sets color style on current side.
 	 *
 	 * @param value
 	 *
@@ -157,14 +160,12 @@ public class BorderSide extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _global : BorderSide;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * @private
 	 */
 	spreadsheet function get global () : BorderSide
 	{
@@ -172,9 +173,10 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Sets global styles on current side.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set global (value : BorderSide) : void
 	{
@@ -205,7 +207,7 @@ public class BorderSide extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _visible : Boolean = true;
 	
@@ -213,6 +215,7 @@ public class BorderSide extends EventDispatcher
 	
 	[Bindable(event="visibleChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -223,6 +226,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Sets visible style on current side.
 	 *
 	 * @param value
 	 *
@@ -252,7 +256,7 @@ public class BorderSide extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _weight : Number = 1;
 	
@@ -260,6 +264,7 @@ public class BorderSide extends EventDispatcher
 	
 	[Bindable(event="weightChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -270,6 +275,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Sets weight style on current side.
 	 *
 	 * @param value
 	 *
@@ -301,6 +307,7 @@ public class BorderSide extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -317,6 +324,8 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
+	 * Accepts either Object or BorderSide.
+	 * If value is typed as BorderSide then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -347,8 +356,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchAlphaChangedEvent () : void
 	{
@@ -356,8 +364,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchColorChangedEvent () : void
 	{
@@ -365,8 +372,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchVisibleChangedEvent () : void
 	{
@@ -374,8 +380,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchWeightChangedEvent () : void
 	{
@@ -383,8 +388,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{
@@ -398,9 +402,7 @@ public class BorderSide extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_colorChangedHandler (e : Event) : void
 	{
@@ -408,9 +410,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_alphaChangedHandler (e : Event) : void
 	{
@@ -418,9 +418,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_weightChangedHandler (e : Event) : void
 	{
@@ -428,9 +426,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_visibleChangedHandler (e : Event) : void
 	{

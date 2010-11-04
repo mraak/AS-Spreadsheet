@@ -75,12 +75,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	public const menu : Menu = new Menu (Cell (this));
 	
 	/**
-	 *
+	 *  @private
 	 */
 	spreadsheet const controlObject : ControlObject = new ControlObject (Cell (this));
 	
@@ -138,12 +138,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	spreadsheet var owner : Spreadsheet;
 	
 	/**
-	 *
+	 *  @private
 	 */
 	spreadsheet var width : Number, height : Number;
 	
@@ -158,14 +158,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	protected var _bounds : Rectangle;
 	
+	// TODO: Make protected
 	/**
-	 *
-	 * @return
-	 *
+	 *  @private
 	 */
 	spreadsheet function get bounds () : Rectangle
 	{
@@ -207,7 +206,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	protected const _condition : Condition = new Condition;
 	
@@ -226,6 +225,11 @@ public class Cell extends EventDispatcher implements IExternalizable
 		return _condition;
 	}
 	
+	/**
+	 *
+	 * @param value
+	 *
+	 */
 	public function set condition (value : Condition) : void
 	{
 		if (!value || _condition === value)
@@ -262,7 +266,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	protected var _contextMenuEnabled : Boolean;
 	
@@ -297,7 +301,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	protected var _enabled : Boolean = true;
 	
@@ -334,7 +338,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 *  @private
 	 */
 	protected var _expression : String;
 	
@@ -381,8 +385,14 @@ public class Cell extends EventDispatcher implements IExternalizable
 		dispatchEvent (new Event ("expressionChanged"));
 	}
 	
+	/**
+	 *  @private
+	 */
 	protected var _expressionObject : Object;
 	
+	/**
+	 *  @private
+	 */
 	spreadsheet function get expressionObject () : Object
 	{
 		if (!_expressionObject && owner)
@@ -391,6 +401,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 		return _expressionObject;
 	}
 	
+	/**
+	 *  @private
+	 */
 	spreadsheet function get expressionObjectByOldID () : Object
 	{
 		if (!_expressionObject && owner)
@@ -399,6 +412,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 		return _expressionObject;
 	}
 	
+	/**
+	 *  @private
+	 */
 	spreadsheet function set expressionObject (value : Object) : void
 	{
 		//trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
@@ -425,9 +441,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set globalStyles (value : CellStyles) : void
 	{
@@ -439,9 +453,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set globalCondition (value : Condition) : void
 	{
@@ -498,7 +510,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected const _styles : CellStyles = new CellStyles;
 	
@@ -554,7 +566,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	protected var _value : String;
 	
@@ -570,9 +582,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set value (value : String) : void
 	{
@@ -625,6 +635,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -646,6 +657,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
+	 * Accepts either Object or Cell.
+	 * If value is typed as Cell then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -698,6 +711,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 		}
 	}
 	
+	/**
+	 * Resets cell to its default value.
+	 */
 	public function clear () : void
 	{
 		expression = "";
@@ -709,10 +725,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 * @param excludeRule
-	 *
+	 * @private
 	 */
 	protected function moveExpressionHorizontally (amount : int, index : int) : void
 	{
@@ -720,10 +733,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 * @param excludeRule
-	 *
+	 * @private
 	 */
 	protected function moveExpressionVertically (amount : int, index : int) : void
 	{
@@ -731,9 +741,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 *
+	 * @private
 	 */
 	protected function moveHorizontally (amount : uint) : void
 	{
@@ -751,9 +759,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 *
+	 * @private
 	 */
 	protected function moveVertically (amount : uint) : void
 	{
@@ -771,9 +777,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param input
-	 *
+	 * @private
 	 */
 	public function readExternal (input : IDataInput) : void
 	{
@@ -794,8 +798,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{
@@ -827,9 +830,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 *
+	 * @private
 	 */
 	protected function resizeHorizontally (amount : uint) : void
 	{
@@ -840,9 +841,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param amount
-	 *
+	 * @private
 	 */
 	protected function resizeVertically (amount : uint) : void
 	{
@@ -853,10 +852,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
 	 * @private
-	 * @param value
-	 *
 	 */
 	protected function setBounds (value : Rectangle) : void
 	{
@@ -875,10 +871,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
 	 * @private
-	 * @param value
-	 *
 	 */
 	protected function setBoundsObject (value : Object) : void
 	{
@@ -889,9 +882,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param output
-	 *
+	 * @private
 	 */
 	public function writeExternal (output : IDataOutput) : void
 	{
@@ -918,9 +909,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function columnInsertHandler (e : ColumnEvent) : void
 	{
@@ -941,9 +930,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function columnRemoveHandler (e : ColumnEvent) : void
 	{
@@ -964,9 +951,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function conditionChanged (e : Event = null) : void
 	{
@@ -977,9 +962,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function resizeCellHandler (e : CellEvent) : void
 	{
@@ -996,9 +979,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function rowInsertHandler (e : RowEvent) : void
 	{
@@ -1019,9 +1000,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function rowRemoveHandler (e : RowEvent) : void
 	{
@@ -1042,9 +1021,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function removeTemporaryOldID (e : Event) : void
 	{
@@ -1052,9 +1029,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function controlObject_expressionChanged (e : Event) : void
 	{

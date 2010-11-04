@@ -20,7 +20,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
+ * StylesState class provides support for border on current state.
  */
 public class StylesState extends Styles
 {
@@ -76,12 +76,13 @@ public class StylesState extends Styles
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _border : Border = new Border;
 	
 	[Bindable(event="borderChanged")]
 	/**
+	 * Provides access to border.
 	 *
 	 * @return
 	 *
@@ -92,6 +93,8 @@ public class StylesState extends Styles
 	}
 	
 	/**
+	 * Replaces current border styles with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -108,6 +111,9 @@ public class StylesState extends Styles
 	
 	[Transient]
 	/**
+	 * Accepts either Object or Border.
+	 * If value is typed as Border then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -132,9 +138,10 @@ public class StylesState extends Styles
 	//----------------------------------
 	
 	/**
+	 * Sets global styles both on cell and border.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	override spreadsheet function set global (value : Styles) : void
 	{
@@ -156,6 +163,7 @@ public class StylesState extends Styles
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -172,6 +180,8 @@ public class StylesState extends Styles
 	}
 	
 	/**
+	 * Accepts either Object or StylesState or Styles.
+	 * If value is typed as StylesState or Styles then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -195,8 +205,7 @@ public class StylesState extends Styles
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	override spreadsheet function release () : void
 	{

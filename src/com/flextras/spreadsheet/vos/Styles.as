@@ -71,7 +71,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
+ * Styles class provides common api for setting the styles on current state.
  */
 public class Styles extends EventDispatcher
 {
@@ -133,7 +133,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _alpha : Number = 1;
 	
@@ -141,6 +141,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="alphaChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -151,6 +152,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets alpha style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -172,7 +175,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _backgroundAlpha : Number = 1;
 	
@@ -180,6 +183,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="backgroundAlphaChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -190,6 +194,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets backgroundAlpha style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -211,7 +217,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _backgroundColor : uint = 0xFFFFFF;
 	
@@ -219,6 +225,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="backgroundColorChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -229,6 +236,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets backgroundColor style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -250,7 +259,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _bold : Boolean;
 	
@@ -258,6 +267,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="boldChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -268,6 +278,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets bold style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -289,7 +301,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _color : uint;
 	
@@ -297,6 +309,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="colorChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -307,6 +320,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets color style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -328,7 +343,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _font : String = "arial";
 	
@@ -336,6 +351,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="fontChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -346,6 +362,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets font style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -367,14 +385,12 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _global : Styles;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * @private
 	 */
 	spreadsheet function get global () : Styles
 	{
@@ -382,9 +398,10 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets global styles on cell.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set global (value : Styles) : void
 	{
@@ -429,7 +446,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _horizontalAlign : String = TextAlign.CENTER;
 	
@@ -437,6 +454,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="horizontalAlignChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -447,6 +465,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets horizontalAlign style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -468,7 +488,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _italic : Boolean;
 	
@@ -476,6 +496,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="italicChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -486,6 +507,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets italic style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -507,7 +530,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _size : uint = 14;
 	
@@ -515,6 +538,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="sizeChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -525,6 +549,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets size style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -546,7 +572,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _underline : Boolean;
 	
@@ -554,6 +580,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="underlineChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -564,6 +591,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets underline style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -585,7 +614,7 @@ public class Styles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _verticalAlign : String = VerticalAlign.MIDDLE;
 	
@@ -593,6 +622,7 @@ public class Styles extends EventDispatcher
 	
 	[Bindable(event="verticalAlignChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -603,6 +633,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets verticalAlign style on cell.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -626,6 +658,7 @@ public class Styles extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -649,6 +682,8 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
+	 * Accepts either Object or Styles.
+	 * If value is typed or Styles then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -700,8 +735,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchAlphaChangedEvent () : void
 	{
@@ -709,8 +743,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchBackgroundAlphaChangedEvent () : void
 	{
@@ -718,8 +751,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchBackgroundColorChangedEvent () : void
 	{
@@ -727,8 +759,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchBoldChangedEvent () : void
 	{
@@ -736,8 +767,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchColorChangedEvent () : void
 	{
@@ -745,8 +775,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchFontChangedEvent () : void
 	{
@@ -754,8 +783,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchHorizontalAlignChangedEvent () : void
 	{
@@ -763,8 +791,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchItalicChangedEvent () : void
 	{
@@ -772,8 +799,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchSizeChangedEvent () : void
 	{
@@ -781,8 +807,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchUnderlineChangedEvent () : void
 	{
@@ -790,8 +815,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchVerticalAlignChangedEvent () : void
 	{
@@ -799,8 +823,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{
@@ -814,9 +837,7 @@ public class Styles extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_colorChangedHandler (e : Event) : void
 	{
@@ -824,9 +845,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_alphaChangedHandler (e : Event) : void
 	{
@@ -834,8 +853,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_backgroundColorChangedHandler (e : Event) : void
 	{
@@ -843,8 +861,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_backgroundAlphaChangedHandler (e : Event) : void
 	{
@@ -852,8 +869,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_boldChangedHandler (e : Event) : void
 	{
@@ -861,8 +877,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_italicChangedHandler (e : Event) : void
 	{
@@ -870,8 +885,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_underlineChangedHandler (e : Event) : void
 	{
@@ -879,8 +893,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_fontChangedHandler (e : Event) : void
 	{
@@ -888,8 +901,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_horizontalAlignChangedHandler (e : Event) : void
 	{
@@ -897,8 +909,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_verticalAlignChangedHandler (e : Event) : void
 	{
@@ -906,8 +917,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function global_sizeChangedHandler (e : Event) : void
 	{

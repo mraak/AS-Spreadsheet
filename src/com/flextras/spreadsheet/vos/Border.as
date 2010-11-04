@@ -33,8 +33,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
- *
+ * Border class provides common api for setting the styles on all sides. It also contains references to individual sides.
  */
 public class Border extends EventDispatcher
 {
@@ -89,6 +88,7 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets alpha style on all sides.
 	 *
 	 * @param value
 	 *
@@ -103,12 +103,13 @@ public class Border extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _bottom : BorderSide = new BorderSide;
 	
 	[Bindable(event="bottomChanged")]
 	/**
+	 * Provides access to bottom side of border.
 	 *
 	 * @return
 	 *
@@ -119,6 +120,8 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for bottom side with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -135,6 +138,9 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or BorderSide.
+	 * If value is typed as BorderSide then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -160,6 +166,7 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets color style on all sides.
 	 *
 	 * @param value
 	 *
@@ -174,9 +181,10 @@ public class Border extends EventDispatcher
 	//----------------------------------
 	
 	/**
+	 * Sets global styles on all sides.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set global (value : Border) : void
 	{
@@ -201,12 +209,13 @@ public class Border extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _left : BorderSide = new BorderSide;
 	
 	[Bindable(event="leftChanged")]
 	/**
+	 * Provides access to left side of border.
 	 *
 	 * @return
 	 *
@@ -217,6 +226,8 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for left side with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -233,6 +244,9 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or BorderSide.
+	 * If value is typed as BorderSide then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -257,12 +271,13 @@ public class Border extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _right : BorderSide = new BorderSide;
 	
 	[Bindable(event="rightChanged")]
 	/**
+	 * Provides access to right side of border.
 	 *
 	 * @return
 	 *
@@ -273,6 +288,8 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for right side with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -289,6 +306,9 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or BorderSide.
+	 * If value is typed as BorderSide then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -313,12 +333,13 @@ public class Border extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _top : BorderSide = new BorderSide;
 	
 	[Bindable(event="topChanged")]
 	/**
+	 * Provides access to top side of border.
 	 *
 	 * @return
 	 *
@@ -329,6 +350,8 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for top side with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -345,6 +368,9 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or BorderSide.
+	 * If value is typed as BorderSide then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -370,6 +396,7 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets visible style on all sides.
 	 *
 	 * @param value
 	 *
@@ -385,6 +412,7 @@ public class Border extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets weight style on all sides.
 	 *
 	 * @param value
 	 *
@@ -401,6 +429,7 @@ public class Border extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -417,6 +446,8 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
+	 * Accepts either Object or Border.
+	 * If value is typed as Border then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -459,8 +490,7 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{

@@ -46,8 +46,7 @@ use namespace spreadsheet;
 
 [RemoteClass]
 /**
- *
- *
+ * CellStyles class provides common api for setting the styles on all states. It also contains references to individual state.
  */
 public class CellStyles extends EventDispatcher
 {
@@ -132,6 +131,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets alpha style on all states.
 	 *
 	 * @param value
 	 *
@@ -147,6 +147,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets backgroundAlpha style on all states.
 	 *
 	 * @param value
 	 *
@@ -162,6 +163,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets backgroundColor style on all states.
 	 *
 	 * @param value
 	 *
@@ -177,6 +179,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets bold style on all states.
 	 *
 	 * @param value
 	 *
@@ -192,6 +195,8 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Replaces current border styles with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -209,6 +214,9 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or Border.
+	 * If value is typed as Border then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -229,7 +237,7 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _cellGradientLevel : int = 50;
 	
@@ -237,6 +245,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="cellGradientLevelChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -247,6 +256,9 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets rollOutDuration style for all states.
+	 * It also dispathes an event.
+	 *
 	 *  Performs a scaled brightness adjustment of an RGB color.
 	 *
 	 *  @param value The percentage to brighten or darken the original color.
@@ -276,6 +288,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets color style on all states.
 	 *
 	 * @param value
 	 *
@@ -290,12 +303,13 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _disabled : StylesState = new StylesState;
 	
 	[Bindable(event="disabledChanged")]
 	/**
+	 * Provides access to disabled state of cell.
 	 *
 	 * @return
 	 *
@@ -306,6 +320,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for disabled state with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -322,6 +338,9 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or StylesState.
+	 * If value is typed as StylesState then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -347,6 +366,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets font style on all states.
 	 *
 	 * @param value
 	 *
@@ -361,14 +381,12 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _global : CellStyles;
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * @private
 	 */
 	spreadsheet function get global () : CellStyles
 	{
@@ -376,9 +394,10 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets global styles on all states.
 	 *
 	 * @param value
-	 *
+	 * @private
 	 */
 	spreadsheet function set global (value : CellStyles) : void
 	{
@@ -418,6 +437,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets horizontalAlign style on all states.
 	 *
 	 * @param value
 	 *
@@ -432,12 +452,13 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _hovered : StylesState = new StylesState;
 	
 	[Bindable(event="hoveredChanged")]
 	/**
+	 * Provides access to hovered state of cell.
 	 *
 	 * @return
 	 *
@@ -448,6 +469,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for hovered state with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -464,6 +487,9 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or StylesState.
+	 * If value is typed as StylesState then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -489,6 +515,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets italic style on all states.
 	 *
 	 * @param value
 	 *
@@ -503,12 +530,13 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _normal : StylesState = new StylesState;
 	
 	[Bindable(event="normalChanged")]
 	/**
+	 * Provides access to normal state of cell.
 	 *
 	 * @return
 	 *
@@ -519,6 +547,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for normal state with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -535,6 +565,9 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or StylesState.
+	 * If value is typed as StylesState then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -559,7 +592,7 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _rollOutDuration : int = 500;
 	
@@ -567,6 +600,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="rollOutDurationChanged")]
 	/**
+	 * Returns local style if global styles weren't specified.
 	 *
 	 * @return
 	 *
@@ -577,6 +611,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Sets rollOutDuration style for all states.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -598,12 +634,13 @@ public class CellStyles extends EventDispatcher
 	//----------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	private var _selected : StylesState = new StylesState;
 	
 	[Bindable(event="selectedChanged")]
 	/**
+	 * Provides access to selected state of cell.
 	 *
 	 * @return
 	 *
@@ -614,6 +651,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Replaces current styles for selected state with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -630,6 +669,9 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Accepts either Object or StylesState.
+	 * If value is typed as StylesState then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -655,6 +697,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets size style on all states.
 	 *
 	 * @param value
 	 *
@@ -670,6 +713,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets underline style on all states.
 	 *
 	 * @param value
 	 *
@@ -685,6 +729,7 @@ public class CellStyles extends EventDispatcher
 	
 	[Transient]
 	/**
+	 * Sets verticalAlign style on all states.
 	 *
 	 * @param value
 	 *
@@ -701,6 +746,7 @@ public class CellStyles extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
+	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
 	 *
@@ -720,6 +766,8 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
+	 * Accepts either Object or CellStyles.
+	 * If value is typed as CellStyles then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
 	 *
@@ -792,8 +840,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchCellGradientLevelChangedEvent () : void
 	{
@@ -801,8 +848,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	protected function dispatchRollOutDurationChangedEvent () : void
 	{
@@ -810,8 +856,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 *
+	 * @private
 	 */
 	spreadsheet function release () : void
 	{
@@ -825,9 +870,7 @@ public class CellStyles extends EventDispatcher
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_cellGradientLevelChangedHandler (e : Event) : void
 	{
@@ -835,9 +878,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 *
-	 * @param e
-	 *
+	 * @private
 	 */
 	protected function global_rollOutDurationChangedHandler (e : Event) : void
 	{
