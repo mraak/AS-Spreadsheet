@@ -33,7 +33,9 @@ public class GridList extends List
 	{
 		super ();
 	}
-	
+	/**
+	 * @private
+	 */
 	override protected function keyDownHandler (event : KeyboardEvent) : void
 	{
 		if (!dataProvider || !layout || event.isDefaultPrevented ())
@@ -52,11 +54,17 @@ public class GridList extends List
 			adjustSelectionAndCaretUponNavigation (event);
 	}
 	
+	/**
+	 * @private
+	 */
 	override protected function item_mouseDownHandler (event : MouseEvent) : void
 	{
 		super.item_mouseDownHandler (event);
 	}
 	
+	/**
+	 * @private
+	 */
 	override protected function adjustSelectionAndCaretUponNavigation (event : KeyboardEvent) : void
 	{
 		// Some unrecognized key stroke was entered, return. 
@@ -101,6 +109,9 @@ public class GridList extends List
 		ensureIndexIsVisible (end);
 	}
 	
+	/**
+	 * @private
+	 */
 	override protected function calculateSelectedIndices (index : int, shiftKey : Boolean, ctrlKey : Boolean) : Vector.<int>
 	{
 		if (!shiftKey)
@@ -113,6 +124,9 @@ public class GridList extends List
 		return populateInterval (start, index);
 	}
 	
+	/**
+	 * @private
+	 */
 	protected function populateInterval (start : int, end : int) : Vector.<int>
 	{
 		var interval : Vector.<int> = new Vector.<int>;
@@ -186,11 +200,17 @@ public class GridList extends List
 		return interval;
 	}
 	
+	/**
+	 * @private
+	 */
 	protected function sortAsc (a : int, b : int) : int
 	{
 		return a - b;
 	}
 	
+	/**
+	 * @private
+	 */
 	protected function sortDesc (a : int, b : int) : int
 	{
 		return b - a;
