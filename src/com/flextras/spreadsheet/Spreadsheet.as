@@ -7,6 +7,7 @@ import com.flextras.spreadsheet.core.spreadsheet;
 import com.flextras.spreadsheet.events.CellEvent;
 import com.flextras.spreadsheet.events.ColumnEvent;
 import com.flextras.spreadsheet.events.RowEvent;
+import com.flextras.spreadsheet.events.SpreadsheetEvent;
 import com.flextras.spreadsheet.skins.SpreadsheetSkin;
 import com.flextras.spreadsheet.utils.ResizeManager;
 import com.flextras.spreadsheet.vos.Cell;
@@ -30,7 +31,6 @@ import mx.managers.IFocusManagerComponent;
 
 import spark.components.List;
 import spark.components.supportClasses.SkinnableComponent;
-import com.flextras.spreadsheet.events.SpreadsheetEvent;
 
 use namespace spreadsheet;
 
@@ -530,6 +530,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 */
 	private var elementIndex : Object;
 	
+	/**
+	 * @private
+	 */
 	private var ids : Array;
 	
 	/**
@@ -1129,20 +1132,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	}
 	
 	//----------------------------------
-	//  gridDataProvider
-	//----------------------------------
-	
-	/**
-	 * @private
-	 */
-	// ---JH add some documentation for this property ----
-	// --AB this is not needed and will be deleted from here and from ISpreadsheet
-	public function get gridDataProvider () : ArrayCollection
-	{
-		return cells;
-	}
-	
-	//----------------------------------
 	//  id
 	//----------------------------------
 	
@@ -1172,6 +1161,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	private var _indexedCells : Object;
 	
 	/**
+	 * @private
 	 */
 	// ---JH add some documentation for this property ----
 	// --AB this is @private
@@ -1191,6 +1181,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	
 	[Bindable(event="preferredColumnWidthsChanged")]
 	/**
+	 * @private
 	 */
 	// ---JH add some documentation for this property ----
 	// --AB this is private for now, could become feature in next releases

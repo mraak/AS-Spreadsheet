@@ -9,11 +9,9 @@ import flash.events.Event;
 // 	* - WARNING: Something has happened that will result in some loss of data but the procedure will run
 // * normally.
 /**
- * The SpreadSheetEvent class defines events dispatched the Flextras Spreadsheet.
+ * The SpreadsheetEvent class defines events dispatched the Flextras Spreadsheet and Calc.
  *
  * @see com.flextras.spreadsheet.Spreadsheet
- *
- *
  */
 public class SpreadsheetEvent extends Event
 {

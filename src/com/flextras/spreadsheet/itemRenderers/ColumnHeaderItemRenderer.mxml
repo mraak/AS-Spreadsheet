@@ -1,4 +1,6 @@
 <?xml version = "1.0" encoding = "utf-8"?>
+
+<!---Actual column item renderer which also supports column selection and resizing.-->
 <s:ItemRenderer xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				xmlns:s = "library://ns.adobe.com/flex/spark"
 				xmlns:mx = "library://ns.adobe.com/flex/mx"
@@ -81,8 +83,14 @@
 			
 			use namespace spreadsheet;
 			
+			/**
+			 * @private
+			 */
 			public var host : Spreadsheet;
 			
+			/**
+			 * @private
+			 */
 			protected function border_mouseMoveHandler (event : MouseEvent) : void
 			{
 				host.setColumnWidthAt (itemIndex, globalToLocal (new Point (event.stageX, event.stageY)).x);

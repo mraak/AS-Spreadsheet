@@ -1,4 +1,6 @@
 <?xml version = "1.0" encoding = "utf-8"?>
+
+<!---Actual cell item renderer which also supports editing, double clicks, copying and pasting the data and resizing.-->
 <s:ItemRenderer xmlns:fx = "http://ns.adobe.com/mxml/2009"
 				xmlns:s = "library://ns.adobe.com/flex/spark"
 				xmlns:mx = "library://ns.adobe.com/flex/mx"
@@ -172,7 +174,7 @@
 				textAlign = "{horizontalAlignStyle}"
 				verticalAlign = "{verticalAlignStyle}"
 				fontSize = "{sizeStyle}"
-				fontFamily="{fontStyle}" />
+				fontFamily = "{fontStyle}" />
 
 	<components:ResizableRichEditableText id = "input"
 										  wordWrap = "{cell.wordWrap}"
@@ -209,7 +211,7 @@
 		<fx:Boolean id = "italicStyle">{styles.italic}</fx:Boolean>
 
 		<fx:Boolean id = "underlineStyle">{styles.underline}</fx:Boolean>
-		
+
 		<fx:String id = "fontStyle">{styles.font}</fx:String>
 
 		<fx:String id = "horizontalAlignStyle">{styles.horizontalAlign}</fx:String>
@@ -273,9 +275,6 @@
 			import com.flextras.spreadsheet.vos.Styles;
 			import com.flextras.spreadsheet.vos.StylesState;
 			
-			import flashx.textLayout.utils.NavigationUtil;
-			
-			import mx.controls.IFlexContextMenu;
 			import mx.utils.ColorUtil;
 			
 			import spark.core.NavigationUnit;
@@ -283,52 +282,92 @@
 			use namespace spreadsheet;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			public var host : Spreadsheet;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var cell : Cell;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var condition : Condition;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var conditionStyles : Styles;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var styles : StylesState;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var normalStyles : StylesState;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var hoveredStyles : StylesState;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var selectedStyles : StylesState;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var disabledStyles : StylesState;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var borderLeft : BorderSide;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var borderTop : BorderSide;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var borderRight : BorderSide;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var borderBottom : BorderSide;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var oldState : String;
 			
-			/*override public function get flexContextMenu():IFlexContextMenu
-			   {
-			   return cell.menu || super.flexContextMenu;
-			 }*/
-			
+			/**
+			 * @private
+			 */
 			override public function setCurrentState (stateName : String, playTransition : Boolean = true) : void
 			{
 				if (!cell || !cell.enabled)
@@ -337,6 +376,9 @@
 					super.setCurrentState (stateName, playTransition);
 			}
 			
+			/**
+			 * @private
+			 */
 			override protected function stateChanged (oldState : String, newState : String, recursive : Boolean) : void
 			{
 				super.stateChanged (oldState, newState, recursive);
@@ -368,6 +410,9 @@
 				borderBottom = styles.border.bottom;
 			}
 			
+			/**
+			 * @inheritDoc
+			 */
 			override public function set data (value : Object) : void
 			{
 				super.data = value;
@@ -395,31 +440,49 @@
 				conditionStyles = condition.styles;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function cutHandler (event : Event) : void
 			{
 				cell.menu.cutHandler ();
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function copyHandler (event : Event) : void
 			{
 				cell.menu.copyHandler ();
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function pasteHandler (event : Event) : void
 			{
 				cell.menu.pasteHandler ();
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function columnResize_mouseMoveHandler (event : MouseEvent) : void
 			{
 				host.setColumnWidthAt (cell.bounds.right, calculateSize (event).x);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function rowResize_mouseMoveHandler (event : MouseEvent) : void
 			{
 				host.setRowHeightAt (cell.bounds.bottom, calculateSize (event).y);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function edgeResize_mouseMoveHandler (event : MouseEvent) : void
 			{
 				var point : Point = calculateSize (event);
@@ -428,6 +491,9 @@
 				host.setRowHeightAt (cell.bounds.bottom, point.y);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function calculateSize (event : MouseEvent) : Point
 			{
 				var point : Point = globalToLocal (new Point (event.stageX, event.stageY));
@@ -441,6 +507,9 @@
 				return point;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function input_keyDownHandler (event : KeyboardEvent) : void
 			{
 				if (!event.altKey && event.keyCode == Keyboard.ENTER)
@@ -454,6 +523,9 @@
 				}
 			}
 			
+			/**
+			 * Opens editor.
+			 */
 			public function openEditor (value : String = null) : void
 			{
 				focused = true;
@@ -467,6 +539,9 @@
 				input.selectRange (i, i);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function input_focusOutHandler (event : FocusEvent) : void
 			{
 				focused = false;

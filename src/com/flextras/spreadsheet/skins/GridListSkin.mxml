@@ -4,7 +4,7 @@
 			 xmlns:s = "library://ns.adobe.com/flex/spark"
 			 xmlns:fb = "http://ns.adobe.com/flashbuilder/2009"
 			 xmlns:components = "com.flextras.spreadsheet.components.*"
-			 xmlns:layout="com.flextras.spreadsheet.layout.*"
+			 xmlns:layout = "com.flextras.spreadsheet.layout.*"
 			 alpha.disabled = "0.5"
 			 blendMode = "normal">
 
@@ -25,29 +25,20 @@
 		/**
 		 * @private
 		 */
-		override public function get colorizeExclusions() : Array
+		override public function get colorizeExclusions () : Array
 		{
 			return exclusions;
 		}
-		
-		/* Define the content fill items that should be colored by the "contentBackgroundColor" style. */
-		//static private const contentFill : Array = ["bgFill"];
-		
-		/**
-		 * @private
-		 */
-		/* override public function get contentItems() : Array
-		   {
-		   return contentFill;
-		 } */
 	</fx:Script>
 
 	<s:states>
 		<s:State name = "normal" />
+
 		<s:State name = "disabled" />
 	</s:states>
 
 	<fx:Declarations>
+
 		<!---
 			 Defines the appearance of the the List's drop indicator.
 			 To customize the drop indicator appearance, create a custom ListSkin class.
@@ -70,9 +61,11 @@
 						top = "0"
 						bottom = "0">
 					<s:fill>
+
 						<!--- Defines the color of the background. -->
 						<s:SolidColor color = "0xBBBBBB" />
 					</s:fill>
+
 					<s:stroke>
 						<s:SolidColorStroke color = "0x868686"
 											weight = "1" />
@@ -80,22 +73,10 @@
 				</s:Rect>
 			</s:Group>
 		</fx:Component>
-		
-		<layout:GridLayout id = "gridLayout" host="{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
-	</fx:Declarations>
 
-	<!-- fill -->
-	<!--- Defines the background appearance of the list-based component. -->
-	<!--<s:Rect id = "background"
-		 left = "0"
-		 right = "0"
-		 top = "0"
-		 bottom = "0">
-		 <s:fill>
-		 <s:SolidColor id = "bgFill"
-		 color = "0xFFFFFF" />
-		 </s:fill>
-		 </s:Rect>-->
+		<layout:GridLayout id = "gridLayout"
+						   host = "{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
+	</fx:Declarations>
 
 	<!--- The Scroller component to add scroll bars to the list. -->
 	<s:Scroller left = "0"
@@ -105,9 +86,10 @@
 				id = "scroller"
 				minViewportInset = "0"
 				hasFocusableChildren = "false">
+
 		<!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
 		<s:DataGroup id = "dataGroup"
-					 layout="{gridLayout}"
-					 itemRenderer="com.flextras.spreadsheet.itemRenderers.GridItemRenderer" />
+					 layout = "{gridLayout}"
+					 itemRenderer = "com.flextras.spreadsheet.itemRenderers.GridItemRenderer" />
 	</s:Scroller>
 </s:SparkSkin>

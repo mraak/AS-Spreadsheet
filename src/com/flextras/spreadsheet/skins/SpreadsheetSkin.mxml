@@ -6,6 +6,7 @@
 		xmlns:components = "com.flextras.spreadsheet.components.*"
 		alpha.disabled = "0.5"
 		blendMode = "normal">
+
 	<!-- host component -->
 	<fx:Metadata>
 		[HostComponent("com.flextras.spreadsheet.Spreadsheet")]
@@ -20,7 +21,10 @@
 			
 			use namespace spreadsheet;
 			
-			protected function grid_changeHandler(event : IndexChangeEvent) : void
+			/**
+			 * @private
+			 */
+			protected function grid_changeHandler (event : IndexChangeEvent) : void
 			{
 				var columns : Vector.<int> = new Vector.<int>, rows : Vector.<int> = new Vector.<int>;
 				var items : Vector.<Object> = grid.selectedItems;
@@ -29,13 +33,13 @@
 				
 				for (var i : int, n : int = items.length; i < n; ++i)
 				{
-					cell = Cell(items[i]);
+					cell = Cell (items[i]);
 					
 					for (j = cell.bounds.x; j <= cell.bounds.right; ++j)
-						columns.push(j);
+						columns.push (j);
 					
 					for (j = cell.bounds.y; j <= cell.bounds.bottom; ++j)
-						rows.push(j);
+						rows.push (j);
 				}
 				
 				columnHeader.selectedIndices = columns;
@@ -43,12 +47,15 @@
 			}
 		]]>
 	</fx:Script>
+
 	<s:states>
 		<s:State name = "normal" />
+
 		<s:State name = "disabled" />
 	</s:states>
 
 	<!-- border -->
+
 	<!--- @private -->
 	<s:Rect left = "0"
 			right = "0"
@@ -56,6 +63,7 @@
 			bottom = "0"
 			id = "border">
 		<s:stroke>
+
 			<!--- @private -->
 			<s:SolidColorStroke id = "borderStroke"
 								weight = "1" />
@@ -63,6 +71,7 @@
 	</s:Rect>
 
 	<!-- fill -->
+
 	<!--- Defines the background appearance of the list-based component. -->
 	<s:Rect id = "background"
 			left = "1"
@@ -70,10 +79,12 @@
 			top = "1"
 			bottom = "1">
 		<s:fill>
+
 			<!--- Defines the color of the background. The default color is 0xFFFFFF. -->
 			<s:LinearGradient id = "bgFill"
 							  rotation = "90">
 				<s:GradientEntry color = "0xEEEEEE" />
+
 				<s:GradientEntry color = "0xFFFFFF" />
 			</s:LinearGradient>
 		</s:fill>

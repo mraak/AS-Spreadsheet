@@ -45,29 +45,20 @@
 		/**
 		 * @private
 		 */
-		override public function get colorizeExclusions() : Array
+		override public function get colorizeExclusions () : Array
 		{
 			return exclusions;
 		}
-		
-		/* Define the content fill items that should be colored by the "contentBackgroundColor" style. */
-		//static private const contentFill : Array = ["bgFill"];
-		
-		/**
-		 * @private
-		 */
-		/* override public function get contentItems() : Array
-		   {
-		   return contentFill;
-		 } */
 	</fx:Script>
 
 	<s:states>
 		<s:State name = "normal" />
+
 		<s:State name = "disabled" />
 	</s:states>
 
 	<fx:Declarations>
+
 		<!---
 			 Defines the appearance of the the List's drop indicator.
 			 To customize the drop indicator appearance, create a custom ListSkin class.
@@ -90,9 +81,11 @@
 						top = "0"
 						bottom = "0">
 					<s:fill>
+
 						<!--- Defines the color of the background. -->
 						<s:SolidColor color = "0xBBBBBB" />
 					</s:fill>
+
 					<s:stroke>
 						<s:SolidColorStroke color = "0x868686"
 											weight = "1" />
@@ -101,21 +94,9 @@
 			</s:Group>
 		</fx:Component>
 
-		<layout:RowLayout id = "rowLayout" host="{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
+		<layout:RowLayout id = "rowLayout"
+						  host = "{SpreadsheetSkin(hostComponent.parent).hostComponent}" />
 	</fx:Declarations>
-
-	<!-- fill -->
-	<!--- Defines the background appearance of the list-based component. -->
-	<!--<s:Rect id = "background"
-		 left = "0"
-		 right = "0"
-		 top = "0"
-		 bottom = "0">
-		 <s:fill>
-		 <s:SolidColor id = "bgFill"
-		 color = "0xFFFFFF" />
-		 </s:fill>
-		 </s:Rect>-->
 
 	<!--- The Scroller component to add scroll bars to the list. -->
 	<s:Scroller left = "0"
@@ -126,9 +107,10 @@
 				minViewportInset = "0"
 				hasFocusableChildren = "false"
 				verticalScrollPolicy = "off">
+
 		<!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
 		<s:DataGroup id = "dataGroup"
 					 layout = "{rowLayout}"
-					 itemRenderer="com.flextras.spreadsheet.itemRenderers.RowHeaderItemRenderer" />
+					 itemRenderer = "com.flextras.spreadsheet.itemRenderers.RowHeaderItemRenderer" />
 	</s:Scroller>
 </s:SparkSkin>
