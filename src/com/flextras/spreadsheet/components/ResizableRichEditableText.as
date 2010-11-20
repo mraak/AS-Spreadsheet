@@ -8,45 +8,26 @@ import spark.components.RichEditableText;
 
 use namespace mx_internal;
 
+
+/**
+ * This component adds support for wordWrap and resizing even if boundaries are provided (left, top, right, bottom, width, height, ...) 
+ * and wordWrap is false, otherwise it respects current boundaries and wraps text.
+ * */
 public class ResizableRichEditableText extends RichEditableText
 {
+	/**
+	 * Flag that indicates if the component should wrap text
+	 * */
 	public var wordWrap : Boolean;
 	
 	public function ResizableRichEditableText()
 	{
 		super();
 	}
-	
-	/*override public function set width(value : Number) : void
-	   {
-	   trace("width", value);
-	   }
-	
-	   override public function set height(value : Number) : void
-	   {
-	   trace("height", value);
-	   }
-	
-	   override public function set left(value : Object) : void
-	   {
-	   trace("left", value);
-	   }
-	
-	   override public function set top(value : Object) : void
-	   {
-	   trace("top", value);
-	   }
-	
-	   override public function set right(value : Object) : void
-	   {
-	   trace("right", value);
-	   }
-	
-	   override public function set bottom(value : Object) : void
-	   {
-	   trace("bottom", value);
-	 }*/
-	
+
+	/**
+	 * @private
+	 * */
 	override protected function measure() : void
 	{
 		var bounds : Rectangle = measureTextSize(NaN);
@@ -71,11 +52,17 @@ public class ResizableRichEditableText extends RichEditableText
 		//trace("+measure", measuredWidth, measuredHeight, width, height);
 	}
 	
+	/**
+	 * @private
+	 * */
 	override protected function canSkipMeasurement() : Boolean
 	{
 		return false;
 	}
 	
+	/**
+	 * @private
+	 * */
 	override public function set maxWidth(value : Number) : void
 	{
 		if (wordWrap)

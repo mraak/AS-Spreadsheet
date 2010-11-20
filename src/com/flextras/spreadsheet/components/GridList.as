@@ -17,6 +17,7 @@ use namespace spreadsheet;
 use namespace mx_internal;
 
 /**
+ * @private
  * This class overrides default multiselect behavior. Instead of selecting all cells between two points it selects only those that are in selected rectangle.
  */
 public class GridList extends List
