@@ -152,7 +152,7 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Pass individal bracket to this function.
+	 * @private Pass individal bracket to this function.
 	 * Returns a string that is numeric solution to the expression in brackets
 	 *
 	 * */
@@ -579,13 +579,6 @@ public class Calc extends EventDispatcher
 	
 	private function updateDependent(objectChanged : ControlObject) : void
 	{
-		/*
-		   if (objectChanged.grid)
-		   {
-		   objectChanged.grid.gridDataProvider.itemUpdated(objectChanged.ctrl);
-		   }
-		 */
-		
 		if (objectChanged.dependants.length > 0)
 		{
 			for each (var c : ControlObject in objectChanged.dependants)
@@ -594,18 +587,6 @@ public class Calc extends EventDispatcher
 				{
 					if (c.exp)
 						assignControlExpression(c, c.exp, true);
-					
-						//if (c.grid)
-						//c.grid.invalidateExpressions();
-					
-					/*	if(c.grid)
-					   {
-					   c.grid.assignExpression(c.id, c.exp);
-					   }
-					   else
-					   {
-					   assignControlExpression(c, c.exp, true);
-					 }*/
 				}
 				else
 				{
@@ -639,8 +620,6 @@ public class Calc extends EventDispatcher
 		co = getCtrl(ctrl);
 		currentTarget = co;
 		
-		//trace("exp begin " + co.id + ".ops:" + co.ctrlOperands);
-		
 		// remove this object as dependant from all of the operands
 		if (!update)
 		{
@@ -648,12 +627,10 @@ public class Calc extends EventDispatcher
 			
 			for each (var op : ControlObject in co.ctrlOperands)
 			{
-				//trace("\t " + op.id + " " + op.dependants);
 				var ind : int = op.dependants.indexOf(co);
 				
 				if (ind >= 0)
 					op.dependants.splice(ind, 1);
-					//trace("\t " + op.id + " " + op.dependants + " " + ind);
 			}
 			
 			co.ctrlOperands = new Array();
@@ -705,7 +682,6 @@ public class Calc extends EventDispatcher
 					if (coind >= 0)
 						co.grid.expressionTree.splice(coind, 1);
 				}
-				
 			}
 		}
 		else
@@ -733,11 +709,8 @@ public class Calc extends EventDispatcher
 		// add this object as dependant to each operand
 		if (!update)
 		{
-			//trace("exp end " + co.id + ".ops:" + co.ctrlOperands);
-			
 			for each (op in co.ctrlOperands)
 			{
-				//trace("\t\to: "+op.id);
 				op.dependants.push(co);
 			}
 		}
@@ -746,7 +719,6 @@ public class Calc extends EventDispatcher
 		
 		if (!co.grid)
 		{
-			//UIComponent(co.ctrl).toolTip =  "id: " + co.id + "\nclass: " + UIComponent(co.ctrl).className + "\nexp: " + co.exp;
 			try
 			{
 				UIComponent(co.ctrl).toolTip = co.toolTipLabel;
@@ -757,31 +729,12 @@ public class Calc extends EventDispatcher
 		}
 		
 		updateDependent(co);
-		
-		/*
-		   if (co && co.grid && co.grid is ISpreadsheet)
-		   {
-		   var dg : ISpreadsheet = co.grid;
-		   var o : Object = dg.getExpressionObject(co.id);
-		
-		   if (o)
-		   {
-		   var oldValue : Object = o.value;
-		   o.value = _val;
-		   dg.expressions.itemUpdated(o, "value", oldValue, _val);
-		   }
-		
-		   dg.gridDataProvider.itemUpdated(co.ctrl, co.valueProp, oldValue, _val);
-		   }
-		 */
+
 		
 		currentTarget = null;
 	}
 	
-	public function assignExpression(target : *, expression : String) : void
-	{
-	
-	}
+
 	
 	/**
 	 * Cells are moved 'incrementaly', i.e. the expression on the target
@@ -956,6 +909,15 @@ public class Calc extends EventDispatcher
 	
 	}
 	
+	/**
+	 * Gets the dependants of a certain collection added through addCollection.
+	 * Dependants are all the objects that use this collection in its expressions as operands.
+	 * 
+	 * @param collection Collection that we want to retreive the dependants for.
+	 * 
+	 * @return array of ControlObject references that are dependent on the collection specified.
+	 * 
+	 * */
 	public function getDependantsOfCollection(collection : *) : Array
 	{
 		var arr : Array;
@@ -971,7 +933,14 @@ public class Calc extends EventDispatcher
 		return arr;
 	}
 	
-	private function onCtrlChanged(evt : Event) : void
+	
+	/**
+	 * This function gets executed when a control registered with addControl() changes its value.
+	 * For example when the TextInput receives a new value.
+	 * 
+	 * @param Corresponding Event
+	 * */
+	protected function onCtrlChanged(evt : Event) : void
 	{
 		var co : ControlObject = getCtrlById(evt.currentTarget.id);
 		
@@ -993,7 +962,13 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	private function onCtrlFocus(evt : Event) : void
+	/**
+	 * This function gets executed when a control registered with addControl() receives focus. 
+	 * For example TextInput is clicked on.
+	 * 
+	 * @param evt Corresponding Event.
+	 * */
+	protected function onCtrlFocus(evt : Event) : void
 	{
 		var co : ControlObject = getCtrlById(evt.currentTarget.id);
 		
@@ -1004,9 +979,15 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	protected function onCollectionChange(e : CollectionEvent) : void
+	/**
+	 * This function gets executed when a collection added through Calc.addCollection gets changed.
+	 * This is typically when value changes and this function requests recalculation of all the objects that use this value as its operand.
+	 * 
+	 * @param evt Corresponding CollectionEvent.
+	 * */
+	protected function onCollectionChange(evt : CollectionEvent) : void
 	{
-		var dependants : Array = getDependantsOfCollection(e.target);
+		var dependants : Array = getDependantsOfCollection(evt.target);
 		
 		for each (var co : ControlObject in dependants)
 		{
@@ -1025,20 +1006,20 @@ public class Calc extends EventDispatcher
 	/**
 	 * Adds TextInput control and registers it with the Calc.
 	 * This is a shortcut method to addControl if you only want to add TextInput.
+	 * @param textInput A TextInput control you want to register with Calc
 	 * */
 	public function addTextInput(textInput : TextInput) : void
 	{
 		addControl(textInput, "text", ["focusIn"], [FlexEvent.ENTER, "focusOut"]);
-		//addControl(textInput, "text", ["focusIn"], ["enter", "focusOut"]);
 	}
 	
 	/**
 	 * Adds any Flex Control and registers it with the Calc. Calc then performs calculations and expressions
-	 * assigned to this component through Calc.assignControlExpression() method.<br/><br/>
-	 * <strong>ctrl: UIComponent</strong>, Flex Control you want to register with the Calc<br/>
-	 * <strong>valueProp: String</strong>, property that holds a value for the control. It can be "value", "text", or any other you choose<br/>
-	 * <strong>editStartEvents: Array</strong>, specifies which events is Calc listening to, to display the expression instead of value in the editor. Used primarily with TextInput compnent where you would specify [FocusEvent.FOCUS_IN]<br/>
-	 * <strong>editEndEvents: Array</strong>, specifies which events are assigning are triggered when the ctrl's value has been modified. Example: [Event.CHANGE, FlexEvent.ENTER, FocusEvent.FOCUS_OUT]<br/>
+	 * assigned to this component through Calc.assignControlExpression() method.
+	 * @param ctrl Flex Control you want to register with the Calc
+	 * @param valuePro Property that holds a value for the control. It can be "value", "text", or any other you choose
+	 * @param editStartEvents Specifies which events is Calc listening to, to display the expression instead of value in the editor. Used primarily with TextInput compnent where you would specify [FocusEvent.FOCUS_IN]
+	 * @param editEndEvents Specifies which events are assigning are triggered when the ctrl's value has been modified. Example: [Event.CHANGE, FlexEvent.ENTER, FocusEvent.FOCUS_OUT]
 	 * */
 	public function addControl(ctrl : UIComponent, valueProp : String, editStartEvents : Array = null, editEndEvents : Array = null) : void
 	{
@@ -1070,6 +1051,27 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	
+	/**
+	 * Registered any Object with the Calc and you can later use specified property on this Object as the operand in the expression.
+	 * 
+	 * @param id Id of the Object, you will use this id to access the Object in expressions
+	 * @param object The reference to the actual Object you want to register
+	 * @param valueProp Teh value property of the Object you want to use as the value
+	 * 
+	 * @example The following code adds ArrayCollection and uses it in expression:
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var calc:Calc = new Calc();
+	 * var myCol:ArrayCollection = new ArrayCollection([{name:"Python", age:20}, {name:"Ruby", age:15}]);
+	 * calc.addCollection("names", myCol);
+	 * var ages:String = calc.solveExpression("names!age!0 + names!age!1);
+	 * trace(ages); // output: 35
+	 * 
+	 * </listing>
+	 * 
+	 * */
 	public function addObject(id : String, object : *, valueProp : String) : void
 	{
 		var ctrlObject : ControlObject = new ControlObject();
@@ -1080,6 +1082,14 @@ public class Calc extends EventDispatcher
 		_ctrlCollection[ctrlObject.id] = ctrlObject;
 	}
 	
+	/**
+	 * Registers an ISpreadsheet object with this Calc.
+	 * <br/><br/> 
+	 * <strong>NOTE:</strong> Spreadsheet, when you instanciate it, does not need to be added to separate Calc as it already has internal Calc object.
+	 * @param sheet ISpreadsheet instance to be registered
+	 * 
+	 * 
+	 * */	
 	public function addSpreadsheet(sheet : ISpreadsheet) : void
 	{
 		if (sheet.id == "" || sheet.id == null)
@@ -1098,7 +1108,25 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Calc currently supports ArrayCollection only
+	 * Calc currently supports ArrayCollection only. 
+	 * By registering a collection with the Calc you can use it in the expressions.
+	 * This is a feature not found in other standard Spreadsheet programs and is unique to AS.
+	 * 
+	 * @param id Id with which you want to identify this collection when used in expressions
+	 * @param collection The actual collection you want to register with this Calc
+	 * 
+	 * @example The following code adds ArrayCollection and uses it in expression:
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var calc:Calc = new Calc();
+	 * var myCol:ArrayCollection = new ArrayCollection([{name:"Python", age:20}, {name:"Ruby", age:15}]);
+	 * calc.addCollection("names", myCol);
+	 * var ages:String = calc.solveExpression("names!age!0 + names!age!1);
+	 * trace(ages); // output: 35
+	 * 
+	 * </listing>
+	 * 
 	 *
 	 * */
 	public function addCollection(id : String, collection : *) : void
@@ -1118,16 +1146,25 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	/**
+	 * Returns the dictionary collection of all the ISpreadsheet objects registered with this Calc.
+	 * */
 	public function get gridCollection() : Object
 	{
 		return _gridCollection;
 	}
 	
+	/**
+	 * Returns the dictionary collection of all the Objecs or Flex Controls registered with this Calc, excepts collections and ISpreadsheets.
+	 * */
 	public function get ctrlCollection() : Object
 	{
 		return _ctrlCollection;
 	}
 	
+	/**
+	 * Returns the dictionary collection of all the collections (ArrayCollection objects) registered with this Calc.
+	 * */
 	public function get collections() : Object
 	{
 		return _collections;
