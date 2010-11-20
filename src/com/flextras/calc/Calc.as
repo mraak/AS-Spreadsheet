@@ -41,23 +41,32 @@ public class Calc extends EventDispatcher
 	
 	private var _collections : Object;
 	
-	private var currentOriginator : ControlObject;
+	private var _currentOriginator : ControlObject;
 	
-	private var dependantsTree : Object;
+	private var _dependantsTree : Object;
 	
-	private var currentDependantsTreeObject : Object;
+	private var _currentDependantsTreeObject : Object;
 	
-	private var operandError : String = null;
+	private var _operandError : String = null;
 	
-	private var repairedExpression : String;
+	private var _repairedExpression : String;
 	
+	/**
+	 * Control Object that is currently being processed, used in update cycles.
+	 * */
 	public var currentTarget : ControlObject;
 	
+	
+	/**
+	 * Contains all ControlObject instances that have either expression or a value applied to it
+	 * */
 	[Bindable]
 	public var expressionTree : Array;
 	
 	
-	
+	/**
+	 * Constructor. Creates a new instance of the Calc.
+	 * */
 	public function Calc()
 	{
 		init();
@@ -86,7 +95,7 @@ public class Calc extends EventDispatcher
 	public function solveExpression(exp : String, forget : Boolean = true) : String
 	{
 		var isValid : String = Utils.checkValidExpression(exp);
-		operandError = null;
+		_operandError = null;
 		
 		if (isValid == "ok")
 		{
@@ -108,7 +117,7 @@ public class Calc extends EventDispatcher
 			
 			// remember the expression before it gets modified into result
 			if (!forget)
-				repairedExpression = Utils.repairExpression(exp);
+				_repairedExpression = Utils.repairExpression(exp);
 			
 			// find the innermost brackets, also see if brackets are part of formula - SUM(args)
 			var rxParen : RegExp = /([A-Za-z]*)\([^()]*\)/g;
@@ -133,12 +142,12 @@ public class Calc extends EventDispatcher
 			this.dispatchEvent(errEvt);
 		}
 		
-		if (operandError)
+		if (_operandError)
 		{
-			exp = operandError;
+			exp = _operandError;
 			
 			var errEvt1 : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
-			errEvt1.message = operandError;
+			errEvt1.message = _operandError;
 				//this.dispatchEvent(errEvt1);
 		}
 		
@@ -154,6 +163,7 @@ public class Calc extends EventDispatcher
 	 * Solves an individual expression contained within parenthesis. 
 	 * Used internaly by solveExpression().
 	 * 
+	 * @param: arguments is automatically passed from String.replace() function in solveExpression() method.
 	 * @return A string that is numeric solution to the expression in parenthesis
 	 *
 	 * */
@@ -281,17 +291,12 @@ public class Calc extends EventDispatcher
 		else if (FormulaLogic.functions.indexOf(formula.toLowerCase()) > -1)
 		{
 			
-			//exp = FormulaLogic.solve(formula, exp.split(","));
-			
 			var input : Array = exp.split(",");
 			
 			if (formula.toLowerCase() == FormulaLogic.IF)
 			{
-				//TODO: report error and return
 				if (input.length != 3)
 				{
-					//throw(new Error("IF function has wrong number of parameters"));
-					
 					var ifErrEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
 					ifErrEvt.message = "IF function has wrong number of parameters, reqired 3, found: " + input.length;
 					this.dispatchEvent(ifErrEvt);
@@ -310,11 +315,8 @@ public class Calc extends EventDispatcher
 			}
 			else if (formula.toLowerCase() == FormulaLogic.COUNTIF)
 			{
-				//TODO: report error and return
 				if (input.length != 2)
 				{
-					//throw(new Error("IF function has wrong number of parameters"));
-					
 					var countifErrEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
 					countifErrEvt.message = "COUNTIF function has wrong number of parameters, reqired 2, found: " + input.length;
 					this.dispatchEvent(countifErrEvt);
@@ -358,8 +360,8 @@ public class Calc extends EventDispatcher
 	/**
 	 * @private
 	 * Solves simple expressions with one operator, one operand on the left, and one operand on the right.
-	 * Returns a numerical string that is a solution to passed expression.
-	 * Parameter: <i>arguments</i> (Array) is automatically passed from String.replace() function in solveParen method.
+	 * @return A numerical string that is a solution to passed expression.
+	 * @param: arguments is automatically passed from String.replace() function in solveParen() method.
 	 * */
 	private function solveSimple() : String
 	{
@@ -410,8 +412,9 @@ public class Calc extends EventDispatcher
 	 * This method extracts the value from a Control specified as String.
 	 * Calc uses this when solving expressions, if the expression is '=A1 + 5', it will attempt to find a ControlObject with the id="a1", and return its value.
 	 * 
-	 * @param operand String identifying the control (operand in the expression)
-	 * @return A Number that is the value of the control specified
+	 * @param operand String identifying the control (for example operand in the expression)
+	 * @param emptyStringPolicy Can be "zero" or "nan", specifies what the function will return if the operand is not found. 
+	 * @return A Number that is the value of the control specified. If not found and emptyStringPolicy=="nan", return value is NaN. If not found and emptyStringPolicy=="zero", return value is 0. 
 	 *
 	 * */
 	public function getValueFromOperand(operand : String, emptyStringPolicy : String = "zero") : Number
@@ -456,7 +459,6 @@ public class Calc extends EventDispatcher
 				erev.message = "Operand does not exist: " + operand + ". Calculations might not appear as expected.";
 				this.dispatchEvent(erev);
 				
-					//operandError = "!Error: Operand does not exist: " + operand;
 			}
 		}
 		else
@@ -599,21 +601,21 @@ public class Calc extends EventDispatcher
 		{
 			for each (var c : ControlObject in objectChanged.dependants)
 			{
-				if (c != currentOriginator)
+				if (c != _currentOriginator)
 				{
 					if (c.exp)
 						assignControlExpression(c, c.exp, true);
 				}
 				else
 				{
-					var e : String = "Cyclic reference detected at: " + currentOriginator.id + "<->" + objectChanged.id + ". Reset this field.";
+					var e : String = "Cyclic reference detected at: " + _currentOriginator.id + "<->" + objectChanged.id + ". Reset this field.";
 					
 					var errEvt : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
 					errEvt.message = e;
 					this.dispatchEvent(errEvt);
 					
-					currentOriginator.ctrl[currentOriginator.valueProp] = e;
-					currentOriginator.exp = null;
+					_currentOriginator.ctrl[_currentOriginator.valueProp] = e;
+					_currentOriginator.exp = null;
 				}
 			}
 		}
@@ -639,7 +641,7 @@ public class Calc extends EventDispatcher
 		// remove this object as dependant from all of the operands
 		if (!update)
 		{
-			currentOriginator = co;
+			_currentOriginator = co;
 			
 			for each (var op : ControlObject in co.ctrlOperands)
 			{
@@ -661,8 +663,8 @@ public class Calc extends EventDispatcher
 		{
 			funcCalc = exp.substr(1);
 			_val = solveExpression(funcCalc, false).toString();
-			co.exp = "=" + repairedExpression;
-			repairedExpression = null;
+			co.exp = "=" + _repairedExpression;
+			_repairedExpression = null;
 			
 			coind = expressionTree.indexOf(co);
 			
@@ -799,7 +801,7 @@ public class Calc extends EventDispatcher
 		}
 		else
 		{
-			currentOriginator = co;
+			_currentOriginator = co;
 			updateDependent(co);
 		}
 	}
