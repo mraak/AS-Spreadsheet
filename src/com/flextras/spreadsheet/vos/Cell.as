@@ -75,12 +75,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	public const menu : Menu = new Menu (Cell (this));
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet const controlObject : ControlObject = new ControlObject (Cell (this));
 	
@@ -93,8 +93,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 	/**
 	 * Constructor.
 	 *
-	 * @param owner
-	 * @param bounds
+	 * @param owner Reference to Spreadsheet component.
+	 * @param bounds Bounds contains cell boundaries. x represents column index, y row index, width column span and height the number of rows it spans - starting with 0, which means it doesn't span at all.
 	 *
 	 */
 	public function Cell (owner : Spreadsheet = null, bounds : Rectangle = null)
@@ -138,12 +138,12 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet var owner : Spreadsheet;
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet var width : Number, height : Number;
 	
@@ -158,13 +158,13 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected var _bounds : Rectangle;
 	
-	// TODO: Make protected
+	// TODO: Make protected or remove.
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet function get bounds () : Rectangle
 	{
@@ -177,9 +177,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Wrapper that returns index of column in which this cell is located.
 	 *
 	 * @return
-	 *
 	 */
 	public function get columnIndex () : uint
 	{
@@ -192,9 +192,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Wrapper that returns number of columns this cell spans.
 	 *
 	 * @return
-	 *
 	 */
 	public function get columnSpan () : uint
 	{
@@ -206,7 +206,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected const _condition : Condition = new Condition;
 	
@@ -226,6 +226,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
+	 * Replaces current cell condition with new one.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -242,6 +244,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Accepts either Object or Condition.
+	 * If value is typed as Condition then this setter behaves the same as regular setter otherwise it changes only the provided properties.
+	 * It also dispathes an event.
 	 *
 	 * @param value
 	 *
@@ -266,15 +271,15 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected var _contextMenuEnabled : Boolean;
 	
 	[Bindable(event="contextMenuEnabledChanged")]
 	/**
+	 * Enables custom context menu on selected cell.
 	 *
 	 * @return
-	 *
 	 */
 	public function get contextMenuEnabled () : Boolean
 	{
@@ -282,9 +287,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set contextMenuEnabled (value : Boolean) : void
 	{
@@ -301,15 +304,15 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected var _enabled : Boolean = true;
 	
 	[Bindable(event="enabledChanged")]
 	/**
+	 * Cell is enabled by default. When disabled, cell uses different styles and isn't editable.
 	 *
 	 * @return
-	 *
 	 */
 	public function get enabled () : Boolean
 	{
@@ -317,9 +320,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set enabled (value : Boolean) : void
 	{
@@ -338,16 +339,16 @@ public class Cell extends EventDispatcher implements IExternalizable
 	//----------------------------------
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected var _expression : String;
 	
 	[Bindable(event="expressionChanged")]
 	[Bindable(event="valueChanged")]
 	/**
+	 * Contains actual cells expression used by editor and for evaluationg the formula.
 	 *
 	 * @return
-	 *
 	 */
 	public function get expression () : String
 	{
@@ -357,9 +358,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set expression (value : String) : void
 	{
@@ -386,12 +385,14 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	protected var _expressionObject : Object;
 	
 	/**
-	 *  @private
+	 * Contains reference to the whole expression object from Spreadsheet.expressions array.
+	 *
+	 * @private
 	 */
 	spreadsheet function get expressionObject () : Object
 	{
@@ -402,7 +403,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet function get expressionObjectByOldID () : Object
 	{
@@ -413,7 +414,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
-	 *  @private
+	 * @private
 	 */
 	spreadsheet function set expressionObject (value : Object) : void
 	{
@@ -466,9 +467,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Returns id provided by expressions array. It's formatted as "A0", where 'A' represents first column, and '0' first row.
 	 *
 	 * @return
-	 *
 	 */
 	public function get id () : String
 	{
@@ -481,9 +482,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Wrapper that returns index of row in which this cell is located.
 	 *
 	 * @return
-	 *
 	 */
 	public function get rowIndex () : uint
 	{
@@ -496,9 +497,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Wrapper that returns number of rows this cell spans.
 	 *
 	 * @return
-	 *
 	 */
 	public function get rowSpan () : uint
 	{
@@ -516,9 +517,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Bindable(event="stylesChanged")]
 	/**
+	 * Provides access to styles.
 	 *
 	 * @return
-	 *
 	 */
 	public function get styles () : CellStyles
 	{
@@ -526,9 +527,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 	}
 	
 	/**
+	 * Replaces current cell styles with new ones.
+	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set styles (value : CellStyles) : void
 	{
@@ -542,9 +544,11 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Transient]
 	/**
+	 * Accepts either Object or CellStyles.
+	 * If value is typed as CellStyles then this setter behaves the same as regular setter otherwise it changes only the provided styles.
+	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set stylesObject (value : Object) : void
 	{
@@ -572,9 +576,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	
 	[Bindable(event="valueChanged")]
 	/**
+	 * Contains the result from evaluated expression.
 	 *
 	 * @return
-	 *
 	 */
 	public function get value () : String
 	{
@@ -608,7 +612,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 	[Bindable(event="wordWrapChanged")]
 	/**
 	 * This property is a flag that indicates whether text in the cells should be word wrapped.
-	 *  If <code>true</code>, enables word wrapping for text in the spreadsheet cells.
+	 * If <code>true</code>, enables word wrapping for text in the spreadsheet cells.
 	 */
 	public function get wordWrap () : Boolean
 	{

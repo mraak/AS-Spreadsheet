@@ -4,8 +4,7 @@ import flash.events.Event;
 import flash.geom.Rectangle;
 
 /**
- *
- *
+ * Only reason we used event instead of directly calling the required function is that user can prevent spanning if criteria isn't met.
  */
 public class CellEvent extends Event
 {
@@ -16,19 +15,9 @@ public class CellEvent extends Event
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 */
-	public static const UPDATE : String = "com.flextras.spreadsheet.events.CellEvent::UPDATE";
-	
-	/**
-	 *
+	 * Dispatched when user sets column | row span on selected cell.
 	 */
 	public static const RESIZE : String = "com.flextras.spreadsheet.events.CellEvent::RESIZE";
-	
-	/**
-	 *
-	 */
-	public static const CLEAR : String = "com.flextras.spreadsheet.events.CellEvent::CLEAR";
 	
 	//--------------------------------------------------------------------------
 	//
@@ -37,7 +26,7 @@ public class CellEvent extends Event
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 * Amount contains new cell boundaries. x represents column index, y row index, width column span and height the number of rows it spans - starting with 0, which means it doesn't span at all.
 	 */
 	public var amount : Rectangle;
 	
@@ -50,9 +39,8 @@ public class CellEvent extends Event
 	/**
 	 * Constructor.
 	 *
-	 * @param type
-	 * @param data
-	 *
+	 * @param type Event type.
+	 * @param data Amount contains new cell boundaries.
 	 */
 	public function CellEvent (type : String, amount : Rectangle)
 	{
@@ -68,9 +56,7 @@ public class CellEvent extends Event
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
-	 * @return
-	 *
+	 * @private
 	 */
 	override public function clone () : Event
 	{
