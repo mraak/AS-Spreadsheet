@@ -41,13 +41,6 @@ public class Calc extends EventDispatcher
 	
 	private var _collections : Object;
 	
-	public var ignoreCase : Boolean;
-	
-	public var currentTarget : ControlObject;
-	
-	[Bindable]
-	public var expressionTree : Array;
-	
 	private var currentOriginator : ControlObject;
 	
 	private var dependantsTree : Object;
@@ -58,27 +51,36 @@ public class Calc extends EventDispatcher
 	
 	private var repairedExpression : String;
 	
+	public var currentTarget : ControlObject;
+	
+	[Bindable]
+	public var expressionTree : Array;
+	
+	
+	
 	public function Calc()
 	{
 		init();
 	}
 	
+	/**
+	 * @private
+	 * Sets initial values
+	 * */
 	private function init() : void
 	{
 		_ctrlCollection = new Object();
 		_gridCollection = new Object();
 		_collections = new Object();
 		expressionTree = new Array();
-		ignoreCase = false;
-	
 	}
 	
 	/**
-	 * Call this method to solve the math expression.
-	 * Also supports negative numbers. Supports formulas like SUM(2,3), MAX(a1:d3), etc.
+	 * Solve the mathemathical expression and supports formulas like SUM(2,3), MAX(a1:d3), etc.
 	 *
-	 * returns: Number, which is the numerical solution to expression
-	 * params: exp (String), math expression in a string, e.g.
+	 * @param exp Expression that needs to be solved
+	 * @param forget Internal, you never need to set this param
+	 * @return A string that is numeric solution to the expression
 	 *
 	 * */
 	public function solveExpression(exp : String, forget : Boolean = true) : String
@@ -89,10 +91,6 @@ public class Calc extends EventDispatcher
 		if (isValid == "ok")
 		{
 			var res : Number;
-			
-			// TODO: Delete
-			// sheets/grids with labels containing spaces
-			//var rxSheetLabel : RegExp = /'[^']+'!/g;
 			
 			// remove white spaces from expression		
 			exp = exp.replace(/\s+/g, "");
@@ -152,8 +150,11 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * @private Pass individal bracket to this function.
-	 * Returns a string that is numeric solution to the expression in brackets
+	 * @private 
+	 * Solves an individual expression contained within parenthesis. 
+	 * Used internaly by solveExpression().
+	 * 
+	 * @return A string that is numeric solution to the expression in parenthesis
 	 *
 	 * */
 	private function solveParen() : String
@@ -222,6 +223,14 @@ public class Calc extends EventDispatcher
 		return exp;
 	}
 	
+	/**
+	 * @private
+	 * Solves expression that contains a formula formula, i.e. SUM(a2:a5)
+	 * 
+	 * @param exp Expression that you want to solve
+	 * @returns A string that is numeric solution to the expression
+	 * 
+	 * */
 	private function solveFormula(exp : String) : String
 	{
 		var regex : RegExp = /[A-Za-z]*\(([^()]*)\)/g;
@@ -347,6 +356,7 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
+	 * @private
 	 * Solves simple expressions with one operator, one operand on the left, and one operand on the right.
 	 * Returns a numerical string that is a solution to passed expression.
 	 * Parameter: <i>arguments</i> (Array) is automatically passed from String.replace() function in solveParen method.
@@ -397,14 +407,11 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * This method extracts the value from any operand on the left or right of the operator.
-	 * Legal values for operands:
-	 * - [fieldId] - Id of any existing field that was assigned to this Calc
-	 * - -[fieldId] - negative value in front of a field Id of any existing field that was assigned to this Calc
-	 * - N - any number
-	 * - -N - negative value of any number
-	 * E.G.:
-	 *  - a1+4, -field2*-4, 5+6, -b2-8
+	 * This method extracts the value from a Control specified as String.
+	 * Calc uses this when solving expressions, if the expression is '=A1 + 5', it will attempt to find a ControlObject with the id="a1", and return its value.
+	 * 
+	 * @param operand String identifying the control (operand in the expression)
+	 * @return A Number that is the value of the control specified
 	 *
 	 * */
 	public function getValueFromOperand(operand : String, emptyStringPolicy : String = "zero") : Number
@@ -462,12 +469,17 @@ public class Calc extends EventDispatcher
 		return rn;
 	}
 	
+	/**
+	 * Gets a ControlObject from a String.
+	 * 
+	 * @param ctrlId Id of a ControlObject you wish to get, e.g. "a1"
+	 * @return Returns a ControlObject associated with the string provided
+	 * */
 	public function getCtrlById(ctrlId : String) : ControlObject
 	{
 		var ro : ControlObject;
 		
-		if (ignoreCase)
-			ctrlId = ctrlId.toLowerCase();
+		ctrlId = ctrlId.toLowerCase();
 		
 		var collectionId : String;
 		var objectId : String;
@@ -525,7 +537,6 @@ public class Calc extends EventDispatcher
 			{
 				var gr : ISpreadsheet = _gridCollection[collectionId];
 				ro = gr.ctrlObjects[objectId];
-				
 			}
 			
 		}
@@ -543,7 +554,8 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * From either string or ControlObject
+	 * Gets a ControlObject
+	 * @param ctrl Specify either a String, ControlObject or UIComponent that you wish to resolve to a ControlObject 
 	 * */
 	public function getCtrl(ctrl : *) : ControlObject
 	{
@@ -566,7 +578,6 @@ public class Calc extends EventDispatcher
 			else
 			{
 				throw("UIComponent has to have 'id' property specified");
-				
 			}
 		}
 		else
@@ -577,6 +588,11 @@ public class Calc extends EventDispatcher
 		return co;
 	}
 	
+	
+	/**
+	 * @private
+	 * Loops recursively through the dependent objects of objectChanged until all dependants are resolved.
+	 * */
 	private function updateDependent(objectChanged : ControlObject) : void
 	{
 		if (objectChanged.dependants.length > 0)
@@ -605,10 +621,10 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Main function for assigning the expressions to the objects.
-	 * - ctrl:*, object that you want to assign expression to. You can use the ID:String of the object or a reference to the object typed as ControlObject
-	 * - expression:String, expression to be assigned, e.g. "=5+5"
-	 * - update:Boolean, internal use
+	 * Assigns expressions to the objects registered with the Calc.
+	 * @param Object that you want to assign expression to. You can use the ID:String of the object or a reference to the object typed as ControlObject
+	 * @expression Expression to be assigned, e.g. "=5+5"
+	 * @update Internal use, you don't ever need to specify this
 	 * */
 	public function assignControlExpression(ctrl : *, expression : String, update : Boolean = false) : void
 	{
