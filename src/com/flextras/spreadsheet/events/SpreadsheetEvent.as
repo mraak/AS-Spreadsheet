@@ -1,5 +1,5 @@
 
-package com.flextras.spreadsheet
+package com.flextras.spreadsheet.events
 {
 import flash.events.Event;
 

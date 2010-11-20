@@ -2,14 +2,14 @@ package com.flextras.calc
 {
 import com.flextras.spreadsheet.ISpreadsheet;
 import com.flextras.spreadsheet.Spreadsheet;
-import com.flextras.spreadsheet.SpreadsheetEvent;
+import com.flextras.spreadsheet.events.SpreadsheetEvent;
 
 import flash.events.EventDispatcher;
 import flash.text.TextField;
 
 
-[Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
-[Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="error", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
+[Event(name="warning", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * Calc is the main class for performing all the calculation logic. It can evaluate 

@@ -30,6 +30,7 @@ import mx.managers.IFocusManagerComponent;
 
 import spark.components.List;
 import spark.components.supportClasses.SkinnableComponent;
+import com.flextras.spreadsheet.events.SpreadsheetEvent;
 
 use namespace spreadsheet;
 
@@ -45,27 +46,27 @@ use namespace spreadsheet;
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGE
  */
-[Event(name="expressionsChange", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="expressionsChange", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGED
  */
-[Event(name="expressionsChanged", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="expressionsChanged", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CLEARED
  */
-[Event(name="expressionsCleared", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="expressionsCleared", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.ERROR
  */
-[Event(name="error", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="error", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.WARNING
  */
-[Event(name="warning", type="com.flextras.spreadsheet.SpreadsheetEvent")]
+[Event(name="warning", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 [DefaultProperty("expressions")]
 /**
