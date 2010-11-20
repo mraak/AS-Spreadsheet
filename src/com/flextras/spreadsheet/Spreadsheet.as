@@ -2207,6 +2207,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	// --AB will be made public. selectedCell will return whatever DataGroup will return
 	//TODO: move and extend, make public
 	/**
+	 * @private
+	 *
 	 * This property returns a vector of selected Cells.
 	 */
 	protected function get selectedCells () : Vector.<Cell>
@@ -2214,6 +2216,98 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		var items : Vector.<Object> = grid.selectedItems;
 		
 		return Vector.<Cell> (items);
+	}
+	
+	//----------------------------------
+	//  selectedIndex
+	//----------------------------------
+	
+	[Bindable(event="SelectedIndexChanged")]
+	/**
+	 * @copy spark.components.supportClasses.ListBase#selectedIndex
+	 */
+	public function get selectedIndex () : int
+	{
+		return grid.selectedIndex;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set selectedIndex (value : int) : void
+	{
+		grid.selectedIndex = value;
+		
+		dispatchEvent (new Event ("selectedIndexChanged"));
+	}
+	
+	//----------------------------------
+	//  selectedIndices
+	//----------------------------------
+	
+	[Bindable(event="SelectedIndicesChanged")]
+	/**
+	 * @copy spark.components.List#selectedIndices
+	 */
+	public function get selectedIndices () : Vector.<int>
+	{
+		return grid.selectedIndices;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set selectedIndices (value : Vector.<int>) : void
+	{
+		grid.selectedIndices = value;
+		
+		dispatchEvent (new Event ("selectedIndicesChanged"));
+	}
+	
+	//----------------------------------
+	//  selectedItem
+	//----------------------------------
+	
+	[Bindable(event="SelectedItemChanged")]
+	/**
+	 * @copy spark.components.supportClasses.ListBase#selectedItem
+	 */
+	public function get selectedItem () : Cell
+	{
+		return grid.selectedItem;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set selectedItem (value : Cell) : void
+	{
+		grid.selectedItem = value;
+		
+		dispatchEvent (new Event ("selectedItemChanged"));
+	}
+	
+	//----------------------------------
+	//  selectedItems
+	//----------------------------------
+	
+	[Bindable(event="SelectedItemsChanged")]
+	/**
+	 * @copy spark.components.List#selectedItems
+	 */
+	public function get selectedItems () : Vector.<Object>
+	{
+		return grid.selectedItems;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set selectedItems (value : Vector.<Object>) : void
+	{
+		grid.selectedItems = value;
+		
+		dispatchEvent (new Event ("selectedItemsChanged"));
 	}
 	
 	//----------------------------------
