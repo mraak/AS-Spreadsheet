@@ -4,13 +4,18 @@
 				   xmlns:mx = "library://ns.adobe.com/flex/mx"
 				   xmlns:context = "com.flextras.spreadsheet.context.*"
 				   title = "Paste">
+
+	<!---Options-->
 	<s:ButtonBar id = "buttonBar"
 				 change = "buttonBar_changeHandler(event)">
 		<s:dataProvider>
 			<s:ArrayCollection>
 				<fx:String>Styles</fx:String>
+
 				<fx:String>Condition</fx:String>
+
 				<fx:String>Expressions</fx:String>
+
 				<fx:String>Cancel</fx:String>
 			</s:ArrayCollection>
 		</s:dataProvider>
@@ -25,24 +30,27 @@
 			
 			use namespace spreadsheet;
 			
-			protected function buttonBar_changeHandler(event : IndexChangeEvent) : void
+			/**
+			 * @private
+			 */
+			protected function buttonBar_changeHandler (event : IndexChangeEvent) : void
 			{
 				switch (event.newIndex)
 				{
 					case 0:
-						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.STYLES);
+						cell.owner.moveCells (ClipboardData.instance.range, new Point (cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.STYLES);
 						break;
 					
 					case 1:
-						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.CONDITIONS);
+						cell.owner.moveCells (ClipboardData.instance.range, new Point (cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.CONDITIONS);
 						break;
 					
 					case 2:
-						cell.owner.moveCells(ClipboardData.instance.range, new Point(cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.EXPRESSIONS);
+						cell.owner.moveCells (ClipboardData.instance.range, new Point (cell.columnIndex, cell.rowIndex), ClipboardData.instance.copy, MoveOptions.EXPRESSIONS);
 						break;
 				}
 				
-				closeHandler(null);
+				closeHandler (null);
 			}
 		]]>
 	</fx:Script>

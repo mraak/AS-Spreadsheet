@@ -17,29 +17,81 @@ import spark.components.supportClasses.ItemRenderer;
 
 use namespace mx_internal;
 
+/**
+ * ResizeManager adds ability to resize provided target.
+ * It also uses custom mouse cursor.
+ */
 public class ResizeManager extends EventDispatcher
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constants
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Every cell uses same dispatcher for toggling the visibility of resize handlers.
+	 */
 	public static const dispatcher : EventDispatcher = new EventDispatcher;
 	
+	/**
+	 * Event type is used when resize handler should be shown.
+	 */
 	public static const SHOW_HANDLERS : String = "showHandlers";
 	
+	/**
+	 * Event type is used when resize handler should be hidden.
+	 */
 	public static const HIDE_HANDLERS : String = "hideHandlers";
 	
 	[Embed(source="../assets/stretchCursor.png")]
+	/**
+	 * @private
+	 */
 	protected const stretchCursor : Class;
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Constructor.
+	 */
 	public function ResizeManager ()
 	{
 		autoHide = true;
 	}
 	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  autoHide
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	private var _autoHide : Boolean;
 	
+	/**
+	 * If true user can toggle visibility of resize handlers by lets say keystroke.
+	 *
+	 * @default true
+	 */
 	public function get autoHide () : Boolean
 	{
 		return _autoHide;
 	}
 	
+	/**
+	 * @private
+	 */
 	public function set autoHide (value : Boolean) : void
 	{
 		if (autoHide)
@@ -59,6 +111,13 @@ public class ResizeManager extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  target
+	//----------------------------------
+	
+	/**
+	 * Target object which should be resized.
+	 */
 	public function set target (value : ItemRenderer) : void
 	{
 		systemManager = value.getNonNullSystemManager ();
@@ -67,16 +126,34 @@ public class ResizeManager extends EventDispatcher
 		root = systemManager.getSandboxRoot ();
 	}
 	
+	/**
+	 * Custom cursors rotation.
+	 */
 	public var rotation : int;
 	
+	/**
+	 * Custom cursors offset position.
+	 */
 	public var offset : Point;
 	
+	/**
+	 * @private
+	 */
 	protected var systemManager : ISystemManager;
 	
+	/**
+	 * @private
+	 */
 	protected var root : DisplayObject;
 	
+	/**
+	 * @private
+	 */
 	protected var cursorManager : ICursorManager;
 	
+	/**
+	 * Callback function which gets called when user resizes column or row.
+	 */
 	public var mouseMoveHandler : Function;
 	
 	/**
@@ -84,6 +161,37 @@ public class ResizeManager extends EventDispatcher
 	 */
 	protected var resizeCursorID : int = CursorManager.NO_CURSOR;
 	
+	//----------------------------------
+	//  handlersVisible
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	private var _handlersVisible : Boolean = true;
+	
+	[Bindable(event="handlersVisibleChanged")]
+	/**
+	 *
+	 */
+	public function get handlersVisible () : Boolean
+	{
+		return _handlersVisible;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Event handlers
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  mouseOverHandler
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	public function mouseOverHandler (event : MouseEvent) : void
 	{
 		event.stopImmediatePropagation ();
@@ -96,11 +204,25 @@ public class ResizeManager extends EventDispatcher
 			cursorHolder.rotation = rotation;
 	}
 	
+	//----------------------------------
+	//  mouseOutHandler
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	public function mouseOutHandler (event : MouseEvent) : void
 	{
 		cursorManager.removeCursor (resizeCursorID);
 	}
 	
+	//----------------------------------
+	//  mouseDownHandler
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	public function mouseDownHandler (event : MouseEvent) : void
 	{
 		event.stopImmediatePropagation ();
@@ -112,6 +234,13 @@ public class ResizeManager extends EventDispatcher
 		systemManager.deployMouseShields (true);
 	}
 	
+	//----------------------------------
+	//  mouseUpHandler
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	public function mouseUpHandler (event : Event) : void
 	{
 		root.removeEventListener (MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
@@ -121,14 +250,13 @@ public class ResizeManager extends EventDispatcher
 		systemManager.deployMouseShields (false);
 	}
 	
-	private var _handlersVisible : Boolean = true;
+	//----------------------------------
+	//  showHandlersHandler
+	//----------------------------------
 	
-	[Bindable(event="handlersVisibleChanged")]
-	public function get handlersVisible () : Boolean
-	{
-		return _handlersVisible;
-	}
-	
+	/**
+	 * @private
+	 */
 	protected function showHandlersHandler (e : Event) : void
 	{
 		_handlersVisible = true;
@@ -136,6 +264,13 @@ public class ResizeManager extends EventDispatcher
 		dispatchEvent (new Event ("handlersVisibleChanged"));
 	}
 	
+	//----------------------------------
+	//  hideHandlersHandler
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
 	protected function hideHandlersHandler (e : Event) : void
 	{
 		_handlersVisible = false;

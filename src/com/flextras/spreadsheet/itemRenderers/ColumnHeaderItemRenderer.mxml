@@ -17,6 +17,7 @@
 		<s:State name = "disabled" />
 	</s:states>
 
+	<!---Background-->
 	<s:Rect left = "{halfEdgeSize}"
 			top = "0"
 			right = "{halfEdgeSize}"
@@ -31,6 +32,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Separator-->
 	<s:Rect top = "0"
 			bottom = "0"
 			width = "{halfEdgeSize}">
@@ -39,6 +41,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Resize handler-->
 	<s:Group id = "border"
 			 top = "0"
 			 right = "0"
@@ -56,6 +59,7 @@
 		</s:Rect>
 	</s:Group>
 
+	<!---Output-->
 	<s:Label horizontalCenter = "0"
 			 verticalCenter = "3"
 			 text = "{data}"

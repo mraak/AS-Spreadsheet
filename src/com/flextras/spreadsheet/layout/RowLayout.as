@@ -12,32 +12,45 @@ import spark.layouts.supportClasses.LayoutBase;
 use namespace spreadsheet;
 
 /**
- *
- *
+ * Custom layout which lays its children vertically.
  */
 public class RowLayout extends LayoutBase
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
-	 *
-	 *
+	 * Constructor.
 	 */
-	public function RowLayout()
+	public function RowLayout ()
 	{
-		super();
+		super ();
 	}
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties
+	//  Variables
 	//
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	public var host : Spreadsheet;
 	
-	override public function updateDisplayList(width : Number, height : Number) : void
+	//--------------------------------------------------------------------------
+	//
+	//  Overridden methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * inheritDoc
+	 */
+	override public function updateDisplayList (width : Number, height : Number) : void
 	{
 		if (!host)
 			return;
@@ -53,22 +66,22 @@ public class RowLayout extends LayoutBase
 		
 		for (var i : int, n : int = heights.length; i < n; ++i)
 		{
-			if(!heights[i])
+			if (!heights[i])
 				continue;
 			
 			h = heights[i].value;
 			
-			element = target.getVirtualElementAt(i);
-			element.setLayoutBoundsPosition(0, y);
-			element.setLayoutBoundsSize(target.width, h);
+			element = target.getVirtualElementAt (i);
+			element.setLayoutBoundsPosition (0, y);
+			element.setLayoutBoundsSize (target.width, h);
 			
-			if(element is RowHeaderItemRenderer)
-				RowHeaderItemRenderer(element).host = host;
+			if (element is RowHeaderItemRenderer)
+				RowHeaderItemRenderer (element).host = host;
 			
 			y += h;
 		}
 		
-		target.setContentSize(target.width, y);
+		target.setContentSize (target.width, y);
 	}
 }
 }

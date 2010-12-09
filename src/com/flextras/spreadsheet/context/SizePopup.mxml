@@ -7,9 +7,11 @@
 
 	<fx:Binding source = "grid.grid.selectedItem"
 				destination = "cell" />
+
 	<fx:Binding source = "Vector.&lt;Cell>(grid.grid.selectedItems)"
 				destination = "cells" />
 
+	<!---Resizes entire row / column-->
 	<mx:Form enabled = "{!!cell}">
 		<mx:FormItem label = "Set column width">
 			<s:HSlider id = "widthSlider"
@@ -34,24 +36,30 @@
 		<![CDATA[
 			import com.flextras.spreadsheet.vos.Cell;
 			
-			protected function widthSlider_changeHandler(event : Event) : void
+			/**
+			 * @private
+			 */
+			protected function widthSlider_changeHandler (event : Event) : void
 			{
 				if (cells && cells.length > 0)
 					for each (var c : Cell in cells)
-						grid.setColumnWidthAt(c.columnIndex, widthSlider.value);
+						grid.setColumnWidthAt (c.columnIndex, widthSlider.value);
 				
 				if (cell)
-					grid.setColumnWidthAt(cell.columnIndex, widthSlider.value);
+					grid.setColumnWidthAt (cell.columnIndex, widthSlider.value);
 			}
 			
-			protected function heightSlider_changeHandler(event : Event) : void
+			/**
+			 * @private
+			 */
+			protected function heightSlider_changeHandler (event : Event) : void
 			{
 				if (cells && cells.length > 0)
 					for each (var c : Cell in cells)
-						grid.setRowHeightAt(c.rowIndex, heightSlider.value);
+						grid.setRowHeightAt (c.rowIndex, heightSlider.value);
 				
 				if (cell)
-					grid.setRowHeightAt(cell.rowIndex, heightSlider.value);
+					grid.setRowHeightAt (cell.rowIndex, heightSlider.value);
 			}
 		]]>
 	</fx:Script>

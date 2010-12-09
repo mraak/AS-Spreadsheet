@@ -3011,6 +3011,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	//  cells_collectionChangeHandler
 	//----------------------------------
+	
 	/**
 	 * @private
 	 *

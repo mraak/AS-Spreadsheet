@@ -12,32 +12,45 @@ import spark.layouts.supportClasses.LayoutBase;
 use namespace spreadsheet;
 
 /**
- *
- *
+ * Custom layout which lays its children horizontally.
  */
 public class ColumnLayout extends LayoutBase
 {
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
+	
 	/**
-	 *
-	 *
+	 * Constructor.
 	 */
-	public function ColumnLayout()
+	public function ColumnLayout ()
 	{
-		super();
+		super ();
 	}
 	
 	//--------------------------------------------------------------------------
 	//
-	//  Properties
+	//  Variables
 	//
 	//--------------------------------------------------------------------------
 	
 	/**
-	 *
+	 * @private
 	 */
 	public var host : Spreadsheet;
 	
-	override public function updateDisplayList(width : Number, height : Number) : void
+	//--------------------------------------------------------------------------
+	//
+	//  Overridden methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * inheritDoc
+	 */
+	override public function updateDisplayList (width : Number, height : Number) : void
 	{
 		if (!host)
 			return;
@@ -53,22 +66,22 @@ public class ColumnLayout extends LayoutBase
 		
 		for (var i : int, n : int = widths.length; i < n; ++i)
 		{
-			if(!widths[i])
+			if (!widths[i])
 				continue;
 			
 			w = widths[i].value;
 			
-			element = target.getVirtualElementAt(i);
-			element.setLayoutBoundsPosition(x, 0);
-			element.setLayoutBoundsSize(w, target.height);
+			element = target.getVirtualElementAt (i);
+			element.setLayoutBoundsPosition (x, 0);
+			element.setLayoutBoundsSize (w, target.height);
 			
-			if(element is ColumnHeaderItemRenderer)
-				ColumnHeaderItemRenderer(element).host = host;
+			if (element is ColumnHeaderItemRenderer)
+				ColumnHeaderItemRenderer (element).host = host;
 			
 			x += w;
 		}
 		
-		target.setContentSize(x, target.height);
+		target.setContentSize (x, target.height);
 	}
 }
 }

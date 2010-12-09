@@ -15,47 +15,94 @@ import spark.layouts.supportClasses.LayoutBase;
 
 use namespace spreadsheet;
 
+/**
+ * Custom grid layout which also supports column / row spanning.
+ */
 public class GridLayout extends LayoutBase
 {
-	protected var xs : Array;
-	protected var ys : Array;
+	//--------------------------------------------------------------------------
+	//
+	//  Constructor
+	//
+	//--------------------------------------------------------------------------
 	
-	protected var widths : Array;
-	protected var heights : Array;
+	/**
+	 * Constructor.
+	 */
+	public function GridLayout ()
+	{
+		super ();
+	}
 	
-	protected var columns : Array;
-	protected var rows : Array;
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
 	
-	protected var columnCount : int, rowCount : int;
-	
+	/**
+	 * @private
+	 */
 	public var host : Spreadsheet;
 	
-	public function GridLayout()
-	{
-		super();
-	}
-	
+	/**
+	 * @private
+	 */
 	protected var width : Number, height : Number;
 	
-	override public function updateDisplayList(width : Number, height : Number) : void
-	{
-		super.updateDisplayList(width, height);
-		
-		this.width = width;
-		this.height = height;
-		
-		if (useVirtualLayout)
-			updateDisplayListVirtual();
-		else
-			updateDisplayListReal();
-	}
+	/**
+	 * @private
+	 */
+	protected var xs : Array;
 	
-	protected function updateDisplayListVirtual() : void
+	/**
+	 * @private
+	 */
+	protected var ys : Array;
+	
+	/**
+	 * @private
+	 */
+	protected var widths : Array;
+	
+	/**
+	 * @private
+	 */
+	protected var heights : Array;
+	
+	/**
+	 * @private
+	 */
+	protected var columns : Array;
+	
+	/**
+	 * @private
+	 */
+	protected var rows : Array;
+	
+	/**
+	 * @private
+	 */
+	protected var columnCount : int, rowCount : int;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected function updateDisplayListVirtual () : void
 	{
 		//trace("virtual");
 	}
 	
-	protected function updateDisplayListReal() : void
+	/**
+	 * @private
+	 */
+	protected function updateDisplayListReal () : void
 	{
 		columnCount = host.columnCount;
 		rowCount = host.rowCount;
@@ -83,8 +130,8 @@ public class GridLayout extends LayoutBase
 		
 		for (var i : int, n : int = target.numElements; i < n; ++i)
 		{
-			element = target.getElementAt(i);
-			cell = Cell(IItemRenderer(element).data);
+			element = target.getElementAt (i);
+			cell = Cell (IItemRenderer (element).data);
 			
 			column = columns[cell.columnIndex] || [];
 			row = rows[cell.rowIndex] || [];
@@ -98,8 +145,8 @@ public class GridLayout extends LayoutBase
 			width = widths[cell.columnIndex] || new CellWidth;
 			height = heights[cell.rowIndex] || new CellHeight;
 			
-			cell.width = element.getPreferredBoundsWidth();
-			cell.height = element.getPreferredBoundsHeight();
+			cell.width = element.getPreferredBoundsWidth ();
+			cell.height = element.getPreferredBoundsHeight ();
 			
 			if (cell.columnSpan > 0)
 				hasSpan = true;
@@ -119,7 +166,7 @@ public class GridLayout extends LayoutBase
 			
 			if (hasSpan)
 			{
-				spans.push(cell);
+				spans.push (cell);
 				
 				hasSpan = false;
 			}
@@ -199,19 +246,19 @@ public class GridLayout extends LayoutBase
 			if (heights[i])
 				mh += heights[i].value; // + 1;
 		
-		target.setContentSize(mw, mh);
+		target.setContentSize (mw, mh);
 		target.measuredWidth = mw;
 		target.measuredHeight = mh;
 		
 		for (i = 0; i < n; ++i)
 		{
-			element = target.getElementAt(i);
-			cell = Cell(IItemRenderer(element).data);
+			element = target.getElementAt (i);
+			cell = Cell (IItemRenderer (element).data);
 			
 			x = xs[cell.columnIndex];
 			y = ys[cell.rowIndex];
 			
-			if (isNaN(x))
+			if (isNaN (x))
 			{
 				x = 0;
 				
@@ -222,7 +269,7 @@ public class GridLayout extends LayoutBase
 				xs[cell.columnIndex] = x;
 			}
 			
-			if (isNaN(y))
+			if (isNaN (y))
 			{
 				y = 0;
 				
@@ -236,54 +283,47 @@ public class GridLayout extends LayoutBase
 			width = widths[cell.columnIndex];
 			height = heights[cell.rowIndex];
 			
-			element.setLayoutBoundsPosition(x, y);
-			element.setLayoutBoundsSize(cell.columnSpan ? cell.width : width.value, cell.rowSpan ? cell.height : height.value);
+			element.setLayoutBoundsPosition (x, y);
+			element.setLayoutBoundsSize (cell.columnSpan ? cell.width : width.value, cell.rowSpan ? cell.height : height.value);
 		}
-	
-	/*var handler : Sprite;
-	
-	   for (i = 1, n = xs.length; i < n; ++i)
-	   {
-	   handler = new Sprite;
-	   handler.x = xs[i];
-	   handler.width = 1;
-	   handler.height = mh;
-	   handler.graphics.beginFill(0xff0000);
-	   handler.graphics.drawRect(0, 0, 1, mh);
-	   handler.graphics.endFill();
-	
-	   target.addChild(handler);
-	 }*/
 	}
 	
-	protected var elementsChanged : Boolean;
+	//--------------------------------------------------------------------------
+	//
+	//  Overridden methods
+	//
+	//--------------------------------------------------------------------------
 	
-	override public function elementAdded(index : int) : void
+	/**
+	 * inheritDoc
+	 */
+	override public function updateDisplayList (width : Number, height : Number) : void
 	{
-		elementsChanged = true;
+		super.updateDisplayList (width, height);
+		
+		this.width = width;
+		this.height = height;
+		
+		if (useVirtualLayout)
+			updateDisplayListVirtual ();
+		else
+			updateDisplayListReal ();
 	}
 	
-	override public function elementRemoved(index : int) : void
-	{
-		elementsChanged = true;
-	}
-	
-	override public function clearVirtualLayoutCache() : void
-	{
-	
-	}
-	
-	override public function getNavigationDestinationIndex(currentIndex : int, navigationUnit : uint, arrowKeysWrapFocus : Boolean) : int
+	/**
+	 * inheritDoc
+	 */
+	override public function getNavigationDestinationIndex (currentIndex : int, navigationUnit : uint, arrowKeysWrapFocus : Boolean) : int
 	{
 		if (currentIndex < 0)
 			return 0;
 		
-		var result : int = super.getNavigationDestinationIndex(currentIndex, navigationUnit, arrowKeysWrapFocus);
+		var result : int = super.getNavigationDestinationIndex (currentIndex, navigationUnit, arrowKeysWrapFocus);
 		
 		if (result > -1)
 			return result;
 		
-		var cell : Cell = host.indexedCells[host.getIdByIndex(currentIndex)];
+		var cell : Cell = host.indexedCells[host.getIdByIndex (currentIndex)];
 		
 		if (!cell)
 			return -1;
@@ -301,25 +341,25 @@ public class GridLayout extends LayoutBase
 		switch (navigationUnit)
 		{
 			case NavigationUnit.LEFT:
-				column = Math.max(0, column - 1);
+				column = Math.max (0, column - 1);
 				break;
 			
 			case NavigationUnit.RIGHT:
-				column = Math.min(columnCount - 1, column + cell.columnSpan + 1);
+				column = Math.min (columnCount - 1, column + cell.columnSpan + 1);
 				break;
 			case NavigationUnit.UP:
-				row = Math.max(0, row - 1);
+				row = Math.max (0, row - 1);
 				break;
 			
 			case NavigationUnit.DOWN:
-				row = Math.min(rowCount - 1, row + cell.rowSpan + 1);
+				row = Math.min (rowCount - 1, row + cell.rowSpan + 1);
 				break;
 			
 			default:
 				return -1;
 		}
 		
-		return host.getElementIndex(column, row);
+		return host.getElementIndex (column, row);
 	}
 }
 }

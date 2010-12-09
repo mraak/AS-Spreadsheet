@@ -26,6 +26,7 @@
 		<s:State name = "disabled" />
 	</context:states>
 
+	<!---States-->
 	<s:ButtonBar id = "stateBar"
 				 enabled = "{!!cell}"
 				 change = "stateBar_changeHandler(event)"
@@ -41,6 +42,7 @@
 		</s:ArrayCollection>
 	</s:ButtonBar>
 
+	<!---Text color and alpha-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "color"
@@ -68,6 +70,7 @@
 				   value.disabled = "{cell.styles.disabled.alpha}" />
 	</s:HGroup>
 
+	<!---Background color and aplha-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "backgroundColor"
@@ -97,6 +100,7 @@
 
 	<mx:HRule width = "100%" />
 
+	<!---Text styles: bold, italic, underline, fontStyle, size-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:CheckBox id = "boldStyle"
@@ -118,20 +122,31 @@
 				 paddingLeft = "10" />
 
 		<s:ComboBox id = "fontStyle"
-					 change = "fontStyle_changeHandler(event)"
-					 selectedItem = "{cell.styles.normal.font}">
+					change = "fontStyle_changeHandler(event)"
+					selectedItem = "{cell.styles.normal.font}">
 			<s:ArrayCollection>
 				<fx:String>_sans</fx:String>
+
 				<fx:String>_serif</fx:String>
+
 				<fx:String>_typewriter</fx:String>
+
 				<fx:String>Arial</fx:String>
+
 				<fx:String>Courier</fx:String>
+
 				<fx:String>Courier New</fx:String>
+
 				<fx:String>Geneva</fx:String>
+
 				<fx:String>Georgia</fx:String>
+
 				<fx:String>Helvetica</fx:String>
+
 				<fx:String>Times New Roman</fx:String>
+
 				<fx:String>Times</fx:String>
+
 				<fx:String>Verdana</fx:String>
 			</s:ArrayCollection>
 		</s:ComboBox>
@@ -147,6 +162,7 @@
 				   value = "{cell.styles.normal.size}" />
 	</s:HGroup>
 
+	<!---Horizontal text alignment-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "horizontalAlign"
@@ -171,6 +187,7 @@
 		</s:ButtonBar>
 	</s:HGroup>
 
+	<!---Vertical text alignment-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "verticalAlign"
@@ -195,6 +212,7 @@
 		</s:ButtonBar>
 	</s:HGroup>
 
+	<!---Roll out effect duration-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "rollOutDuration"
@@ -208,6 +226,7 @@
 				   value = "{cell.styles.rollOutDuration}" />
 	</s:HGroup>
 
+	<!---Cells background color gradient level-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "cellGradientLevel"
@@ -223,6 +242,7 @@
 
 	<mx:HRule width = "100%" />
 
+	<!---Border side-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "border"
@@ -246,6 +266,7 @@
 		</s:ButtonBar>
 	</s:HGroup>
 
+	<!---Border panel-->
 	<context:BorderSideView id = "side"
 							enabled = "{!!cell}"
 							side = "{borderSideBar.selectedIndex > -1 ? borderSideBar.selectedItem : 'all'}"
@@ -269,8 +290,14 @@
 			import spark.events.IndexChangeEvent;
 			
 			[Bindable]
+			/**
+			 * @private
+			 */
 			protected var borderSide : BorderSide;
 			
+			/**
+			 * @private
+			 */
 			override public function set cell (value : Cell) : void
 			{
 				super.cell = value;
@@ -278,66 +305,105 @@
 				borderSide = value.styles.normal.border.left;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function stateBar_changeHandler (e : IndexChangeEvent) : void
 			{
 				currentState = stateBar.selectedItem;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
 				applyStyle ("color", e.color);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function alphaStyle_changeHandler (e : Event) : void
 			{
 				applyStyle ("alpha", alphaStyle.value);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function backgroundColorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
 				applyStyle ("backgroundColor", e.color);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function backgroundAlphaStyle_changeHandler (e : Event) : void
 			{
 				applyStyle ("backgroundAlpha", backgroundAlphaStyle.value);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function horizontalAlignStyle_changeHandler (e : IndexChangeEvent) : void
 			{
 				applyStyleOnAllStates ("horizontalAlign", horizontalAlignStyle.selectedItem);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function verticalAlignStyle_changeHandler (e : IndexChangeEvent) : void
 			{
 				applyStyleOnAllStates ("verticalAlign", verticalAlignStyle.selectedItem);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function boldStyle_changeHandler (e : Event) : void
 			{
 				applyStyleOnAllStates ("bold", boldStyle.selected);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function italicStyle_changeHandler (e : Event) : void
 			{
 				applyStyleOnAllStates ("italic", italicStyle.selected);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function underlineStyle_changeHandler (e : Event) : void
 			{
 				applyStyleOnAllStates ("underline", underlineStyle.selected);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function fontStyle_changeHandler (e : Event) : void
 			{
 				applyStyleOnAllStates ("font", fontStyle.selectedItem);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function sizeStyle_changeHandler (e : Event) : void
 			{
 				applyStyleOnAllStates ("size", sizeStyle.value);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function applyStyle (name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
@@ -350,6 +416,9 @@
 					cell.styles[stateBar.selectedItem][name] = value;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function applyStyleOnAllStates (name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
@@ -371,6 +440,9 @@
 				}
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function applyBorderStyle (side : String, name : String, value : Object) : void
 			{
 				if (stateBar.selectedIndex < 0)
@@ -393,6 +465,9 @@
 					cell.styles.borderObject = o;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function borderSideBar_changeHandler (event : IndexChangeEvent) : void
 			{
 				if (cell)
@@ -402,6 +477,9 @@
 						borderSide = cell.styles.normal.border.left;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function rollOutDurationStyle_changeHandler (event : Event) : void
 			{
 				for each (var c : Cell in cells)
@@ -411,6 +489,9 @@
 					cell.styles.rollOutDuration = rollOutDurationStyle.value;
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function cellGradientLevelStyle_changeHandler (event : Event) : void
 			{
 				for each (var c : Cell in cells)

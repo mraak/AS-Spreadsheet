@@ -17,12 +17,9 @@
 	<fx:Binding source = "Vector.&lt;Cell>(grid.grid.selectedItems)"
 				destination = "cells" />
 
+	<!---Condition-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
-
-		<!--<s:TextInput id = "leftInput"
-			 text = "{cell.condition.left}"
-			 change = "leftInput_changeHandler(event)" />-->
 
 		<s:DropDownList id = "operatorList"
 						selectedItem = "{cell.condition.operator}"
@@ -47,6 +44,7 @@
 					 change = "rightInput_changeHandler(event)" />
 	</s:HGroup>
 
+	<!---Text color and alpha-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "color"
@@ -68,6 +66,7 @@
 				   value = "{cell.condition.styles.alpha}" />
 	</s:HGroup>
 
+	<!---Background color and alpha-->
 	<s:HGroup verticalAlign = "middle"
 			  enabled = "{!!cell}">
 		<s:Label text = "backgroundColor"
@@ -99,42 +98,58 @@
 			import spark.events.IndexChangeEvent;
 			import spark.events.TextOperationEvent;
 			
-			/* protected function leftInput_changeHandler(event : TextOperationEvent) : void
-			   {
-			   applyChanges("left", leftInput.text);
-			 } */
-			
+			/**
+			 * @private
+			 */
 			protected function operatorList_changeHandler (event : IndexChangeEvent) : void
 			{
 				if (operatorList.selectedIndex > -1)
 					applyChanges ("operator", operatorList.selectedItem);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function rightInput_changeHandler (event : TextOperationEvent) : void
 			{
 				applyChanges ("right", rightInput.text);
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
 				applyChanges ("styles", {color: e.color});
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function alphaStyle_changeHandler (e : Event) : void
 			{
 				applyChanges ("styles", {alpha: alphaStyle.value});
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function backgroundColorStyle_changeHandler (e : ColorPickerEvent) : void
 			{
 				applyChanges ("styles", {backgroundColor: e.color});
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function backgroundAlphaStyle_changeHandler (e : Event) : void
 			{
 				applyChanges ("styles", {backgroundAlpha: backgroundAlphaStyle.value});
 			}
 			
+			/**
+			 * @private
+			 */
 			protected function applyChanges (name : String, value : Object) : void
 			{
 				var o : Object = {};

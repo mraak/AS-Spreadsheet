@@ -36,6 +36,7 @@
 		<s:State name = "disabled" />
 	</s:states>
 
+	<!---Left border-->
 	<s:Rect id = "l"
 			left = "0"
 			top = "0"
@@ -47,6 +48,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Top border-->
 	<s:Rect id = "t"
 			left = "0"
 			top = "0"
@@ -58,6 +60,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Right border-->
 	<s:Rect id = "r"
 			top = "0"
 			right = "{edgeSize}"
@@ -69,6 +72,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Bottom border-->
 	<s:Rect id = "b"
 			left = "0"
 			right = "{edgeSize}"
@@ -80,6 +84,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Background-->
 	<s:Rect left = "{l.width}"
 			top = "{t.height}"
 			right = "{r.width+edgeSize}"
@@ -98,6 +103,7 @@
 		</s:fill>
 	</s:Rect>
 
+	<!---Column resize handler-->
 	<s:Group id = "columnResize"
 			 top = "0"
 			 right = "0"
@@ -117,6 +123,7 @@
 		</s:Rect>
 	</s:Group>
 
+	<!---Row resize handler-->
 	<s:Group id = "rowResize"
 			 left = "0"
 			 right = "{edgeSize}"
@@ -136,6 +143,7 @@
 		</s:Rect>
 	</s:Group>
 
+	<!---Edge (bottom, right) resize handler-->
 	<s:Group id = "edgeResize"
 			 right = "0"
 			 bottom = "0"
@@ -153,6 +161,7 @@
 		</s:Rect>
 	</s:Group>
 
+	<!---Output-->
 	<s:RichText id = "output"
 				maxWidth = "{cell.wordWrap ? width - l.width - r.width : NaN}"
 				visible = "{!focused}"
@@ -176,6 +185,7 @@
 				fontSize = "{sizeStyle}"
 				fontFamily = "{fontStyle}" />
 
+	<!---Editor-->
 	<components:ResizableRichEditableText id = "input"
 										  wordWrap = "{cell.wordWrap}"
 										  maxWidth = "{width - l.width - r.width}"
