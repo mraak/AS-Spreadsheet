@@ -17,6 +17,15 @@ import spark.components.supportClasses.ItemRenderer;
 
 use namespace mx_internal;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ * Dispatched when handlersVisible property gets changed.
+ */
+[Event(name="handlersVisibleChanged", type="flash.events.Event")]
+
 /**
  * ResizeManager adds ability to resize provided target.
  * It also uses custom mouse cursor.

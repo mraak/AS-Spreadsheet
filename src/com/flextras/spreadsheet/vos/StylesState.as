@@ -4,9 +4,6 @@ import com.flextras.spreadsheet.core.spreadsheet;
 
 import flash.events.Event;
 
-import flashx.textLayout.formats.TextAlign;
-import flashx.textLayout.formats.VerticalAlign;
-
 use namespace spreadsheet;
 
 //----------------------------------
@@ -14,7 +11,7 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- *
+ * Dispatched when border or borderObject property gets changed.
  */
 [Event(name="borderChanged", type="flash.events.Event")]
 
@@ -55,8 +52,8 @@ public class StylesState extends Styles
 		italic : Boolean = false,
 		underline : Boolean = false,
 		font : String = "arial",
-		horizontalAlign : String = TextAlign.CENTER,
-		verticalAlign : String = VerticalAlign.MIDDLE,
+		horizontalAlign : String = "center",
+		verticalAlign : String = "middle",
 		size : Number = 14,
 		border : Border = null)
 	{

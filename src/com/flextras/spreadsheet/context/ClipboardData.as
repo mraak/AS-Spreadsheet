@@ -6,6 +6,15 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.geom.Point;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ * Dispatched when allowPaste property gets changed.
+ */
+[Event(name="allowPasteChanged", type="flash.events.Event")]
+
 /**
  * Custom clipboard used by Spreadsheet.
  */

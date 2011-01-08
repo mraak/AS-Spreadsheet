@@ -5,9 +5,6 @@ import com.flextras.spreadsheet.core.spreadsheet;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import flashx.textLayout.formats.TextAlign;
-import flashx.textLayout.formats.VerticalAlign;
-
 use namespace spreadsheet;
 
 //----------------------------------
@@ -15,57 +12,57 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- *
+ * Dispatched when color property gets changed.
  */
 [Event(name="colorChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when alpha property gets changed.
  */
 [Event(name="alphaChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when backgroundColor property gets changed.
  */
 [Event(name="backgroundColorChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when backgroundAlpha property gets changed.
  */
 [Event(name="backgroundAlphaChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when bold property gets changed.
  */
 [Event(name="boldChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when italic property gets changed.
  */
 [Event(name="italicChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when underline property gets changed.
  */
 [Event(name="underlineChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when font property gets changed.
  */
 [Event(name="fontChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when horizontalAlign property gets changed.
  */
 [Event(name="horizontalAlignChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when verticalAlign property gets changed.
  */
 [Event(name="verticalAlignChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when size property gets changed.
  */
 [Event(name="sizeChanged", type="flash.events.Event")]
 
@@ -105,8 +102,8 @@ public class Styles extends EventDispatcher
 		italic : Boolean = false,
 		underline : Boolean = false,
 		font : String = "arial",
-		horizontalAlign : String = TextAlign.CENTER,
-		verticalAlign : String = VerticalAlign.MIDDLE,
+		horizontalAlign : String = "center",
+		verticalAlign : String = "middle",
 		size : Number = 14)
 	{
 		this.color = color;
@@ -448,7 +445,7 @@ public class Styles extends EventDispatcher
 	/**
 	 * @private
 	 */
-	private var _horizontalAlign : String = TextAlign.CENTER;
+	private var _horizontalAlign : String = "center";
 	
 	protected var horizontalAlignChanged : Boolean;
 	
@@ -616,7 +613,7 @@ public class Styles extends EventDispatcher
 	/**
 	 * @private
 	 */
-	private var _verticalAlign : String = VerticalAlign.MIDDLE;
+	private var _verticalAlign : String = "middle";
 	
 	protected var verticalAlignChanged : Boolean;
 	

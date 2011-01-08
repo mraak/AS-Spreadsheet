@@ -5,9 +5,6 @@ import com.flextras.spreadsheet.core.spreadsheet;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import flashx.textLayout.formats.TextAlign;
-import flashx.textLayout.formats.VerticalAlign;
-
 use namespace spreadsheet;
 
 //----------------------------------
@@ -15,32 +12,32 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- *
+ * Dispatched when normal property gets changed.
  */
 [Event(name="normalChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when hovered property gets changed.
  */
 [Event(name="hoveredChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when selected property gets changed.
  */
 [Event(name="selectedChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when disabled property gets changed.
  */
 [Event(name="disabledChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when cellGradientLevel property gets changed.
  */
 [Event(name="cellGradientLevelChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when rollOutDuration property gets changed.
  */
 [Event(name="rollOutDurationChanged", type="flash.events.Event")]
 
@@ -85,8 +82,8 @@ public class CellStyles extends EventDispatcher
 		italic : Boolean = false,
 		underline : Boolean = false,
 		font : String = "arial",
-		horizontalAlign : String = TextAlign.CENTER,
-		verticalAlign : String = VerticalAlign.MIDDLE,
+		horizontalAlign : String = "center",
+		verticalAlign : String = "middle",
 		size : Number = 14,
 		rollOutDuration : int = 500,
 		cellGradientLevel : int = 50,

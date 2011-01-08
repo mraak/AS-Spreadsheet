@@ -7,23 +7,27 @@ import flash.events.EventDispatcher;
 
 use namespace spreadsheet;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
 /**
- *
+ * Dispatched when color property gets changed.
  */
 [Event(name="colorChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when alpha property gets changed.
  */
 [Event(name="alphaChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when weight property gets changed.
  */
 [Event(name="weightChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when visible property gets changed.
  */
 [Event(name="visibleChanged", type="flash.events.Event")]
 

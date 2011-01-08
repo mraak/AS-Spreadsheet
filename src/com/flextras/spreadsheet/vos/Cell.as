@@ -24,37 +24,37 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- *
+ * Dispatched when styles or stylesObject property gets changed.
  */
 [Event(name="stylesChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when condition or conditionObject property gets changed.
  */
 [Event(name="conditionChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when contextMenuEnabled property gets changed.
  */
 [Event(name="contextMenuEnabledChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when enabled property gets changed.
  */
 [Event(name="enabledChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when value property gets changed.
  */
 [Event(name="valueChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when wordWrap property gets changed.
  */
 [Event(name="wordWrapChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when expression property gets changed.
  */
 [Event(name="expressionChanged", type="flash.events.Event")]
 

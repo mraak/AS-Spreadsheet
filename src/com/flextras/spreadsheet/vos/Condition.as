@@ -7,20 +7,34 @@ import flash.events.EventDispatcher;
 
 use namespace spreadsheet;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
 /**
- *
+ * Dispatched when active property gets changed.
+ */
+[Event(name="activeChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when left property gets changed.
  */
 [Event(name="leftChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when operator property gets changed.
  */
 [Event(name="operatorChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when right property gets changed.
  */
 [Event(name="rightChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when styles or stylesObject property gets changed.
+ */
+[Event(name="stylesChanged", type="flash.events.Event")]
 
 [RemoteClass]
 /**

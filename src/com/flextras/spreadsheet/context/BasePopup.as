@@ -9,6 +9,15 @@ import mx.containers.TitleWindow;
 import mx.events.CloseEvent;
 import mx.managers.PopUpManager;
 
+//----------------------------------
+//  Events
+//----------------------------------
+
+/**
+ * Dispatched when cell property gets changed.
+ */
+[Event(name="cellChanged", type="flash.events.Event")]
+
 /**
  * Base class for all popups in context package.
  */

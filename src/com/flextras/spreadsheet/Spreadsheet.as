@@ -39,31 +39,111 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- * @private
+ * Dispatched when cells property gets changed.
  */
 [Event(name="cellsChanged", type="flash.events.Event")]
 
 /**
+ * Dispatched when calc property gets changed.
+ */
+[Event(name="calcChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when cellField property gets changed.
+ */
+[Event(name="cellFieldChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when cellFunction property gets changed.
+ */
+[Event(name="cellFunctionChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when columnCount property gets changed.
+ */
+[Event(name="columnCountChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when columnWidths property gets changed.
+ */
+[Event(name="columnWidthsChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when disabledCells property gets changed.
+ */
+[Event(name="disabledCellsChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when expressionField property gets changed.
+ */
+[Event(name="expressionFieldChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when expressionFunction property gets changed.
+ */
+[Event(name="expressionFunctionChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when globalStyles property gets changed.
+ */
+[Event(name="globalStylesChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when rowCount property gets changed.
+ */
+[Event(name="rowCountChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when rowHeights property gets changed.
+ */
+[Event(name="rowHeightsChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when startRowIndex property gets changed.
+ */
+[Event(name="startRowIndexChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when preferredColumnWidths property gets changed.
+ */
+[Event(name="preferredColumnWidthsChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when selectedIndex property gets changed.
+ */
+[Event(name="selectedIndexChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when selectedIndices property gets changed.
+ */
+[Event(name="selectedIndicesChanged", type="flash.events.Event")]
+
+/**
+ * Dispatched when expressions property gets changed.
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGE
  */
 [Event(name="expressionsChange", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
+ * Dispatched after expressions property gets changed and processed.
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGED
  */
 [Event(name="expressionsChanged", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
+ * Dispatched after clearExpressions method is called and expressions cleared.
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CLEARED
  */
 [Event(name="expressionsCleared", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
+ * Redispatched from Calc.
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.ERROR
  */
 [Event(name="error", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
+ * Redispatched from Calc.
  * @eventType com.flextras.spreadsheet.SpreadsheetEvent.WARNING
  */
 [Event(name="warning", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
@@ -3155,7 +3235,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		//expCE = e;
 		invalidateExpressions ();
 		
-		dispatchEvent (new Event ("expressionsChange"));
+		dispatchEvent (new Event (SpreadsheetEvent.EXPRESSIONS_CHANGE));
 	}
 	
 	//----------------------------------

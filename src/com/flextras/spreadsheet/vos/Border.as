@@ -12,22 +12,22 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
- *
+ * Dispatched when left property gets changed.
  */
 [Event(name="leftChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when top property gets changed.
  */
 [Event(name="topChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when right property gets changed.
  */
 [Event(name="rightChanged", type="flash.events.Event")]
 
 /**
- *
+ * Dispatched when bottom property gets changed.
  */
 [Event(name="bottomChanged", type="flash.events.Event")]
 
