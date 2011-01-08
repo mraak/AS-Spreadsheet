@@ -124,7 +124,7 @@ public class FormulaLogic
 	 * <br/>
 	 * [0] First argument for the condition 
 	 * <br/>
-	 * [1] Condition operator, these can be: <, >, =, >=, <=, <>
+	 * [1] Condition operator, these can be: &lt;, &gt;, =, &lt;=, &gt;=, &lt;&gt;.
 	 * <br/>
 	 * [2] Second argument for the condition
 	 * <br/>
@@ -138,7 +138,7 @@ public class FormulaLogic
 	 *
 	 * <listing version="3.0">
 	 * 
-	 * var result:String = FormulaLogic.solveIF(2, "<", 6, "smaller", "bigger");
+	 * var result:String = FormulaLogic.solveIF(2, "&lt;", 6, "smaller", "bigger");
 	 * trace(result); // smaller
 	 * 
 	 * </listing>
@@ -166,7 +166,7 @@ public class FormulaLogic
 	 * <br/>
 	 * [0] Array of the elements that you want to count, e.g. [12, 3, "d"]
 	 * <br/>
-	 * [1] String that represents the equality operator, these can be: <, >, =, >=, <=, <>
+	 * [1] String that represents the equality operator, these can be: &lt;, &gt;, =, &lt;=, &gt;=, &lt;&gt;.
 	 * <br/>
 	 * [2] Number that each element from [0] array is compared against
 	 * @return String representing the numeric solution to the formula
