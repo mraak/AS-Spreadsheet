@@ -2,7 +2,15 @@ package com.flextras.calc
 {
 	/**
 	 * This class contains static functions for solving wide range of formulas, as 
-	 * found in other popular spreadsheet applications.
+	 * found in other popular spreadsheet applications. 
+	 * This class contains set of basic formulas, other formulas can be found in 
+	 * other classes like FormulaConst and FormulaLogic.
+	 * This class does not need to be implemented, it relies on static methods.
+	 * <br/><br/>
+	 * Supported forumlas are: SUM, AVERAGE, MAX, MIN, ROUND, FLOOR, CEIL, COUNT, MEDIAN
+	 * 
+	 * @see com.flextras.calc.FormulaConst
+	 * @see com.flextras.calc.Logic
 	 * 
 	 * */
 	public class FormulaBasic
@@ -17,14 +25,35 @@ package com.flextras.calc
 		public static const COUNT:String 	= "count";
 		public static const MEDIAN:String 	= "median";
 		
+		/**
+		 * Contains all the formulas supported by this class. 
+		 * */
 		public static const functions:Array = [SUM, AVERAGE, MAX, MIN, ROUND, FLOOR, CEIL,
 												COUNT, MEDIAN];
 		
+		/**
+		 * Constructor. This class does not need to be implemented, it relies on static methods.
+		 * */
 		public function FormulaBasic()
 		{
 			//TODO: implement function
 		}
 		
+		/**
+		 * Main function to solve any formula.
+		 * @param formula Formula that you wish to solve. You can use static constants such as FormulaBasic.SUM
+		 * @param args Array with arguments to the specific formula
+		 * @return String representing the numeric solution to the formula
+		 * 
+		 * @example array with arguments to the specific formula
+		 *
+		 * <listing version="3.0">
+		 * 
+		 * var result:String = FormulaBasic.solve(FormulaBasic.SUM, [1,2,3]);
+		 * trace(result); // 6
+		 * 
+		 * </listing>
+		 * */
 		public static function solve(formula:String, args:Array):String
 		{
 			var res:String;
@@ -46,6 +75,11 @@ package com.flextras.calc
 			return res;
 		}
 		
+		/**
+		 * Solves the SUM formula by adding all the numbers in the array.
+		 * @param args Array that contains the numbers you wish to add. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */
 		public static function solveSUM(args:Array):String
 		{
 			var res:Number = 0;
@@ -59,6 +93,11 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		/**
+		 * Solves AVERAGE formula by calculating the average value of all the numbers in the array.
+		 * @param args Array that contains the numbers you wish to calculate the average from. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */
 		public static function solveAVERAGE(args:Array):String
 		{
 			var res:Number = 0;
@@ -66,6 +105,11 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		/**
+		 * Solves MIN formula by returning the smallest number of those provided in the array.
+		 * @param args Array that contains the numbers you wish to calculate the smallest number from. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */
 		public static function solveMIN(args:Array):String
 		{
 			var res:Number = args[0];
@@ -78,6 +122,11 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		/**
+		 * Solves MAX formula by returning the smallest number of those provided in the array.
+		 * @param args Array that contains the numbers you wish to calculate the smallest number from. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */
 		public static function solveMAX(args:Array):String
 		{
 			var res:Number = args[0];
@@ -90,18 +139,33 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		/**
+		 * Rounds the number to the nearest integer. 
+		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */
 		public static function solveROUND(args:Array):String
 		{
 			var res:Number = args[0];
 			return Math.round(res).toString();
 		}
 		
+		/**
+		 * Rounds the number down to the nearest integer.
+		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */		
 		public static function solveFLOOR(args:Array):String
 		{
 			var res:Number = args[0];
 			return Math.floor(res).toString();
 		}
-		
+
+		/**
+		 * Rounds the number up to the nearest integer.
+		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */	
 		public static function solveCEIL(args:Array):String
 		{
 			var res:Number = args[0];
@@ -109,6 +173,11 @@ package com.flextras.calc
 			
 		}
 		
+		/**
+		 * Solves COUNT formula by counting how many elements in the array are numeric values. E.g. [1, "15", "abc"] returns "2".
+		 * @param args Array of values you wish to count. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */			
 		public static function solveCOUNT(args:Array):String
 		{
 			var c:int = 0;
@@ -125,6 +194,11 @@ package com.flextras.calc
 			return c.toString();		
 		}
 		
+		/**
+		 * Solves MEDIAN formula by calculating the median value of the numbers provided in the array.
+		 * @param args Array of values you wish to calculate median from. Function will attempt to cast the elements of the args to Number.
+		 * @return String representing the numeric solution to the formula
+		 * */	
 		public static function solveMEDIAN(args:Array):String
 		{
 			args.sort();

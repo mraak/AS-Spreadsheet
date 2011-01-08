@@ -12,6 +12,9 @@ import flash.text.TextField;
 [Event(name="warning", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
+ * THIS IS UNSUPPORTED EXPERIMENTAL VERSION OF CALC, NOT USED ELSEWHERE IN PROJECT
+ * ITS INTENTION IS TO REMOVE ALL THE DEPENDENCIES ON FLEX FRAMEWORK AND BE USED WITH PURE ACTIONSCRIPT
+ * 
  * Calc is the main class for performing all the calculation logic. It can evaluate 
  * mathematical expressions from strings and calculate the result. It can register various
  * objects, Flex controls, or Flash components and use them as operands in the expression.
