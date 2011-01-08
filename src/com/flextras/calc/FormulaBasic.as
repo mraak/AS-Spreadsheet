@@ -10,7 +10,7 @@ package com.flextras.calc
 	 * Supported forumlas are: SUM, AVERAGE, MAX, MIN, ROUND, FLOOR, CEIL, COUNT, MEDIAN
 	 * 
 	 * @see com.flextras.calc.FormulaConst
-	 * @see com.flextras.calc.Logic
+	 * @see com.flextras.calc.FormulaLogic
 	 * 
 	 * */
 	public class FormulaBasic
@@ -45,7 +45,7 @@ package com.flextras.calc
 		 * @param args Array with arguments to the specific formula
 		 * @return String representing the numeric solution to the formula
 		 * 
-		 * @example array with arguments to the specific formula
+		 * @example The following code calculates the sum of numbers 1, 2, and 3.
 		 *
 		 * <listing version="3.0">
 		 * 
