@@ -83,10 +83,8 @@ public class Condition extends EventDispatcher
 	
 	[Bindable(event="activeChanged")]
 	/**
-	 *
-	 *
-	 * @return
-	 *
+	 * If true then styles from this condition will be used instead of the ones defined for matching cell.
+	 * It also dispathes an event.
 	 */
 	public function get active () : Boolean
 	{
@@ -94,11 +92,7 @@ public class Condition extends EventDispatcher
 	}
 	
 	/**
-	 * If true then styles from this condition will be used instead of the ones defined for matching cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set active (value : Boolean) : void
 	{
@@ -317,9 +311,10 @@ public class Condition extends EventDispatcher
 	
 	[Bindable(event="stylesChanged")]
 	/**
-	 * Provides access to styles which will be used if condition is active.
+	 * Replaces current styles with new ones.
+	 * It also dispathes an event.
 	 *
-	 * @return
+	 * @param value
 	 *
 	 */
 	public function get styles () : Styles
@@ -328,11 +323,7 @@ public class Condition extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set styles (value : Styles) : void
 	{

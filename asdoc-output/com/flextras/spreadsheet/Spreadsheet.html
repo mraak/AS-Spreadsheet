@@ -21,17 +21,21 @@
                   <li>Create a financial spreadsheet for things such as cash flow forecasts.</li>
                   <li>Create Applications similar to the Google Docs Spreadsheet or Adobe Tables. </li>
                </ul>
-            <p></p><a name="mxmlSyntaxSummary"></a><span class="classHeaderTableLabel">MXML Syntax</span><span id="showMxmlLink" style="display:none"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../../images/collapsed.gif" title="collapsed" alt="collapsed" class="collapsedImage">Show MXML Syntax</a><br/></span><span id="hideMxmlLink"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../../images/expanded.gif" title="expanded" alt="expanded" class="expandedImage">Hide MXML Syntax</a></span><div id="mxmlSyntax" class="mxmlSyntax">  <p>The <code>&lt;flextras:Calendar&gt;</code> tag inherits all the tag attributes
-  of its superclass, and adds the following tag attributes:</p>
-   <pre>
-  &lt;flextras:Spreadsheet
-    <b>Properties</b>
-      <b>Events</b>
- 		error="<i>No default</i>"
- 		warning="<i>No default</i>"
-  /&gt;
+            <p></p><a name="mxmlSyntaxSummary"></a><span class="classHeaderTableLabel">MXML Syntax</span><span id="showMxmlLink" style="display:none"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../../images/collapsed.gif" title="collapsed" alt="collapsed" class="collapsedImage">Show MXML Syntax</a><br/></span><span id="hideMxmlLink"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../../images/expanded.gif" title="expanded" alt="expanded" class="expandedImage">Hide MXML Syntax</a></span><div id="mxmlSyntax" class="mxmlSyntax">  <pre>
+ &lt;spreadsheet:Spreadsheet id = "sheet"&gt;
+ 	&lt;s:ArrayCollection&gt;
+ 		&lt;fx:Object cell = "a1"
+ 				   expression = "=5+5" /&gt;
+  		&lt;fx:Object cell = "b1"
+ 				   expression = "=5+5" /&gt;
+  		&lt;fx:Object cell = "c1"
+ 				   expression = "=5+5" /&gt;
+  		&lt;fx:Object cell = "d1"
+ 				   expression = "=5+5" /&gt;
+ 	&lt;/s:ArrayCollection&gt;
+ &lt;/spreadsheet:Spreadsheet&gt;
   </pre>
-   </div><script language="javascript" type="text/javascript"><!--
+  </div><script language="javascript" type="text/javascript"><!--
 								setMXMLOnly();
 								--></script><p><span class="classHeaderTableLabel">Default MXML Property</span><code>expressions</code></p><p><span class="classHeaderTableLabel">See also</span></p><div class="seeAlso"><a href="../../../com/flextras/calc/Calc.html" target="">com.flextras.calc.Calc</a><br/><a href="ISpreadsheet.html" target="">com.flextras.spreadsheet.ISpreadsheet</a></div><br/><hr></div><a name="propertySummary"></a><div class="summarySection"><div class="summaryTableTitle">Public Properties</div><table cellspacing="0" cellpadding="3" class="summaryTable " id="summaryTableProperty"><tr><th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined By</th></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a href="#calc" class="signatureLink">calc</a> : <a href="../../../com/flextras/calc/Calc.html">Calc</a><div class="summaryTableDescription">
 	 
@@ -497,4 +501,4 @@
  Dispatched when startRowIndex property gets changed.
  </p></div><a name="event:warning"></a><table class="detailHeader" cellpadding="0" cellspacing="0"><tr><td class="detailHeaderName">warning</td><td class="detailHeaderType"> Event </td><td class="detailHeaderRule">&nbsp;</td></tr></table><div class="detailBody"><span class="label">Event Object Type: </span><a href="../../../com/flextras/spreadsheet/events/SpreadsheetEvent.html"><code>com.flextras.spreadsheet.events.SpreadsheetEvent</code></a><br/><span class="label">SpreadsheetEvent.type property = </span><a href="../../../com/flextras/spreadsheet/SpreadsheetEvent.html#WARNING"><code>com.flextras.spreadsheet.SpreadsheetEvent.WARNING</code></a><br/><p></p><p></p><p>
  Redispatched from Calc.
- </p></div><br/><br/><hr><br/><p></p><center class="copyright"><footer></footer><br/>Sat Jan 8 2011, 04:57 PM +01:00  </center></div></body></html><!--<br/>Sat Jan 8 2011, 04:57 PM +01:00  -->
+ </p></div><br/><br/><hr><br/><p></p><center class="copyright"><footer></footer><br/>Sat Jan 8 2011, 06:07 PM +01:00  </center></div></body></html><!--<br/>Sat Jan 8 2011, 06:07 PM +01:00  -->

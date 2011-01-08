@@ -134,14 +134,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _alpha : Number = 1;
 	
+	/**
+	 * @private
+	 */
 	protected var alphaChanged : Boolean;
 	
 	[Bindable(event="alphaChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets alpha style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get alpha () : Number
 	{
@@ -149,11 +150,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets alpha style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set alpha (value : Number) : void
 	{
@@ -176,14 +173,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _backgroundAlpha : Number = 1;
 	
+	/**
+	 * @private
+	 */
 	protected var backgroundAlphaChanged : Boolean;
 	
 	[Bindable(event="backgroundAlphaChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets backgroundAlpha style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get backgroundAlpha () : Number
 	{
@@ -191,11 +189,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets backgroundAlpha style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set backgroundAlpha (value : Number) : void
 	{
@@ -218,14 +212,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _backgroundColor : uint = 0xFFFFFF;
 	
+	/**
+	 * @private
+	 */
 	protected var backgroundColorChanged : Boolean;
 	
 	[Bindable(event="backgroundColorChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets backgroundColor style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get backgroundColor () : uint
 	{
@@ -233,11 +228,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets backgroundColor style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set backgroundColor (value : uint) : void
 	{
@@ -260,14 +251,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _bold : Boolean;
 	
+	/**
+	 * @private
+	 */
 	protected var boldChanged : Boolean;
 	
 	[Bindable(event="boldChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets bold style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get bold () : Boolean
 	{
@@ -275,11 +267,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets bold style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set bold (value : Boolean) : void
 	{
@@ -302,14 +290,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _color : uint;
 	
+	/**
+	 * @private
+	 */
 	protected var colorChanged : Boolean;
 	
 	[Bindable(event="colorChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets color style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get color () : uint
 	{
@@ -317,11 +306,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets color style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set color (value : uint) : void
 	{
@@ -344,14 +329,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _font : String = "arial";
 	
+	/**
+	 * @private
+	 */
 	protected var fontChanged : Boolean;
 	
 	[Bindable(event="fontChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets font style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get font () : String
 	{
@@ -359,11 +345,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets font style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set font (value : String) : void
 	{
@@ -447,14 +429,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _horizontalAlign : String = "center";
 	
+	/**
+	 * @private
+	 */
 	protected var horizontalAlignChanged : Boolean;
 	
 	[Bindable(event="horizontalAlignChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets horizontalAlign style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get horizontalAlign () : String
 	{
@@ -462,11 +445,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets horizontalAlign style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set horizontalAlign (value : String) : void
 	{
@@ -489,14 +468,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _italic : Boolean;
 	
+	/**
+	 * @private
+	 */
 	protected var italicChanged : Boolean;
 	
 	[Bindable(event="italicChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets italic style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get italic () : Boolean
 	{
@@ -504,11 +484,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets italic style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set italic (value : Boolean) : void
 	{
@@ -531,14 +507,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _size : uint = 14;
 	
+	/**
+	 * @private
+	 */
 	protected var sizeChanged : Boolean;
 	
 	[Bindable(event="sizeChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets size style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get size () : uint
 	{
@@ -546,11 +523,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets size style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set size (value : uint) : void
 	{
@@ -573,14 +546,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _underline : Boolean;
 	
+	/**
+	 * @private
+	 */
 	protected var underlineChanged : Boolean;
 	
 	[Bindable(event="underlineChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets underline style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get underline () : Boolean
 	{
@@ -588,11 +562,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets underline style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set underline (value : Boolean) : void
 	{
@@ -615,14 +585,15 @@ public class Styles extends EventDispatcher
 	 */
 	private var _verticalAlign : String = "middle";
 	
+	/**
+	 * @private
+	 */
 	protected var verticalAlignChanged : Boolean;
 	
 	[Bindable(event="verticalAlignChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets verticalAlign style on cell.
+	 * It also dispathes an event.
 	 */
 	public function get verticalAlign () : String
 	{
@@ -630,11 +601,7 @@ public class Styles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets verticalAlign style on cell.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set verticalAlign (value : String) : void
 	{

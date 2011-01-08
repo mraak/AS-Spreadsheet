@@ -109,10 +109,8 @@ public class Border extends EventDispatcher
 	
 	[Bindable(event="bottomChanged")]
 	/**
-	 * Provides access to bottom side of border.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for bottom side with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get bottom () : BorderSide
 	{
@@ -120,11 +118,7 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for bottom side with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set bottom (value : BorderSide) : void
 	{
@@ -143,7 +137,6 @@ public class Border extends EventDispatcher
 	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set bottomObject (value : Object) : void
 	{
@@ -169,7 +162,6 @@ public class Border extends EventDispatcher
 	 * Sets color style on all sides.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set color (value : uint) : void
 	{
@@ -215,10 +207,8 @@ public class Border extends EventDispatcher
 	
 	[Bindable(event="leftChanged")]
 	/**
-	 * Provides access to left side of border.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for left side with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get left () : BorderSide
 	{
@@ -226,11 +216,7 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for left side with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set left (value : BorderSide) : void
 	{
@@ -249,7 +235,6 @@ public class Border extends EventDispatcher
 	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set leftObject (value : Object) : void
 	{
@@ -277,10 +262,8 @@ public class Border extends EventDispatcher
 	
 	[Bindable(event="rightChanged")]
 	/**
-	 * Provides access to right side of border.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for right side with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get right () : BorderSide
 	{
@@ -288,11 +271,7 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for right side with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set right (value : BorderSide) : void
 	{
@@ -311,7 +290,6 @@ public class Border extends EventDispatcher
 	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set rightObject (value : Object) : void
 	{
@@ -339,10 +317,8 @@ public class Border extends EventDispatcher
 	
 	[Bindable(event="topChanged")]
 	/**
-	 * Provides access to top side of border.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for top side with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get top () : BorderSide
 	{
@@ -350,11 +326,7 @@ public class Border extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for top side with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set top (value : BorderSide) : void
 	{
@@ -373,7 +345,6 @@ public class Border extends EventDispatcher
 	 * It also dispathes an event.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set topObject (value : Object) : void
 	{
@@ -399,7 +370,6 @@ public class Border extends EventDispatcher
 	 * Sets visible style on all sides.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set visible (value : Boolean) : void
 	{
@@ -415,7 +385,6 @@ public class Border extends EventDispatcher
 	 * Sets weight style on all sides.
 	 *
 	 * @param value
-	 *
 	 */
 	public function set weight (value : Number) : void
 	{
@@ -432,7 +401,6 @@ public class Border extends EventDispatcher
 	 * Provides convenient way to replace all current styles with new ones.
 	 *
 	 * @param value
-	 *
 	 */
 	public function assign (value : Border) : void
 	{
@@ -450,7 +418,6 @@ public class Border extends EventDispatcher
 	 * If value is typed as Border then this setter behaves the same as regular assign otherwise it changes only the provided styles.
 	 *
 	 * @param value
-	 *
 	 */
 	public function assignObject (value : Object) : void
 	{

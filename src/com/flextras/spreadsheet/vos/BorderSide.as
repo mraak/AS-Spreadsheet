@@ -86,14 +86,14 @@ public class BorderSide extends EventDispatcher
 	 */
 	private var _alpha : Number = 1;
 	
+	/**
+	 * @private
+	 */
 	protected var alphaChanged : Boolean;
 	
 	[Bindable(event="alphaChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets alpha style on current side.
 	 */
 	public function get alpha () : Number
 	{
@@ -101,10 +101,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 * Sets alpha style on current side.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set alpha (value : Number) : void
 	{
@@ -127,14 +124,14 @@ public class BorderSide extends EventDispatcher
 	 */
 	private var _color : uint;
 	
+	/**
+	 * @private
+	 */
 	protected var colorChanged : Boolean;
 	
 	[Bindable(event="colorChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets color style on current side.
 	 */
 	public function get color () : uint
 	{
@@ -142,10 +139,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 * Sets color style on current side.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set color (value : uint) : void
 	{
@@ -215,14 +209,14 @@ public class BorderSide extends EventDispatcher
 	 */
 	private var _visible : Boolean = true;
 	
+	/**
+	 * @private
+	 */
 	protected var visibleChanged : Boolean;
 	
 	[Bindable(event="visibleChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets visible style on current side.
 	 */
 	public function get visible () : Boolean
 	{
@@ -230,10 +224,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 * Sets visible style on current side.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set visible (value : Boolean) : void
 	{
@@ -264,14 +255,14 @@ public class BorderSide extends EventDispatcher
 	 */
 	private var _weight : Number = 1;
 	
+	/**
+	 * @private
+	 */
 	protected var weightChanged : Boolean;
 	
 	[Bindable(event="weightChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets weight style on current side.
 	 */
 	public function get weight () : Number
 	{
@@ -279,10 +270,7 @@ public class BorderSide extends EventDispatcher
 	}
 	
 	/**
-	 * Sets weight style on current side.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set weight (value : Number) : void
 	{

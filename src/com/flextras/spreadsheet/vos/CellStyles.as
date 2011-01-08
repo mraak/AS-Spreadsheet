@@ -238,20 +238,12 @@ public class CellStyles extends EventDispatcher
 	 */
 	private var _cellGradientLevel : int = 50;
 	
+	/**
+	 * @private
+	 */
 	protected var cellGradientLevelChanged : Boolean;
 	
 	[Bindable(event="cellGradientLevelChanged")]
-	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
-	 */
-	public function get cellGradientLevel () : int
-	{
-		return cellGradientLevelChanged || !global ? _cellGradientLevel : global.cellGradientLevel;
-	}
-	
 	/**
 	 * Sets rollOutDuration style for all states.
 	 * It also dispathes an event.
@@ -266,6 +258,14 @@ public class CellStyles extends EventDispatcher
 	 *  -100 produces black while 100 produces white.
 	 *  If this parameter is 0, the RGB color returned
 	 *  is the same as the original color.
+	 */
+	public function get cellGradientLevel () : int
+	{
+		return cellGradientLevelChanged || !global ? _cellGradientLevel : global.cellGradientLevel;
+	}
+	
+	/**
+	 * @private
 	 */
 	public function set cellGradientLevel (value : int) : void
 	{
@@ -306,10 +306,8 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="disabledChanged")]
 	/**
-	 * Provides access to disabled state of cell.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for disabled state with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get disabled () : StylesState
 	{
@@ -317,11 +315,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for disabled state with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set disabled (value : StylesState) : void
 	{
@@ -455,10 +449,8 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="hoveredChanged")]
 	/**
-	 * Provides access to hovered state of cell.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for hovered state with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get hovered () : StylesState
 	{
@@ -466,11 +458,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for hovered state with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set hovered (value : StylesState) : void
 	{
@@ -533,10 +521,8 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="normalChanged")]
 	/**
-	 * Provides access to normal state of cell.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for normal state with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get normal () : StylesState
 	{
@@ -544,11 +530,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for normal state with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set normal (value : StylesState) : void
 	{
@@ -593,14 +575,15 @@ public class CellStyles extends EventDispatcher
 	 */
 	private var _rollOutDuration : int = 500;
 	
+	/**
+	 * @private
+	 */
 	protected var rollOutDurationChanged : Boolean;
 	
 	[Bindable(event="rollOutDurationChanged")]
 	/**
-	 * Returns local style if global styles weren't specified.
-	 *
-	 * @return
-	 *
+	 * Sets rollOutDuration style for all states.
+	 * It also dispathes an event.
 	 */
 	public function get rollOutDuration () : int
 	{
@@ -608,11 +591,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 * Sets rollOutDuration style for all states.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set rollOutDuration (value : int) : void
 	{
@@ -637,10 +616,8 @@ public class CellStyles extends EventDispatcher
 	
 	[Bindable(event="selectedChanged")]
 	/**
-	 * Provides access to selected state of cell.
-	 *
-	 * @return
-	 *
+	 * Replaces current styles for selected state with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get selected () : StylesState
 	{
@@ -648,11 +625,7 @@ public class CellStyles extends EventDispatcher
 	}
 	
 	/**
-	 * Replaces current styles for selected state with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set selected (value : StylesState) : void
 	{

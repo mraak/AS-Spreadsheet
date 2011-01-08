@@ -79,10 +79,8 @@ public class StylesState extends Styles
 	
 	[Bindable(event="borderChanged")]
 	/**
-	 * Provides access to border.
-	 *
-	 * @return
-	 *
+	 * Replaces current border styles with new ones.
+	 * It also dispathes an event.
 	 */
 	public function get border () : Border
 	{
@@ -90,11 +88,7 @@ public class StylesState extends Styles
 	}
 	
 	/**
-	 * Replaces current border styles with new ones.
-	 * It also dispathes an event.
-	 *
-	 * @param value
-	 *
+	 * @private
 	 */
 	public function set border (value : Border) : void
 	{

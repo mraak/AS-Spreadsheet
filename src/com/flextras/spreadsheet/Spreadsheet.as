@@ -165,20 +165,23 @@ use namespace spreadsheet;
  *
  * @mxml
  *
- *  <p>The <code>&lt;flextras:Calendar&gt;</code> tag inherits all the tag attributes
- *  of its superclass, and adds the following tag attributes:</p>
- *
  *  <pre>
- *  &lt;flextras:Spreadsheet
- *    <b>Properties</b>
+ * &lt;spreadsheet:Spreadsheet id = "sheet"&gt;
+ *		&lt;s:ArrayCollection&gt;
+ *			&lt;fx:Object cell = "a1"
+ *					   expression = "=5+5" /&gt;
  *
+ *			&lt;fx:Object cell = "b1"
+ *					   expression = "=5+5" /&gt;
  *
- *    <b>Events</b>
- * 		error="<i>No default</i>"
- * 		warning="<i>No default</i>"
- *  /&gt;
+ *			&lt;fx:Object cell = "c1"
+ *					   expression = "=5+5" /&gt;
+ *
+ *			&lt;fx:Object cell = "d1"
+ *					   expression = "=5+5" /&gt;
+ *		&lt;/s:ArrayCollection&gt;
+ *	&lt;/spreadsheet:Spreadsheet&gt;
  *  </pre>
- *
  *
  * @includeExample SpreadsheetExample.txt
  * @includeExample SpreadsheetExample.mxml
