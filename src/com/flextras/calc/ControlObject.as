@@ -26,57 +26,90 @@ import flash.events.IEventDispatcher;
 [RemoteClass]
 public class ControlObject extends EventDispatcher
 {
+	//-------------------------------------
+	// row
+	//-------------------------------------
 	/**
 	 * If this ControlOBject controls a cell in ISpreadsheet this propery specifies a row of the ISpreadsheet where the cell is located
 	 * */
 	public var row : String;
 	
+	//-------------------------------------
+	// rowIndex
+	//-------------------------------------
 	/**
 	 * If this ControlOBject controls a cell in ISpreadsheet this propery specifies an index of the row in the ISpreadsheet where the cell is located
 	 * */
 	public var rowIndex : int;
 	
+	//-------------------------------------
+	// col
+	//-------------------------------------
 	/**
 	 * If this ControlOBject controls a cell in ISpreadsheet this propery specifies a column of the ISpreadsheet where the cell is located, e.g. "A"
 	 * */
 	public var col : String;
 	
+	//-------------------------------------
+	// colIndex
+	//-------------------------------------
 	/**
 	 * If this ControlOBject controls a cell in ISpreadsheet this propery specifies an index of the cell in the ISpreadsheet where the cell is located
 	 * */
 	public var colIndex : int;
 	
+	//-------------------------------------
+	// oldID
+	//-------------------------------------
 	/**
 	 * Used occasinally for the purpose of ISpreadsheet relocation of cells
 	 * */
 	public var oldID : String;
 	
+	//-------------------------------------
+	// temporaryOldID
+	//-------------------------------------
 	/**
 	 * Used occasinally for the purpose of ISpreadsheet relocation of cells
 	 * */
 	public var temporaryOldID : String;
 	
+	//-------------------------------------
+	// valueProp
+	//-------------------------------------
 	/**
 	 * Property of ControlObject.ctrl that holds a value that will be used for calculation, e.g. "text" for TextInput
 	 * */
 	public var valueProp : String;
 	
+	//-------------------------------------
+	// ctrl
+	//-------------------------------------
 	/**
 	 * Object that this ControlObject controls.
 	 * It can be anything you register to Calc, like Cell, TextInput, Slider, Object, etc...
 	 * */
 	public var ctrl : Object;
 	
+	//-------------------------------------
+	// dependants
+	//-------------------------------------
 	/**
 	 * All ControlObjects that are dependent on this ControlObject by having it as an operand in its exp properties
 	 * */
 	public var dependants : Array = new Array ();
 	
+	//-------------------------------------
+	// ctrlOperands
+	//-------------------------------------
 	/**
 	 * All ControlObjects that are used as operands in the exp property of this ControlObject
 	 * */
 	public var ctrlOperands : Array = new Array ();
 	
+	//-------------------------------------
+	// grid
+	//-------------------------------------
 	/**
 	 * References the ISpreadsheet that this object belongs to (if it belongs to one).
 	 * For example every Cell within ISpreadsheet has one ControlObject that controls it.
@@ -85,6 +118,9 @@ public class ControlObject extends EventDispatcher
 	[Transient]
 	public var grid : ISpreadsheet;
 	
+	//-------------------------------------
+	// collection
+	//-------------------------------------
 	/**
 	 * References the collection that this object belongs to (if it belongs to one).
 	 * For example if you add ArrayCollection to Calc.addCollection() for every
@@ -92,12 +128,18 @@ public class ControlObject extends EventDispatcher
 	 * */
 	public var collection : *;
 	
+	//-------------------------------------
+	// children
+	//-------------------------------------
 	/**
 	 *
 	 * */
 	[Deprecated]
 	public var children : Array = new Array ();
 	
+	//-------------------------------------
+	// ControlObject
+	//-------------------------------------
 	/**
 	 * Contructor.
 	 * */

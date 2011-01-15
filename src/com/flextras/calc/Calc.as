@@ -63,7 +63,9 @@ public class Calc extends EventDispatcher
 	[Bindable]
 	public var expressionTree : Array;
 	
-	
+	//----------------------------------
+	//  Calc
+	//----------------------------------
 	/**
 	 * Constructor. Creates a new instance of the Calc.
 	 * */
@@ -72,6 +74,9 @@ public class Calc extends EventDispatcher
 		init();
 	}
 	
+	//----------------------------------
+	//  init
+	//----------------------------------
 	/**
 	 * @private
 	 * Sets initial values
@@ -84,6 +89,9 @@ public class Calc extends EventDispatcher
 		expressionTree = new Array();
 	}
 	
+	//----------------------------------
+	//  solveExpression
+	//----------------------------------
 	/**
 	 * Solves the mathemathical expression and supports formulas like SUM(2,3), MAX(a1:d3), etc.
 	 *
@@ -149,6 +157,9 @@ public class Calc extends EventDispatcher
 	
 	}
 	
+	//----------------------------------
+	//  solveParen
+	//----------------------------------
 	/**
 	 * @private 
 	 * Solves an individual expression contained within parenthesis. 
@@ -224,6 +235,9 @@ public class Calc extends EventDispatcher
 		return exp;
 	}
 	
+	//----------------------------------
+	//  solveFormula
+	//----------------------------------
 	/**
 	 * @private
 	 * Solves expression that contains a formula formula, i.e. SUM(a2:a5)
@@ -348,6 +362,9 @@ public class Calc extends EventDispatcher
 		return exp;
 	}
 	
+	//----------------------------------
+	//  solveSimple
+	//----------------------------------
 	/**
 	 * @private
 	 * Solves simple expressions with one operator, one operand on the left, and one operand on the right.
@@ -399,6 +416,9 @@ public class Calc extends EventDispatcher
 		return sRes;
 	}
 	
+	//----------------------------------
+	//  getValueFromOperand
+	//----------------------------------
 	/**
 	 * This method extracts the value from a Control specified as String.
 	 * Calc uses this when solving expressions, if the expression is '=A1 + 5', it will attempt to find a ControlObject with the id="a1", and return its value.
@@ -462,6 +482,9 @@ public class Calc extends EventDispatcher
 		return rn;
 	}
 	
+	//----------------------------------
+	//  getCtrlById
+	//----------------------------------
 	/**
 	 * Gets a ControlObject from a String.
 	 * 
@@ -546,6 +569,9 @@ public class Calc extends EventDispatcher
 		return ro;
 	}
 	
+	//----------------------------------
+	//  getCtrl
+	//----------------------------------
 	/**
 	 * Gets a ControlObject
 	 * @param ctrl Specify either a String, ControlObject or UIComponent that you wish to resolve to a ControlObject 
@@ -581,7 +607,9 @@ public class Calc extends EventDispatcher
 		return co;
 	}
 	
-	
+	//----------------------------------
+	//  updateDependent
+	//----------------------------------
 	/**
 	 * @private
 	 * Loops recursively through the dependent objects of objectChanged until all dependants are resolved.
@@ -613,6 +641,9 @@ public class Calc extends EventDispatcher
 	
 	}
 	
+	//----------------------------------
+	//  assignControlExpression
+	//----------------------------------
 	/**
 	 * Assigns expressions to the objects registered with the Calc.
 	 * @param Object that you want to assign expression to. You can use the ID:String of the object or a reference to the object typed as ControlObject
@@ -743,7 +774,9 @@ public class Calc extends EventDispatcher
 		currentTarget = null;
 	}
 	
-
+	//----------------------------------
+	//  getDependantsOfCollection
+	//----------------------------------
 	/**
 	 * Gets the dependants of a certain collection added through addCollection.
 	 * Dependants are all the objects that use this collection in its expressions as operands.
@@ -768,7 +801,9 @@ public class Calc extends EventDispatcher
 		return arr;
 	}
 	
-	
+	//----------------------------------
+	//  onCtrlChanged
+	//----------------------------------
 	/**
 	 * This function gets executed when a control registered with addControl() changes its value.
 	 * For example when the TextInput receives a new value.
@@ -797,6 +832,9 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  onCtrlFocus
+	//----------------------------------
 	/**
 	 * This function gets executed when a control registered with addControl() receives focus. 
 	 * For example TextInput is clicked on.
@@ -814,6 +852,9 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  onCollectionChange
+	//----------------------------------
 	/**
 	 * This function gets executed when a collection added through Calc.addCollection gets changed.
 	 * This is typically when value changes and this function requests recalculation of all the objects that use this value as its operand.
@@ -838,6 +879,9 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	//----------------------------------
+	//  addTextInput
+	//----------------------------------
 	/**
 	 * Adds TextInput control and registers it with the Calc.
 	 * This is a shortcut method to addControl if you only want to add TextInput.
@@ -848,6 +892,9 @@ public class Calc extends EventDispatcher
 		addControl(textInput, "text", ["focusIn"], [FlexEvent.ENTER, "focusOut"]);
 	}
 	
+	//----------------------------------
+	//  addControl
+	//----------------------------------
 	/**
 	 * Adds any Flex Control and registers it with the Calc. Calc then performs calculations and expressions
 	 * assigned to this component through Calc.assignControlExpression() method.
@@ -886,7 +933,9 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
-	
+	//----------------------------------
+	//  addObject
+	//----------------------------------
 	/**
 	 * Registered any Object with the Calc and you can later use specified property on this Object as the operand in the expression.
 	 * 
@@ -917,6 +966,9 @@ public class Calc extends EventDispatcher
 		_ctrlCollection[ctrlObject.id] = ctrlObject;
 	}
 	
+	//----------------------------------
+	//  addSpreadsheet
+	//----------------------------------
 	/**
 	 * Registers an ISpreadsheet object with this Calc.
 	 * <br/><br/> 
@@ -942,6 +994,9 @@ public class Calc extends EventDispatcher
 		_gridCollection[sheet.id] = sheet;
 	}
 	
+	//----------------------------------
+	//  addCollection
+	//----------------------------------
 	/**
 	 * Calc currently supports ArrayCollection only. 
 	 * By registering a collection with the Calc you can use it in the expressions.
@@ -981,6 +1036,10 @@ public class Calc extends EventDispatcher
 		}
 	}
 	
+	
+	//----------------------------------
+	//  gridCollection
+	//----------------------------------
 	/**
 	 * Returns the dictionary collection of all the ISpreadsheet objects registered with this Calc.
 	 * */
@@ -989,6 +1048,9 @@ public class Calc extends EventDispatcher
 		return _gridCollection;
 	}
 	
+	//----------------------------------
+	//  ctrlCollection
+	//----------------------------------
 	/**
 	 * Returns the dictionary collection of all the Objecs or Flex Controls registered with this Calc, excepts collections and ISpreadsheets.
 	 * */
@@ -997,6 +1059,9 @@ public class Calc extends EventDispatcher
 		return _ctrlCollection;
 	}
 	
+	//----------------------------------
+	//  collections
+	//----------------------------------
 	/**
 	 * Returns the dictionary collection of all the collections (ArrayCollection objects) registered with this Calc.
 	 * */

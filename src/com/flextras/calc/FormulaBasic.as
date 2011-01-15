@@ -25,12 +25,20 @@ package com.flextras.calc
 		public static const COUNT:String 	= "count";
 		public static const MEDIAN:String 	= "median";
 		
+		
+		//----------------------------------
+		//  functions
+		//----------------------------------
 		/**
 		 * Contains all the formulas supported by this class. 
 		 * */
 		public static const functions:Array = [SUM, AVERAGE, MAX, MIN, ROUND, FLOOR, CEIL,
 												COUNT, MEDIAN];
 		
+		
+		//----------------------------------
+		//  FormulaBasic
+		//----------------------------------
 		/**
 		 * Constructor. This class does not need to be implemented, it relies on static methods.
 		 * */
@@ -39,6 +47,9 @@ package com.flextras.calc
 			//TODO: implement function
 		}
 		
+		//----------------------------------
+		//  solve
+		//----------------------------------
 		/**
 		 * Main function to solve any formula.
 		 * @param formula Formula that you wish to solve. You can use static constants such as FormulaBasic.SUM
@@ -75,6 +86,9 @@ package com.flextras.calc
 			return res;
 		}
 		
+		//----------------------------------
+		//  solveSUM
+		//----------------------------------
 		/**
 		 * Solves the SUM formula by adding all the numbers in the array.
 		 * @param args Array that contains the numbers you wish to add. Function will attempt to cast the elements of the args to Number.
@@ -93,6 +107,9 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		//----------------------------------
+		//  solveAVERAGE
+		//----------------------------------
 		/**
 		 * Solves AVERAGE formula by calculating the average value of all the numbers in the array.
 		 * @param args Array that contains the numbers you wish to calculate the average from. Function will attempt to cast the elements of the args to Number.
@@ -105,6 +122,9 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		//----------------------------------
+		//  solveMIN
+		//----------------------------------
 		/**
 		 * Solves MIN formula by returning the smallest number of those provided in the array.
 		 * @param args Array that contains the numbers you wish to calculate the smallest number from. Function will attempt to cast the elements of the args to Number.
@@ -122,6 +142,9 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		//----------------------------------
+		//  solveMAX
+		//----------------------------------
 		/**
 		 * Solves MAX formula by returning the smallest number of those provided in the array.
 		 * @param args Array that contains the numbers you wish to calculate the smallest number from. Function will attempt to cast the elements of the args to Number.
@@ -139,6 +162,9 @@ package com.flextras.calc
 			return res.toString();
 		}
 		
+		//----------------------------------
+		//  solveROUND
+		//----------------------------------
 		/**
 		 * Rounds the number to the nearest integer. 
 		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
@@ -150,6 +176,9 @@ package com.flextras.calc
 			return Math.round(res).toString();
 		}
 		
+		//----------------------------------
+		//  solveFLOOR
+		//----------------------------------
 		/**
 		 * Rounds the number down to the nearest integer.
 		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
@@ -160,7 +189,10 @@ package com.flextras.calc
 			var res:Number = args[0];
 			return Math.floor(res).toString();
 		}
-
+		
+		//----------------------------------
+		//  solveCEIL
+		//----------------------------------
 		/**
 		 * Rounds the number up to the nearest integer.
 		 * @param args Function only takes the first element of the array and rounds it, other elements are ignored. Function will attempt to cast the elements of the args to Number.
@@ -173,6 +205,9 @@ package com.flextras.calc
 			
 		}
 		
+		//----------------------------------
+		//  solveCOUNT
+		//----------------------------------
 		/**
 		 * Solves COUNT formula by counting how many elements in the array are numeric values. E.g. [1, "15", "abc"] returns "2".
 		 * @param args Array of values you wish to count. Function will attempt to cast the elements of the args to Number.
@@ -194,6 +229,9 @@ package com.flextras.calc
 			return c.toString();		
 		}
 		
+		//----------------------------------
+		//  solveMEDIAN
+		//----------------------------------
 		/**
 		 * Solves MEDIAN formula by calculating the median value of the numbers provided in the array.
 		 * @param args Array of values you wish to calculate median from. Function will attempt to cast the elements of the args to Number.

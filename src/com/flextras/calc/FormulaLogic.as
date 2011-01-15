@@ -17,11 +17,17 @@ public class FormulaLogic
 	
 	public static const COUNTIF : String = "countif";
 	
+	//----------------------------------
+	//  functions
+	//----------------------------------
 	/**
 	 * Contains all the formulas supported by this class. 
 	 * */
 	public static const functions : Array = [IF, COUNTIF];
 	
+	//----------------------------------
+	//  FormulaLogic
+	//----------------------------------
 	/**
 	 * Constructor. This class does not need to be implemented, it relies on static methods.
 	 * */
@@ -29,7 +35,9 @@ public class FormulaLogic
 	{
 	}
 	
-	
+	//----------------------------------
+	//  solve
+	//----------------------------------
 	/**
 	 * Main function to solve any formula.
 	 * @param formula Formula that you wish to solve. You can use static constants such as FormulaBasic.SUM
@@ -60,6 +68,9 @@ public class FormulaLogic
 		return res;
 	}
 	
+	//----------------------------------
+	//  solve
+	//----------------------------------
 	/**
 	 * This function compares two values for equality, based on following operators: &lt;, &gt;, =, &lt;=, &gt;=, &lt;&gt;.
 	 * @param arg1 First argument
@@ -117,6 +128,9 @@ public class FormulaLogic
 		return b;
 	}
 	
+	//----------------------------------
+	//  solveIF
+	//----------------------------------
 	/**
 	 * Solves the IF formula by evaluating condition and returning appropriate value.
 	 * @param args Array has to follow special formation. It has to always contain five elements.
@@ -160,6 +174,9 @@ public class FormulaLogic
 		return res;
 	}
 	
+	//----------------------------------
+	//  solveCOUNTIF
+	//----------------------------------
 	/**
 	 * Solves COUNTIF formula by counting how many elements are numbers AND match the condition specified.
 	 * @param args Array has to follow special formation. It has to always contain three elements:

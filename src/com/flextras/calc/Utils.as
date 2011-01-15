@@ -7,21 +7,33 @@ package com.flextras.calc
  * */
 public class Utils
 {
+	//----------------------------------
+	//  _calc
+	//----------------------------------
 	/**
 	 * @private
 	 * */
 	private static var _calc : Calc;
 	
+	//----------------------------------
+	//  orepl
+	//----------------------------------
 	/**
 	 * Part of the frepl/orepl replacement mechanism
 	 * */
 	private static var orepl : Object;
 	
+	//----------------------------------
+	//  rxValidOperand
+	//----------------------------------
 	/**
 	 * @private not in use
 	 * */
 	public static var rxValidOperand : RegExp = new RegExp("f");
 	
+	//----------------------------------
+	//  alphabet
+	//----------------------------------
 	/**
 	 * Alphabet simbols from A up to BZ, mostly used for column naming
 	 * */
@@ -29,19 +41,27 @@ public class Utils
 										  "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ",
 										  "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ"];
 	
+	//----------------------------------
+	//  rgxNotAllowed
+	//----------------------------------
 	/**
 	 * Regular Expression that matches characters not allowed in the expression for Calc or Spreadsheet, e.g. '~'
 	 * */
 	public static var rgxNotAllowed : RegExp = /[^a-zA-Z0-9!\s\+\-\*\/\^\.\(\)\:\,=<>"']/g;
 	
+	//----------------------------------
+	//  Utils
+	//----------------------------------
 	/**
-	 * Constructor.
+	 * Constructor. This class contains mostly static methods.
 	 * */
 	public function Utils()
 	{
-		//TODO: implement function
 	}
 	
+	//----------------------------------
+	//  checkValidExpression
+	//----------------------------------
 	/**
 	 * Checks if the string is a valid expression to be accepted by Calc or Spreadsheet and returns an error String.
 	 * @param exp String that you want to check if it is a valid expression.
@@ -80,6 +100,9 @@ public class Utils
 		return err;
 	}
 	
+	//----------------------------------
+	//  gridFieldToIndexes
+	//----------------------------------
 	/**
 	 * Resolves column names and row numbers to indexes. E.g. from "a0" to [0, 0, null, "A", "0"], from "f6" to [5, 6, null, "F", "6"], from "sheet1!a0 to [0, 0, "sheet1", "A", "0"]"
 	 * @param fieldId String that represents the ID of the field or cell in the Spreadsheet.
@@ -109,6 +132,9 @@ public class Utils
 		return [intCol, intRow, sheet, col, row, (col + row)]
 	}
 	
+	//----------------------------------
+	//  moveFieldId
+	//----------------------------------
 	/**
 	 * Moves the id of the field for specific dx and dy.
 	 * @param fieldId String representing the id of the field or cell
@@ -159,6 +185,9 @@ public class Utils
 		return moveOp;
 	}
 	
+	//----------------------------------
+	//  moveExpression
+	//----------------------------------
 	/**
 	 * Moves entire expression of ControlObject by dx and dy.
 	 * @param co ControlObject which ContorlObject.exp property you want to move.
@@ -214,6 +243,9 @@ public class Utils
 		return exp;
 	}
 	
+	//----------------------------------
+	//  moveExpression2
+	//----------------------------------
 	/**
 	 * Moves entire expression of ControlObject by dx and dy. It calculates the transformations based on temporaryOldID of ControlObject.
 	 * @param co ControlObject which ContorlObject.exp property you want to move.
@@ -277,7 +309,9 @@ public class Utils
 		return exp;
 	}
 	
-	
+	//----------------------------------
+	//  resolveFieldsRange
+	//----------------------------------
 	/**
 	 * Resolves range specified as string into array of field id's. 
 	 * It works on cell id's such as a1, a2, b1,.. as well as on collections registered by Calc.
@@ -351,6 +385,10 @@ public class Utils
 		
 		return range;
 	}
+	
+	//----------------------------------
+	//  resolveWildCardRange
+	//----------------------------------
 	/**
 	 * Resolves the range with wildcard * into array of ControlObject id's. 
 	 * Works on collections registered with Calc through Calc.addCollection
@@ -396,6 +434,9 @@ public class Utils
 		return arr;
 	}
 	
+	//----------------------------------
+	//  resolveRange
+	//----------------------------------
 	/**
 	 * Resolves range specified as string into array of field id's.
 	 * @param range Array containing field/cell ID's from which to resolve all the ID's in the range.
@@ -475,6 +516,10 @@ public class Utils
 		
 		return ra;
 	}
+	
+	//----------------------------------
+	//  resolveCollectionRange
+	//----------------------------------
 	/**
 	 * Resolves the range of ControlObject ID's in a collection that is specified by a range.
 	 * @param range Array containing two ID's specifying the range.
@@ -512,6 +557,9 @@ public class Utils
 	
 	}
 	
+	//----------------------------------
+	//  frepl
+	//----------------------------------
 	/**
 	 * Part of the frepl/orepl replacement mechanism
 	 * */
@@ -520,6 +568,9 @@ public class Utils
 		return orepl[arguments[0]];
 	}
 	
+	//----------------------------------
+	//  repairOperators
+	//----------------------------------
 	/**
 	 * This function attempts to repair the misstyped and redundant operators,
 	 * by returning only the first valid operator.
@@ -548,6 +599,9 @@ public class Utils
 		return exp;
 	}
 	
+	//----------------------------------
+	//  useFirstOp
+	//----------------------------------
 	/**
 	 * Regex replacement function that returns first operator if multiple are given in the expression. Used by repairOperators()
 	 * @args Passed in by RegExp.replace.
@@ -562,6 +616,9 @@ public class Utils
 		return ops;
 	}
 	
+	//----------------------------------
+	//  repairExpression
+	//----------------------------------
 	/**
 	 * Replaces ~ by - and removes outer brackets. Eg: "(5 * ~3)", to "5 * -3".
 	 * @param exp String represating the expression that needs to be repaired
@@ -577,11 +634,14 @@ public class Utils
 		return exp;
 	}
 	
+	//----------------------------------
+	//  breakComparisonInput
+	//----------------------------------
 	/**
 	 * Breaks the comparison string into an object containg arguments and operator.
 	 * Eg: "4 >= 6", returns {arg1: 4, arg2: 6, op:">="}.
 	 * @param input String Input string that needs to be broken into arguments and operator.
-	 * @return Object with the following values set: arg1, arg2, op.  
+	 * @return Object with the following properties set: arg1, arg2, op.  
 	 * */
 	public static function breakComparisonInput(input : String) : Object
 	{
@@ -611,7 +671,9 @@ public class Utils
 		return ro;
 	}
 	
-	
+	//----------------------------------
+	//  isString
+	//----------------------------------
 	/**
 	 * Recognizes if supplied <i>input</i> is supposed to be treated as string within calculation expressions. 
 	 * That means it checks wheather it is enclosed in double quotes.
@@ -639,6 +701,9 @@ public class Utils
 		return b;
 	}
 	
+	//----------------------------------
+	//  stripStringQuotes
+	//----------------------------------
 	/**
 	 * Removes quotes from beginning and end of the input String.
 	 * @param input String to remove the quotes from.
@@ -658,6 +723,9 @@ public class Utils
 		return rs;
 	}
 	
+	//----------------------------------
+	//  repl
+	//----------------------------------
 	/**
 	 * NOT USED
 	 * */
@@ -684,6 +752,9 @@ public class Utils
 		str = str.replace(rx, frepl);
 	}
 	
+	//----------------------------------
+	//  calc
+	//----------------------------------
 	/**
 	 * Occasionally Utils need reference to Calc to perform some magic.
 	 * This is where you set it.

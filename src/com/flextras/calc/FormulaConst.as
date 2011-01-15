@@ -1,5 +1,6 @@
 package com.flextras.calc
 {
+	
 	/**
 	 * This class contains static functions that only return a value and do not
 	 * perform any calculation or logical decisions. For example PI, #NA, etc.
@@ -15,15 +16,25 @@ package com.flextras.calc
 		public static const NA:String 		= "na";
 		public static const PI:String 		= "pi";
 		
+		//----------------------------------
+		//  functions
+		//----------------------------------
 		/**
 		 * Contains all the formulas supported by this class. 
 		 * */
 		public static const functions:Array = [NA, PI];
 		
+		//----------------------------------
+		//  FormulaConst
+		//----------------------------------
 		public function FormulaConst()
 		{
 			
 		}
+		
+		//----------------------------------
+		//  solve
+		//----------------------------------
 		/**
 		 * Main function to solve any formula.
 		 * @param formula Formula that you wish to solve. You can use static constants such as FormulaConst.PI
@@ -52,6 +63,9 @@ package com.flextras.calc
 		
 		}
 		
+		//----------------------------------
+		//  solveNA
+		//----------------------------------
 		/**
 		 * Returns '#NA'
 		 * */
@@ -60,6 +74,9 @@ package com.flextras.calc
 			return "'#NA'";
 		}
 		
+		//----------------------------------
+		//  solvePI
+		//----------------------------------
 		/**
 		 * Returns '3.141592653589793'
 		 * */
