@@ -69,6 +69,8 @@ use namespace spreadsheet;
 [RemoteClass]
 /**
  * Styles class provides common api for setting the styles on current state.
+ *
+ * @see com.flextras.spreadsheet.vos.CellStyles
  */
 public class Styles extends EventDispatcher
 {
@@ -92,7 +94,6 @@ public class Styles extends EventDispatcher
 	 * @param horizontalAlign
 	 * @param verticalAlign
 	 * @param size
-	 *
 	 */
 	public function Styles (color : uint = 0,
 		alpha : Number = 1,

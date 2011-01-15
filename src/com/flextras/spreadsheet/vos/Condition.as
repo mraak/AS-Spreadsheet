@@ -39,6 +39,8 @@ use namespace spreadsheet;
 [RemoteClass]
 /**
  * Condition class represents actual condition on cell.
+ *
+ * @see com.flextras.spreadsheet.vos.Cell
  */
 public class Condition extends EventDispatcher
 {

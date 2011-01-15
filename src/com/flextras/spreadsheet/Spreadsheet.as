@@ -166,7 +166,7 @@ use namespace spreadsheet;
  * @mxml
  *
  *  <pre>
- * &lt;spreadsheet:Spreadsheet id = "sheet"&gt;
+ * &lt;spreadsheet:Spreadsheet id = "grid"&gt;
  *		&lt;s:ArrayCollection&gt;
  *			&lt;fx:Object cell = "a1"
  *					   expression = "=5+5" /&gt;
@@ -1539,6 +1539,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method will add a single expression to the cell at the specified location.
 	 * If an expression already exists at the specified cell location, then it will be replaced.
 	 *
+	 * @example
+	 * <pre>grid.assignExpression ("a0", "=5+5");</pre>
+	 *
 	 *
 	 * @param cellId This argument specifies the cell you want to assign the expression to.
 	 * The format for address a cell is "[column index in alphabetical form][row index in numerical form]".
@@ -1591,6 +1594,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * Each object in the expressions array should include a cell property to specify the location and an expression property to specify the new expression.
 	 *
+	 * @example
+	 * <pre>grid.assignExpressions ([cell:"a0" : expression="=5+5"]);</pre>
+	 *
 	 * For more information on the cell and expression, see the expressions property.
 	 *
 	 * @param expressions An array of objects
@@ -1639,6 +1645,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * This method retrieves the cell based on the specified coordinates.
 	 *
+	 * @example
+	 * <pre>var cell:Cell = grid.getCellAt (0, 0);</pre>
+	 *
 	 * @param columnIndex This specifies the columnIndex of the cell we want to retrieve.
 	 * @param rowIndex This specifies the rowIndex of the cell we want to retrieve.
 	 * @return An object representing the cell.
@@ -1661,6 +1670,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * This method retrieves the cell based on the given Point object.
 	 *
+	 * @example
+	 * <pre>var cell:Cell = grid.getCellByPoint (new Point(0, 0));</pre>
+	 *
 	 * @param location A point that specifies the location of the cell to retrieve.
 	 * @return An object representing the cell.
 	 *
@@ -1682,6 +1694,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method retrieves the cell based on the specified coordinates.
+	 *
+	 * @example
+	 * <pre>var cell:Cell = grid.getCellById ("a0");</pre>
 	 *
 	 * @param value This specifies the ID of the cell to retrieve.
 	 *
@@ -1711,7 +1726,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method retrieves the condition object of the cell located at the given coordinates.
 	 *
 	 * @example
-	 * <pre>grid.getCellConditionAt (0, 0);</pre>
+	 * <pre>var condition:Condition = grid.getCellConditionAt (0, 0);</pre>
 	 *
 	 * @param columnIndex This specifies the columnIndex of the cell whose condition the method will retrieve.
 	 * @param rowIndex This specifies the rowIndex of the cell whose condition the method will retrieve.
@@ -1735,7 +1750,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 *  This method retrieves the condition object of the cell located at the given point.
 	 *
 	 * @example
-	 * <pre>grid.getCellConditionByPoint (new Point(0, 0));</pre>
+	 * <pre>var condition:Condition = grid.getCellConditionByPoint (new Point(0, 0));</pre>
 	 *
 	 * @param location A point that specifies the location of the cell, whose condition the method will retrieve.
 	 * @return  An object representing the cell.
@@ -1858,7 +1873,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method returns the cellStyles at the specified coordinates.
 	 *
 	 * @example
-	 * <pre>grid.getCellStylesAt (0, 0);</pre>
+	 * <pre>var cellStyles:CellStyles = grid.getCellStylesAt (0, 0);</pre>
 	 *
 	 * @param columnIndex This specifies the columnIndex of the cell whose styles the method will process.
 	 * @param rowIndex This specifies the rowIndex of the cell whose styles the method will process.
@@ -1881,7 +1896,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method returns the cellStyles at the specified point.
 	 *
 	 * @example
-	 * <pre>grid.getCellStylesByPoint (new Point(0, 0));</pre>
+	 * <pre>var cellStyles:CellStyles = grid.getCellStylesByPoint (new Point(0, 0));</pre>
 	 *
 	 * @param location A point that specifies the location of the cell, whose styles the method will process.
 	 * @return An object representing the cell’s styles.
@@ -2135,7 +2150,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method returns the width of the column at the specified index.
 	 *
 	 * @example
-	 * <pre>grid.getColumnWidthAt (1);</pre>
+	 * <pre>var columnWidth:Number = grid.getColumnWidthAt (1);</pre>
 	 *
 	 * @param index This specifies the index of the column.
 	 * @return This returns the column width.
@@ -2575,7 +2590,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method will return a group of cells that represent the specified coordinates.
 	 *
 	 * @example
-	 * <pre>grid.getCellsInRangeAt (1, 1, 4, 4);</pre>
+	 * <pre>var cells:Vector.&lt;Cell> = grid.getCellsInRangeAt (1, 1, 4, 4);</pre>
 	 *
 	 * @param columnIndex This specifies the integer location of the column to start the cell retrieval.
 	 * @param rowIndex This specifies the integer location of the row to start the cell retrieval.
@@ -2611,7 +2626,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method will return a group of cells based on the data in the specified Rectangle.
 	 *
 	 * @example
-	 * <pre>grid.getCellsInRangeByRectangle (new Rectangle(1, 1, 4, 4));</pre>
+	 * <pre>var cells:Vector.&lt;Cell> = grid.getCellsInRangeByRectangle (new Rectangle(1, 1, 4, 4));</pre>
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
 	 * @return This method returns a Vector of the cells at the location specified.
@@ -2632,7 +2647,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method will return a group of range conditions that exist at the specified coordinates.
 	 *
 	 * @example
-	 * <pre>grid.getCellsConditionsInRangeAt (1, 1, 4, 4);</pre>
+	 * <pre>var conditions:Vector.&lt;Condition> = grid.getCellsConditionsInRangeAt (1, 1, 4, 4);</pre>
 	 *
 	 * @param columnIndex This specifies the integer location of the column to start the condition retrieval.
 	 * @param rowIndex This specifies the integer location of the row to start the condition retrieval.
@@ -2672,7 +2687,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method will return a group of range conditions that exist at the specified coordinates.
 	 *
 	 * @example
-	 * <pre>grid.getCellsConditionsInRangeByRectangle (new Rectangle(1, 1, 4, 4));</pre>
+	 * <pre>var conditions:Vector.&lt;Condition> = grid.getCellsConditionsInRangeByRectangle (new Rectangle(1, 1, 4, 4));</pre>
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
 	 *
@@ -2805,7 +2820,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method retrieves all the styles in the specified range.
 	 *
 	 * @example
-	 * <pre>grid.getCellsStylesInRangeAt (1, 1, 4, 4);</pre>
+	 * <pre>var styles:Vector.&lt;CellStyles> = grid.getCellsStylesInRangeAt (1, 1, 4, 4);</pre>
 	 *
 	 * @param columnIndex his specifies the integer location of the column to process.
 	 * @param rowIndex This specifies the integer location of the row to process.
@@ -2842,7 +2857,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method retrieves all the styles in the specified range.
 	 *
 	 * @example
-	 * <pre>grid.getCellsStylesInRangeByRectange (new Rectangle(1, 1, 4, 4));</pre>
+	 * <pre>var styles:Vector.&lt;CellStyles> = grid.getCellsStylesInRangeByRectange (new Rectangle(1, 1, 4, 4));</pre>
 	 *
 	 * @param location This is a Rectangle object specifying the start coordinates as the x and y values of the rectangle.  The width and height values of the Rectangle specify number of columns or rows to span, respectively.
 	 * @return The method returns a vector of CellStyles objects.
@@ -3118,7 +3133,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method gets the row height at the specified index.
 	 *
 	 * @example
-	 * <pre>grid.getRowHeightAt (1);</pre>
+	 * <pre>var rowHeight:Number = grid.getRowHeightAt (1);</pre>
 	 *
 	 * @param index This specifies the integer location of the row to process.
 	 * @return The height of the requested row.

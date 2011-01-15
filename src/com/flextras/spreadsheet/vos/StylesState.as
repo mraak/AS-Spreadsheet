@@ -18,6 +18,8 @@ use namespace spreadsheet;
 [RemoteClass]
 /**
  * StylesState class provides support for border on current state.
+ *
+ * @see com.flextras.spreadsheet.vos.CellStyles
  */
 public class StylesState extends Styles
 {

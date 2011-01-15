@@ -65,6 +65,20 @@ use namespace spreadsheet;
  * and thats true for all four states (normal, over, selected, disabled), but there's a catch:
  * font related styles (kerning, spacing, ...) can only be set in "styles" property - which is for "normal" state
  * every other state will be ignored.
+ *
+ * @example
+ * <pre>
+ * var cell:Cell = grid.getCellAt(0, 0);
+ *
+ * cell.styles.color = 0xFF0000;
+ * cell.styles.hovered.color = 0x00FF00;
+ * cell.stylesObject = {backgroundColor: 0xEEEEEE};
+ * cell.condition = new Condition(NaN, ">", 4);
+ * cell.contextMenuEnabled = false;
+ * cell.expression = "=5+5";
+ * </pre>
+ *
+ * @see com.flextras.spreadsheet.vos.CellStyles
  */
 public class Cell extends EventDispatcher implements IExternalizable
 {

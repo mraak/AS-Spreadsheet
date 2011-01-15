@@ -44,6 +44,20 @@ use namespace spreadsheet;
 [RemoteClass]
 /**
  * CellStyles class provides common api for setting the styles on all states. It also contains references to individual state.
+ *
+ * @example
+ * <pre>
+ * var cellStyles:CellStyles = grid.getCellAt(0, 0).styles;
+ *
+ * cellStyles.color = 0x333333;
+ * cellStyles.backgroundColor = 0xEEEEEE;
+ * cellStyles.bold = true;
+ * cellStyles.hovered.color = 0x666666;
+ * cellStyles.border = new Border(0xFF0000, 1, 2);
+ * cellStyles.normal.top = new BorderSide(0xFF0000, .75, 1);
+ * cellStyles.normal.bottom.assignObject({visible:false});
+ * cellStyles.hovered.color = 0x00FF00;
+ * </pre>
  */
 public class CellStyles extends EventDispatcher
 {

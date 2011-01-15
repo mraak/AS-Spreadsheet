@@ -34,6 +34,8 @@ use namespace spreadsheet;
 [RemoteClass]
 /**
  * BorderSide class provides common api for setting the styles on individual side.
+ *
+ * @see com.flextras.spreadsheet.vos.CellStyles
  */
 public class BorderSide extends EventDispatcher
 {
