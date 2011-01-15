@@ -67,16 +67,15 @@ use namespace spreadsheet;
  * every other state will be ignored.
  *
  * @example
- * <pre>
+ * <listing version="3.0">
  * var cell:Cell = grid.getCellAt(0, 0);
- *
  * cell.styles.color = 0xFF0000;
  * cell.styles.hovered.color = 0x00FF00;
  * cell.stylesObject = {backgroundColor: 0xEEEEEE};
  * cell.condition = new Condition(NaN, ">", 4);
  * cell.contextMenuEnabled = false;
  * cell.expression = "=5+5";
- * </pre>
+ * </listing>
  *
  * @see com.flextras.spreadsheet.vos.CellStyles
  */
