@@ -35,20 +35,20 @@ import spark.components.TextInput;
  * */
 public class Calc extends EventDispatcher
 {
+	
+	// dictionary referencing all ISpreadsheet instances registered with Calc through addSpreadsheet()
 	private var _gridCollection : Object;
 	
+	// dictionary referencing all ControlObject instances registered with Calc through addControl()
 	private var _ctrlCollection : Object;
 	
+	// dictionary referencing all collections (ArrayCollection) registered with Calc through addCollection()
 	private var _collections : Object;
 	
+	// used in some functions that do recursive calculations, this sets the ControlObject that triggered recursive chain of calculations
 	private var _currentOriginator : ControlObject;
 	
-	private var _dependantsTree : Object;
-	
-	private var _currentDependantsTreeObject : Object;
-	
-	private var _operandError : String = null;
-	
+	// stores the exression repair attempt by Utils.repairExpression()
 	private var _repairedExpression : String;
 	
 	/**
@@ -85,7 +85,7 @@ public class Calc extends EventDispatcher
 	}
 	
 	/**
-	 * Solve the mathemathical expression and supports formulas like SUM(2,3), MAX(a1:d3), etc.
+	 * Solves the mathemathical expression and supports formulas like SUM(2,3), MAX(a1:d3), etc.
 	 *
 	 * @param exp Expression that needs to be solved
 	 * @param forget Internal, you never need to set this param
@@ -95,7 +95,6 @@ public class Calc extends EventDispatcher
 	public function solveExpression(exp : String, forget : Boolean = true) : String
 	{
 		var isValid : String = Utils.checkValidExpression(exp);
-		_operandError = null;
 		
 		if (isValid == "ok")
 		{
@@ -142,14 +141,6 @@ public class Calc extends EventDispatcher
 			this.dispatchEvent(errEvt);
 		}
 		
-		if (_operandError)
-		{
-			exp = _operandError;
-			
-			var errEvt1 : SpreadsheetEvent = new SpreadsheetEvent(SpreadsheetEvent.ERROR);
-			errEvt1.message = _operandError;
-				//this.dispatchEvent(errEvt1);
-		}
 		
 		if (Utils.isString(exp))
 			exp = Utils.stripStringQuotes(exp);

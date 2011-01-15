@@ -47,12 +47,12 @@ public class ControlObject extends EventDispatcher
 	public var colIndex : int;
 	
 	/**
-	 * Used occasinally for the purpose of ISpreadsheet reloation of cells
+	 * Used occasinally for the purpose of ISpreadsheet relocation of cells
 	 * */
 	public var oldID : String;
 	
 	/**
-	 * Used occasinally for the purpose of ISpreadsheet reloation of cells
+	 * Used occasinally for the purpose of ISpreadsheet relocation of cells
 	 * */
 	public var temporaryOldID : String;
 	

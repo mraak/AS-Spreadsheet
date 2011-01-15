@@ -1,26 +1,52 @@
 package com.flextras.calc
 {
 
+/**
+ * Utils class contains helper methods for various operations regarding Spreadsheet, mathematical and logical operations.
+ * User of Spreadsheet SDK does not need to directly use these functions, however some advanced users might find them very useful in wide variety of applications.
+ * */
 public class Utils
 {
-	
+	/**
+	 * @private
+	 * */
 	private static var _calc : Calc;
 	
+	/**
+	 * Part of the frepl/orepl replacement mechanism
+	 * */
 	private static var orepl : Object;
 	
+	/**
+	 * @private not in use
+	 * */
 	public static var rxValidOperand : RegExp = new RegExp("f");
 	
+	/**
+	 * Alphabet simbols from A up to BZ, mostly used for column naming
+	 * */
 	public static var alphabet : Array = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 										  "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ",
 										  "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ"];
 	
+	/**
+	 * Regular Expression that matches characters not allowed in the expression for Calc or Spreadsheet, e.g. '~'
+	 * */
 	public static var rgxNotAllowed : RegExp = /[^a-zA-Z0-9!\s\+\-\*\/\^\.\(\)\:\,=<>"']/g;
 	
+	/**
+	 * Constructor.
+	 * */
 	public function Utils()
 	{
 		//TODO: implement function
 	}
 	
+	/**
+	 * Checks if the string is a valid expression to be accepted by Calc or Spreadsheet and returns an error String.
+	 * @param exp String that you want to check if it is a valid expression.
+	 * @return String 'ok' if exp is valid expression, error string if not.
+	 * */
 	public static function checkValidExpression(exp : String) : String
 	{
 		var err : String = "ok";
@@ -55,7 +81,9 @@ public class Utils
 	}
 	
 	/**
-	 * From "a0" to [0,0], from "f6" to [5,6]
+	 * Resolves column names and row numbers to indexes. E.g. from "a0" to [0, 0, null, "A", "0"], from "f6" to [5, 6, null, "F", "6"], from "sheet1!a0 to [0, 0, "sheet1", "A", "0"]"
+	 * @param fieldId String that represents the ID of the field or cell in the Spreadsheet.
+	 * @return Array with info, [0] int column index, [1] int row index, [2] String sheet id, [3] String column id, [4] String row id
 	 *
 	 * */
 	public static function gridFieldToIndexes(fieldId : String) : Array
@@ -81,6 +109,22 @@ public class Utils
 		return [intCol, intRow, sheet, col, row, (col + row)]
 	}
 	
+	/**
+	 * Moves the id of the field for specific dx and dy.
+	 * @param fieldId String representing the id of the field or cell
+	 * @param dx movement on the x axis
+	 * @param dy movement on the y axis
+	 * @return new field id, based on the movement
+	 * 
+	 * @example The following moves filed id from a0 to c1
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var result:String = Utils.moveFieldId("a0", 2, 1);
+	 * trace(result); // c1
+	 * 
+	 * </listing>
+	 * */
 	public static function moveFieldId(fieldId : String, dx : int, dy : int) : String
 	{
 		var origOp : String = fieldId;
@@ -115,6 +159,16 @@ public class Utils
 		return moveOp;
 	}
 	
+	/**
+	 * Moves entire expression of ControlObject by dx and dy.
+	 * @param co ControlObject which ContorlObject.exp property you want to move.
+	 * @param dx movement on the x axis
+	 * @param dy movement on the y axis
+	 * @param toGrid if you want to move the expression onto different sheet
+	 * @param excludeRule masks the areas of the grid, where you want the movement to appear, in the form of [fromColumn:int, toColumn:int, fromRow:int, toRow:int]
+	 * @return String representing an expression that moved
+	 * 
+	 * */
 	public static function moveExpression(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
 	{
 		var exp : String = co.exp;
@@ -160,6 +214,16 @@ public class Utils
 		return exp;
 	}
 	
+	/**
+	 * Moves entire expression of ControlObject by dx and dy. It calculates the transformations based on temporaryOldID of ControlObject.
+	 * @param co ControlObject which ContorlObject.exp property you want to move.
+	 * @param dx movement on the x axis
+	 * @param dy movement on the y axis
+	 * @param toGrid if you want to move the expression onto different sheet
+	 * @param excludeRule masks the areas of the grid, where you want the movement to appear, in the form of [fromColumn:int, toColumn:int, fromRow:int, toRow:int]
+	 * @return String representing an expression that moved
+	 * 
+	 * */
 	public static function moveExpression2(co : ControlObject, dx : int, dy : int, toGrid : String = null, excludeRule : Array = null) : String
 	{
 		var exp : String = co.exp;
@@ -213,6 +277,51 @@ public class Utils
 		return exp;
 	}
 	
+	
+	/**
+	 * Resolves range specified as string into array of field id's. 
+	 * It works on cell id's such as a1, a2, b1,.. as well as on collections registered by Calc.
+	 * 
+	 * @param fields String representing the range of fields/cells to resolve.
+	 * @return Array containing the ID's of fields/cells in the range.
+	 * 
+	 * @example The following resolves range on one column specified by collon
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var range:Array = Utils.resolveFieldsRange("a1:a4");
+	 * trace(range); // ["a1", "a2", "a3", "a4"]
+	 * 
+	 * </listing>
+	 * 
+	 * @example The following resolves range on one row specified by collon
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var range:Array = Utils.resolveFieldsRange("a1:c1");
+	 * trace(range); // ["a1", "b1", "c1"]
+	 * 
+	 * </listing>
+	 * 
+	 * @example The following resolves range on one row specified by comma
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var range:Array = Utils.resolveFieldsRange("a1,b1,c1");
+	 * trace(range); // ["a1", "b1", "c1"]
+	 * 
+	 * </listing>
+	 * 
+	 * @example The following resolves square range on multiple rows and columns specified by collon
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var range:Array = Utils.resolveFieldsRange("a1:c2");
+	 * trace(range); // ["a1", "a2", "b1", "b2", "c1", "c2"]
+	 * 
+	 * </listing>
+	 * 
+	 * */
 	public static function resolveFieldsRange(fields : String) : Array
 	{
 		var range : Array = new Array();
@@ -242,7 +351,13 @@ public class Utils
 		
 		return range;
 	}
-	
+	/**
+	 * Resolves the range with wildcard * into array of ControlObject id's. 
+	 * Works on collections registered with Calc through Calc.addCollection
+	 * E.g.: resolveWildCardRange("arrayCol!users!*") // ["arrayCol!users!0", "arrayCol!users!1", "arrayCol!users!2", ... arrayCol!users!N]
+	 * @param fields String representing the range of objects to resolve. 
+	 * @return Array containing the ID's of objects in the range. This is in the form of CollectionName!ObjectName!IndexInCollection
+	 * */
 	public static function resolveWildCardRange(fields : String) : Array
 	{
 		var arr : Array = new Array();
@@ -281,6 +396,19 @@ public class Utils
 		return arr;
 	}
 	
+	/**
+	 * Resolves range specified as string into array of field id's.
+	 * @param range Array containing field/cell ID's from which to resolve all the ID's in the range.
+	 * @return Array containing all the resolved field/cell ID's  
+	 * @example The following resolves square range on multiple rows and columns specified by collon
+	 *
+	 * <listing version="3.0">
+	 * 
+	 * var range:Array = Utils.resolveFieldsRange("a1:c2");
+	 * trace(range); // ["a1", "a2", "b1", "b2", "c1", "c2"]
+	 * 
+	 * </listing> 
+	 * */
 	public static function resolveRange(range : Array) : Array
 	{
 		
@@ -347,7 +475,11 @@ public class Utils
 		
 		return ra;
 	}
-	
+	/**
+	 * Resolves the range of ControlObject ID's in a collection that is specified by a range.
+	 * @param range Array containing two ID's specifying the range.
+	 * @return Array with all the ControlObject ID's that fall into range.
+	 * */
 	public static function resolveCollectionRange(range : Array) : Array
 	{
 		var arr : Array = new Array();
@@ -380,6 +512,9 @@ public class Utils
 	
 	}
 	
+	/**
+	 * Part of the frepl/orepl replacement mechanism
+	 * */
 	private static function frepl() : String
 	{
 		return orepl[arguments[0]];
@@ -387,10 +522,12 @@ public class Utils
 	
 	/**
 	 * This function attempts to repair the misstyped and redundant operators,
-	 * by returning only the first valid operator
-	 * e.g.: -+5+*!+/3+, result: -5+3
+	 * by returning only the first valid operator.
+	 * e.g.: -+5+*!+/3+, result: -5+3.
 	 * Secondly, it attempts to repair redundant operators in parenthesis,
-	 * e.g.: (*5+6/), result: (5+6)
+	 * e.g.: (*5+6/), result: (5+6).
+	 * @param exp String of expression to attempt to repair.
+	 * @return String repaired expression.
 	 * */
 	public static function repairOperators(exp : String) : String
 	{
@@ -403,7 +540,7 @@ public class Utils
 		
 		exp = exp.replace(rx, "$1$3");
 		
-		//TODO: temporarily removed * and !
+		//maybeTODO: temporarily removed * and !
 		rx = /([A-Za-z0-9~])([\^\+\/\-!]+)(\))/g;
 		
 		exp = exp.replace(rx, "$1$3");
@@ -411,6 +548,10 @@ public class Utils
 		return exp;
 	}
 	
+	/**
+	 * Regex replacement function that returns first operator if multiple are given in the expression. Used by repairOperators()
+	 * @args Passed in by RegExp.replace.
+	 * */
 	private static function useFirstOp(... args) : String
 	{
 		var ops : String = args[0];
@@ -421,6 +562,11 @@ public class Utils
 		return ops;
 	}
 	
+	/**
+	 * Replaces ~ by - and removes outer brackets. Eg: "(5 * ~3)", to "5 * -3".
+	 * @param exp String represating the expression that needs to be repaired
+	 * @return String repaired expression.
+	 * */
 	public static function repairExpression(exp : String) : String
 	{
 		exp = exp.replace(/~/g, "-");
@@ -431,6 +577,12 @@ public class Utils
 		return exp;
 	}
 	
+	/**
+	 * Breaks the comparison string into an object containg arguments and operator.
+	 * Eg: "4 >= 6", returns {arg1: 4, arg2: 6, op:">="}.
+	 * @param input String Input string that needs to be broken into arguments and operator.
+	 * @return Object with the following values set: arg1, arg2, op.  
+	 * */
 	public static function breakComparisonInput(input : String) : Object
 	{
 		var ro : Object = new Object();
@@ -459,20 +611,15 @@ public class Utils
 		return ro;
 	}
 	
-	private static function doBreakCompInput() : String
-	{
-		var args : Array = arguments;
-		
-		var s : String = args[1] + "_" + args[2] + "_" + args[3];
-		
-		return s;
-	}
 	
 	/**
-	 * Recognizes if supplied <i>input</i> is supposed to be treated as string. That means
-	 * it checks wheather it is enclosed in double quotes.<br/><br/>
+	 * Recognizes if supplied <i>input</i> is supposed to be treated as string within calculation expressions. 
+	 * That means it checks wheather it is enclosed in double quotes.
+	 * This is not to be confused with ActionScript String class, it is a separate construct that is used in Calc.
+	 * <br/><br/>
 	 * <b>Example:</b><br/> isString("s"), returns <i>false</i><br/> isString(""s""), returns <i>true</i>
-	 *
+	 * @param input String that needs to be checked if it is a valid string representation for Calc.
+	 * @return Boolean true if the specified string is a valid string representation for Calc.
 	 * */
 	public static function isString(input : String) : Boolean
 	{
@@ -492,6 +639,11 @@ public class Utils
 		return b;
 	}
 	
+	/**
+	 * Removes quotes from beginning and end of the input String.
+	 * @param input String to remove the quotes from.
+	 * @return String with removed quotes characters from the beginning and end of input String. 
+	 * */
 	public static function stripStringQuotes(input : String) : String
 	{
 		var rs : String;
@@ -506,6 +658,9 @@ public class Utils
 		return rs;
 	}
 	
+	/**
+	 * NOT USED
+	 * */
 	public static function repl() : void
 	{
 		var str : String = "my bicycle and my house are better than your bicycle and your house";
@@ -529,6 +684,11 @@ public class Utils
 		str = str.replace(rx, frepl);
 	}
 	
+	/**
+	 * Occasionally Utils need reference to Calc to perform some magic.
+	 * This is where you set it.
+	 * @param calc Instance of Calc that you want Utils to have reference to.
+	 * */
 	public static function set calc(value : Calc) : void
 	{
 		_calc = value;
