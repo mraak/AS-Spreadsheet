@@ -2501,6 +2501,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * @see com.flextras.spreadsheet.vos.MoveOptions
 	 */
 	// ---JH Not sure what the options argument is --
+	// --ML MoveOptions class now contains documentation.
 	// ---JH What happens if the Vector does not contain contiguous cells??  For example A1 and B12
 	// --AB it would move them by dx and dy based on the distnce between A1 and Point, i.e. the top left most cell determines how entire Vector will be moved
 	public function moveCells (cells : Vector.<Cell>, to : Point, copy : Boolean = false, options : String = MoveOptions.ALL) : void
