@@ -516,6 +516,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 				columnHeader.scroller.horizontalScrollBar.value = e.currentTarget.value;
 			});
 			
+			grid.addEventListener ("selectedIndexChanged", selectionChangedHandler);
+			grid.addEventListener ("selectedIndicesChanged", selectionChangedHandler);
+			grid.addEventListener ("selectedItemChanged", selectionChangedHandler);
+			grid.addEventListener ("selectedItemsChanged", selectionChangedHandler);
+			
 			grid.setFocus ();
 		}
 	}
@@ -539,7 +544,10 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		if (grid === instance)
 		{
-			
+			grid.removeEventListener ("selectedIndexChanged", selectionChangedHandler);
+			grid.removeEventListener ("selectedIndicesChanged", selectionChangedHandler);
+			grid.removeEventListener ("selectedItemChanged", selectionChangedHandler);
+			grid.removeEventListener ("selectedItemsChanged", selectionChangedHandler);
 		}
 	}
 	
@@ -1422,7 +1430,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * You can change the default behavior by setting this property to any positive integer or zero.
 	 * E.g.: startRowIndex = 0, will render the table as A0, A1,... B0, B1,...
 	 * If you change this, you have to take this into account when constructing expressions.
-	 * 
+	 *
 	 * @return Integer by which you want to start indexing rows.
 	 */
 	// --JH Add some documentation for this property  
@@ -1788,6 +1796,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method sets the condition object of the cell located at the given columnIndex and rowIndex.
 	 * This method will override all the previously set properties to the new properties in condition Condition.
 	 * Those not set in condition paramater will override with default values.
+	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionAt (0, 0, new Condition(5, ">", 4));</listing>
 	 *
@@ -1812,7 +1821,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * This method sets the condition object of the cell located at the given Point.
 	 * This method will override all the previously set properties to the new properties in condition Condition.
 	 * Those not set in condition paramater will override with default values.
-	 * 
+	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionByPoint (new Point(0, 0), new Condition(5, ">", 4));</listing>
 	 *
@@ -1837,7 +1846,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given coordinates.
-	 * This method allows you to modify only those properties that are specified in condition Object. 
+	 * This method allows you to modify only those properties that are specified in condition Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionObjectAt (0, 0, {operator:">", right:4});</listing>
@@ -1861,8 +1870,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given Point.
-	 * This method allows you to modify only those properties that are specified in condition Object. 
-	 * 
+	 * This method allows you to modify only those properties that are specified in condition Object.
+	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionObjectByPoint (new Point(0, 0), {operator:">", right:4});</listing>
 	 *
@@ -1940,6 +1949,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the cellStyles at the specified coordinates.
+	 * This method will override all the previously set properties to the new properties in styles CellStyles.
+	 * Those not set in condition paramater will override with default values.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellStylesAt (0, 0, new CellStyles(0xFF0000));</listing>
@@ -1983,6 +1994,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method set the cellStyles at the specified point.
+	 * This method will override all the previously set properties to the new properties in styles CellStyles.
+	 * Those not set in condition paramater will override with default values.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellStylesByPoint (new Point(0, 0), new CellStyles(0xFF0000));</listing>
@@ -2008,6 +2021,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the cellStyles at the specified coordinates.
+	 * This method allows you to modify only those properties that are specified in styles Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellStylesObjectAt (6, 0, {bold: true, backgroundColor: 0xFFFF00});</listing>
@@ -2034,6 +2048,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the cellStyles at the specified Point.
+	 * This method allows you to modify only those properties that are specified in styles Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellStylesObjectByPoint (new Point(6, 0), {bold: true, backgroundColor: 0xFFFF00});</listing>
@@ -2131,7 +2146,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * @private
+	 * This method removes all previously defined expressions.
 	 */
 	// ---JH add some documentation for this method; should it really be public if it will not be documented? ----
 	// --JH If this deletes all expressions; should it really be public?  
@@ -2428,7 +2443,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  selectedIndex
 	//----------------------------------
 	
-	[Bindable(event="SelectedIndexChanged")]
+	[Bindable(event="selectedIndexChanged")]
 	/**
 	 * @copy spark.components.supportClasses.ListBase#selectedIndex
 	 */
@@ -2451,7 +2466,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  selectedIndices
 	//----------------------------------
 	
-	[Bindable(event="SelectedIndicesChanged")]
+	[Bindable(event="selectedIndicesChanged")]
 	/**
 	 * @copy spark.components.List#selectedIndices
 	 */
@@ -2474,7 +2489,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  selectedItem
 	//----------------------------------
 	
-	[Bindable(event="SelectedItemChanged")]
+	[Bindable(event="selectedItemChanged")]
 	/**
 	 * @copy spark.components.supportClasses.ListBase#selectedItem
 	 */
@@ -2497,7 +2512,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  selectedItems
 	//----------------------------------
 	
-	[Bindable(event="SelectedItemsChanged")]
+	[Bindable(event="selectedItemsChanged")]
 	/**
 	 * @copy spark.components.List#selectedItems
 	 */
@@ -2742,6 +2757,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location.
+	 * This method will override all the previously set properties to the new properties in condition Condition.
+	 * Those not set in condition paramater will override with default values.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsConditionsInRangeAt (1, 1, 4, 4, new Condition(5, ">", 4));</listing>
@@ -2773,6 +2790,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location.
+	 * This method will override all the previously set properties to the new properties in condition Condition.
+	 * Those not set in condition paramater will override with default values.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsConditionsInRangeByRectangle (new Rectangle(1, 1, 4, 4), new Condition(5, ">", 4));</listing>
@@ -2797,6 +2816,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location to the specified object.  If rowSpan or columnSpan are greater than 1, then all cells in the area will be given the new condition.
+	 * This method allows you to modify only those properties that are specified in condition Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsConditionsInRangeObjectAt (1, 1, 4, 4, {operator:">", right:4});</listing>
@@ -2826,6 +2846,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method will set the range condition at the specified location to the specified object.
+	 * This method allows you to modify only those properties that are specified in condition Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsConditionsInRangeObjectByRectangle (new Rectangle(1, 1, 4, 4), {operator:">", right:4});</listing>
@@ -2912,7 +2933,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * This method sill set the cell styles in the specified range.
+	 * This method will set the cell styles in the specified range.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsStylesInRangeAt (1, 1, 4, 4, new CellStyles(0xFF0000));</listing>
@@ -2942,7 +2963,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * This method sill set the cell styles in the specified range.
+	 * This method will set the cell styles in the specified range.
+	 * This method will override all the previously set properties to the new properties in styles CellStyles.
+	 * Those not set in condition paramater will override with default values.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsStylesInRangeByRectangle (new Rectangle(1, 1, 4, 4), new CellStyles(0xFF0000));</listing>
@@ -2967,7 +2990,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * This method sill set the cell styles in the specified range.
+	 * This method will set the cell styles in the specified range.
+	 * This method allows you to modify only those properties that are specified in styles Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsStylesObjectInRangeAt (0, 0, 6, 0, {bold: true, backgroundColor: 0xCC99FF});</listing>
@@ -2998,7 +3022,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	
 	/**
-	 * This method sill set the cell styles in the specified range.
+	 * This method will set the cell styles in the specified range.
+	 * This method allows you to modify only those properties that are specified in styles Object.
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellsStylesObjectInRangeByRectangle (new Rectangle(0, 0, 6, 0), {bold: true, backgroundColor: 0xCC99FF});</listing>
@@ -3632,6 +3657,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		doSort = true;
 		
 		invalidateCells ();
+	}
+	
+	//----------------------------------
+	//  selectionChangedHandler
+	//----------------------------------	
+	/**
+	 * @private
+	 */
+	protected function selectionChangedHandler (e : Event) : void
+	{
+		dispatchEvent (e);
 	}
 }
 }

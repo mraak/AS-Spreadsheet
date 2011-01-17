@@ -5,6 +5,7 @@ import com.flextras.spreadsheet.core.spreadsheet;
 import com.flextras.spreadsheet.itemRenderers.GridItemRenderer;
 import com.flextras.spreadsheet.vos.Cell;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
@@ -34,6 +35,35 @@ public class GridList extends List
 	{
 		super ();
 	}
+	
+	override public function set selectedIndex (value : int) : void
+	{
+		super.selectedIndex = value;
+		
+		dispatchEvent (new Event ("selectedIndexChanged"));
+	}
+	
+	override public function set selectedIndices (value : Vector.<int>) : void
+	{
+		super.selectedIndices = value;
+		
+		dispatchEvent (new Event ("selectedIndicesChanged"));
+	}
+	
+	override public function set selectedItem (value : *) : void
+	{
+		super.selectedItem = value;
+		
+		dispatchEvent (new Event ("selectedItemChanged"));
+	}
+	
+	override public function set selectedItems (value : Vector.<Object>) : void
+	{
+		super.selectedItems = value;
+		
+		dispatchEvent (new Event ("selectedItemsChanged"));
+	}
+	
 	/**
 	 * @private
 	 */
