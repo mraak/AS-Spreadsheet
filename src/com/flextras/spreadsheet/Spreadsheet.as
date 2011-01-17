@@ -1772,6 +1772,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//  setCellConditionAt
 	//----------------------------------
 	/**
+	 * This method sets the condition object of the cell located at the given columnIndex and rowIndex.
+	 * This method will override all the previously set properties to the new properties in condition Condition.
+	 * Those not set in condition paramater will override with default values.
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionAt (0, 0, new Condition(5, ">", 4));</listing>
 	 *
@@ -1794,7 +1797,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given Point.
-	 *
+	 * This method will override all the previously set properties to the new properties in condition Condition.
+	 * Those not set in condition paramater will override with default values.
+	 * 
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionByPoint (new Point(0, 0), new Condition(5, ">", 4));</listing>
 	 *
@@ -1818,6 +1823,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given coordinates.
+	 * This method allows you to modify only those properties that are specified in condition Object. 
 	 *
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionObjectAt (0, 0, {operator:">", right:4});</listing>
@@ -1841,7 +1847,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	//----------------------------------
 	/**
 	 * This method sets the condition object of the cell located at the given Point.
-	 *
+	 * This method allows you to modify only those properties that are specified in condition Object. 
+	 * 
 	 * @example
 	 * <listing version="3.0">grid.setCellConditionObjectByPoint (new Point(0, 0), {operator:">", right:4});</listing>
 	 *
