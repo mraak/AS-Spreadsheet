@@ -447,7 +447,11 @@ public class Cell extends EventDispatcher implements IExternalizable
 				expression = value[owner.expressionField];
 		}
 		else
+		{
 			_expression = controlObject.exp = this.value = null;
+			
+			dispatchEvent (new Event ("expressionChanged"));
+		}
 	}
 	
 	//----------------------------------

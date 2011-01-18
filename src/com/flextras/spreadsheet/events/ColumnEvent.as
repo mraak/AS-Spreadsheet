@@ -20,17 +20,17 @@ public class ColumnEvent extends Event
 	/**
 	 * Dispatched when user wants to insert the column.
 	 */
-	public static const INSERT : String = "com.flextras.spreadsheet.events.ColumnEvent::INSERT";
+	public static const INSERT : String = "insertColumn";
 	
 	/**
 	 * Dispatched when user wants to remove the column.
 	 */
-	public static const REMOVE : String = "com.flextras.spreadsheet.events.ColumnEvent::REMOVE";
+	public static const REMOVE : String = "removeColumn";
 	
 	/**
 	 * Dispatched when user wants to clear the column.
 	 */
-	public static const CLEAR : String = "com.flextras.spreadsheet.events.ColumnEvent::CLEAR";
+	public static const CLEAR : String = "clearColumn";
 	
 	//----------------------------------
 	//  notifiers
@@ -39,17 +39,17 @@ public class ColumnEvent extends Event
 	/**
 	 * Dispatched after the column was inserted.
 	 */
-	public static const INSERTED : String = "com.flextras.spreadsheet.events.ColumnEvent::INSERTED";
+	public static const INSERTED : String = "columnInserted";
 	
 	/**
 	 * Dispatched after the column was removed.
 	 */
-	public static const REMOVED : String = "com.flextras.spreadsheet.events.ColumnEvent::REMOVED";
+	public static const REMOVED : String = "columnRemoved";
 	
 	/**
 	 * Dispatched after the column was cleared.
 	 */
-	public static const CLEARED : String = "com.flextras.spreadsheet.events.ColumnEvent::CLEARED";
+	public static const CLEARED : String = "columnCleared";
 	
 	//--------------------------------------------------------------------------
 	//

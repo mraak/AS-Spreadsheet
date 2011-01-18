@@ -39,112 +39,200 @@ use namespace spreadsheet;
 //----------------------------------
 
 /**
+ * @copy ColumnEvent#INSERT
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.INSERT
+ */
+[Event(name="insertColumn", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy ColumnEvent#REMOVE
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.REMOVE
+ */
+[Event(name="removeColumn", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy ColumnEvent#CLEAR
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.CLEAR
+ */
+[Event(name="clearColumn", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy ColumnEvent#INSERTED
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.INSERTED
+ */
+[Event(name="columnInserted", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy ColumnEvent#REMOVED
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.REMOVED
+ */
+[Event(name="columnRemoved", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy ColumnEvent#CLEARED
+ * @eventType com.flextras.spreadsheet.events.ColumnEvent.CLEARED
+ */
+[Event(name="columnCleared", type="com.flextras.spreadsheet.events.ColumnEvent")]
+
+/**
+ * @copy RowEvent#INSERT
+ * @eventType com.flextras.spreadsheet.events.RowEvent.INSERT
+ */
+[Event(name="insertRow", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
+ * @copy RowEvent#REMOVE
+ * @eventType com.flextras.spreadsheet.events.RowEvent.REMOVE
+ */
+[Event(name="removeRow", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
+ * @copy RowEvent#CLEAR
+ * @eventType com.flextras.spreadsheet.events.RowEvent.CLEAR
+ */
+[Event(name="clearRow", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
+ * @copy RowEvent#INSERTED
+ * @eventType com.flextras.spreadsheet.events.RowEvent.INSERTED
+ */
+[Event(name="rowInserted", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
+ * @copy RowEvent#REMOVED
+ * @eventType com.flextras.spreadsheet.events.RowEvent.REMOVED
+ */
+[Event(name="rowRemoved", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
+ * @copy RowEvent#CLEARED
+ * @eventType com.flextras.spreadsheet.events.RowEvent.CLEARED
+ */
+[Event(name="rowCleared", type="com.flextras.spreadsheet.events.RowEvent")]
+
+/**
  * Dispatched when cells property gets changed.
+ * @eventType "cellsChanged"
  */
 [Event(name="cellsChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when calc property gets changed.
+ * @eventType "calcChanged"
  */
 [Event(name="calcChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when cellField property gets changed.
+ * @eventType "cellFieldChanged"
  */
 [Event(name="cellFieldChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when cellFunction property gets changed.
+ * @eventType "cellFunctionChanged"
  */
 [Event(name="cellFunctionChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when columnCount property gets changed.
+ * @eventType "columnCountChanged"
  */
 [Event(name="columnCountChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when columnWidths property gets changed.
+ * @eventType "columnWidthsChanged"
  */
 [Event(name="columnWidthsChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when disabledCells property gets changed.
+ * @eventType "disabledCellsChanged"
  */
 [Event(name="disabledCellsChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when expressionField property gets changed.
+ * @eventType "expressionFieldChanged"
  */
 [Event(name="expressionFieldChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when expressionFunction property gets changed.
+ * @eventType "expressionFunctionChanged"
  */
 [Event(name="expressionFunctionChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when globalStyles property gets changed.
+ * @eventType "globalStylesChanged"
  */
 [Event(name="globalStylesChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when rowCount property gets changed.
+ * @eventType "rowCountChanged"
  */
 [Event(name="rowCountChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when rowHeights property gets changed.
+ * @eventType "rowHeightsChanged"
  */
 [Event(name="rowHeightsChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when startRowIndex property gets changed.
+ * @eventType "startRowIndexChanged"
  */
 [Event(name="startRowIndexChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when preferredColumnWidths property gets changed.
+ * @eventType "preferredColumnWidthsChanged"
  */
 [Event(name="preferredColumnWidthsChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when selectedIndex property gets changed.
+ * @eventType "selectedIndexChanged"
  */
 [Event(name="selectedIndexChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when selectedIndices property gets changed.
+ * @eventType "selectedIndicesChanged"
  */
 [Event(name="selectedIndicesChanged", type="flash.events.Event")]
 
 /**
  * Dispatched when expressions property gets changed.
- * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGE
+ * @eventType com.flextras.spreadsheet.events.SpreadsheetEvent.EXPRESSIONS_CHANGE
  */
 [Event(name="expressionsChange", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * Dispatched after expressions property gets changed and processed.
- * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CHANGED
+ * @eventType com.flextras.spreadsheet.events.SpreadsheetEvent.EXPRESSIONS_CHANGED
  */
 [Event(name="expressionsChanged", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * Dispatched after clearExpressions method is called and expressions cleared.
- * @eventType com.flextras.spreadsheet.SpreadsheetEvent.EXPRESSIONS_CLEARED
+ * @eventType com.flextras.spreadsheet.events.SpreadsheetEvent.EXPRESSIONS_CLEARED
  */
 [Event(name="expressionsCleared", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * Redispatched from Calc.
- * @eventType com.flextras.spreadsheet.SpreadsheetEvent.ERROR
+ * @eventType com.flextras.spreadsheet.events.SpreadsheetEvent.ERROR
  */
 [Event(name="error", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
 /**
  * Redispatched from Calc.
- * @eventType com.flextras.spreadsheet.SpreadsheetEvent.WARNING
+ * @eventType com.flextras.spreadsheet.events.SpreadsheetEvent.WARNING
  */
 [Event(name="warning", type="com.flextras.spreadsheet.events.SpreadsheetEvent")]
 
@@ -441,16 +529,16 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			dispatchEvent (new RowEvent (RowEvent.INSERTED, addRowIndex));
 		}
 		
-		if (removeColumnDirty)
+		if (columnRemovedirty)
 		{
-			removeColumnDirty = false;
+			columnRemovedirty = false;
 			
 			dispatchEvent (new ColumnEvent (ColumnEvent.REMOVED, removeColumnIndex));
 		}
 		
-		if (removeRowDirty)
+		if (rowRemovedirty)
 		{
-			removeRowDirty = false;
+			rowRemovedirty = false;
 			
 			dispatchEvent (new RowEvent (RowEvent.REMOVED, removeRowIndex));
 		}
@@ -658,7 +746,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @private
 	 */
-	protected var removeColumnDirty : Boolean;
+	protected var columnRemovedirty : Boolean;
 	
 	/**
 	 * @private
@@ -670,7 +758,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @private
 	 */
-	protected var removeRowDirty : Boolean;
+	protected var rowRemovedirty : Boolean;
 	
 	/**
 	 *    --JH What is this property used for?
@@ -1116,6 +1204,11 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @private
 	 */
+	private var oldExpressions : Array = [];
+	
+	/**
+	 * @private
+	 */
 	protected var expressionsChanged : Boolean;
 	
 	[Bindable(event="expressionsChange")]
@@ -1135,10 +1228,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		if (expressions === value)
 			return;
 		
-		var oldValue : ArrayCollection = expressions;
-		
 		if (expressions)
 		{
+			oldExpressions = expressions.source.concat ();
 			//expressions.removeAll(); //replace with reset
 			expressions.dispatchEvent (new CollectionEvent (CollectionEvent.COLLECTION_CHANGE, false, false, CollectionEventKind.RESET));
 			
@@ -2155,6 +2247,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	{
 		clearExpressionsDirty = true;
 		
+		oldExpressions = expressions.source.concat ();
 		expressions.removeAll ();
 	}
 	
@@ -3443,7 +3536,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			items = e.items;
 		
 		if (e.kind == CollectionEventKind.RESET)
-			items = expressions.source;
+			items = oldExpressions;
 		
 		if (items)
 			for (var i : uint, n : uint = items.length, item : Object; i < n; ++i)
@@ -3592,7 +3685,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		removeColumn (index, rowCount);
 		
-		removeColumnDirty = true;
+		columnRemovedirty = true;
 		
 		updatePreferredColumnWidths (index, -1);
 	}
@@ -3621,7 +3714,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 		
 		removeRow (index, columnCount);
 		
-		removeRowDirty = true;
+		rowRemovedirty = true;
 		
 		updatePreferredRowHeights (index, -1);
 	}

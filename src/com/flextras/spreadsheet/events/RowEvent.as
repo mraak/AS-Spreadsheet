@@ -20,17 +20,17 @@ public class RowEvent extends Event
 	/**
 	 * Dispatched when user wants to insert the row.
 	 */
-	public static const INSERT : String = "com.flextras.spreadsheet.events.RowEvent::INSERT";
+	public static const INSERT : String = "insertRow";
 	
 	/**
 	 * Dispatched when user wants to remove the row.
 	 */
-	public static const REMOVE : String = "com.flextras.spreadsheet.events.RowEvent::REMOVE";
+	public static const REMOVE : String = "removeRow";
 	
 	/**
 	 * Dispatched when user wants to clear the row.
 	 */
-	public static const CLEAR : String = "com.flextras.spreadsheet.events.RowEvent::CLEAR";
+	public static const CLEAR : String = "clearRow";
 	
 	//----------------------------------
 	//  notifiers
@@ -39,17 +39,17 @@ public class RowEvent extends Event
 	/**
 	 * Dispatched after the row was inserted.
 	 */
-	public static const INSERTED : String = "com.flextras.spreadsheet.events.RowEvent::INSERTED";
+	public static const INSERTED : String = "rowInserted";
 	
 	/**
 	 * Dispatched after the row was removed.
 	 */
-	public static const REMOVED : String = "com.flextras.spreadsheet.events.RowEvent::REMOVED";
+	public static const REMOVED : String = "rowRemoved";
 	
 	/**
 	 * Dispatched after the row was cleared.
 	 */
-	public static const CLEARED : String = "com.flextras.spreadsheet.events.RowEvent::CLEARED";
+	public static const CLEARED : String = "rowCleared";
 	
 	//--------------------------------------------------------------------------
 	//
