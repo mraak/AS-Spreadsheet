@@ -365,9 +365,9 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	public function get expression () : String
 	{
-		var value : String = _expression || this.value;
+		const value : String = _expression || this.value;
 		
-		return owner && owner.expressionFunction != null ? owner.expressionFunction (value) : value;
+		return owner && owner.expressionFunction != null ? owner.expressionFunction (expressionObject) : value;
 	}
 	
 	/**
@@ -383,16 +383,10 @@ public class Cell extends EventDispatcher implements IExternalizable
 		controlObject.exp = value;
 		
 		if (owner)
-		{
-			//owner.calc.assignControlExpression(controlObject, value || "");
 			owner.assignExpression (controlObject.id, value);
-		}
-		
-		/*if(!expressionObject)
-		 owner.assignExpression(id, expression);*/
 		
 		if (expressionObject)
-			expressionObject.expression = value;
+			expressionObject[owner.expressionField] = value;
 		
 		dispatchEvent (new Event ("expressionChanged"));
 	}
@@ -431,8 +425,6 @@ public class Cell extends EventDispatcher implements IExternalizable
 	 */
 	spreadsheet function set expressionObject (value : Object) : void
 	{
-		//trace(value ? value.cell : "id", value ? value.reference : "ref", value ? value.expression : "exp", controlObject.oldID, id, expression);
-		
 		if (_expressionObject === value)
 			return;
 		
@@ -711,8 +703,8 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (value.hasOwnProperty ("value"))
 			this.value = String (value.value);
 		
-		if (value.hasOwnProperty ("expression"))
-			expression = String (value.expression);
+		if (value.hasOwnProperty (owner.expressionField))
+			expression = String (value[owner.expressionField]);
 		
 		if (value.hasOwnProperty ("bounds"))
 		{
@@ -858,7 +850,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (amount < 0)
 			return;
 		
-		_bounds.width = amount; //+=
+		_bounds.width = amount;
 	}
 	
 	/**
@@ -869,7 +861,7 @@ public class Cell extends EventDispatcher implements IExternalizable
 		if (amount < 0)
 			return;
 		
-		_bounds.height = amount; //+=
+		_bounds.height = amount;
 	}
 	
 	/**

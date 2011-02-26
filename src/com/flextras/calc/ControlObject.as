@@ -134,7 +134,7 @@ public class ControlObject extends EventDispatcher
 	/**
 	 *
 	 * */
-	[Deprecated]
+	//[Deprecated]
 	public var children : Array = new Array ();
 	
 	//-------------------------------------

@@ -447,6 +447,8 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 			
 			var o : Object, id : String, indexes : Array, columnIndex : int, rowIndex : int;
 			
+			var expression:String;
+			
 			if (expressions)
 				while (c < expressions.length)
 				{
@@ -486,7 +488,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					//if (!cell)
 					//	continue;
 					
-					if (!itemToExpression (o) || itemToExpression (o) == "")
+					expression = itemToExpression (o);
+					
+					if (!expression || expression == "")
 					{
 						if (expressionTree.indexOf (cell.controlObject) > -1)
 							calc.assignControlExpression (cell.controlObject, "");
@@ -1707,7 +1711,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	 * Each object in the expressions array should include a cell property to specify the location and an expression property to specify the new expression.
 	 *
 	 * @example
-	 * <listing version="3.0">grid.assignExpressions ([cell:"a0" : expression="=5+5"]);</listing>
+	 * <listing version="3.0">grid.assignExpressions ([{cell:"a0", expression="=5+5"}]);</listing>
 	 *
 	 * For more information on the cell and expression, see the expressions property.
 	 *
@@ -2488,7 +2492,7 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	public function itemToCell (value : Object) : String
 	{
 		if (cellFunction != null)
-			return cellFunction (value[cellField]);
+			return cellFunction (value);
 		
 		return value[cellField];
 	}
@@ -2508,28 +2512,9 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	public function itemToExpression (value : Object) : String
 	{
 		if (expressionFunction != null)
-			return expressionFunction (value[expressionField]);
+			return expressionFunction (value);
 		
 		return value[expressionField];
-	}
-	
-	//----------------------------------
-	//  selectedCells
-	//----------------------------------
-	// --JH Most Flex Components have a selectedCell and selectedCells property.  The selectedCell property would return the first 
-	// item in this vector.  
-	// --AB will be made public. selectedCell will return whatever DataGroup will return
-	//TODO: move and extend, make public
-	/**
-	 * @private
-	 *
-	 * This property returns a vector of selected Cells.
-	 */
-	protected function get selectedCells () : Vector.<Cell>
-	{
-		var items : Vector.<Object> = grid.selectedItems;
-		
-		return Vector.<Cell> (items);
 	}
 	
 	//----------------------------------
@@ -2609,17 +2594,17 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 	/**
 	 * @copy spark.components.List#selectedItems
 	 */
-	public function get selectedItems () : Vector.<Object>
+	public function get selectedItems () : Vector.<Cell>
 	{
-		return grid.selectedItems;
+		return Vector.<Cell> (grid.selectedItems);
 	}
 	
 	/**
 	 * @private
 	 */
-	public function set selectedItems (value : Vector.<Object>) : void
+	public function set selectedItems (value : Vector.<Cell>) : void
 	{
-		grid.selectedItems = value;
+		grid.selectedItems = Vector.<Object> (value);
 		
 		dispatchEvent (new Event ("selectedItemsChanged"));
 	}
@@ -3436,9 +3421,6 @@ public class Spreadsheet extends SkinnableComponent implements ISpreadsheet, IFo
 					
 					if ((index = expressionTree.indexOf (cell.controlObject)) > -1)
 						expressionTree.splice (index, 1);
-					
-						//if ((index = expressions.getItemIndex(cell.expressionObject)) > -1)
-						//	expressions.removeItemAt(index); //expressions.getItemAt(index).expression = "";
 				}
 				
 				invalidateCells ();
