@@ -1,0 +1,505 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<context:BasePopup xmlns:fx = "http://ns.adobe.com/mxml/2009"
+				   xmlns:s = "library://ns.adobe.com/flex/spark"
+				   xmlns:mx = "library://ns.adobe.com/flex/mx"
+				   xmlns:context="uk.co.currentlabel.spreadsheet.context.*"
+				   paddingLeft = "10"
+				   paddingTop = "10"
+				   paddingRight = "10"
+				   paddingBottom = "10"
+				   verticalGap = "10"
+				   horizontalAlign = "center">
+
+	<fx:Binding source = "grid.grid.selectedItem"
+				destination = "cell" />
+
+	<fx:Binding source = "Vector.&lt;Cell>(grid.grid.selectedItems)"
+				destination = "cells" />
+
+	<context:states>
+		<s:State name = "normal" />
+
+		<s:State name = "hovered" />
+
+		<s:State name = "selected" />
+
+		<s:State name = "disabled" />
+	</context:states>
+
+	<!---States-->
+	<s:ButtonBar id = "stateBar"
+				 enabled = "{!!cell}"
+				 change = "stateBar_changeHandler(event)"
+				 selectedIndex = "0">
+		<s:ArrayCollection>
+			<fx:String>normal</fx:String>
+
+			<fx:String>hovered</fx:String>
+
+			<fx:String>selected</fx:String>
+
+			<fx:String>disabled</fx:String>
+		</s:ArrayCollection>
+	</s:ButtonBar>
+
+	<!---Text color and alpha-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "color"
+				 width = "100" />
+
+		<mx:ColorPicker id = "colorStyle"
+						change = "colorStyle_changeHandler(event)"
+						selectedColor.normal = "{cell.styles.normal.color}"
+						selectedColor.hovered = "{cell.styles.hovered.color}"
+						selectedColor.selected = "{cell.styles.selected.color}"
+						selectedColor.disabled = "{cell.styles.disabled.color}" />
+
+		<s:Label text = "alpha"
+				 paddingLeft = "10"
+				 width = "110" />
+
+		<s:HSlider id = "alphaStyle"
+				   change = "alphaStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "1"
+				   stepSize = ".01"
+				   value.normal = "{cell.styles.normal.alpha}"
+				   value.hovered = "{cell.styles.hovered.alpha}"
+				   value.selected = "{cell.styles.selected.alpha}"
+				   value.disabled = "{cell.styles.disabled.alpha}" />
+	</s:HGroup>
+
+	<!---Background color and aplha-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "backgroundColor"
+				 width = "100" />
+
+		<mx:ColorPicker id = "backgroundColorStyle"
+						change = "backgroundColorStyle_changeHandler(event)"
+						selectedColor.normal = "{cell.styles.normal.backgroundColor}"
+						selectedColor.hovered = "{cell.styles.hovered.backgroundColor}"
+						selectedColor.selected = "{cell.styles.selected.backgroundColor}"
+						selectedColor.disabled = "{cell.styles.disabled.backgroundColor}" />
+
+		<s:Label text = "backgroundAlpha"
+				 paddingLeft = "10"
+				 width = "110" />
+
+		<s:HSlider id = "backgroundAlphaStyle"
+				   change = "backgroundAlphaStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "1"
+				   stepSize = ".01"
+				   value.normal = "{cell.styles.normal.backgroundAlpha}"
+				   value.hovered = "{cell.styles.hovered.backgroundAlpha}"
+				   value.selected = "{cell.styles.selected.backgroundAlpha}"
+				   value.disabled = "{cell.styles.disabled.backgroundAlpha}" />
+	</s:HGroup>
+
+	<mx:HRule width = "100%" />
+
+	<!---Text styles: bold, italic, underline, fontStyle, size-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:CheckBox id = "boldStyle"
+					label = "bold"
+					change = "boldStyle_changeHandler(event)"
+					selected = "{cell.styles.normal.bold}" />
+
+		<s:CheckBox id = "italicStyle"
+					label = "italic"
+					change = "italicStyle_changeHandler(event)"
+					selected = "{cell.styles.normal.italic}" />
+
+		<s:CheckBox id = "underlineStyle"
+					label = "underline"
+					change = "underlineStyle_changeHandler(event)"
+					selected = "{cell.styles.normal.underline}" />
+
+		<s:Label text = "font"
+				 paddingLeft = "10" />
+
+		<s:ComboBox id = "fontStyle"
+					change = "fontStyle_changeHandler(event)"
+					selectedItem = "{cell.styles.normal.font}">
+			<s:ArrayCollection>
+				<fx:String>_sans</fx:String>
+
+				<fx:String>_serif</fx:String>
+
+				<fx:String>_typewriter</fx:String>
+
+				<fx:String>Arial</fx:String>
+
+				<fx:String>Courier</fx:String>
+
+				<fx:String>Courier New</fx:String>
+
+				<fx:String>Geneva</fx:String>
+
+				<fx:String>Georgia</fx:String>
+
+				<fx:String>Helvetica</fx:String>
+
+				<fx:String>Times New Roman</fx:String>
+
+				<fx:String>Times</fx:String>
+
+				<fx:String>Verdana</fx:String>
+			</s:ArrayCollection>
+		</s:ComboBox>
+
+		<s:Label text = "size"
+				 paddingLeft = "10" />
+
+		<s:HSlider id = "sizeStyle"
+				   change = "sizeStyle_changeHandler(event)"
+				   minimum = "1"
+				   maximum = "72"
+				   stepSize = "1"
+				   value = "{cell.styles.normal.size}" />
+	</s:HGroup>
+
+	<!---Horizontal text alignment-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "horizontalAlign"
+				 width = "100" />
+
+		<s:ButtonBar id = "horizontalAlignStyle"
+					 change = "horizontalAlignStyle_changeHandler(event)"
+					 selectedItem = "{cell.styles.normal.horizontalAlign}">
+			<s:layout>
+				<s:HorizontalLayout gap = "-1" />
+			</s:layout>
+
+			<s:ArrayCollection>
+				<fx:String>left</fx:String>
+
+				<fx:String>center</fx:String>
+
+				<fx:String>right</fx:String>
+
+				<fx:String>justify</fx:String>
+			</s:ArrayCollection>
+		</s:ButtonBar>
+	</s:HGroup>
+
+	<!---Vertical text alignment-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "verticalAlign"
+				 width = "100" />
+
+		<s:ButtonBar id = "verticalAlignStyle"
+					 change = "verticalAlignStyle_changeHandler(event)"
+					 selectedItem = "{cell.styles.normal.verticalAlign}">
+			<s:layout>
+				<s:HorizontalLayout gap = "-1" />
+			</s:layout>
+
+			<s:ArrayCollection>
+				<fx:String>top</fx:String>
+
+				<fx:String>middle</fx:String>
+
+				<fx:String>bottom</fx:String>
+
+				<fx:String>justify</fx:String>
+			</s:ArrayCollection>
+		</s:ButtonBar>
+	</s:HGroup>
+
+	<!---Roll out effect duration-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "rollOutDuration"
+				 width = "100" />
+
+		<s:HSlider id = "rollOutDurationStyle"
+				   change = "rollOutDurationStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "1000"
+				   stepSize = "10"
+				   value = "{cell.styles.rollOutDuration}" />
+	</s:HGroup>
+
+	<!---Cells background color gradient level-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "cellGradientLevel"
+				 width = "100" />
+
+		<s:HSlider id = "cellGradientLevelStyle"
+				   change = "cellGradientLevelStyle_changeHandler(event)"
+				   minimum = "-100"
+				   maximum = "100"
+				   stepSize = "10"
+				   value = "{cell.styles.cellGradientLevel}" />
+	</s:HGroup>
+
+	<mx:HRule width = "100%" />
+
+	<!---Border side-->
+	<s:HGroup verticalAlign = "middle"
+			  enabled = "{!!cell}">
+		<s:Label text = "border"
+				 width = "100" />
+
+		<s:ButtonBar id = "borderSideBar"
+					 change = "borderSideBar_changeHandler(event)">
+			<s:layout>
+				<s:HorizontalLayout gap = "-1" />
+			</s:layout>
+
+			<s:ArrayCollection>
+				<fx:String>left</fx:String>
+
+				<fx:String>top</fx:String>
+
+				<fx:String>right</fx:String>
+
+				<fx:String>bottom</fx:String>
+			</s:ArrayCollection>
+		</s:ButtonBar>
+	</s:HGroup>
+
+	<!---Border panel-->
+	<context:BorderSideView id = "side"
+							enabled = "{!!cell}"
+							side = "{borderSideBar.selectedIndex > -1 ? borderSideBar.selectedItem : 'all'}"
+							visibleStyle = "{borderSide.visible}"
+							visibleStyleChanged = "applyBorderStyle(borderSideBar.selectedItem, 'visible', side.newVisibleStyle);"
+							colorStyle = "{borderSide.color}"
+							colorStyleChanged = "applyBorderStyle(borderSideBar.selectedItem, 'color', side.newColorStyle);"
+							alphaStyle = "{borderSide.alpha}"
+							alphaStyleChanged = "applyBorderStyle(borderSideBar.selectedItem, 'alpha', side.newAlphaStyle);"
+							weightStyle = "{borderSide.weight}"
+							weightStyleChanged = "applyBorderStyle(borderSideBar.selectedItem, 'weight', side.newWeightStyle);"
+							width = "210" />
+
+	<fx:Script>
+		<![CDATA[
+			import uk.co.currentlabel.spreadsheet.vos.BorderSide;
+			import uk.co.currentlabel.spreadsheet.vos.Cell;
+			
+			import mx.events.ColorPickerEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			/**
+			 * @private
+			 */
+			protected var borderSide : BorderSide;
+			
+			/**
+			 * @private
+			 */
+			override public function set cell (value : Cell) : void
+			{
+				super.cell = value;
+				
+				borderSide = value.styles.normal.border.left;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function stateBar_changeHandler (e : IndexChangeEvent) : void
+			{
+				currentState = stateBar.selectedItem;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
+			{
+				applyStyle ("color", e.color);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function alphaStyle_changeHandler (e : Event) : void
+			{
+				applyStyle ("alpha", alphaStyle.value);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function backgroundColorStyle_changeHandler (e : ColorPickerEvent) : void
+			{
+				applyStyle ("backgroundColor", e.color);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function backgroundAlphaStyle_changeHandler (e : Event) : void
+			{
+				applyStyle ("backgroundAlpha", backgroundAlphaStyle.value);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function horizontalAlignStyle_changeHandler (e : IndexChangeEvent) : void
+			{
+				applyStyleOnAllStates ("horizontalAlign", horizontalAlignStyle.selectedItem);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function verticalAlignStyle_changeHandler (e : IndexChangeEvent) : void
+			{
+				applyStyleOnAllStates ("verticalAlign", verticalAlignStyle.selectedItem);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function boldStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("bold", boldStyle.selected);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function italicStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("italic", italicStyle.selected);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function underlineStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("underline", underlineStyle.selected);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function fontStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("font", fontStyle.selectedItem);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function sizeStyle_changeHandler (e : Event) : void
+			{
+				applyStyleOnAllStates ("size", sizeStyle.value);
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function applyStyle (name : String, value : Object) : void
+			{
+				if (stateBar.selectedIndex < 0)
+					return;
+				
+				for each (var c : Cell in cells)
+					c.styles[stateBar.selectedItem][name] = value;
+				
+				if (cell)
+					cell.styles[stateBar.selectedItem][name] = value;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function applyStyleOnAllStates (name : String, value : Object) : void
+			{
+				if (stateBar.selectedIndex < 0)
+					return;
+				
+				var o : Object = {};
+				o[name] = value;
+				
+				for each (var c : Cell in cells)
+				{
+					c.styles.assignObject (o);
+					c.condition.stylesObject = o;
+				}
+				
+				if (cell)
+				{
+					cell.styles.assignObject (o);
+					cell.condition.stylesObject = o;
+				}
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function applyBorderStyle (side : String, name : String, value : Object) : void
+			{
+				if (stateBar.selectedIndex < 0)
+					return;
+				
+				var o : Object = {};
+				
+				if (side)
+				{
+					o[side] = {};
+					o[side][name] = value;
+				}
+				else
+					o[name] = value;
+				
+				for each (var c : Cell in cells)
+					c.styles.borderObject = o;
+				
+				if (cell)
+					cell.styles.borderObject = o;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function borderSideBar_changeHandler (event : IndexChangeEvent) : void
+			{
+				if (cell)
+					if (borderSideBar.selectedIndex > -1)
+						borderSide = cell.styles.normal.border[borderSideBar.selectedItem];
+					else
+						borderSide = cell.styles.normal.border.left;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function rollOutDurationStyle_changeHandler (event : Event) : void
+			{
+				for each (var c : Cell in cells)
+					c.styles.rollOutDuration = rollOutDurationStyle.value;
+				
+				if (cell)
+					cell.styles.rollOutDuration = rollOutDurationStyle.value;
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function cellGradientLevelStyle_changeHandler (event : Event) : void
+			{
+				for each (var c : Cell in cells)
+					c.styles.cellGradientLevel = cellGradientLevelStyle.value;
+				
+				if (cell)
+					cell.styles.cellGradientLevel = cellGradientLevelStyle.value;
+			}
+		]]>
+	</fx:Script>
+</context:BasePopup>
