@@ -1,7 +1,7 @@
 AS-Spreadsheet
 ==============
 
-ActionScript based spreadsheet component and calculation logic. 
+ActionScript based spreadsheet component and calculation logic. UI works for Flex based projects, though calculation logic can easily be applied to Actionscript only.
 
 
 
