@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.flextras.paintgrid.CellStyles"/>
+    <classEntry path="com.flextras.paintgrid.PaintGridEmptyColumnHeader"/>
+    <classEntry path="com.flextras.paintgrid.Styles"/>
+    <classEntry path="com.flextras.paintgrid.PaintGridRowResizeSkin"/>
+    <classEntry path="com.flextras.spreadsheet.context.StylesPopup"/>
+    <classEntry path="com.flextras.paintgrid.PGIR"/>
+    <classEntry path="com.flextras.paintgrid.IPaintGridItemRenderer"/>
+    <classEntry path="com.flextras.calc.FormulaConst"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

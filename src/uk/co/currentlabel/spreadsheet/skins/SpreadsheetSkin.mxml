@@ -1,0 +1,118 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<s:Skin xmlns:fx = "http://ns.adobe.com/mxml/2009"
+		xmlns:s = "library://ns.adobe.com/flex/spark"
+		xmlns:spreadsheet="uk.co.currentlabel.spreadsheet.*"
+		xmlns:layout="uk.co.currentlabel.spreadsheet.layout.*"
+		xmlns:components="uk.co.currentlabel.spreadsheet.components.*"
+		alpha.disabled = "0.5"
+		blendMode = "normal">
+
+	<!-- host component -->
+	<fx:Metadata>
+		[HostComponent("uk.co.currentlabel.spreadsheet.Spreadsheet")]
+	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+			import uk.co.currentlabel.spreadsheet.core.spreadsheet;
+			import uk.co.currentlabel.spreadsheet.vos.Cell;
+			
+			import spark.events.IndexChangeEvent;
+			
+			use namespace spreadsheet;
+			
+			/**
+			 * @private
+			 */
+			protected function grid_changeHandler (event : IndexChangeEvent) : void
+			{
+				var columns : Vector.<int> = new Vector.<int>, rows : Vector.<int> = new Vector.<int>;
+				var items : Vector.<Object> = grid.selectedItems;
+				var cell : Cell;
+				var j : int;
+				
+				for (var i : int, n : int = items.length; i < n; ++i)
+				{
+					cell = Cell (items[i]);
+					
+					for (j = cell.bounds.x; j <= cell.bounds.right; ++j)
+						columns.push (j);
+					
+					for (j = cell.bounds.y; j <= cell.bounds.bottom; ++j)
+						rows.push (j);
+				}
+				
+				columnHeader.selectedIndices = columns;
+				rowHeader.selectedIndices = rows;
+			}
+		]]>
+	</fx:Script>
+
+	<s:states>
+		<s:State name = "normal" />
+
+		<s:State name = "disabled" />
+	</s:states>
+
+	<!-- border -->
+
+	<!--- @private -->
+	<s:Rect left = "0"
+			right = "0"
+			top = "0"
+			bottom = "0"
+			id = "border">
+		<s:stroke>
+
+			<!--- @private -->
+			<s:SolidColorStroke id = "borderStroke"
+								weight = "1" />
+		</s:stroke>
+	</s:Rect>
+
+	<!-- fill -->
+
+	<!--- Defines the background appearance of the list-based component. -->
+	<s:Rect id = "background"
+			left = "1"
+			right = "1"
+			top = "1"
+			bottom = "1">
+		<s:fill>
+
+			<!--- Defines the color of the background. The default color is 0xFFFFFF. -->
+			<s:LinearGradient id = "bgFill"
+							  rotation = "90">
+				<s:GradientEntry color = "0xEEEEEE" />
+
+				<s:GradientEntry color = "0xFFFFFF" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<s:List id = "columnHeader"
+			skinClass = "uk.co.currentlabel.spreadsheet.skins.ColumnHeaderListSkin"
+			left = "{rowHeader.width+1}"
+			top = "1"
+			right = "1"
+			allowMultipleSelection = "true" />
+
+	<s:List id = "rowHeader"
+			skinClass = "uk.co.currentlabel.spreadsheet.skins.RowHeaderListSkin"
+			top = "{columnHeader.height+1}"
+			left = "1"
+			bottom = "1"
+			allowMultipleSelection = "true" />
+
+	<components:GridList id = "grid"
+						 skinClass = "uk.co.currentlabel.spreadsheet.skins.GridListSkin"
+						 left = "{rowHeader.width+1}"
+						 top = "{columnHeader.height+1}"
+						 right = "1"
+						 bottom = "1"
+						 allowMultipleSelection = "true"
+						 useVirtualLayout = "false"
+						 focusSkin = "{null}"
+						 host = "{hostComponent}"
+						 change = "grid_changeHandler(event)" />
+</s:Skin>

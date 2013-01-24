@@ -1,0 +1,15 @@
+
+////////////////////////////////////////////////////////////////////////////////
+//  
+//  Copyright 2012 Alen Balja
+//  All Rights Reserved.
+//
+//  See the file license.txt for copying permission.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+
+package uk.co.currentlabel.spreadsheet.core
+{
+public namespace spreadsheet = "uk.co.currentlabel.spreadsheet.core.spreadsheet";
+}

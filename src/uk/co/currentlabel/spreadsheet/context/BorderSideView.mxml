@@ -1,0 +1,124 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<s:VGroup xmlns:fx = "http://ns.adobe.com/mxml/2009"
+		  xmlns:s = "library://ns.adobe.com/flex/spark"
+		  xmlns:mx = "library://ns.adobe.com/flex/mx">
+
+	<!---Border visibility-->
+	<s:CheckBox label = "visible"
+				change = "visibleStyle_changeHandler(event)"
+				selected = "{visibleStyle}" />
+
+	<!---Border color-->
+	<s:HGroup verticalAlign = "middle">
+		<s:Label text = "color"
+				 width = "100" />
+
+		<mx:ColorPicker change = "colorStyle_changeHandler(event)"
+						selectedColor = "{colorStyle}" />
+	</s:HGroup>
+
+	<!---Border alpha-->
+	<s:HGroup verticalAlign = "middle">
+		<s:Label text = "alpha"
+				 width = "100" />
+
+		<s:HSlider change = "alphaStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "1"
+				   stepSize = ".01"
+				   value = "{alphaStyle}" />
+	</s:HGroup>
+
+	<!---Border thickness-->
+	<s:HGroup verticalAlign = "middle">
+		<s:Label text = "weight"
+				 width = "100" />
+
+		<s:HSlider change = "weightStyle_changeHandler(event)"
+				   minimum = "0"
+				   maximum = "10"
+				   stepSize = "1"
+				   value = "{weightStyle}" />
+	</s:HGroup>
+
+	<fx:Metadata>
+
+		<!---Dispatched when color style gets changed.-->
+		[Event(name="colorStyleChanged", type="flash.events.Event")]
+		
+		<!---Dispatched when alpha style gets changed.-->
+		[Event(name="alphaStyleChanged", type="flash.events.Event")]
+		
+		<!---Dispatched when weight style gets changed.-->
+		[Event(name="weightStyleChanged", type="flash.events.Event")]
+		
+		<!---Dispatched when visible style gets changed.-->
+		[Event(name="visibleStyleChanged", type="flash.events.Event")]
+	</fx:Metadata>
+
+	<fx:Declarations>
+		<fx:String id = "side" />
+
+		<fx:uint id = "colorStyle" />
+
+		<fx:Number id = "alphaStyle" />
+
+		<fx:Number id = "weightStyle" />
+
+		<fx:Boolean id = "visibleStyle" />
+
+		<fx:uint id = "newColorStyle" />
+
+		<fx:Number id = "newAlphaStyle" />
+
+		<fx:Number id = "newWeightStyle" />
+
+		<fx:Boolean id = "newVisibleStyle" />
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.ColorPickerEvent;
+			
+			/**
+			 * @private
+			 */
+			protected function colorStyle_changeHandler (e : ColorPickerEvent) : void
+			{
+				newColorStyle = e.color;
+				
+				dispatchEvent (new Event ("colorStyleChanged"));
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function alphaStyle_changeHandler (e : Event) : void
+			{
+				newAlphaStyle = e.currentTarget.value;
+				
+				dispatchEvent (new Event ("alphaStyleChanged"));
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function weightStyle_changeHandler (e : Event) : void
+			{
+				newWeightStyle = e.currentTarget.value;
+				
+				dispatchEvent (new Event ("weightStyleChanged"));
+			}
+			
+			/**
+			 * @private
+			 */
+			protected function visibleStyle_changeHandler (e : Event) : void
+			{
+				newVisibleStyle = e.currentTarget.selected;
+				
+				dispatchEvent (new Event ("visibleStyleChanged"));
+			}
+		]]>
+	</fx:Script>
+</s:VGroup>
